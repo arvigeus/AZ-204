@@ -141,9 +141,9 @@ Answer: Azure WebJobs permits developers to control retry policies.
 
 #### Further reading
 
-[Choose the right integration and automation services in Azure](https://learn.microsoft.com/en-us/azure/azure-functions/functions-compare-logic-apps-ms-flow-webjobs)
-[What is Azure Logic Apps?](https://learn.microsoft.com/en-us/azure/logic-apps/logic-apps-overview)
-[Get started with Power Automate](https://learn.microsoft.com/en-us/power-automate/getting-started)
-[Run Background tasks with WebJobs in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/webjobs-create)
-[An introduction to Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/functions-overview)
-[Create a function that integrates with Azure Logic Apps](https://learn.microsoft.com/en-us/azure/azure-functions/functions-twitter-email)
+- [Choose the right integration and automation services in Azure](https://learn.microsoft.com/en-us/azure/azure-functions/functions-compare-logic-apps-ms-flow-webjobs)
+- [What is Azure Logic Apps?](https://learn.microsoft.com/en-us/azure/logic-apps/logic-apps-overview)
+- [Get started with Power Automate](https://learn.microsoft.com/en-us/power-automate/getting-started)
+- [Run Background tasks with WebJobs in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/webjobs-create)
+- [An introduction to Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/functions-overview)
+- [Create a function that integrates with Azure Logic Apps](https://learn.microsoft.com/en-us/azure/azure-functions/functions-twitter-email)
