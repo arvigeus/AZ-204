@@ -133,7 +133,7 @@ Answer: Logic Apps (supports both UI and code), Azure Functions, WebJobs.
 Question: Which tools for creating workflows does not support code editing?  
 Answer: There is no way to edit the source code that Microsoft Power Automate creates. Extra help and templates are provided for common types of workflow.
 
-Question: Which would be cheaper: Azure Functions or WebJobs?
+Question: Which would be cheaper: Azure Functions or WebJobs?  
 Answer: Azure Function can run on a consumption plan, so you only pay when the function runs. With Web Jobs, you pay for the entire VM or App Service Plan that hosts the job.
 
 Question: You have on-premises SharePoint server, which isn't as reliable as a cloud-based server would be, developers want to carefully control the way the workflow retries this connection, if there's a failure. Which would you choose?  
