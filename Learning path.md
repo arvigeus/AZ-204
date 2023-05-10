@@ -6,9 +6,9 @@ Learn how Azure App Service functions and how to create and update an app. Explo
 
 Prerequisites:
 
-    - At least one year of experience developing scalable solutions through all phases of software development.
-    - Have a base understanding of Azure and cloud concepts, services, and the Azure portal.
-    - If you're new to Azure or cloud computing it's recommended you complete the AZ-900: Azure Fundamentals course.
+- At least one year of experience developing scalable solutions through all phases of software development.
+- Have a base understanding of Azure and cloud concepts, services, and the Azure portal.
+- If you're new to Azure or cloud computing it's recommended you complete the AZ-900: Azure Fundamentals course.
 
 ### Explore Azure App Service
 
@@ -67,9 +67,9 @@ Learn how to create and deploy Azure Functions. Explore hosting options, binding
 
 Prerequisites:
 
-    - At least one year of experience developing scalable solutions through all phases of software development.
-    - Have a base understanding of Azure and cloud concepts, services, and the Azure portal.
-    - If you are new to Azure or cloud computing it's recommended you complete the AZ-900: Azure Fundamentals course.
+- At least one year of experience developing scalable solutions through all phases of software development.
+- Have a base understanding of Azure and cloud concepts, services, and the Azure portal.
+- If you are new to Azure or cloud computing it's recommended you complete the AZ-900: Azure Fundamentals course.
 
 ### Explore Azure Functions
 
@@ -100,9 +100,9 @@ Learn how to create Azure Blob storage resources, manage data through the blob s
 
 Prerequisites:
 
-    - At least one year of experience developing scalable solutions through all phases of software development.
-    - Have a base understanding of Azure and cloud concepts, services, and the Azure portal.
-    - If you are new to Azure or cloud computing it is recommended you complete the AZ-900: Azure Fundamentals course.
+- At least one year of experience developing scalable solutions through all phases of software development.
+- Have a base understanding of Azure and cloud concepts, services, and the Azure portal.
+- If you are new to Azure or cloud computing it is recommended you complete the AZ-900: Azure Fundamentals course.
 
 ### Explore Azure Blob storage
 
@@ -147,9 +147,9 @@ Learn how to create Azure Cosmos DB resources with the appropriate consistency l
 
 Prerequisites:
 
-    - At least one year of experience developing scalable solutions through all phases of software development.
-    - Have a base understanding of Azure and cloud concepts, services, and the Azure portal.
-    - If you're new to Azure or cloud computing it's recommended you complete the AZ-900: Azure Fundamentals course.
+- At least one year of experience developing scalable solutions through all phases of software development.
+- Have a base understanding of Azure and cloud concepts, services, and the Azure portal.
+- If you're new to Azure or cloud computing it's recommended you complete the AZ-900: Azure Fundamentals course.
 
 ### Explore Azure Cosmos DB
 
@@ -185,9 +185,9 @@ Learn how to create and deploy containerized solutions to Azure by using the Azu
 
 Prerequisites:
 
-    - At least one year of experience developing scalable solutions through all phases of software development.
-    - Have a base understanding of Azure and cloud concepts, services, and the Azure portal.
-    - If you are new to Azure, or cloud computing, it is recommended you complete the AZ-900: Azure Fundamentals course.
+- At least one year of experience developing scalable solutions through all phases of software development.
+- Have a base understanding of Azure and cloud concepts, services, and the Azure portal.
+- If you are new to Azure, or cloud computing, it is recommended you complete the AZ-900: Azure Fundamentals course.
 
 ### Manage container images in Azure Container Registry
 
@@ -235,9 +235,9 @@ Learn how to implement authentication and authorization to resources by using th
 
 Prerequisites:
 
-    - At least one year of experience developing scalable solutions through all phases of software development.
-    - Have a base understanding of Azure and cloud concepts, services, and the Azure portal.
-    - If you are new to Azure or cloud computing it is recommended you complete the AZ-900: Azure Fundamentals course.
+- At least one year of experience developing scalable solutions through all phases of software development.
+- Have a base understanding of Azure and cloud concepts, services, and the Azure portal.
+- If you are new to Azure or cloud computing it is recommended you complete the AZ-900: Azure Fundamentals course.
 
 ### Explore the Microsoft identity platform
 
@@ -291,9 +291,9 @@ Learn how to more securely deploy apps in Azure by using Azure Key Vault, manage
 
 Prerequisites:
 
-    - At least one year of experience developing scalable solutions through all phases of software development.
-    - Have a base understanding of Azure and cloud concepts, services, and the Azure portal.
-    - If you are new to Azure, or cloud computing, it's recommended you complete the AZ-900: Azure Fundamentals course.
+- At least one year of experience developing scalable solutions through all phases of software development.
+- Have a base understanding of Azure and cloud concepts, services, and the Azure portal.
+- If you are new to Azure, or cloud computing, it's recommended you complete the AZ-900: Azure Fundamentals course.
 
 ### Implement Azure Key Vault
 
@@ -337,9 +337,9 @@ Learn how the API Management service functions, how to transform and secure APIs
 
 Prerequisites:
 
-    - At least one year of experience developing scalable solutions through all phases of software development.
-    - Have a base understanding of Azure and cloud concepts, services, and the Azure portal.
-    - If you are new to Azure, or cloud computing, it is recommended you complete the AZ-900: Azure Fundamentals course.
+- At least one year of experience developing scalable solutions through all phases of software development.
+- Have a base understanding of Azure and cloud concepts, services, and the Azure portal.
+- If you are new to Azure, or cloud computing, it is recommended you complete the AZ-900: Azure Fundamentals course.
 
 ### Explore API Management
 
@@ -362,9 +362,9 @@ Learn how to build applications with event-based architectures by integrating Az
 
 Prerequisites:
 
-    - At least one year of experience developing scalable solutions through all phases of software development.
-    - Have a base understanding of Azure and cloud concepts, services, and the Azure portal.
-    - If you are new to Azure or cloud computing it is recommended you complete the AZ-900: Azure Fundamentals course.
+- At least one year of experience developing scalable solutions through all phases of software development.
+- Have a base understanding of Azure and cloud concepts, services, and the Azure portal.
+- If you are new to Azure or cloud computing it is recommended you complete the AZ-900: Azure Fundamentals course.
 
 ### Explore Azure Event Grid
 
@@ -400,9 +400,9 @@ Learn how to build applications with message-based architectures by integrating 
 
 Prerequisites:
 
-    - At least one year of experience developing scalable solutions through all phases of software development.
-    - Have a base understanding of Azure and cloud concepts, services, and the Azure portal.
-    - If you are new to Azure or cloud computing it is recommended you complete the AZ-900: Azure Fundamentals course.
+- At least one year of experience developing scalable solutions through all phases of software development.
+- Have a base understanding of Azure and cloud concepts, services, and the Azure portal.
+- If you are new to Azure or cloud computing it is recommended you complete the AZ-900: Azure Fundamentals course.
 
 ### Discover Azure message queues
 
@@ -425,9 +425,9 @@ Learn how to instrument apps to enable Application Insights to monitor performan
 
 Prerequisites:
 
-    - At least one year of experience developing scalable solutions through all phases of software development.
-    - Have a base understanding of Azure and cloud concepts, services, and the Azure portal.
-    - If you're new to Azure or cloud computing it's recommended you complete the AZ-900: Azure Fundamentals course.
+- At least one year of experience developing scalable solutions through all phases of software development.
+- Have a base understanding of Azure and cloud concepts, services, and the Azure portal.
+- If you're new to Azure or cloud computing it's recommended you complete the AZ-900: Azure Fundamentals course.
 
 ### Monitor app performance
 
@@ -448,9 +448,9 @@ Learn how to improve the performance and scalability of your applications by int
 
 Prerequisites:
 
-    - At least one year of experience developing scalable solutions through all phases of software development.
-    - Have a base understanding of Azure and cloud concepts, services, and the Azure portal.
-    - If you're new to Azure or cloud computing it's recommended you complete the AZ-900: Azure Fundamentals course.
+- At least one year of experience developing scalable solutions through all phases of software development.
+- Have a base understanding of Azure and cloud concepts, services, and the Azure portal.
+- If you're new to Azure or cloud computing it's recommended you complete the AZ-900: Azure Fundamentals course.
 
 ### Develop for Azure Cache for Redis
 
