@@ -125,7 +125,7 @@ The unit of scale for Azure Functions is the function app. When the function app
 
 ![Scale controller monitoring events and creating instances](https://learn.microsoft.com/en-us/training/wwl-azure/explore-azure-functions/media/central-listener.png)
 
-:information-source: After your function app has been idle for a number of minutes, the platform may scale the number of instances on which your app runs in to zero. The next request has the added latency of scaling from zero to one. This latency is referred to as a \_cold start\*.
+:information_source: After your function app has been idle for a number of minutes, the platform may scale the number of instances on which your app runs in to zero. The next request has the added latency of scaling from zero to one. This latency is referred to as a \_cold start\*.
 
 #### Scaling behaviors
 
