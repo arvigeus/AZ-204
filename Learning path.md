@@ -1,6 +1,6 @@
 # Learning path
 
-## Implement Azure App Service web apps
+## [Implement Azure App Service web apps](https://learn.microsoft.com/en-us/training/paths/create-azure-app-service-web-apps/)
 
 Learn how Azure App Service functions and how to create and update an app. Explore App Service authentication and authorization, configuring app settings, scale apps, and how to use deployment slots.
 
@@ -61,7 +61,7 @@ In this module you'll learn how slot swapping operates and how to perform a swap
 - [Knowledge check](https://learn.microsoft.com/en-us/training/modules/understand-app-service-deployment-slots/6-knowledge-check/?ns-enrollment-type=learningpath&ns-enrollment-id=learn.wwl.create-azure-app-service-web-apps)
 - [Summary](https://learn.microsoft.com/en-us/training/modules/understand-app-service-deployment-slots/7-summary/?ns-enrollment-type=learningpath&ns-enrollment-id=learn.wwl.create-azure-app-service-web-apps)
 
-## Implement Azure Functions
+## [Implement Azure Functions](https://learn.microsoft.com/en-us/training/paths/implement-azure-functions/)
 
 Learn how to create and deploy Azure Functions. Explore hosting options, bindings, and triggers.
 
@@ -94,7 +94,7 @@ Learn how to create and deploy Azure Functions.
 - [Knowledge check](https://learn.microsoft.com/en-us/training/modules/develop-azure-functions/6-knowledge-check/?ns-enrollment-type=learningpath&ns-enrollment-id=learn.wwl.implement-azure-functions)
 - [Summary](https://learn.microsoft.com/en-us/training/modules/develop-azure-functions/7-summary/?ns-enrollment-type=learningpath&ns-enrollment-id=learn.wwl.implement-azure-functions)
 
-## Develop solutions that use Blob storage
+## [Develop solutions that use Blob storage](https://learn.microsoft.com/en-us/training/paths/develop-solutions-that-use-blob-storage/)
 
 Learn how to create Azure Blob storage resources, manage data through the blob storage lifecycle, and work with containers and items by using the Azure Blob storage client library V12 for .NET.
 
@@ -141,7 +141,7 @@ Learn how to use the Azure Blob storage client library to create and update Blob
 - [Knowledge check](https://learn.microsoft.com/en-us/training/modules/work-azure-blob-storage/7-knowledge-check/?ns-enrollment-type=learningpath&ns-enrollment-id=learn.wwl.develop-solutions-that-use-blob-storage)
 - [Summary](https://learn.microsoft.com/en-us/training/modules/work-azure-blob-storage/8-summary/?ns-enrollment-type=learningpath&ns-enrollment-id=learn.wwl.develop-solutions-that-use-blob-storage)
 
-## Develop solutions that use Azure Cosmos DB
+## [Develop solutions that use Azure Cosmos DB](https://learn.microsoft.com/en-us/training/paths/az-204-develop-solutions-that-use-azure-cosmos-db/)
 
 Learn how to create Azure Cosmos DB resources with the appropriate consistency levels, and perform data operations by using the .NET SDK V3 for Azure Cosmos DB.
 
@@ -179,7 +179,7 @@ Learn how to develop client and server-side programming solutions on Azure Cosmo
 - [Knowledge check](https://learn.microsoft.com/en-us/training/modules/work-with-cosmos-db/7-knowledge-check/?ns-enrollment-type=learningpath&ns-enrollment-id=learn.wwl.az-204-develop-solutions-that-use-azure-cosmos-db)
 - [Summary](https://learn.microsoft.com/en-us/training/modules/work-with-cosmos-db/8-summary/?ns-enrollment-type=learningpath&ns-enrollment-id=learn.wwl.az-204-develop-solutions-that-use-azure-cosmos-db)
 
-## Implement containerized solutions
+## [Implement containerized solutions](https://learn.microsoft.com/en-us/training/paths/az-204-implement-iaas-solutions/)
 
 Learn how to create and deploy containerized solutions to Azure by using the Azure Container Registry, Azure Container Instances, and Azure Container Apps.
 
@@ -229,7 +229,7 @@ Learn how Azure Container Apps can help you deploy and manage microservices and 
 - [Knowledge check](https://learn.microsoft.com/en-us/training/modules/implement-azure-container-apps/8-knowledge-check/?ns-enrollment-type=learningpath&ns-enrollment-id=learn.wwl.az-204-implement-iaas-solutions)
 - [Summary](https://learn.microsoft.com/en-us/training/modules/implement-azure-container-apps/9-summary/?ns-enrollment-type=learningpath&ns-enrollment-id=learn.wwl.az-204-implement-iaas-solutions)
 
-## Implement user authentication and authorization
+## [Implement user authentication and authorization](https://learn.microsoft.com/en-us/training/paths/az-204-implement-authentication-authorization/)
 
 Learn how to implement authentication and authorization to resources by using the Microsoft identity platform, Microsoft Authentication Library, shared access signatures, and use Microsoft Graph.
 
@@ -285,7 +285,7 @@ Learn how Microsoft Graph facilitates the access and flow of data and how to for
 - [Knowledge check](https://learn.microsoft.com/en-us/training/modules/microsoft-graph/6-knowledge-check/?ns-enrollment-type=learningpath&ns-enrollment-id=learn.wwl.az-204-implement-authentication-authorization)
 - [Summary](https://learn.microsoft.com/en-us/training/modules/microsoft-graph/7-summary/?ns-enrollment-type=learningpath&ns-enrollment-id=learn.wwl.az-204-implement-authentication-authorization)
 
-## Implement secure Azure solutions
+## [Implement secure Azure solutions](https://learn.microsoft.com/en-us/training/paths/az-204-implement-secure-cloud-solutions/)
 
 Learn how to more securely deploy apps in Azure by using Azure Key Vault, managed identities, and Azure App Configuration.
 
@@ -331,7 +331,7 @@ Learn how to use Azure App Configuration service to centrally manage and secure 
 - [Knowledge check](https://learn.microsoft.com/en-us/training/modules/implement-azure-app-configuration/6-knowledge-check/?ns-enrollment-type=learningpath&ns-enrollment-id=learn.wwl.az-204-implement-secure-cloud-solutions)
 - [Summary](https://learn.microsoft.com/en-us/training/modules/implement-azure-app-configuration/7-summary/?ns-enrollment-type=learningpath&ns-enrollment-id=learn.wwl.az-204-implement-secure-cloud-solutions)
 
-## Implement API Management
+## [Implement API Management](https://learn.microsoft.com/en-us/training/paths/az-204-implement-api-management/)
 
 Learn how the API Management service functions, how to transform and secure APIs, and how to create a backend API.
 
@@ -356,7 +356,7 @@ Learn how the API Management service functions, how to transform and secure APIs
 - [Knowledge check](https://learn.microsoft.com/en-us/training/modules/explore-api-management/9-knowledge-check/?ns-enrollment-type=learningpath&ns-enrollment-id=learn.wwl.az-204-implement-api-management)
 - [Summary](https://learn.microsoft.com/en-us/training/modules/explore-api-management/10-summary/?ns-enrollment-type=learningpath&ns-enrollment-id=learn.wwl.az-204-implement-api-management)
 
-## Develop event-based solutions
+## [Develop event-based solutions](https://learn.microsoft.com/en-us/training/paths/az-204-develop-event-based-solutions/)
 
 Learn how to build applications with event-based architectures by integrating Azure Event Grid and Azure Event Hubs in to your solution.
 
@@ -394,7 +394,7 @@ Learn how Azure Event Hubs captures events and how to scale your processing appl
 - [Knowledge check](https://learn.microsoft.com/en-us/training/modules/azure-event-hubs/7-knowledge-check/?ns-enrollment-type=learningpath&ns-enrollment-id=learn.wwl.az-204-develop-event-based-solutions)
 - [Summary](https://learn.microsoft.com/en-us/training/modules/azure-event-hubs/8-summary/?ns-enrollment-type=learningpath&ns-enrollment-id=learn.wwl.az-204-develop-event-based-solutions)
 
-## Develop message-based solutions
+## [Develop message-based solutions](https://learn.microsoft.com/en-us/training/paths/az-204-develop-message-based-solutions/)
 
 Learn how to build applications with message-based architectures by integrating Azure Service Bus and Azure Queue Storage in to your solution.
 
@@ -419,7 +419,7 @@ Learn how to integrate Azure Service Bus and Azure Queue storage in to your solu
 - [Knowledge check](https://learn.microsoft.com/en-us/training/modules/discover-azure-message-queue/9-knowledge-check/?ns-enrollment-type=learningpath&ns-enrollment-id=learn.wwl.az-204-develop-message-based-solutions)
 - [Summary](https://learn.microsoft.com/en-us/training/modules/discover-azure-message-queue/10-summary/?ns-enrollment-type=learningpath&ns-enrollment-id=learn.wwl.az-204-develop-message-based-solutions)
 
-## Troubleshoot solutions by using Application Insights
+## [Troubleshoot solutions by using Application Insights](https://learn.microsoft.com/en-us/training/paths/az-204-instrument-solutions-support-monitoring-logging/)
 
 Learn how to instrument apps to enable Application Insights to monitor performance and help troubleshoot issues.
 
@@ -442,7 +442,7 @@ Learn how to use the tools offered in Application Insights to enhance the perfor
 - [Knowledge check](https://learn.microsoft.com/en-us/training/modules/monitor-app-performance/7-knowledge-check/?ns-enrollment-type=learningpath&ns-enrollment-id=learn.wwl.az-204-instrument-solutions-to-support-monitoring-logging)
 - [Summary](https://learn.microsoft.com/en-us/training/modules/monitor-app-performance/8-summary/?ns-enrollment-type=learningpath&ns-enrollment-id=learn.wwl.az-204-instrument-solutions-to-support-monitoring-logging)
 
-## Implement caching for solutions
+## [Implement caching for solutions](https://learn.microsoft.com/en-us/training/paths/az-204-integrate-caching-content-delivery-within-solutions/)
 
 Learn how to improve the performance and scalability of your applications by integrating Azure Cache for Redis and Azure Content Delivery Network in to your solution.
 

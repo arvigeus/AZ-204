@@ -1,0 +1,28 @@
+{
+  "files.exclude": {
+    "node_modules": true,
+    "*.log": true,
+    "dist": true,
+    ".env": true,
+    ".cache": true,
+    "vite-cache": true,
+    "*.tsbuildinfo": true
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "eslint.workingDirectories": [
+    {
+      "directory": "quiz-app",
+      "changeProcessCWD": true
+    }
+  ]
+}
