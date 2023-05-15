@@ -7,6 +7,9 @@ import path from "path";
 const cache = new NodeCache();
 const githubAPIUrl = "https://api.github.com/repos";
 
+const repo = "arvigeus/AZ-204";
+const directory = "Questions";
+
 export interface QAPair {
   id: string;
   question: string;
@@ -110,10 +113,7 @@ const getQAFromFile = async (
   return parseQA(name.replace(/\.[^/.]+$/, ""), fileContent);
 };
 
-export const getTopics = async (
-  repo: string,
-  directory: string
-): Promise<string[]> => {
+export const getTopics = async (): Promise<string[]> => {
   if (cache.has("")) {
     const cachedData = cache.get("") as string[] | undefined;
     if (cachedData && cachedData.length > 0) {
@@ -151,8 +151,6 @@ export const getTopics = async (
 };
 
 export const getQA = async (
-  repo: string,
-  directory: string,
   topic?: string | null | undefined
 ): Promise<QAPair> => {
   const isDev = process.env.NODE_ENV === "development";
@@ -190,7 +188,7 @@ export const getQA = async (
       // Remove file from cache if it doesn't contain any QA pairs
       cache.del(file.path);
       // Recursive call to find another file
-      return await getQA(repo, directory);
+      return await getQA();
     }
   } else {
     const qaList = await getQAFromFile(repo, file.name, file.path, isDev);
@@ -199,7 +197,7 @@ export const getQA = async (
       return shuffleQA(getRandomElement(qaList));
     } else {
       // Recursive call to find another file
-      return await getQA(repo, directory);
+      return await getQA();
     }
   }
 };

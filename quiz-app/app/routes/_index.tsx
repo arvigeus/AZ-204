@@ -19,10 +19,7 @@ export const meta: MetaFunction = () => {
 };
 
 export let loader = async () => {
-  const data = await Promise.all([
-    getQA("arvigeus/AZ-204", "Questions"),
-    getTopics("arvigeus/AZ-204", "Questions"),
-  ]);
+  const data = await Promise.all([getQA(), getTopics()]);
   return json({
     question: data[0],
     topics: data[1],
@@ -32,7 +29,7 @@ export let loader = async () => {
 export let action: ActionFunction = async ({ request }) => {
   const payload = await request.formData();
   const topic = payload.get("topic");
-  const data = await getQA("arvigeus/AZ-205", "Questions", topic?.toString());
+  const data = await getQA(topic?.toString());
   return json(data);
 };
 
