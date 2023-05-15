@@ -59,7 +59,7 @@ export default function Index() {
   const isLoading = navigation.state === "submitting";
 
   const btnStyle = clsx(
-    "min-w-[30%] flex items-center justify-center text-center bg-blue-700 focus:ring-2 font-medium text-sm px-5 py-2.5 inline-flex items-center",
+    "min-w-[30%] flex items-center justify-center text-center bg-blue-700 focus:ring-2 font-medium text-xs sm:text-sm px-2.5 py-1 sm:px-5 sm:py-2.5 inline-flex items-center",
     isLoading
       ? "text-gray-900 bg-white border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
       : "text-white bg-blue-700 hover:bg-blue-800 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
