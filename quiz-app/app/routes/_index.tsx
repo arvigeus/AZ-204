@@ -64,6 +64,7 @@ export default function Index() {
   };
 
   const handleSubmit = () => {
+    setCheckedValues([]);
     setShowAnswer(false);
     setShowDropdown(false);
     return false;
