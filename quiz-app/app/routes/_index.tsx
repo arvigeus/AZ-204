@@ -122,6 +122,7 @@ export default function Index() {
                           type={
                             data.answerIndexes.length < 2 ? "checkbox" : "radio"
                           }
+                          checked={checkedValues.includes(`${index}`)}
                           onChange={handleChange}
                           className="hidden"
                           value={index}
