@@ -109,13 +109,18 @@ export default function Index() {
                       <label
                         className={clsx(
                           "block mt-4 border border-gray-300 rounded-lg py-2 px-6 text-lg",
-                          (showAnswer || checkedValues.includes(index)) && data.answerIndexes.includes(index)
+                          (showAnswer || checkedValues.includes(index)) &&
+                            data.answerIndexes.includes(index)
                             ? "bg-green-200"
-                            : checkedValues.includes(index) ? "bg-red-200" : "bg-transparent"
+                            : checkedValues.includes(index)
+                            ? "bg-red-200"
+                            : "bg-transparent"
                         )}
                       >
                         <input
-                          type={data.answerIndexes.length < 2 "checkbox" : "radio"}
+                          type={
+                            data.answerIndexes.length < 2 ? "checkbox" : "radio"
+                          }
                           onChange={handleChange}
                           className="hidden"
                           value={index}
