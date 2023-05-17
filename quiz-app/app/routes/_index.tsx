@@ -8,6 +8,7 @@ import { json } from "@remix-run/node";
 import type { ActionFunction } from "@remix-run/node";
 import type { V2_MetaFunction as MetaFunction } from "@remix-run/node";
 import { useState } from "react";
+import type { ChangeEventHandler } from "react";
 import clsx from "clsx";
 import Markdown from "markdown-to-jsx";
 
@@ -38,7 +39,7 @@ export default function Index() {
   const actionData = useActionData<typeof action>();
   const navigation = useNavigation();
 
-  const [checkedValues, setCheckedValues] = useState([]);
+  const [checkedValues, setCheckedValues] = useState<number[]>([]);
   const [showAnswer, setShowAnswer] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
 
@@ -51,15 +52,16 @@ export default function Index() {
 
   const answerStyle = clsx("mt-4", showAnswer ? "visible" : "invisible");
 
-  const handleChange = async (event) => {
+  const handleChange: ChangeEventHandler<HTMLInputElement> = async (event) => {
     const { checked, value } = event.target;
 
+    const index = parseInt(value, 10);
     if (checked) {
       // Add to checked values
-      setCheckedValues((prev) => [...prev, value]);
+      setCheckedValues((prev) => [...prev, index]);
     } else {
       // Remove from checked values
-      setCheckedValues((prev) => prev.filter((v) => v !== value));
+      setCheckedValues((prev) => prev.filter((v) => v !== index));
     }
   };
 
@@ -71,12 +73,21 @@ export default function Index() {
   };
 
   const isLoading = navigation.state === "submitting";
+  const isCorrectlyAnswered =
+    data.answerIndexes &&
+    data.answerIndexes.length > 0 &&
+    data.answerIndexes.length == checkedValues.length &&
+    data.answerIndexes.every((value) => checkedValues.includes(value));
+
+  const buttonColor = isCorrectlyAnswered
+    ? "bg-green-700 hover:bg-green-800 focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+    : "bg-blue-700 hover:bg-blue-800 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800";
 
   const btnStyle = clsx(
-    "min-w-[30%] flex items-center justify-center text-center bg-blue-700 focus:ring-2 font-medium text-xs sm:text-sm px-2.5 py-1 sm:px-5 sm:py-2.5 inline-flex items-center",
+    "min-w-[30%] flex items-center justify-center text-center focus:ring-2 font-medium text-xs sm:text-sm px-2.5 py-1 sm:px-5 sm:py-2.5 inline-flex items-center",
     isLoading
       ? "text-gray-900 bg-white border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-      : "text-white bg-blue-700 hover:bg-blue-800 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+      : `text-white ${buttonColor}`
   );
 
   return (
@@ -110,10 +121,10 @@ export default function Index() {
                       <label
                         className={clsx(
                           "block mt-4 border border-gray-300 rounded-lg py-2 px-6 text-lg",
-                          (showAnswer || checkedValues.includes(`${index}`)) &&
+                          (showAnswer || checkedValues.includes(index)) &&
                             data.answerIndexes.includes(index)
                             ? "bg-green-200"
-                            : checkedValues.includes(`${index}`)
+                            : checkedValues.includes(index)
                             ? "bg-red-200"
                             : "bg-transparent"
                         )}
@@ -122,7 +133,7 @@ export default function Index() {
                           type={
                             data.answerIndexes.length < 2 ? "checkbox" : "radio"
                           }
-                          checked={checkedValues.includes(`${index}`)}
+                          checked={checkedValues.includes(index)}
                           onChange={handleChange}
                           className="hidden"
                           value={index}
@@ -198,7 +209,12 @@ export default function Index() {
                       <button
                         onClick={handleDropdown}
                         data-dropdown-toggle="dropdown"
-                        className="text-white bg-blue-800 hover:bg-blue-900 focus:ring-4 focus:outline-none focus:ring-blue-400 font-medium rounded-r-lg text-sm pr-4 py-2.5 text-center inline-flex items-center dark:bg-blue-500 dark:hover:bg-blue-800 dark:focus:ring-blue-900"
+                        className={clsx(
+                          "text-white  focus:ring-4 focus:outline-none font-medium rounded-r-lg text-sm pr-4 py-2.5 text-center inline-flex items-center ",
+                          isCorrectlyAnswered
+                            ? "bg-green-800 hover:bg-green-900 focus:ring-green-400 dark:bg-green-500 dark:hover:bg-green-800 dark:focus:ring-green-900"
+                            : "bg-blue-800 hover:bg-blue-900 focus:ring-blue-400 dark:bg-blue-500 dark:hover:bg-blue-800 dark:focus:ring-blue-900"
+                        )}
                         type="button"
                       >
                         <span className="invisible">|</span>
