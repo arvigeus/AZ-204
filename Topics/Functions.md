@@ -4,12 +4,6 @@
 
 Azure Functions lets you develop serverless applications on Microsoft Azure. You can write just the code you need for the problem at hand, without worrying about a whole application or the infrastructure to run it.
 
-After completing this module, you'll be able to:
-
-- Explain functional differences between Azure Functions, Azure Logic Apps, and WebJobs
-- Describe Azure Functions hosting plan options
-- Describe how Azure Functions scale to meet business needs
-
 ### Discover Azure Functions
 
 Azure Functions is a serverless solution that allows you to write less code, maintain less infrastructure, and save on costs. Instead of worrying about deploying and maintaining servers, the cloud infrastructure provides all the up-to-date resources needed to keep your applications running.
@@ -141,13 +135,6 @@ You may wish to restrict the maximum number of instances an app used to scale ou
 ## Develop Azure Functions
 
 Functions share a few core technical concepts and components, regardless of the language or binding you use.
-
-After completing this module, you'll be able to:
-
-- Explain the key components of a function and how they are structured
-- Create triggers and bindings to control when a function runs and where the output is directed
-- Connect a function to services in Azure
-- Create a function by using Visual Studio Code and the Azure Functions Core Tools
 
 ### Explore Azure Functions development
 
