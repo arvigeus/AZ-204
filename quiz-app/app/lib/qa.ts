@@ -43,15 +43,18 @@ const parseQA = (name: string, text: string): QAPair[] => {
 
   const optionRegex = /^\s*- \[(?:x|\s)\]|^[a-zA-Z0-9]+[),]\s/;
 
+  let itemType: "question" | "option" | "answer" | null = null:
+
   for (const line of lines) {
     if (line.startsWith("Question:")) {
       currentQuestion = [line.replace("Question:", "").trim()];
+      itemType = "question";
     } else if (line.startsWith("Answer:")) {
       currentAnswer = [line.replace("Answer:", "").trim()];
+      itemType = "answer";
     } else if (
       line.trim() === "" &&
-      currentQuestion.length > 0 &&
-      currentAnswer.length > 0
+      currentQuestion.length > 0
     ) {
       qaPairs.push({
         id: uuid(),
@@ -65,15 +68,21 @@ const parseQA = (name: string, text: string): QAPair[] => {
       currentAnswer = [];
       currentOptions = [];
       currentAnswerIndex = [];
+      itemType = null;
     } else {
       const trimmedLine = line.trimEnd();
       if (optionRegex.test(trimmedLine)) {
         currentOptions.push(trimmedLine.replace(optionRegex, ""));
+        itemType = "option";
         if (/^(\s*- \[x\])/.test(trimmedLine))
           currentAnswerIndex.push(currentOptions.length - 1);
       } else {
-        if (currentQuestion.length > 0) currentQuestion.push(trimmedLine);
-        if (currentAnswer.length > 0) currentAnswer.push(trimmedLine);
+        switch (itemType) {
+          case "question": currentQuestion.push(trimmedLine); break;
+          case "answer": currentAnswer.push(trimmedLine); break;
+          case "option": currentOptions.push(trimmedLine); break;
+          default: break;
+        }
       }
     }
   }
