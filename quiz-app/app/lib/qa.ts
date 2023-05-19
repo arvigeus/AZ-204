@@ -47,28 +47,27 @@ const parseQA = (name: string, text: string): QAPair[] => {
 
   for (const line of lines) {
     if (line.startsWith("Question:")) {
+      if (currentQuestion.lenght > 0) {
+        qaPairs.push({
+          id: uuid(),
+          question: currentQuestion.join("\n").trimEnd(),
+          answer: currentAnswer.join("\n").trimEnd(),
+          options: [...currentOptions],
+          answerIndexes: currentAnswerIndex,
+          topic: name,
+        });
+        currentQuestion = [];
+        currentAnswer = [];
+        currentOptions = [];
+        currentAnswerIndex = [];
+        itemType = null;
+      }
+
       currentQuestion = [line.replace("Question:", "").trim()];
       itemType = "question";
     } else if (line.startsWith("Answer:")) {
       currentAnswer = [line.replace("Answer:", "").trim()];
       itemType = "answer";
-    } else if (
-      line.trim() === "" &&
-      currentQuestion.length > 0
-    ) {
-      qaPairs.push({
-        id: uuid(),
-        question: currentQuestion.join("\n"),
-        answer: currentAnswer.join("\n"),
-        options: [...currentOptions],
-        answerIndexes: currentAnswerIndex,
-        topic: name,
-      });
-      currentQuestion = [];
-      currentAnswer = [];
-      currentOptions = [];
-      currentAnswerIndex = [];
-      itemType = null;
     } else {
       const trimmedLine = line.trimEnd();
       if (optionRegex.test(trimmedLine)) {
@@ -80,7 +79,10 @@ const parseQA = (name: string, text: string): QAPair[] => {
         switch (itemType) {
           case "question": currentQuestion.push(trimmedLine); break;
           case "answer": currentAnswer.push(trimmedLine); break;
-          case "option": currentOptions.push(trimmedLine); break;
+          case "option":
+              if (trimmedLine !== "")
+                currentOptions.push(trimmedLine);
+              break;
           default: break;
         }
       }
@@ -88,11 +90,11 @@ const parseQA = (name: string, text: string): QAPair[] => {
   }
 
   // For QA pair without trailing empty line
-  if (currentQuestion.length > 0 && currentAnswer.length > 0) {
+  if (currentQuestion.length > 0) {
     qaPairs.push({
       id: uuid(),
-      question: currentQuestion.join("\n"),
-      answer: currentAnswer.join("\n"),
+      question: currentQuestion.join("\n").trimEnd(),
+      answer: currentAnswer.join("\n").trimEnd(),
       options: [...currentOptions],
       answerIndexes: currentAnswerIndex,
       topic: name,
