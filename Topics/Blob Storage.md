@@ -707,7 +707,7 @@ PUT https://myaccount.blob.core.windows.net/mycontainer?comp=metadata&restype=co
 
 The URI syntax for setting metadata headers on a blob is as follows:
 
-```
+```txt
 PUT https://myaccount.blob.core.windows.net/mycontainer/myblob?comp=metadata
 ```
 

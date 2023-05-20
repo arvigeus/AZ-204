@@ -5,7 +5,7 @@ import {
   Form,
 } from "@remix-run/react";
 import { json } from "@remix-run/node";
-import type { ActionFunction } from "@remix-run/node";
+import type { ActionFunction, LoaderArgs } from "@remix-run/node";
 import type { V2_MetaFunction as MetaFunction } from "@remix-run/node";
 import { useState } from "react";
 import type { ChangeEventHandler } from "react";
@@ -14,24 +14,46 @@ import Markdown from "markdown-to-jsx";
 
 import type { QAPair } from "../lib/qa";
 import { getQA, getTopics } from "../lib/qa";
+import { getSession, commitSession } from "../session";
 
 export const meta: MetaFunction = () => {
   return [{ title: "Developing Solutions for Microsoft Azure: Quiz" }];
 };
 
-export let loader = async () => {
-  const data = await Promise.all([getQA(), getTopics()]);
-  return json({
-    question: data[0],
-    topics: data[1],
-  });
+export let loader = async ({ request }: LoaderArgs) => {
+  const session = await getSession(request.headers.get("Cookie") || "");
+  const data = await Promise.all([getQA(session), getTopics(session)]);
+  const cookie = `session=${await commitSession(session)}`;
+  return json(
+    {
+      question: data[0],
+      topics: data[1],
+    },
+    {
+      headers: {
+        "Set-Cookie": cookie,
+      },
+    }
+  );
 };
 
 export let action: ActionFunction = async ({ request }) => {
+  const session = await getSession(request.headers.get("Cookie") || "");
   const payload = await request.formData();
   const topic = payload.get("topic");
-  const data = await getQA(topic?.toString());
-  return json(data);
+  const id = payload.get("id");
+  let data = await getQA(session, topic?.toString());
+  let attempts = 3;
+  while (data.id == id && attempts > 0) {
+    attempts--;
+    data = await getQA(session, topic?.toString());
+  }
+  const cookie = `session=${await commitSession(session)}`;
+  return json(data, {
+    headers: {
+      "Set-Cookie": cookie,
+    },
+  });
 };
 
 export default function Index() {
@@ -53,15 +75,23 @@ export default function Index() {
   const answerStyle = clsx("mt-4", showAnswer ? "visible" : "invisible");
 
   const handleChange: ChangeEventHandler<HTMLInputElement> = async (event) => {
-    const { checked, value } = event.target;
+    const { checked, value, type } = event.target;
 
     const index = parseInt(value, 10);
-    if (checked) {
-      // Add to checked values
-      setCheckedValues((prev) => [...prev, index]);
-    } else {
-      // Remove from checked values
-      setCheckedValues((prev) => prev.filter((v) => v !== index));
+
+    if (type === "checkbox") {
+      if (checked) {
+        // Add to checked values
+        setCheckedValues((prev) => [...prev, index]);
+      } else {
+        // Remove from checked values
+        setCheckedValues((prev) => prev.filter((v) => v !== index));
+      }
+    } else if (type === "radio") {
+      if (checked) {
+        // Set checked value to the selected radio button
+        setCheckedValues([index]);
+      }
     }
   };
 
@@ -131,12 +161,13 @@ export default function Index() {
                       >
                         <input
                           type={
-                            data.answerIndexes.length < 2 ? "checkbox" : "radio"
+                            data.answerIndexes.length < 2 ? "radio" : "checkbox"
                           }
                           checked={checkedValues.includes(index)}
                           onChange={handleChange}
                           className="hidden"
                           value={index}
+                          name="answers"
                         />
                         <Markdown children={option} />
                       </label>

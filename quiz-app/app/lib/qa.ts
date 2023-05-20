@@ -1,10 +1,9 @@
 import fetch from "node-fetch";
-import NodeCache from "node-cache";
 import { uuid } from "uuidv4";
 import fs from "fs/promises";
 import path from "path";
+import type { Session, SessionData } from "@remix-run/node";
 
-const cache = new NodeCache();
 const githubAPIUrl = "https://api.github.com/repos";
 
 const repo = "arvigeus/AZ-204";
@@ -128,7 +127,9 @@ const getQAFromFile = async (
   return parseQA(name.replace(/\.[^/.]+$/, ""), fileContent);
 };
 
-export const getTopics = async (): Promise<string[]> => {
+export const getTopics = async (
+  cache: Session<SessionData, SessionData>
+): Promise<string[]> => {
   if (cache.has("")) {
     const cachedData = cache.get("") as string[] | undefined;
     if (cachedData && cachedData.length > 0) {
@@ -166,6 +167,7 @@ export const getTopics = async (): Promise<string[]> => {
 };
 
 export const getQA = async (
+  cache: Session<SessionData, SessionData>,
   topic?: string | null | undefined
 ): Promise<QAPair> => {
   const isDev = process.env.NODE_ENV === "development";
@@ -201,18 +203,19 @@ export const getQA = async (
       return shuffleQA(getRandomElement(cachedData));
     } else {
       // Remove file from cache if it doesn't contain any QA pairs
-      cache.del(file.path);
+      cache.unset(file.path);
       // Recursive call to find another file
-      return await getQA();
+      return await getQA(cache);
     }
   } else {
     const qaList = await getQAFromFile(repo, file.name, file.path, isDev);
     cache.set(file.path, qaList);
+
     if (qaList.length > 0) {
       return shuffleQA(getRandomElement(qaList));
     } else {
       // Recursive call to find another file
-      return await getQA();
+      return await getQA(cache);
     }
   }
 };
