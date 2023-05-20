@@ -43,11 +43,11 @@ const parseQA = (name: string, text: string): QAPair[] => {
 
   const optionRegex = /^\s*- \[(?:x|\s)\]|^[a-zA-Z0-9]+[),]\s/;
 
-  let itemType: "question" | "option" | "answer" | null = null:
+  let itemType: "question" | "option" | "answer" | null = null;
 
   for (const line of lines) {
     if (line.startsWith("Question:")) {
-      if (currentQuestion.lenght > 0) {
+      if (currentQuestion.length > 0) {
         qaPairs.push({
           id: uuid(),
           question: currentQuestion.join("\n").trimEnd(),
@@ -77,13 +77,17 @@ const parseQA = (name: string, text: string): QAPair[] => {
           currentAnswerIndex.push(currentOptions.length - 1);
       } else {
         switch (itemType) {
-          case "question": currentQuestion.push(trimmedLine); break;
-          case "answer": currentAnswer.push(trimmedLine); break;
+          case "question":
+            currentQuestion.push(trimmedLine);
+            break;
+          case "answer":
+            currentAnswer.push(trimmedLine);
+            break;
           case "option":
-              if (trimmedLine !== "")
-                currentOptions.push(trimmedLine);
-              break;
-          default: break;
+            if (trimmedLine !== "") currentOptions.push(trimmedLine);
+            break;
+          default:
+            break;
         }
       }
     }
