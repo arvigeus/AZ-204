@@ -355,7 +355,7 @@ When hosted in the Azure Functions service, identity-based connections use a [ma
 
 Whatever identity is being used must have permissions to perform the intended actions. This is typically done by assigning a role in Azure RBAC or specifying the identity in an access policy, depending on the service to which you're connecting.
 
-&#x2757; Some permissions might be exposed by the target service that are not necessary for all contexts. Where possible, adhere to the **principle of least privilege**, granting the identity only required privileges.
+:bangbang: Some permissions might be exposed by the target service that are not necessary for all contexts. Where possible, adhere to the **principle of least privilege**, granting the identity only required privileges.
 
 ### Exercise: Create an Azure Function by using Visual Studio Code
 
@@ -464,7 +464,7 @@ In this section, you create the Azure resources you need to deploy your local fu
 
 1. Confirm that you want to deploy your function by selecting **Deploy** on the confirmation prompt.
 
-   &#x2757; Publishing to an existing function overwrites any previous deployments.
+   :bangbang: Publishing to an existing function overwrites any previous deployments.
 
 #### Run the function in Azure
 
