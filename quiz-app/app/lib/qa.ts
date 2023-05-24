@@ -5,7 +5,9 @@ import { data } from "~/db";
 export { topics } from "~/db";
 
 export const getQA = (topic?: string | null | undefined): QAPair => {
-  const questions = topic ? data.filter((item) => topic === item.topic) : data;
+  const questions = topic
+    ? data.filter((item: QAPair) => topic === item.topic)
+    : data;
 
   const question = getRandomElement(questions);
 
