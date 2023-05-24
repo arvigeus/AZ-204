@@ -12,7 +12,7 @@ A value isn't required for Data
 
 Question: Which of the following Event Grid built-in roles is appropriate for managing Event Grid resources?
 
-- [ ] Event Grid Contributor
+- [x] Event Grid Contributor
 - [ ] Event Grid Subscription Contributor
 - [ ] Event Grid Data Sender
 

@@ -25,7 +25,7 @@ Question: Which of the following methods is recommended when deploying a multi-c
 Answer: Due to the YAML format's more concise nature, a YAML file is recommended when your deployment includes only container instances.  
 `az container creates` isn't specific to this scenario.
 
-Questions: Which of the following options is true about the built-in authentication feature in Azure Container Apps?
+Question: Which of the following options is true about the built-in authentication feature in Azure Container Apps?
 
 - [ ] It can only be configured to restrict access to authenticated users.
 - [x] It allows for out-of-the-box authentication with federated identity providers.
