@@ -65,7 +65,7 @@ In this section, you open your terminal and create some variables used throughou
 1. Open a local terminal and create, and change in to, a directory named az204svcbus and then run the command to launch Visual Studio Code.
 
    ```sh
-   mkdir -p az204svcbus
+   dotnet new console -n az204svcbus
    cd az204svcbus
    code .
    ```
@@ -73,7 +73,6 @@ In this section, you open your terminal and create some variables used throughou
 1. Open the terminal in Visual Studio Code by selecting **Terminal > New Terminal** in the menu bar and run the following commands to create the console app and add the **Azure.Messaging.ServiceBus** package.
 
    ```sh
-   dotnet new console
    dotnet add package Azure.Messaging.ServiceBus
    ```
 
