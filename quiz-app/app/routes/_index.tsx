@@ -124,7 +124,7 @@ export default function Index() {
                 <Markdown children={data.question} />
               </div>
               {data.options && data.options.length > 0 && (
-                <ul className="list-none">
+                <ul className="list-none p-0">
                   {data.options.map((option: string, index: number) => (
                     <li key={index} className="mb-2">
                       <label
