@@ -5,55 +5,35 @@ import {
   Form,
 } from "@remix-run/react";
 import { json } from "@remix-run/node";
-import type { ActionFunction, LoaderArgs } from "@remix-run/node";
+import type { ActionFunction } from "@remix-run/node";
 import type { V2_MetaFunction as MetaFunction } from "@remix-run/node";
 import { useState } from "react";
 import type { ChangeEventHandler } from "react";
 import clsx from "clsx";
 import Markdown from "markdown-to-jsx";
 
-import type { QAPair } from "../lib/qa";
-import { getQA, getTopics } from "../lib/qa";
-import { getSession, commitSession } from "../session";
+import type { QAPair } from "~/types/QAPair";
+import { getQA, topics } from "~/lib/qa";
 
 export const meta: MetaFunction = () => {
   return [{ title: "Developing Solutions for Microsoft Azure: Quiz" }];
 };
 
-export let loader = async ({ request }: LoaderArgs) => {
-  const session = await getSession(request.headers.get("Cookie") || "");
-  const data = await Promise.all([getQA(session), getTopics(session)]);
-  const cookie = `session=${await commitSession(session)}`;
-  return json(
-    {
-      question: data[0],
-      topics: data[1],
-    },
-    {
-      headers: {
-        "Set-Cookie": cookie,
-      },
-    }
-  );
+export let loader = async () => {
+  return getQA();
 };
 
 export let action: ActionFunction = async ({ request }) => {
-  const session = await getSession(request.headers.get("Cookie") || "");
   const payload = await request.formData();
   const topic = payload.get("topic");
   const id = payload.get("id");
-  let data = await getQA(session, topic?.toString());
+  let data = getQA(topic?.toString());
   let attempts = 3;
   while (data.id == id && attempts > 0) {
     attempts--;
-    data = await getQA(session, topic?.toString());
+    data = getQA(topic?.toString());
   }
-  const cookie = `session=${await commitSession(session)}`;
-  return json(data, {
-    headers: {
-      "Set-Cookie": cookie,
-    },
-  });
+  return json(data);
 };
 
 export default function Index() {
@@ -69,8 +49,7 @@ export default function Index() {
     setShowDropdown(!showDropdown);
   };
 
-  const data = (actionData as QAPair) || initialData.question;
-  const { topics } = initialData;
+  const data = (actionData as QAPair) || initialData;
 
   const answerStyle = clsx("mt-4", showAnswer ? "visible" : "invisible");
 
