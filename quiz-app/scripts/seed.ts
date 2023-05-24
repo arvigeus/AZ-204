@@ -129,6 +129,6 @@ const init = async (dirPath: string): Promise<void> => {
   await saveData(topics, data);
 };
 
-init(path.join(process.cwd(), "..", "Questions"))
+init(path.join(__dirname, "..", "..", "Questions"))
   .then(() => console.log("Questions saved to database successfully"))
   .catch((err) => console.error(err));
