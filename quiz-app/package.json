@@ -3,9 +3,9 @@
   "sideEffects": false,
   "scripts": {
     "seed": "ts-node scripts/seed.ts",
-    "prebuild": "npm run seed",
+    "prebuild": "NODE_ENV=production npm run seed",
     "build": "remix build",
-    "predev": "npm run seed",
+    "predev": "NODE_ENV=development npm run seed",
     "dev": "remix dev",
     "typecheck": "tsc"
   },

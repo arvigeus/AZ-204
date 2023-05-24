@@ -83,7 +83,9 @@ const parseItem = (name: string, text: string): QAPair[] => {
   return qaPairs;
 };
 
-const loadContents = async (dirPath: string): Promise<FileContent[]> => {
+const loadContents = async (directory: string): Promise<FileContent[]> => {
+  const dirPath = path.join(__dirname, "..", "..", directory);
+  console.log(`Loading questions from ${dirPath}`);
   const fileNames = await fs.readdir(dirPath);
 
   const filePromises = fileNames
@@ -97,6 +99,43 @@ const loadContents = async (dirPath: string): Promise<FileContent[]> => {
     });
 
   return await Promise.all(filePromises);
+};
+
+const loadContentFromGItHub = async (
+  directory: string
+): Promise<FileContent[]> => {
+  const githubAPIUrl = "https://api.github.com/repos";
+  const repo = "arvigeus/AZ-204";
+
+  const repoDir = `${githubAPIUrl}/${repo}/contents/${directory}`;
+  console.log(`Loading questions from ${repoDir}`);
+
+  const dirResponse = await fetch(repoDir);
+  const dirData = (await dirResponse.json()) as {
+    name: string;
+    path: string;
+    type: "file" | "dir";
+  }[];
+  const files = dirData.filter(
+    (item) =>
+      item.type === "file" &&
+      item.name.toLowerCase() !== "readme.md" &&
+      item.name.endsWith(".md")
+  );
+
+  const items: FileContent[] = [];
+
+  for (const file of files) {
+    const url = `${githubAPIUrl}/${repo}/contents/${file.path}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    const name = file.name.replace(/\.[^/.]+$/, "");
+    const content = Buffer.from(data.content, "base64").toString("utf-8");
+
+    items.push({ name, content });
+  }
+
+  return items;
 };
 
 const parseFiles = (files: FileContent[]) => {
@@ -121,14 +160,16 @@ const saveData = async (topics: string[], data: any[]) => {
   await fs.writeFile(dbPath, content);
 };
 
-const init = async (dirPath: string): Promise<void> => {
-  const files = await loadContents(dirPath);
+const init = async (directory: string): Promise<void> => {
+  const files = await (process.env.NODE_ENV === "development"
+    ? loadContents(directory)
+    : loadContentFromGItHub(directory));
 
   const { topics, data } = parseFiles(files);
 
   await saveData(topics, data);
 };
 
-init(path.join(__dirname, "..", "..", "Questions"))
+init(path.join("Questions"))
   .then(() => console.log("Questions saved to database successfully"))
   .catch((err) => console.error(err));
