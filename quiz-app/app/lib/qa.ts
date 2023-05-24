@@ -1,7 +1,7 @@
 import type { QAPair } from "~/types/QAPair";
 
+// @ts-expect-error db.ts may not be visible
 import { data } from "~/db";
-
 export { topics } from "~/db";
 
 export const getQA = (topic?: string | null | undefined): QAPair => {
@@ -9,7 +9,7 @@ export const getQA = (topic?: string | null | undefined): QAPair => {
     ? data.filter((item: QAPair) => topic === item.topic)
     : data;
 
-  const question = getRandomElement(questions);
+  const question = getRandomElement<QAPair>(questions);
 
   return shuffleQA(question);
 };
