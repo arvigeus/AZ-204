@@ -3,36 +3,41 @@ import {
   useActionData,
   useNavigation,
   Form,
+  Link,
 } from "@remix-run/react";
 import { json } from "@remix-run/node";
 import type { ActionFunction } from "@remix-run/node";
-import type { V2_MetaFunction as MetaFunction } from "@remix-run/node";
-import { useState } from "react";
-import type { ChangeEventHandler } from "react";
+import type {
+  V2_MetaFunction as MetaFunction,
+  LoaderArgs,
+} from "@remix-run/node";
+import { useState, useRef } from "react";
 import clsx from "clsx";
 import Markdown from "markdown-to-jsx";
 
 import type { QAPair } from "~/types/QAPair";
 import { getQA, topics } from "~/lib/qa";
 
+import { Button, LoadingButton, NextButton } from "~/components/Button";
+import { AnswerOptions } from "~/components/AnswerOptions";
+
 export const meta: MetaFunction = () => {
   return [{ title: "Developing Solutions for Microsoft Azure: Quiz" }];
 };
 
-export let loader = async () => {
-  return getQA();
+export let loader = async ({ request }: LoaderArgs) => {
+  const url = new URL(request.url);
+  const topic = url.searchParams.get("topic");
+
+  return { data: getQA(topic), topic };
 };
 
 export let action: ActionFunction = async ({ request }) => {
   const payload = await request.formData();
   const topic = payload.get("topic");
-  const id = payload.get("id");
-  let data = getQA(topic?.toString());
-  let attempts = 3;
-  while (data.id == id && attempts > 0) {
-    attempts--;
-    data = getQA(topic?.toString());
-  }
+  // const id = payload.get("id");
+  const answered = payload.get("answered")?.toString();
+  const data = getQA(topic?.toString(), answered?.split(","));
   return json(data);
 };
 
@@ -45,34 +50,17 @@ export default function Index() {
   const [showAnswer, setShowAnswer] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
 
+  const answered = useRef(new Set<string>());
+
   const handleDropdown = () => {
     setShowDropdown(!showDropdown);
   };
 
-  const data = (actionData as QAPair) || initialData;
+  const data = (actionData as QAPair) || initialData.data;
 
-  const answerStyle = clsx("mt-4", showAnswer ? "visible" : "invisible");
-
-  const handleChange: ChangeEventHandler<HTMLInputElement> = async (event) => {
-    const { checked, value, type } = event.target;
-
-    const index = parseInt(value, 10);
-
-    if (type === "checkbox") {
-      if (checked) {
-        // Add to checked values
-        setCheckedValues((prev) => [...prev, index]);
-      } else {
-        // Remove from checked values
-        setCheckedValues((prev) => prev.filter((v) => v !== index));
-      }
-    } else if (type === "radio") {
-      if (checked) {
-        // Set checked value to the selected radio button
-        setCheckedValues([index]);
-      }
-    }
-  };
+  // REmove element so it can be moved to end of set
+  if (answered.current.has(data.id)) answered.current.delete(data.id);
+  answered.current.add(data.id);
 
   const handleSubmit = () => {
     setCheckedValues([]);
@@ -88,16 +76,7 @@ export default function Index() {
     data.answerIndexes.length == checkedValues.length &&
     data.answerIndexes.every((value) => checkedValues.includes(value));
 
-  const buttonColor = isCorrectlyAnswered
-    ? "bg-green-700 hover:bg-green-800 focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-    : "bg-blue-700 hover:bg-blue-800 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800";
-
-  const btnStyle = clsx(
-    "min-w-[30%] flex items-center justify-center text-center focus:ring-2 font-medium text-xs sm:text-sm px-2.5 py-1 sm:px-5 sm:py-2.5 inline-flex items-center",
-    isLoading
-      ? "text-gray-900 bg-white border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-      : `text-white ${buttonColor}`
-  );
+  const buttonColor = showAnswer || isCorrectlyAnswered ? "green" : "blue";
 
   return (
     <div className="antialiased text-gray-700 bg-gray-100 flex w-full h-screen justify-center pt-12">
@@ -109,169 +88,64 @@ export default function Index() {
           <div className="bg-white p-12 rounded-lg shadow-lg w-full mt-8">
             <Form method="post" onSubmit={handleSubmit}>
               <h2 className="mt-0 text-center">
-                <a
-                  target="_blank"
-                  rel="noreferrer"
-                  href={`https://github.com/arvigeus/AZ-204/blob/master/Topics/${data.topic}.md`}
-                >
+                <Link to={`?topic=${encodeURIComponent(data.topic)}`}>
                   {data.topic}
-                </a>
+                </Link>
               </h2>
               <input type="hidden" name="id" value={data.id} />
+              <input
+                type="hidden"
+                name="answered"
+                value={Array.from(answered.current).join(",")}
+              />
               <input type="hidden" name="type" value={data.topic} />
               <div className="text-2x">
                 <span className="font-bold">Question: </span>
                 <Markdown children={data.question} />
               </div>
               {data.options && data.options.length > 0 && (
-                <ul className="list-none p-0">
-                  {data.options.map((option: string, index: number) => (
-                    <li key={index} className="mb-2">
-                      <label
-                        className={clsx(
-                          "block mt-4 border border-gray-300 rounded-lg py-2 px-6 text-lg",
-                          (showAnswer || checkedValues.includes(index)) &&
-                            data.answerIndexes.includes(index)
-                            ? "bg-green-200"
-                            : checkedValues.includes(index)
-                            ? "bg-red-200"
-                            : "bg-transparent"
-                        )}
-                      >
-                        <input
-                          type={
-                            data.answerIndexes.length < 2 ? "radio" : "checkbox"
-                          }
-                          checked={checkedValues.includes(index)}
-                          onChange={handleChange}
-                          className="hidden"
-                          value={index}
-                          name="answers"
-                        />
-                        <Markdown children={option} />
-                      </label>
-                    </li>
-                  ))}
-                </ul>
+                <AnswerOptions
+                  name="answers"
+                  options={data.options}
+                  checkedValues={checkedValues}
+                  setCheckedValues={setCheckedValues}
+                  showAnswer={showAnswer}
+                  answerIndexes={data.answerIndexes}
+                  disabled={showAnswer}
+                />
               )}
-              <div className={answerStyle}>
+              <div
+                className={clsx(
+                  "transition-[height] transition-[opacity] duration-500 ease-in-out mt-4 overflow-hidden",
+                  showAnswer ? "h-auto opacity-100" : "h-0 opacity-0"
+                )}
+              >
                 <span className="font-bold">Answer: </span>
                 <Markdown children={data.answer} />
               </div>
               <div className="flex justify-between mt-12">
-                <button
+                <Button
                   type="button"
                   disabled={isLoading}
                   onClick={() => setShowAnswer(true)}
-                  className={`${btnStyle} ${clsx(
+                  bgColor={buttonColor}
+                  className={clsx(
                     showAnswer || isLoading ? "invisible" : "visible"
-                  )} rounded-lg`}
+                  )}
                 >
                   Show Answer
-                </button>
+                </Button>
                 {isLoading ? (
-                  <button
-                    disabled
-                    type="button"
-                    className={`${btnStyle} rounded-lg`}
-                  >
-                    <svg
-                      aria-hidden="true"
-                      role="status"
-                      className="inline w-4 h-4 mr-3 text-gray-200 animate-spin dark:text-gray-600"
-                      viewBox="0 0 100 101"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                        fill="currentColor"
-                      />
-                      <path
-                        d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                        fill="#1C64F2"
-                      />
-                    </svg>{" "}
-                    Loading
-                  </button>
+                  <LoadingButton text="Loading" />
                 ) : (
-                  <div className="flex flex-row">
-                    <button
-                      type="submit"
-                      className={`${btnStyle} rounded-l-lg`}
-                    >
-                      Next
-                      <svg
-                        aria-hidden="true"
-                        className="w-5 h-5 ml-2 -mr-1"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                          clipRule="evenodd"
-                        ></path>
-                      </svg>
-                    </button>
-                    <div className="relative">
-                      <button
-                        onClick={handleDropdown}
-                        data-dropdown-toggle="dropdown"
-                        className={clsx(
-                          "text-white  focus:ring-4 focus:outline-none font-medium rounded-r-lg text-sm pr-4 py-2.5 text-center inline-flex items-center ",
-                          isCorrectlyAnswered
-                            ? "bg-green-800 hover:bg-green-900 focus:ring-green-400 dark:bg-green-500 dark:hover:bg-green-800 dark:focus:ring-green-900"
-                            : "bg-blue-800 hover:bg-blue-900 focus:ring-blue-400 dark:bg-blue-500 dark:hover:bg-blue-800 dark:focus:ring-blue-900"
-                        )}
-                        type="button"
-                      >
-                        <span className="invisible">|</span>
-                        <svg
-                          className="w-4 h-4 ml-2"
-                          aria-hidden="true"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M19 9l-7 7-7-7"
-                          ></path>
-                        </svg>
-                      </button>
-
-                      <div
-                        className={clsx(
-                          "absolute z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700",
-                          { hidden: !showDropdown }
-                        )}
-                      >
-                        <ul
-                          className="px-0 py-1 m-0 text-sm text-gray-700 dark:text-gray-200 list-none"
-                          aria-labelledby="dropdownDefaultButton"
-                        >
-                          {topics.map((option, index) => (
-                            <li key={index} className="p-0 box-border">
-                              <button
-                                type="submit"
-                                name="topic"
-                                value={option}
-                                className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white w-full text-left"
-                                role="menuitem"
-                              >
-                                {option}
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
+                  <NextButton
+                    bgColor={buttonColor}
+                    showDropdown={showDropdown}
+                    onToggleDropdown={handleDropdown}
+                    text="Next"
+                    topic={initialData.topic}
+                    entries={topics}
+                  />
                 )}
               </div>
             </Form>

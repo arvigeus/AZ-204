@@ -1,6 +1,5 @@
 import fs from "fs/promises";
 import path from "path";
-import { v4 } from "uuid";
 
 import type { QAPair } from "~/types/QAPair";
 
@@ -9,7 +8,7 @@ type FileContent = {
   content: string;
 };
 
-const parseItem = (name: string, text: string): QAPair[] => {
+const parseItem = (name: string, text: string, idCounter: number): QAPair[] => {
   const lines = text.split("\n");
   const qaPairs: QAPair[] = [];
   let currentQuestion: string[] = [];
@@ -25,7 +24,7 @@ const parseItem = (name: string, text: string): QAPair[] => {
     if (line.startsWith("Question:")) {
       if (currentQuestion.length > 0) {
         qaPairs.push({
-          id: v4(),
+          id: `${++idCounter}`,
           question: currentQuestion.join("\n").trimEnd(),
           answer: currentAnswer.join("\n").trimEnd(),
           options: [...currentOptions],
@@ -71,7 +70,7 @@ const parseItem = (name: string, text: string): QAPair[] => {
   // For QA pair without trailing empty line
   if (currentQuestion.length > 0) {
     qaPairs.push({
-      id: v4(),
+      id: `${++idCounter}`,
       question: currentQuestion.join("\n").trimEnd(),
       answer: currentAnswer.join("\n").trimEnd(),
       options: [...currentOptions],
@@ -144,7 +143,7 @@ const parseFiles = (files: FileContent[]) => {
 
   for (const { name, content } of files) {
     topics.push(name);
-    const items = parseItem(name, content);
+    const items = parseItem(name, content, data.length);
     data.push(...items);
   }
 
