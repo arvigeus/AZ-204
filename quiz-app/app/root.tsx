@@ -10,10 +10,12 @@ import {
 } from "@remix-run/react";
 
 import stylesheet from "~/tailwind.css";
+import highlight from "highlight.js/styles/github.css";
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
   { rel: "stylesheet", href: stylesheet },
+  { rel: "stylesheet", href: highlight },
 ];
 
 export default function App() {

@@ -96,8 +96,8 @@ export default function Index() {
 
   return (
     <div className="antialiased text-gray-700 bg-gray-100 flex w-full h-screen justify-center pt-12">
-      <div className="w-full max-w-xl p-3 flex flex-col justify-between">
-        <main className="flex-grow prose">
+      <div className="w-full max-w-3xl p-3 flex flex-col justify-between">
+        <main className="flex-grow prose max-w-3xl">
           <h1 className="font-bold text-5xl text-center text-indigo-700">
             AZ-204 Quiz
           </h1>
@@ -113,7 +113,7 @@ export default function Index() {
               <input type="hidden" name="type" value={data.topic} />
               <div className="text-2x">
                 <span className="font-bold">Question: </span>
-                <RichMarkdown children={data.question} />
+                <RichMarkdown interactive children={data.question} />
               </div>
               {data.options && data.options.length > 0 && (
                 <AnswerOptions
@@ -136,8 +136,8 @@ export default function Index() {
                   showAnswer ? "h-auto opacity-100" : "h-0 opacity-0"
                 )}
               >
-                <span className="font-bold">Answer: </span>
-                <Markdown children={data.answer} />
+                <div className="font-bold">Answer: </div>
+                <RichMarkdown children={data.answer} />
               </div>
               <div className="flex justify-between mt-12">
                 <Button

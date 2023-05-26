@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+.cm-editor {
+  font-size: 14px;
+}
+
 .cm-focused {
   outline: none !important;
 }
