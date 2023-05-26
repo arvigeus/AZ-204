@@ -20,6 +20,8 @@ import { getQA, topics } from "~/lib/qa";
 
 import { Button, LoadingButton, NextButton } from "~/components/Button";
 import { AnswerOptions } from "~/components/AnswerOptions";
+import { RichMarkdown } from "~/components/RichMarkdown";
+import { TextInput } from "~/components/Input";
 
 export const meta: MetaFunction = () => {
   return [{ title: "Developing Solutions for Microsoft Azure: Quiz" }];
@@ -101,7 +103,7 @@ export default function Index() {
               <input type="hidden" name="type" value={data.topic} />
               <div className="text-2x">
                 <span className="font-bold">Question: </span>
-                <Markdown children={data.question} />
+                <RichMarkdown children={data.question} />
               </div>
               {data.options && data.options.length > 0 && (
                 <AnswerOptions
@@ -114,6 +116,10 @@ export default function Index() {
                   disabled={showAnswer}
                 />
               )}
+              {(!data.options || !data.options.length) && !data.hasCode && (
+                <TextInput />
+              )}
+
               <div
                 className={clsx(
                   "transition-[height] transition-[opacity] duration-500 ease-in-out mt-4 overflow-hidden",
@@ -127,13 +133,11 @@ export default function Index() {
                 <Button
                   type="button"
                   disabled={isLoading}
-                  onClick={() => setShowAnswer(true)}
+                  onClick={() => setShowAnswer((ans) => !ans)}
                   bgColor={buttonColor}
-                  className={clsx(
-                    showAnswer || isLoading ? "invisible" : "visible"
-                  )}
+                  className={clsx(isLoading ? "invisible" : "visible")}
                 >
-                  Show Answer
+                  {!showAnswer ? "Show" : "Hide"} Answer
                 </Button>
                 {isLoading ? (
                   <LoadingButton text="Loading" />

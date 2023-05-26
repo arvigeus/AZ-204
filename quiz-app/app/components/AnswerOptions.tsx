@@ -2,6 +2,8 @@ import type { FC, Dispatch, SetStateAction, ChangeEventHandler } from "react";
 import clsx from "clsx";
 import Markdown from "markdown-to-jsx";
 
+import { InputStyle } from "~/components/Input";
+
 interface AnswerOptionsProps {
   name: string;
   options: string[];
@@ -48,7 +50,7 @@ export const AnswerOptions: FC<AnswerOptionsProps> = ({
         <li key={index} className="mb-2">
           <label
             className={clsx(
-              "block mt-4 border border-gray-300 rounded-lg py-2 px-6 text-lg",
+              InputStyle,
               (showAnswer || checkedValues.includes(index)) &&
                 answerIndexes.includes(index)
                 ? "bg-green-200"

@@ -15,6 +15,7 @@ const parseItem = (name: string, text: string, idCounter: number): QAPair[] => {
   let currentOptions: string[] = [];
   let currentAnswer: string[] = [];
   let currentAnswerIndex = [];
+  let currentHasCode = false;
 
   const optionRegex = /^\s*- \[(?:x|\s)\]|^[a-zA-Z0-9]+[),]\s/;
 
@@ -29,12 +30,14 @@ const parseItem = (name: string, text: string, idCounter: number): QAPair[] => {
           answer: currentAnswer.join("\n").trimEnd(),
           options: [...currentOptions],
           answerIndexes: currentAnswerIndex,
+          hasCode: currentHasCode,
           topic: name,
         });
         currentQuestion = [];
         currentAnswer = [];
         currentOptions = [];
         currentAnswerIndex = [];
+        currentHasCode = false;
         itemType = null;
       }
 
@@ -53,6 +56,7 @@ const parseItem = (name: string, text: string, idCounter: number): QAPair[] => {
         switch (itemType) {
           case "question":
             currentQuestion.push(line);
+            if (/^```(cs|ps)$/.test(line.trim())) currentHasCode = true;
             break;
           case "answer":
             currentAnswer.push(line);
@@ -75,6 +79,7 @@ const parseItem = (name: string, text: string, idCounter: number): QAPair[] => {
       answer: currentAnswer.join("\n").trimEnd(),
       options: [...currentOptions],
       answerIndexes: currentAnswerIndex,
+      hasCode: currentHasCode,
       topic: name,
     });
   }
