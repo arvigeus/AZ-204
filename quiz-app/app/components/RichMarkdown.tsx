@@ -14,14 +14,16 @@ const CodeWrapper = ({ children, className, ...props }: CodeWrapperProps) => {
 
   // NOTE: Use `csharp` or `powershell` to create immutable code block
 
-  if (!language || !["cs", "ps"].includes(language))
-    return (
-      <pre>
-        <code className={className} {...props}>
-          {children}
-        </code>
-      </pre>
+  if (!language || !["cs", "ps"].includes(language)) {
+    const code = (
+      <code className={className} {...props}>
+        {children}
+      </code>
     );
+
+    // pre is only applicable for code blocks
+    return /\n/.test(children) ? <pre>{code}</pre> : code;
+  }
 
   const value = children.trim()
     ? children
