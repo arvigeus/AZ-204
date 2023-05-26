@@ -14,7 +14,13 @@ export const getQA = (
   if (questions.length === 0) return null;
 
   if (answered) {
-    const chances = convertToChances(answered);
+    const answeredByTopic = topic
+      ? questions
+         .filter((item: QAPair) => answered.includes(item.id))
+         .map(element => element.id)
+      : answered;
+
+    const chances = convertToChances(answeredByTopic, answeredByTopic.length === questions.length);
 
     const filtered = questions.filter(
       (item) => !chances[item.id] || Math.random() > chances[item.id]
@@ -50,14 +56,14 @@ function shuffleQA(question: QAPair): QAPair {
   };
 }
 
-function convertToChances<T>(arr: T[]): { [key: string]: number } {
+function convertToChances<T>(arr: T[], startFromZero?: boolean): { [key: string]: number } {
   const chances: { [key: string]: number } = {};
 
   if (arr.length === 0) return chances;
 
-  const step = 1 / arr.length;
+  const step = startFromZero ? 1 / (arr.length - 1) : 1 / arr.length;
   for (let i = 0; i < arr.length; i++) {
-    chances[arr[i] as any] = (i + 1) * step;
+    chances[arr[i] as any] = i * step;
   }
   return chances;
 }
