@@ -6,16 +6,15 @@ import {
   Link,
 } from "@remix-run/react";
 import { json } from "@remix-run/node";
-import type { ActionFunction } from "@remix-run/node";
+import type { ActionArgs } from "@remix-run/node";
 import type {
   V2_MetaFunction as MetaFunction,
   LoaderArgs,
 } from "@remix-run/node";
-import { useState, useRef } from "react";
+import { useState, useMemo, useRef } from "react";
 import clsx from "clsx";
 import Markdown from "markdown-to-jsx";
 
-import type { QAPair } from "~/types/QAPair";
 import { getQA, getQAById, topics } from "~/lib/qa";
 
 import { Button, LoadingButton, NextButton } from "~/components/Button";
@@ -45,17 +44,19 @@ export let loader = async ({ request }: LoaderArgs) => {
   return { data, topic };
 };
 
-export let action: ActionFunction = async ({ request }) => {
+export let action = async ({ request }: ActionArgs) => {
   const payload = await request.formData();
   const topic = payload.get("topic");
   // const id = payload.get("id");
-  const answered = payload.get("answered")?.toString();
-  const data = getQA(topic?.toString(), answered?.split(","));
+  const answered = new Set<string>(
+    payload.get("answered")?.toString()?.split(",")
+  );
+  const data = getQA(topic?.toString(), answered);
   return json(data);
 };
 
 export default function Index() {
-  const initialData = useLoaderData<typeof loader>();
+  const loaderData = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
   const navigation = useNavigation();
 
@@ -63,17 +64,19 @@ export default function Index() {
   const [showAnswer, setShowAnswer] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
 
-  const answered = useRef(new Set<string>());
+  const data = actionData || loaderData.data;
+
+  const answerSet = useRef(new Set<string>());
+
+  const answered = useMemo(() => {
+    answerSet.current.delete(data.id);
+    answerSet.current.add(data.id);
+    return Array.from(answerSet.current).join(",");
+  }, [data.id]);
 
   const handleDropdown = () => {
     setShowDropdown(!showDropdown);
   };
-
-  const data = (actionData as QAPair) || initialData.data;
-
-  // REmove element so it can be moved to end of set
-  if (answered.current.has(data.id)) answered.current.delete(data.id);
-  answered.current.add(data.id);
 
   const handleSubmit = () => {
     setCheckedValues([]);
@@ -106,11 +109,7 @@ export default function Index() {
                 </Link>
               </h2>
               <input type="hidden" name="id" value={data.id} />
-              <input
-                type="hidden"
-                name="answered"
-                value={Array.from(answered.current).join(",")}
-              />
+              <input type="hidden" name="answered" value={answered} />
               <input type="hidden" name="type" value={data.topic} />
               <div className="text-2x">
                 <span className="font-bold">Question: </span>
@@ -158,7 +157,7 @@ export default function Index() {
                     showDropdown={showDropdown}
                     onToggleDropdown={handleDropdown}
                     text="Next"
-                    topic={initialData.topic}
+                    topic={loaderData.topic}
                     entries={topics}
                   />
                 )}
