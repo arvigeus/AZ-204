@@ -14,5 +14,5 @@ Question: Which of the following represents the expire time resolution when appl
 - [ ] 10-milliseconds
 - [ ] seconds or milliseconds
 
-Answer: he expire time resolution is always 1 millisecond.  
+Answer: The expire time resolution is always 1 millisecond.  
 Expirations can be set using seconds or milliseconds precision, but the expire time resolution is always 1 millisecond.

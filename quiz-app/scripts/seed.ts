@@ -1,5 +1,6 @@
 import fs from "fs/promises";
 import path from "path";
+import { createHash } from "crypto";
 
 import type { QAPair } from "~/types/QAPair";
 
@@ -24,9 +25,10 @@ const parseItem = (name: string, text: string, idCounter: number): QAPair[] => {
   for (const line of lines) {
     if (line.startsWith("Question:")) {
       if (currentQuestion.length > 0) {
+        const question = currentQuestion.join("\n").trimEnd();
         qaPairs.push({
-          id: `${++idCounter}`,
-          question: currentQuestion.join("\n").trimEnd(),
+          id: createHash("sha256").update(question).digest("hex"),
+          question,
           answer: currentAnswer.join("\n").trimEnd(),
           options: [...currentOptions],
           answerIndexes: currentAnswerIndex,
@@ -73,9 +75,10 @@ const parseItem = (name: string, text: string, idCounter: number): QAPair[] => {
 
   // For QA pair without trailing empty line
   if (currentQuestion.length > 0) {
+    const question = currentQuestion.join("\n").trimEnd();
     qaPairs.push({
-      id: `${++idCounter}`,
-      question: currentQuestion.join("\n").trimEnd(),
+      id: createHash("sha256").update(question).digest("hex"),
+      question,
       answer: currentAnswer.join("\n").trimEnd(),
       options: [...currentOptions],
       answerIndexes: currentAnswerIndex,

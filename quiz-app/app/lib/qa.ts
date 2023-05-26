@@ -1,16 +1,17 @@
 import type { QAPair } from "~/types/QAPair";
 
-// @ts-expect-error db.ts may not be visible
 import { data } from "~/db";
-export { topics } from "~/db";
+export { data, topics } from "~/db";
 
 export const getQA = (
   topic?: string | null | undefined,
   answered?: string[] | null | undefined
-): QAPair => {
+): QAPair | null => {
   let questions: QAPair[] = topic
-    ? data.filter((item: QAPair) => topic === item.topic)
+    ? data.filter((item) => topic === item.topic)
     : data;
+
+  if (questions.length === 0) return null;
 
   if (answered) {
     const chances = convertToChances(answered);
@@ -26,6 +27,8 @@ export const getQA = (
 
   return shuffleQA(question);
 };
+
+export const getQAById = (id: string) => data.find((item) => item.id == id);
 
 const getRandomElement = <T>(array: T[]): T =>
   array[Math.floor(Math.random() * array.length)];

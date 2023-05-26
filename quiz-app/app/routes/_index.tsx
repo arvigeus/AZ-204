@@ -16,7 +16,7 @@ import clsx from "clsx";
 import Markdown from "markdown-to-jsx";
 
 import type { QAPair } from "~/types/QAPair";
-import { getQA, topics } from "~/lib/qa";
+import { getQA, getQAById, topics } from "~/lib/qa";
 
 import { Button, LoadingButton, NextButton } from "~/components/Button";
 import { AnswerOptions } from "~/components/AnswerOptions";
@@ -31,7 +31,18 @@ export let loader = async ({ request }: LoaderArgs) => {
   const url = new URL(request.url);
   const topic = url.searchParams.get("topic");
 
-  return { data: getQA(topic), topic };
+  const data =
+    process.env.NODE_ENV !== "production" && url.searchParams.has("id")
+      ? getQAById(url.searchParams.get("id")!.toString())
+      : getQA(topic);
+
+  if (!data)
+    throw new Response(null, {
+      status: 404,
+      statusText: "Not Found",
+    });
+
+  return { data, topic };
 };
 
 export let action: ActionFunction = async ({ request }) => {
