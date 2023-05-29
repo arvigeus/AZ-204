@@ -35,7 +35,7 @@ const CodeWrapper = ({ children, className, ...props }: CodeWrapperProps) => {
 
   if (!/\n/.test(children))
     return (
-      <code ref={codeRef} className={className} {...props}>
+      <code className={className} {...props}>
         {children}
       </code>
     );
