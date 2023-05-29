@@ -115,3 +115,103 @@ az storage account generate-sas
 az storage account list
     [--resource-group]
 ```
+
+```sh
+az storage account list
+    [--resource-group]
+```
+
+```sh
+az storage account revoke-delegation-keys
+    [--ids] # You should provide either --ids or other 'Resource Id' arguments.
+    [--name]
+    [--resource-group]
+    [--subscription]
+```
+
+```sh
+az storage account show
+    [--expand {geoReplicationStats, blobRestoreStatus, None}] # Expand the properties within account's properties. By default, data is not included when fetching properties. default value: None
+    [--ids] # One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments.
+    [--name]
+    [--resource-group]
+    [--subscription]
+```
+
+```sh
+az storage account show-connection-string
+    [--blob-endpoint]
+    [--file-endpoint]
+    [--ids] # One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments.
+    [--key {key1, key2, primary, secondary}] # Key to use. default value: key1
+    [--name]
+    [--protocol {http, https}] # default value: https
+    [--queue-endpoint]
+    [--resource-group]
+    [--sas-token] # The SAS token to be used in the connection-string.
+    [--subscription]
+    [--table-endpoint]
+```
+
+```sh
+az storage account show-usage
+    --location # Values from: az account list-locations
+```
+
+```sh
+az storage account update
+    [--access-tier {Cool, Hot, Premium}] # Required for storage accounts where kind = BlobStorage. The access tier is used for billing. The "Premium" access tier is the default value for premium block blobs storage account type and it cannot be changed for the premium block blobs storage account type.
+    [--account-type]
+    [--add] # Add an object to a list of objects by specifying a path and key value pairs. Example: --add property.listProperty <key=value, string or JSON string>. default value: []
+    [--allow-append {false, true}] # This property can only be changed for disabled and unlocked time-based retention policies. When enabled, new blocks can be written to an append blob while maintaining immutability protection and compliance. Only new blocks can be added and any existing blocks cannot be modified or deleted.
+    [--allow-blob-public-access {false, true}] # When true, containers in the account may be configured for public access. Note that setting this property to true does not enable anonymous access to any data in the account. The additional step of configuring the public access setting for a container is required to enable anonymous access. default value: true
+    [--allow-cross-tenant-replication {false, true}] # Allow or disallow cross AAD tenant object replication. default value: true
+    [--allow-shared-key-access {false, true}] #  If false, then all requests, including shared access signatures, must be authorized with Azure Active Directory (Azure AD). default value: true
+    [--assign-identity] # default value: False
+    [--azure-storage-sid] # Required when --enable-files-adds is set to True.
+    [--bypass {AzureServices, Logging, Metrics, None}]
+    [--custom-domain] # Use "" to clear existing value.
+    [--default-action {Allow, Deny}]
+    [--default-share-permission {None, StorageFileDataSmbShareContributor, StorageFileDataSmbShareElevatedContributor, StorageFileDataSmbShareReader}] # Default share permission for users using Kerberos authentication if RBAC role is not assigned.
+    [--domain-guid] # Required when --enable-files-adds is set to True.
+    [--domain-name] # Required when --enable-files-adds is set to True.
+    [--domain-sid] # Specify the security identifier (SID). Required when --enable-files-adds is set to True.
+    [--enable-files-aadds {false, true}] # Enable Azure Active Directory Domain Services authentication for Azure Files.
+    [--enable-files-aadkerb {false, true}] # Enable Azure Files Active Directory Domain Service Kerberos Authentication for the storage account.
+    [--enable-files-adds {false, true}] # Enable Azure Files Active Directory Domain Service Authentication for storage account. When --enable-files-adds is set to true, Azure Active Directory Properties arguments must be provided
+    [--enable-large-file-share] # Enable the capability to support large file shares with more than 5 TiB capacity for storage account.Once the property is enabled, the feature cannot be disabled. Currently only supported for LRS and ZRS replication types, hence account conversions to geo-redundant accounts would not be possible.
+    [--enable-local-user {false, true}]
+    [--enable-sftp {false, true}]
+    [--encryption-key-name]
+    [--encryption-key-source {Microsoft.Keyvault, Microsoft.Storage}]
+    [--encryption-key-vault]
+    [--encryption-key-version] # The version of the KeyVault key to use, which will opt out of implicit key rotation. Please use "" to opt in key auto-rotation again.
+    [--encryption-services {blob, file, queue, table}] # Specifies which service(s) to encrypt.
+    [--force-string] # When using 'set' or 'add', preserve string literals instead of attempting to convert to JSON. default value: false
+    [--forest-name] # Specify the Active Directory forest to get. Required when --enable-files-adds is set to True.
+    [--https-only {false, true}]
+    [--identity-type {None, SystemAssigned, SystemAssigned,UserAssigned, UserAssigned}]
+    [--ids] # One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments.
+    [--immutability-period] # The immutability period for the blobs in the container since the policy creation, in days.
+    [--immutability-state {Disabled, Locked, Unlocked}] # Defines the mode of the policy. Disabled state disables the policy, Unlocked state allows increase and decrease of immutability retention time and also allows toggling allow-protected-append-write property, Locked state only allows the increase of the immutability retention time. A policy can only be created in a Disabled or Unlocked state and can be toggled between the two states. Only a policy in an Unlocked state can transition to a Locked state which cannot be reverted.
+    [--key-exp-days] # Expiration period in days of the Key Policy assigned to the storage account.
+    [--key-vault-federated-client-id] # ClientId of the multi-tenant application to be used in conjunction with the user-assigned identity for cross-tenant customer-managed-keys server-side encryption on the storage account.
+    [--key-vault-user-identity-id] # Resource identifier of the UserAssigned identity to be associated with server-side encryption on the storage account.
+    [--min-tls-version {TLS1_0, TLS1_1, TLS1_2}] # default value: TLS1_0
+    [--name]
+    [--net-bios-domain-name] # Required when --enable-files-adds is set to True
+    [--public-network-access {Disabled, Enabled}]
+    [--publish-internet-endpoints {false, true}]
+    [--publish-microsoft-endpoints {false, true}]
+    [--remove] # Remove a property or an element from a list. Example: --remove property.list OR --remove propertyToRemove. default value: []
+    [--resource-group]
+    [--routing-choice {InternetRouting, MicrosoftRouting}]
+    [--sam-account-name] # Specify the Active Directory SAMAccountName for Azure Storage.
+    [--sas-exp] # Expiration period of the SAS Policy assigned to the storage account, DD.HH:MM:SS.
+    [--set] # Update an object by specifying a property path and value to set. Example: --set property1.property2=. default value: []
+    [--sku {Premium_LRS, Premium_ZRS, Standard_GRS, Standard_GZRS, Standard_LRS, Standard_RAGRS, Standard_RAGZRS, Standard_ZRS}] # Note that the SKU name cannot be updated to Standard_ZRS, Premium_LRS or Premium_ZRS, nor can accounts of those SKU names be updated to any other value.
+    [--subscription]
+    [--tags] # Space-separated tags: key[=value] [key[=value] ...]. Use "" to clear existing tags.
+    [--use-subdomain {false, true}] # Specify whether to use indirect CNAME validation.
+    [--user-identity-id] # The key is the ARM resource identifier of the identity. Only 1 User Assigned identity is permitted here.
+```

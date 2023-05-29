@@ -223,3 +223,99 @@ Answer:
 ```ps
 az storage account list -g MyResourceGroup
 ```
+
+Question: List all storage accounts in `MyResourceGroup` resource group.
+
+```ps
+az storage # Options here
+```
+
+Answer:
+
+```ps
+az storage account list -g MyResourceGroup
+```
+
+Question: Revoke all user delegation keys for `MyStorageAccount` storage account in `MySubscription` subscription in `MyResourceGroup` using a resource ID.
+
+```ps
+az storage # Options here
+```
+
+Answer:
+
+```ps
+az storage account revoke-delegation-keys --ids /subscriptions/MySubscription/resourceGroups/MyResourceGroup/providers/Microsoft.Storage/storageAccounts/MyStorageAccount
+```
+
+Question: Revoke all user delegation keys for `MyStorageAccount` account name in `MyResourceGroup` resource group.
+
+```ps
+az storage # Options here
+```
+
+Answer:
+
+```ps
+az storage account revoke-delegation-keys -n mystorageaccount -g MyResourceGroup
+```
+
+Question: Show properties for `MyStorageAccount` storage account in `MySubscription` subscription in `MyResourceGroup` using a resource ID.
+
+```ps
+az storage # Options here
+```
+
+Answer:
+
+```ps
+az storage account show --ids /subscriptions/MySubscription/resourceGroups/MyResourceGroup/providers/Microsoft.Storage/storageAccounts/MyStorageAccount
+```
+
+Question: Show properties for `MyStorageAccount` account name in `MyResourceGroup` resource group.
+
+```ps
+az storage # Options here
+```
+
+Answer:
+
+```ps
+az storage account show -g MyResourceGroup -n MyStorageAccount
+```
+
+Question: Get a connection string for a storage account `MyStorageAccount` in resource group `MyResourceGroup`
+
+```ps
+az storage # Options here
+```
+
+Answer:
+
+```ps
+az storage account show-connection-string -g MyResourceGroup -n MyStorageAccount
+```
+
+Question: Show the current count and limit of the storage accounts under the subscription for location `westus2`.
+
+```ps
+az storage # Options here
+```
+
+Answer:
+
+```ps
+az storage account show-usage --location westus2
+```
+
+Question: Update the properties of a storage account `MyStorageAccount` in resource group `MyResourceGroup` to set default action to True when no rule matches.
+
+```ps
+az storage # Options here
+```
+
+Answer:
+
+```ps
+az storage account update --default-action Allow --name MyStorageAccount --resource-group MyResourceGroup
+```
