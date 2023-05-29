@@ -30,15 +30,16 @@ function CodeBlock({ children, className, ...props }: CodeWrapperProps) {
   );
 }
 
+const InlineCode = ({ children, className, ...props }: CodeWrapperProps) => {
+  return (
+    <CodeBlock className={className} {...props}>
+      {children}
+    </CodeBlock>
+  );
+};
+
 const CodeWrapper = ({ children, className, ...props }: CodeWrapperProps) => {
   const language = className ? className.split("-")[1] : null;
-
-  if (!/\n/.test(children))
-    return (
-      <code className={className} {...props}>
-        {children}
-      </code>
-    );
 
   // NOTE: Use `csharp` or `powershell` to create immutable code block
 
@@ -59,19 +60,19 @@ const CodeWrapper = ({ children, className, ...props }: CodeWrapperProps) => {
 
 const interactiveOverrides = {
   pre: {
-    component: PreWrapper,
+    component: CodeWrapper,
   },
   code: {
-    component: CodeWrapper,
+    component: InlineCode,
   },
 };
 
 const staticOverrides = {
   pre: {
-    component: PreWrapper,
+    component: CodeBlock,
   },
   code: {
-    component: CodeBlock,
+    component: InlineCode,
   },
 };
 
