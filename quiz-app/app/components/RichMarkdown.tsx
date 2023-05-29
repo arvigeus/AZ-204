@@ -1,5 +1,6 @@
 import Markdown from "markdown-to-jsx";
-import { useEffect, useRef } from "react";
+import { Children, useEffect, useRef } from "react";
+import type { ReactNode, ReactElement } from "react";
 import clsx from "clsx";
 
 import hljs from "highlight.js";
@@ -7,11 +8,9 @@ import hljs from "highlight.js";
 import CodeEditor from "~/components/CodeEditor";
 
 interface CodeWrapperProps {
-  children: string;
+  children: ReactNode;
   className: string;
 }
-
-const PreWrapper = ({ children }: any) => children;
 
 function CodeBlock({ children, className, ...props }: CodeWrapperProps) {
   const codeRef = useRef<HTMLElement>(null);
@@ -34,28 +33,27 @@ const InlineCode = ({ children, ...props }: CodeWrapperProps) => {
   return <code {...props}>{children}</code>;
 };
 
-const CodeWrapper = ({ children, className, ...props }: CodeWrapperProps) => {
-  const language = className ? className.split("-")[1] : null;
+const CodeWrapper = ({ children, ...props }: CodeWrapperProps) => {
+  if (Children.count(children) === 1) {
+    const child = Children.only(children) as ReactElement;
+    if (child.type === InlineCode) {
+      const value = child.props.children as string;
+      const { className } = child.props; // Getting all properties of the code element
+
+      const language = className ? className.split("-")[1] : null;
+
+      if (language && ["cs", "ps"].includes(language))
+        return <CodeEditor value={value + "\n"} lang={language} />;
+    }
+  }
 
   // NOTE: Use `csharp` or `powershell` to create immutable code block
 
-  if (!language || !["cs", "ps"].includes(language))
-    return (
-      <CodeBlock className={className} {...props}>
-        {children}
-      </CodeBlock>
-    );
-
-  const value = children.trim()
-    ? children
-    : `${language === "cs" ? "//" : "#"} Enter your code here\n`;
-
-  // @ts-expect-error lang is checked
-  return <CodeEditor value={value} lang={language} />;
+  return <CodeBlock {...props}>{children}</CodeBlock>;
 };
 
 const interactiveOverrides = {
-  "pre > code": {
+  pre: {
     component: CodeWrapper,
   },
   code: {
@@ -64,7 +62,7 @@ const interactiveOverrides = {
 };
 
 const staticOverrides = {
-  "pre > code": {
+  pre: {
     component: CodeBlock,
   },
   code: {
