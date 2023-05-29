@@ -44,12 +44,12 @@ const CodeWrapper = ({ children, ...props }: CodeWrapperProps) => {
 
       if (language && ["cs", "ps"].includes(language))
         return <CodeEditor value={value + "\n"} lang={language} />;
+      // NOTE: Use `csharp` or `powershell` to create immutable code block
+      else return <CodeBlock {...props}>{value}</CodeBlock>;
     }
+
+    return <pre {...props}>{children}</pre>;
   }
-
-  // NOTE: Use `csharp` or `powershell` to create immutable code block
-
-  return <CodeBlock {...props}>{children}</CodeBlock>;
 };
 
 const interactiveOverrides = {
