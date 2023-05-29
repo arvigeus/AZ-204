@@ -59,7 +59,7 @@ const CodeWrapper = ({ children, className, ...props }: CodeWrapperProps) => {
 };
 
 const interactiveOverrides = {
-  pre: {
+  "pre > code": {
     component: CodeWrapper,
   },
   code: {
@@ -68,7 +68,7 @@ const interactiveOverrides = {
 };
 
 const staticOverrides = {
-  pre: {
+  "pre > code": {
     component: CodeBlock,
   },
   code: {
