@@ -6,11 +6,11 @@ Azure Functions lets you develop serverless applications on Microsoft Azure. You
 
 ### Discover Azure Functions
 
-Azure Functions is a serverless solution that allows you to write less code, maintain less infrastructure, and save on costs. Instead of worrying about deploying and maintaining servers, the cloud infrastructure provides all the up-to-date resources needed to keep your applications running.
+Azure Function is a serverless compute service that enables user to run event-triggered code without having to provision or manage infrastructure. Being as a trigger-based service, it runs a script or piece of code in response to a variety of events. This could be in the context of creating a web API, reacting to changes in a database, processing data from IoT devices, or managing message queues.
 
-We often build systems to react to a series of critical events. Whether you're building a web API, responding to database changes, processing IoT data streams, or even managing message queues - every application needs a way to run some code as these events occur.
+Azure Functions introduces the concepts of triggers and bindings to address this need. Triggers initiate the execution of your code based on specific events, while bindings simplify the process of managing input and output data in your code.
 
-Azure Functions supports triggers, which are ways to start execution of your code, and bindings, which are ways to simplify coding for input and output data. There are other integration and automation services in Azure and they all can solve integration problems and automate business processes. They can all define input, actions, conditions, and output.
+Additionally, Azure provides a suite of integration and automation services, each capable of addressing integration challenges and automating business processes. These services enable defining inputs, actions, conditions, and outputs, providing an integrated approach to streamline your application workflows.
 
 #### Compare Azure Functions and Azure Logic Apps
 
@@ -356,124 +356,3 @@ When hosted in the Azure Functions service, identity-based connections use a [ma
 Whatever identity is being used must have permissions to perform the intended actions. This is typically done by assigning a role in Azure RBAC or specifying the identity in an access policy, depending on the service to which you're connecting.
 
 :bangbang: Some permissions might be exposed by the target service that are not necessary for all contexts. Where possible, adhere to the **principle of least privilege**, granting the identity only required privileges.
-
-### Exercise: Create an Azure Function by using Visual Studio Code
-
-In this exercise, you learn how to create a C# function that responds to HTTP requests. After creating and testing the code locally in Visual Studio Code, you'll deploy to Azure.
-
-#### Prerequisites
-
-Before you begin, make sure you have the following requirements in place:
-
-- An **Azure account** with an active subscription. If you don't already have one, you can sign up for a free trial at <https://azure.com/free>.
-- The [Azure Functions Core Tools](https://github.com/Azure/azure-functions-core-tools#installing) version 4.x.
-- [Visual Studio Code](https://code.visualstudio.com/) on one of the [supported platforms](https://code.visualstudio.com/docs/supporting/requirements#_platforms).
-- [.NET 6](https://dotnet.microsoft.com/download/dotnet/6.0) is the target framework for the steps below.
-- The [C# extension](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp) for Visual Studio Code.
-- The [Azure Functions extension](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurefunctions) for Visual Studio Code.
-
-#### Create your local project
-
-In this section, you use Visual Studio Code to create a local Azure Functions project in C#. Later in this exercise, you publish your function code to Azure.
-
-1. Choose the Azure icon in the Activity bar, then in the **Workspace** area, select **Add**.... Finally, select **Create Function**....
-
-   ![Choosing to create a new project.](https://learn.microsoft.com/en-us/training/wwl-azure/develop-azure-functions/media/create-function.png)
-
-   :information_source: A pop-up message will likely appear prompting you to create a new project, if it does select **Create new project**.
-
-2. Choose a directory location for your project workspace and choose **Select**.
-
-   :information_source: Be sure to select a project folder that is outside of an existing workspace.
-
-3. Provide the following information at the prompts:
-   - **Select a language**: Choose `C#`.
-   - **Select a .NET runtime**: Choose `.NET 6`
-   - **Select a template for your project's first function**: Choose `HTTP trigger`.
-   - **Provide a function name**: Type `HttpExample`.
-   - **Provide a namespace**: Type `My.Function`.
-   - **Authorization level**: Choose `Anonymous`, which enables anyone to call your function endpoint.
-   - **Select how you would like to open your project**: Choose `Add to workspace`.
-
-Using this information, Visual Studio Code generates an Azure Functions project with an HTTP trigger.
-
-#### Run the function locally
-
-Visual Studio Code integrates with Azure Functions Core tools to let you run this project on your local development computer before you publish to Azure.
-
-1. Make sure the terminal is open in Visual Studio Code. You can open the terminal by selecting **Terminal** and then **New Terminal** in the menu bar.
-
-1. Press **F5** to start the function app project in the debugger. Output from Core Tools is displayed in the **Terminal** panel. Your app starts in the **Terminal** panel. You can see the URL endpoint of your HTTP-triggered function running locally.
-
-   ![The endpoint of your HTTP-triggered function is displayed in the **Terminal** panel.](https://learn.microsoft.com/en-us/training/wwl-azure/develop-azure-functions/media/run-function-local.png)
-
-1. With Core Tools running, go to the **Azure: Functions** area. Under **Functions**, expand **Local Project** > **Functions**. Right-click the `HttpExample` function and choose **Execute Function Now**....
-
-   ![Steps for running the function locally as described in the text.](https://learn.microsoft.com/en-us/training/wwl-azure/develop-azure-functions/media/execute-function.png)
-
-1. In **Enter request body** type the request message body value of `{ "name": "Azure" }`. Press **Enter** to send this request message to your function. When the function executes locally and returns a response, a notification is raised in Visual Studio Code. Information about the function execution is shown in **Terminal** panel.
-
-1. Press **Shift + F5** to stop Core Tools and disconnect the debugger.
-
-After you've verified that the function runs correctly on your local computer, it's time to use Visual Studio Code to publish the project directly to Azure.
-
-#### Sign in to Azure
-
-Before you can publish your app, you must sign in to Azure. If you're already signed in, go to the next section.
-
-1. If you aren't already signed in, choose the Azure icon in the Activity bar, then in the **Azure: Functions** area, choose **Sign in to Azure**....
-
-   ![Sign in to Azure within VS Code](https://learn.microsoft.com/en-us/training/wwl-azure/develop-azure-functions/media/functions-sign-into-azure.png)
-
-1. When prompted in the browser, choose your Azure account and sign in using your Azure account credentials.
-
-1. After you've successfully signed in, you can close the new browser window. The subscriptions that belong to your Azure account are displayed in the Side bar.
-
-#### Create resources in Azure
-
-In this section, you create the Azure resources you need to deploy your local function app.
-
-1. Choose the Azure icon in the Activity bar, then in the **Resources** area select the **Create resource**... button.
-
-   ![Location of the Deploy to Function app button.](https://learn.microsoft.com/en-us/training/wwl-azure/develop-azure-functions/media/create-resource.png)
-
-1. Provide the following information at the prompts:
-
-   - Select **Create Function App in Azure**...
-   - **Enter a globally unique name for the function app**: Type a name that is valid in a URL path. The name you type is validated to make sure that it's unique in Azure Functions.
-   - **Select a runtime stack**: Use the same choice you made in the _Create your local project_ section above.
-   - **Select a location for new resources**: For better performance, choose a region near you.
-   - **Select subscription**: Choose the subscription to use. _You won't see this if you only have one subscription._
-
-   The extension shows the status of individual resources as they're being created in Azure in the **AZURE: ACTIVITY LOG** area of the terminal window.
-
-1. When completed, the following Azure resources are created in your subscription, using names based on your function app name:
-   - A resource group, which is a logical container for related resources.
-   - A standard Azure Storage account, which maintains state and other information about your projects.
-   - A consumption plan, which defines the underlying host for your serverless function app.
-   - A function app, which provides the environment for executing your function code. A function app lets you group functions as a logical unit for easier management, deployment, and sharing of resources within the same hosting plan.
-   - An Application Insights instance connected to the function app, which tracks usage of your serverless function.
-
-#### Deploy the code
-
-1. In the **WORKSPACE** section of the Azure bar select the **Deploy**... button, and then select **Deploy to Function App**....
-
-   ![Image showing location of the **Deploy...** button.](https://learn.microsoft.com/en-us/training/wwl-azure/develop-azure-functions/media/deploy-function-app.png)
-
-1. When prompted to **Select a resource**, choose the function app you created in the previous section.
-
-1. Confirm that you want to deploy your function by selecting **Deploy** on the confirmation prompt.
-
-   :bangbang: Publishing to an existing function overwrites any previous deployments.
-
-#### Run the function in Azure
-
-1. Back in the **Resources** area in the side bar, expand your subscription, your new function app, and Functions. **Right-click** the `HttpExample` function and choose **Execute Function Now**....
-
-   ![Execute function now in Azure from Visual Studio Code](https://learn.microsoft.com/en-us/training/wwl-azure/develop-azure-functions/media/execute-function-now.png)
-
-1. In **Enter request body** you see the request message body value of `{ "name": "Azure" }`. Press Enter to send this request message to your function.
-
-1. When the function executes in Azure and returns a response, a notification is raised in Visual Studio Code.
-
-   ![Executed function notification](https://learn.microsoft.com/en-us/training/wwl-azure/develop-azure-functions/media/executed-function-notification.png)
