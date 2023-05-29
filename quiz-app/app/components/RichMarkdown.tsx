@@ -30,12 +30,8 @@ function CodeBlock({ children, className, ...props }: CodeWrapperProps) {
   );
 }
 
-const InlineCode = ({ children, className, ...props }: CodeWrapperProps) => {
-  return (
-    <CodeBlock className={className} {...props}>
-      {children}
-    </CodeBlock>
-  );
+const InlineCode = ({ children, ...props }: CodeWrapperProps) => {
+  return <code {...props}>{children}</code>;
 };
 
 const CodeWrapper = ({ children, className, ...props }: CodeWrapperProps) => {
