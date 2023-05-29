@@ -96,15 +96,16 @@ Answer:
 az group wait --deleted --resource-group MyResourceGroup
 ```
 
-Question: Create a storage account `mystorageaccount` in resource group `MyResourceGroup` in the West US region with locally redundant storage.
+Question: Create a storage account `mystorageaccount` in a new resource group `MyResourceGroup` in the West US region with locally redundant storage.
 
 ```ps
-az storage # Options here
+az # Options here
 ```
 
 Answer:
 
 ```ps
+az group create --name $MyResourceGroup --location westus
 az storage account create -n mystorageaccount -g MyResourceGroup -l westus --sku Standard_LRS
 ```
 
