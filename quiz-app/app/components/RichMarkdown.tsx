@@ -15,30 +15,33 @@ const PreWrapper = ({ children }: any) => children;
 
 function CodeBlock({ children, className, ...props }: CodeWrapperProps) {
   const codeRef = useRef<HTMLElement>(null);
-  const isBlock = /\n/.test(children);
 
   useEffect(() => {
-    if (!codeRef.current || !isBlock) return;
+    if (!codeRef.current) return;
     hljs.highlightElement(codeRef.current);
-  }, [children, isBlock]);
+  }, [children]);
 
-  const code = (
-    <code ref={codeRef} className={clsx(className, "!py-2 !px-6")} {...props}>
-      {children}
-    </code>
+  return (
+    <pre className="bg-transparent p-0 my-0">
+      <code ref={codeRef} className={clsx(className, "!py-2 !px-6")} {...props}>
+        {children}
+      </code>
+    </pre>
   );
-
-  // pre is only applicable for code blocks
-  return isBlock ? <pre className="bg-transparent p-0 my-0">{code}</pre> : code;
 }
 
 const CodeWrapper = ({ children, className, ...props }: CodeWrapperProps) => {
   const language = className ? className.split("-")[1] : null;
-  const isBlock = /\n/.test(children);
+  
+  if (!/\n/.test(children)) return (
+    <code ref={codeRef} className={className} {...props}>
+      {children}
+    </code>
+  )'
 
   // NOTE: Use `csharp` or `powershell` to create immutable code block
 
-  if (!isBlock || !language || !["cs", "ps"].includes(language))
+  if (!language || !["cs", "ps"].includes(language))
     return (
       <CodeBlock className={className} {...props}>
         {children}
