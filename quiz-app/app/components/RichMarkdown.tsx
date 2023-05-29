@@ -32,12 +32,13 @@ function CodeBlock({ children, className, ...props }: CodeWrapperProps) {
 
 const CodeWrapper = ({ children, className, ...props }: CodeWrapperProps) => {
   const language = className ? className.split("-")[1] : null;
-  
-  if (!/\n/.test(children)) return (
-    <code ref={codeRef} className={className} {...props}>
-      {children}
-    </code>
-  )'
+
+  if (!/\n/.test(children))
+    return (
+      <code ref={codeRef} className={className} {...props}>
+        {children}
+      </code>
+    );
 
   // NOTE: Use `csharp` or `powershell` to create immutable code block
 
