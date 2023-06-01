@@ -96,7 +96,7 @@ Answer:
 az group wait --deleted --resource-group MyResourceGroup
 ```
 
-Question: Create a storage account `mystorageaccount` in a new resource group `MyResourceGroup` in the West US region with locally redundant storage.
+Question: Create a storage account `mystorageaccount` in new resource group `MyResourceGroup` in the West US region with locally redundant storage.
 
 ```ps
 az # Options here
@@ -105,19 +105,20 @@ az # Options here
 Answer:
 
 ```ps
-az group create --name $MyResourceGroup --location westus
+az group create -l westus -n MyResourceGroup
 az storage account create -n mystorageaccount -g MyResourceGroup -l westus --sku Standard_LRS
 ```
 
-Question: Create a storage account `mystorageaccount` in resource group `MyResourceGroup` in the eastus2euap region with account-scoped encryption key enabled for Table Service.
+Question: Create a storage account `mystorageaccount` in new resource group `MyResourceGroup` in the eastus2euap region with account-scoped encryption key enabled for Table Service.
 
 ```ps
-az storage # Options here
+az # Options here
 ```
 
 Answer:
 
 ```ps
+az group create -l eastus2euap -n MyResourceGroup
 az storage account create -n mystorageaccount -g MyResourceGroup --kind StorageV2 -l eastus2euap -t Account
 ```
 
@@ -223,100 +224,4 @@ Answer:
 
 ```ps
 az storage account list -g MyResourceGroup
-```
-
-Question: List all storage accounts in `MyResourceGroup` resource group.
-
-```ps
-az storage # Options here
-```
-
-Answer:
-
-```ps
-az storage account list -g MyResourceGroup
-```
-
-Question: Revoke all user delegation keys for `MyStorageAccount` storage account in `MySubscription` subscription in `MyResourceGroup` using a resource ID.
-
-```ps
-az storage # Options here
-```
-
-Answer:
-
-```ps
-az storage account revoke-delegation-keys --ids /subscriptions/MySubscription/resourceGroups/MyResourceGroup/providers/Microsoft.Storage/storageAccounts/MyStorageAccount
-```
-
-Question: Revoke all user delegation keys for `MyStorageAccount` account name in `MyResourceGroup` resource group.
-
-```ps
-az storage # Options here
-```
-
-Answer:
-
-```ps
-az storage account revoke-delegation-keys -n mystorageaccount -g MyResourceGroup
-```
-
-Question: Show properties for `MyStorageAccount` storage account in `MySubscription` subscription in `MyResourceGroup` using a resource ID.
-
-```ps
-az storage # Options here
-```
-
-Answer:
-
-```ps
-az storage account show --ids /subscriptions/MySubscription/resourceGroups/MyResourceGroup/providers/Microsoft.Storage/storageAccounts/MyStorageAccount
-```
-
-Question: Show properties for `MyStorageAccount` account name in `MyResourceGroup` resource group.
-
-```ps
-az storage # Options here
-```
-
-Answer:
-
-```ps
-az storage account show -g MyResourceGroup -n MyStorageAccount
-```
-
-Question: Get a connection string for a storage account `MyStorageAccount` in resource group `MyResourceGroup`
-
-```ps
-az storage # Options here
-```
-
-Answer:
-
-```ps
-az storage account show-connection-string -g MyResourceGroup -n MyStorageAccount
-```
-
-Question: Show the current count and limit of the storage accounts under the subscription for location `westus2`.
-
-```ps
-az storage # Options here
-```
-
-Answer:
-
-```ps
-az storage account show-usage --location westus2
-```
-
-Question: Update the properties of a storage account `MyStorageAccount` in resource group `MyResourceGroup` to set default action to True when no rule matches.
-
-```ps
-az storage # Options here
-```
-
-Answer:
-
-```ps
-az storage account update --default-action Allow --name MyStorageAccount --resource-group MyResourceGroup
 ```

@@ -48,6 +48,8 @@ const parseItem = (name: string, text: string, idCounter: number): QAPair[] => {
     } else if (line.startsWith("Answer:")) {
       currentAnswer = [line.replace("Answer:", "").trimStart()];
       itemType = "answer";
+    } else if (line.trim() === "---") {
+      if (itemType === "question") currentQuestion.push(line);
     } else {
       if (optionRegex.test(line)) {
         currentOptions.push(line.replace(optionRegex, ""));
