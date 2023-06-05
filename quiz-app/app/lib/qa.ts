@@ -3,29 +3,34 @@ import type { QAPair } from "~/types/QAPair";
 import { data } from "~/db";
 export { data, topics } from "~/db";
 
+type Question = QAPair & { index: number };
+
 export const getQA = (
   topic?: string | null | undefined,
-  answered?: Set<string> | null | undefined
-): QAPair | null => {
+  answeredIndexes?: Set<number> | null | undefined
+): Question | null => {
   let questions: QAPair[] = topic
     ? data.filter((item) => topic === item.topic)
     : data;
 
   if (questions.length === 0) return null;
 
-  if (answered && answered.size) {
-    const copyAnswers = new Set(answered);
+  if (answeredIndexes && answeredIndexes.size) {
+    const answeredIds = new Set<string>();
+    for (const i of answeredIndexes)
+      if (i >= 0 && i < data.length) answeredIds.add(data[i].id);
+
     if (topic) {
       const availableIds = new Set(questions.map((q) => q.id));
-      for (let key of copyAnswers.keys())
-        if (!availableIds.has(key)) copyAnswers.delete(key);
+      for (let key of answeredIds.keys())
+        if (!availableIds.has(key)) answeredIds.delete(key);
     }
 
-    const answersArray = Array.from(copyAnswers);
+    const answers = Array.from(answeredIds);
 
     const chances = convertToChances(
-      answersArray,
-      answersArray.length === questions.length
+      answers,
+      answers.length === questions.length
     );
 
     const filtered = questions.filter(
@@ -36,16 +41,21 @@ export const getQA = (
   }
 
   const question = getRandomElement<QAPair>(questions);
+  const index = data.findIndex((item) => item.id === question.id);
 
-  return shuffleQA(question);
+  return shuffleQA({ ...question, index });
 };
 
-export const getQAById = (id: string) => data.find((item) => item.id == id);
+export const getQAById = (id: string) => {
+  var index = data.findIndex((item) => item.id == id);
+  if (index < 0) return null;
+  return { ...data[index], index };
+};
 
 const getRandomElement = <T>(array: T[]): T =>
   array[Math.floor(Math.random() * array.length)];
 
-function shuffleQA(question: QAPair): QAPair {
+function shuffleQA(question: Question): Question {
   if (!question.options.length) return question;
 
   const answers = question.answerIndexes.map((i) => question.options[i]);

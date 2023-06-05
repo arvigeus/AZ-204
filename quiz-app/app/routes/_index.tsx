@@ -13,7 +13,6 @@ import type {
 } from "@remix-run/node";
 import { useState, useMemo, useRef } from "react";
 import clsx from "clsx";
-import Markdown from "markdown-to-jsx";
 
 import { getQA, getQAById, topics } from "~/lib/qa";
 
@@ -48,8 +47,12 @@ export let action = async ({ request }: ActionArgs) => {
   const payload = await request.formData();
   const topic = payload.get("topic");
   // const id = payload.get("id");
-  const answered = new Set<string>(
-    payload.get("answered")?.toString()?.split(",")
+  const answered = new Set<number>(
+    payload
+      .get("answered")
+      ?.toString()
+      ?.split(",")
+      .map((i) => parseInt(i, 10))
   );
   const data = getQA(topic?.toString(), answered);
   return json(data);
@@ -66,13 +69,13 @@ export default function Index() {
 
   const data = actionData || loaderData.data;
 
-  const answerSet = useRef(new Set<string>());
+  const answerSet = useRef(new Set<number>());
 
   const answered = useMemo(() => {
-    answerSet.current.delete(data.id);
-    answerSet.current.add(data.id);
+    answerSet.current.delete(data.index);
+    answerSet.current.add(data.index);
     return Array.from(answerSet.current).join(",");
-  }, [data.id]);
+  }, [data.index]);
 
   const handleDropdown = () => {
     setShowDropdown(!showDropdown);
