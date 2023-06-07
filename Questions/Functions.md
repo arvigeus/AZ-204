@@ -125,7 +125,7 @@ Question: Which of the following can be output binding in an Azure Function:
 - [x] Table storage
 - [ ] Timer
 
-Answer: Everything but `Timer` and `IoT` hub.
+Answer: Everything but `Timer` and `IoT Hub`.
 
 ---
 
@@ -144,6 +144,7 @@ Question: Write an Azure function that uses HTTP trigger and takes `id` from the
 [FunctionName("BlobAppend")]
 public static void Run(
     /* Triggers and Bindings here */
+
     ILogger log)
 {
     // Code here
@@ -157,6 +158,7 @@ Answer:
 public static void Run(
     [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
     [Blob("{id}", FileAccess.ReadWrite)] Stream myBlob,
+
     ILogger log)
 {
     var id = req.Query["id"];
@@ -214,7 +216,7 @@ public static void Run(
 
 ---
 
-Question: You've been assigned a project where your task is to create an Azure function that triggers automatically every 10 minutes. The function must access a data source, process the data, and update another source with the processed data. Fill in the triggers and bindings in the following code:
+Question: You've been assigned a project where your task is to design an Azure function that activates automatically every 10 minutes. This function has to interact with a vast amount of unstructured data such as text or binary data from a source, perform necessary computations, and subsequently modify another source with the outcome. Now, in the context of this task, provide the appropriate triggers and bindings in the following code:
 
 ```cs
 [FunctionName("ProcessData")]
@@ -223,13 +225,13 @@ public static void Run(
 
     ILogger log)
 {
-    // Read data from inputData
+    // Read data from input
     // Process the data
-    // Write the processed data to outputData
+    // Write the processed data to output
 }
 ```
 
-Answer: For this, you could use a Timer Trigger for the Azure Function which would make it execute every 10 minutes. The function could use an input binding to fetch data from your chosen data source (such as Blob Storage or Cosmos DB), and an output binding to the same (or different) service to store the processed data.
+Answer: To accomplish this, you could utilize a Timer Trigger for the Azure Function, enabling it to initiate every 10 minutes. This function could be configured with an input binding to retrieve data from the data source, in this case, Blob Storage, which is apt for handling unstructured data. Once the data processing is completed, an output binding to Blob Storage can be used to deposit the processed data.
 
 ```cs
 [FunctionName("ProcessData")]
@@ -244,9 +246,9 @@ public static void Run(
 
     ILogger log)
 {
-    // Read data from inputData
+    // Read data from input
     // Process the data
-    // Write the processed data to outputData
+    // Write the processed data to output
 }
 ```
 
@@ -262,9 +264,9 @@ public static void Run(
     string name,
     ILogger log)
 {
-    // Read the inputImage
+    // Read the input image
     // Resize the image
-    // Write the resized image to outputImage
+    // Write the resized image to output image
 }
 ```
 
@@ -282,15 +284,15 @@ public static void Run(
     string name,
     ILogger log)
 {
-    // Read the inputImage
+    // Read the input image
     // Resize the image
-    // Write the resized image to outputImage
+    // Write the resized image to output image
 }
 ```
 
 ---
 
-Question: Imagine you're building a real-time analytics solution for a social media company. They want to monitor and analyze user posts and reactions in real-time. Your job is to design an Azure function that gets triggered by this real-time activity. What would be the most suitable Azure services to achieve this? Fill in the triggers and bindings in the following code:
+Question: Imagine you're devising a real-time analytics solution for a social media company. They desire to oversee and scrutinize user posts and reactions instantaneously. Your assignment is to develop an Azure function that is activated by this live activity. Considering the company's requirement for low-latency data access, complex querying, and globally distributed data, which Azure services would you utilize to accomplish this task? Please provide the triggers and bindings in the given code:
 
 ```cs
 [FunctionName("AnalyzeUserActivity")]
@@ -301,11 +303,11 @@ public static void Run(
 {
     // Loop over the events array
     // For each event, analyze the event data
-    // Write the analysis results to Cosmos DB using the 'document' output binding
+    // Write the analysis results to globally distributed storage
 }
 ```
 
-Answer: Event Hubs would be a great choice for triggering the Azure function for real-time monitoring and analysis. Event Hubs are designed to capture streaming data like the one from social media feeds. You could then process the data as per the company's requirements.
+Answer: Event Hubs would be a great choice for triggering the Azure function for real-time monitoring and analysis. Event Hubs are designed to capture streaming data like the one from social media feeds. After capturing this real-time data, it can then be processed using Azure Cosmos DB. Cosmos DB, a globally-distributed multi-model database service, would provide the required low-latency data access and support for handling large amounts of data, making it an excellent choice for processing this real-time data according to the company's requirements.
 
 ```cs
 [FunctionName("AnalyzeUserActivity")]
@@ -320,13 +322,13 @@ public static void Run(
 {
     // Loop over the events array
     // For each event, analyze the event data
-    // Write the analysis results to Cosmos DB using the 'document' output binding
+    // Write the analysis results to globally distributed storage
 }
 ```
 
 ---
 
-Question: You are in charge of building a serverless application that needs to communicate with an API. This application will receive data via HTTP requests and based on the data received, it needs to update a database. Can you describe how would you design the Azure Function to serve this purpose? Fill in the triggers and bindings in the following code:
+Question: You are responsible for creating a serverless application that communicates with an API. This application will ingest data through HTTP requests and, dependent on the received data, it must modify a structured NoSQL database in the cloud. This database should have a key/attribute store with a schemaless design. Could you outline how you would construct the Azure Function to fulfill this purpose? Please provide the triggers and bindings in the code below:
 
 ```cs
 [FunctionName("UpdateDatabase")]
@@ -335,14 +337,13 @@ public static async Task<IActionResult> Run(
 
     ILogger log)
 {
-    // Parse the incoming HTTP request
-    // Process the data
-    // Add the processed data to Cosmos DB using the 'outputDocuments' output binding
+    // Parse the incoming data
+    // Add the processed data to storage
     // Return a success response
 }
 ```
 
-Answer: This is an example of an HTTP Trigger. The Azure function can be triggered by an HTTP request containing the data. The function could use an output binding to Azure Cosmos DB (or any other database service) to update the database based on the received data.
+Answer: This is an example of an HTTP Trigger. The Azure function can be activated by an HTTP request containing the data. In response to the data received, the function could use an output binding to a structured NoSQL service, Azure Table Storage in this case, to modify the database accordingly.
 
 ```cs
 [FunctionName("UpdateDatabase")]
@@ -350,14 +351,13 @@ public static async Task<IActionResult> Run(
     [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)]
     HttpRequest req,
 
-    [CosmosDB("<database-name>", "<collection-name>", ConnectionStringSetting = "CosmosDBConnectionString")]
-    IAsyncCollector<dynamic> outputDocuments,
+    [Table("<table-name>", Connection = "<storage-connection-string>")]
+    IAsyncCollector<dynamic> outputTable,
 
     ILogger log)
 {
-    // Parse the incoming HTTP request
-    // Process the data
-    // Add the processed data to Cosmos DB using the 'outputDocuments' output binding
+    // Parse the incoming data
+    // Add the processed data to storage
     // Return a success response
 }
 ```
@@ -373,9 +373,9 @@ public static void Run(
 
     ILogger log)
 {
-    // Process the incoming deliveryRequest
-    // Prepare the outputRequest
-    // The outputRequest is automatically added to the queue
+    // Process the incoming delivery request
+    // Prepare the output request
+    // The output request is automatically added to the queue
 }
 ```
 
@@ -392,15 +392,15 @@ public static void Run(
 
     ILogger log)
 {
-    // Process the incoming deliveryRequest
-    // Prepare the outputRequest
-    // The outputRequest is automatically added to the queue
+    // Process the incoming delivery request
+    // Prepare the output request
+    // The output request is automatically added to the queue
 }
 ```
 
 ---
 
-Question: You are working on a project that requires automatic clean-up of older records in a database every day at a specific time. The clean-up task should be an Azure function that gets triggered at the specified time. Can you outline a solution for this? Fill in the triggers and bindings in the following code:
+Question: You are working on a project that requires automatic clean-up of older records in a database every day at a specific time. The clean-up task should be an Azure function that gets triggered at the specified time. The target database has high-throughput transactional capacity, and tunable consistency levels, can you delineate a solution for this task? Please provide the triggers and bindings in the given code.
 
 ```cs
 [FunctionName("CleanUpOldRecords")]
@@ -411,11 +411,11 @@ public static void Run(
 {
     // Loop over oldRecords
     // For each record, mark it for deletion or update it as per your logic
-    // Add the updated records to Cosmos DB using the 'outputDocuments' output binding
+    // Add the updated records to database
 }
 ```
 
-Answer: A Timer trigger would be the ideal choice here. You can schedule the Azure function to run at the specified time daily. The function could use input and output bindings to Azure Cosmos DB (or another database service) to fetch and clean-up the older records.
+Answer: A Timer trigger would be the optimal selection in this scenario. This allows for the scheduling of an Azure function to execute at a specified time each day. The function should utilize input and output bindings to Azure Cosmos DB, which provides specified capabilities. Its role would be to retrieve and clear out older records.
 
 ```cs
 [FunctionName("CleanUpOldRecords")]
@@ -432,13 +432,13 @@ public static void Run(
 {
     // Loop over oldRecords
     // For each record, mark it for deletion or update it as per your logic
-    // Add the updated records to Cosmos DB using the 'outputDocuments' output binding
+    // Add the updated records to database
 }
 ```
 
 ---
 
-Question: Let's consider a case where you're dealing with an IoT project. You're receiving huge amounts of telemetry data from IoT devices, and this data should trigger an Azure function that analyses the data in near real-time. How would you set up the Azure function for this scenario? Fill in the triggers and bindings in the following code:
+Question: Let's consider a case where you're dealing with an IoT project. You're receiving huge amounts of telemetry data from IoT devices, and this data should trigger an Azure function that analyses the data in near real-time. Assuming you would need a service that can handle vast amounts of data with millisecond response times, storage should provide low latency at any scale. How would you structure the Azure function for this situation? Please provide the triggers and bindings in the given code.
 
 ```cs
 [FunctionName("ProcessTelemetryData")]
@@ -449,11 +449,11 @@ public static void Run(
 {
     // Loop over the events array
     // For each event, process the telemetry data
-    // Write the processed data to Cosmos DB using the 'document' output binding
+    // Write the processed data to storage
 }
 ```
 
-Answer: Event Hubs would again be the right choice for this scenario, given their capability to handle large amounts of data in real-time. The telemetry data could be sent to an Event Hub, which would trigger the function. The function could then analyze the data and use an output binding to store the analysis results.
+Answer: Event Hubs would again be the right choice for this scenario, given their capability to handle large amounts of data in real-time. The telemetry data could be sent to an Event Hub, which would trigger the function. The function could then analyze the data and use an output binding to store the analysis results. Cosmos DB's capabilities to provide low latency at any scale and its global distribution n
 
 ```cs
 [FunctionName("ProcessTelemetryData")]
@@ -468,13 +468,13 @@ public static void Run(
 {
     // Loop over the events array
     // For each event, process the telemetry data
-    // Write the processed data to Cosmos DB using the 'document' output binding
+    // Write the processed data to storage
 }
 ```
 
 ---
 
-Question: A news company needs an Azure function to collect real-time news data from different web sources (webhooks) and then store the collected data in a specific format into a database. What strategy would you recommend? Fill in the triggers and bindings in the following code:
+Question: A media company requires an Azure function to accumulate real-time news data from various online sources (webhooks) and subsequently deposit the collected data in a particular format into a database. Given the need to store large amounts of unstructured data that will be accessed infrequently, what approach would you suggest? Please provide the triggers and bindings in the provided code:
 
 ```cs
 [FunctionName("CollectNewsData")]
@@ -483,14 +483,14 @@ public static async Task<IActionResult> Run(
 
     ILogger log)
 {
-    // Parse the incoming HTTP request to get the news data
+    // Parse the incoming data
     // Process the news data, if necessary
-    // Add the news data to Cosmos DB using the 'outputDocuments' output binding
+    // Add the news data to storage
     // Return a success response
 }
 ```
 
-Answer: An HTTP trigger could be used to collect real-time news data from different web sources. The function could then format the collected data and use an output binding to Azure Cosmos DB (or another database service) to store the data.
+Answer: To gather real-time news data from diverse web sources, an HTTP trigger could be utilized. The function could then reformat the amassed data and employ an output binding to a service that specializes in storing large amounts of unstructured data and is cost-effective for infrequent data access - Azure Blob Storage - to deposit the data.
 
 ```cs
 [FunctionName("CollectNewsData")]
@@ -498,14 +498,14 @@ public static async Task<IActionResult> Run(
     [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)]
     HttpRequest req,
 
-    [CosmosDB("<database-name>", "<collection-name>", ConnectionStringSetting = "CosmosDBConnectionString")]
-    IAsyncCollector<dynamic> outputDocuments,
+    [Blob("<container-name>/<blob-name>", FileAccess.Write, Connection = "<storage-connection-string>")]
+    Stream outputBlob,
 
     ILogger log)
 {
-    // Parse the incoming HTTP request to get the news data
+    // Parse the incoming data
     // Process the news data, if necessary
-    // Add the news data to Cosmos DB using the 'outputDocuments' output binding
+    // Add the news data to storage
     // Return a success response
 }
 ```
@@ -522,8 +522,8 @@ public static void Run(
     ILogger log)
 {
     // Process the incoming message, if necessary
-    // Prepare the outputMessage
-    // The outputMessage is automatically sent to the Service Bus topic
+    // Prepare the output message
+    // The output message is automatically sent for the subscribers to read later
 }
 ```
 
@@ -541,14 +541,14 @@ public static void Run(
     ILogger log)
 {
     // Process the incoming message, if necessary
-    // Prepare the outputMessage
-    // The outputMessage is automatically sent to the Service Bus topic
+    // Prepare the output message
+    // The output message is automatically sent for the subscribers to read later
 }
 ```
 
 ---
 
-Question: Imagine you're part of a cloud-based company that manages a large number of resources across multiple Azure subscriptions. The company wants to log all resource state changes for compliance and auditing. Which Azure service would you choose to trigger your Azure function? Fill in the triggers and bindings in the following code:
+Question: Imagine you're part of an organization that operates in the cloud and manages numerous resources across a wide variety of Azure subscriptions. For compliance and auditing purposes, the company aims to log all changes to resource states. Considering that your organization operates worldwide, requiring the data to be available without significant latency regardless of the location, which Azure service would you recommend to trigger your Azure Function? Fill in the triggers and bindings in the code provided:
 
 ```cs
 [FunctionName("LogResourceChanges")]
@@ -559,11 +559,11 @@ public static void Run(
 {
     // Process the incoming event
     // Prepare the document based on the event data
-    // The document is automatically added to Cosmos DB
+    // The document is automatically added to storage
 }
 ```
 
-Answer: This would be a perfect scenario for an Event Grid trigger. Azure Event Grid can send an event whenever a state change occurs in Azure resources, triggering your Azure Function. The function can then log these changes to a data store using an output binding (like Azure Cosmos DB or Blob Storage).
+Answer: For this scenario, an Event Grid trigger would be ideal. Azure Event Grid is capable of dispatching an event whenever there is a state change in Azure resources, which in turn triggers your Azure Function. Following activation, the function could log these changes to a data service that can offer seamless access to data from any corner of the world, such as Azure Cosmos DB, using an output binding. This would ensure that no matter where the request is coming from, data access will remain consistent and fast, supporting your global operations.
 
 ```cs
 [FunctionName("LogResourceChanges")]
@@ -578,7 +578,7 @@ public static void Run(
 {
     // Process the incoming event
     // Prepare the document based on the event data
-    // The document is automatically added to Cosmos DB
+    // The document is automatically added to storage
 }
 ```
 
@@ -617,7 +617,7 @@ public static async void Run(
 
 ---
 
-Question: A client wants to set up a system that receives JSON payloads from various services. The payload data is then to be stored in a database. How would you design an Azure Function to cater to this need? Fill in the triggers and bindings in the following code:
+Question: A customer is keen on setting up a system that is capable of accepting JSON payloads from an assortment of services. This payload data is then intended to be stored in a database that is optimal for storing large amounts of structured, non-relational data, such as metadata, user data, and diagnostic data. How would you structure an Azure Function to accommodate this need? Please provide the triggers and bindings in the following code.
 
 ```cs
 [FunctionName("ProcessPayload")]
@@ -626,14 +626,13 @@ public static async Task<IActionResult> Run(
 
     ILogger log)
 {
-    // Parse the incoming HTTP request to get the JSON payload
-    // Process the payload data
-    // Add the processed data to Cosmos DB using the 'outputDocuments' output binding
+    // Process incoming JSON payload data
+    // Add the processed data to designated storage
     // Return a success response
 }
 ```
 
-Answer: In this scenario, you can use an HTTP trigger to receive JSON payloads. Then, you could use an output binding to Azure Cosmos DB to store the payload data into the database.
+Answer: In this circumstance, an HTTP trigger could be employed to receive the JSON payloads. The payload data could then be stored into a database service that is designed for storing structured NoSQL data using an output binding - in this case, Azure Table Storage.
 
 ```cs
 [FunctionName("ProcessPayload")]
@@ -641,47 +640,155 @@ public static async Task<IActionResult> Run(
     [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)]
     HttpRequest req,
 
-    [CosmosDB("<database-name>", "<collection-name>", ConnectionStringSetting = "CosmosDBConnectionString")]
-    IAsyncCollector<dynamic> outputDocuments,
+    [Table("<table-name>", Connection = "StorageConnectionAppSetting")]
+    IAsyncCollector<dynamic> outputTable,
 
     ILogger log)
 {
-    // Parse the incoming HTTP request to get the JSON payload
-    // Process the payload data
-    // Add the processed data to Cosmos DB using the 'outputDocuments' output binding
+    // Process incoming JSON payload data
+    // Add the processed data to designated storage
     // Return a success response
 }
 ```
 
 ---
 
-Question: An organization is looking to automate some of their systems. They have a system that triggers an event whenever a new employee is onboarded. The organization wants an Azure Function that responds to this event by creating a welcome email and sending it to the new employee. Can you outline a solution for this? Fill in the triggers and bindings in the following code:
+Question: How to define an HTTP output binding in Azure Function?
+
+- [ ] Using `[Http(AuthorizationLevel.Function, "post", Route = null)]` parameter
+- [x] Returning `Task<IActionResult>` result from the function
+- [ ] There is only HTTP input binding, output binding does not exist
+
+Answer: This binding requires an HTTP trigger and allows you to customize the response associated with the trigger's request.
+
+---
+
+Question: Write an Azure function that is invoked when there are inserts or updates in the `Items` collection of `ToDoItems` database for CosmoDB.
 
 ```cs
-[FunctionName("WelcomeNewEmployee")]
-public static async void Run(
+[FunctionName("CosmosTrigger")]
+public static async Task<IActionResult> Run(
     /* Triggers and Bindings here */
 
     ILogger log)
 {
-    // Process the incoming event
-    // Prepare the welcome email based on the new employee data
-    // Use HttpClient to send the welcome email to the new employee
+    // TODO: List modified documents
 }
 ```
 
-Answer: This can be achieved using an Event Grid trigger. The onboarding system can send an event to Event Grid when a new employee is added, which would trigger the Azure function. The function can use the HTTP output binding to call an external email service API to send the welcome email.
+Answer:
 
 ```cs
-[FunctionName("WelcomeNewEmployee")]
-public static async void Run(
-    [EventGridTrigger]
-    EventGridEvent eventGridEvent,
+[FunctionName("CosmosTrigger")]
+public static async Task<IActionResult> Run(
+    [CosmosDBTrigger(databaseName: "ToDoItems", collectionName: "Items", ConnectionStringSetting = "CosmosDBConnection",LeaseCollectionName = "leases", CreateLeaseCollectionIfNotExists = true)]
+    IReadOnlyList<Document> documents,
 
     ILogger log)
 {
-    // Process the incoming event
-    // Prepare the welcome email based on the new employee data
-    // Use HttpClient to send the welcome email to the new employee
+    if (documents != null && documents.Count > 0)
+    {
+        log.LogInformation($"Documents modified: {documents.Count}");
+        for (var i = 0; i < documents.Count; i++)
+            log.LogInformation($"First document Id: {documents[0].Id}");
+    }
 }
 ```
+
+---
+
+Question: You're part of a large digital library that digitizes and stores thousands of books. Once a book is digitized and stored in Blob Storage, a process is triggered to generate metadata for the digitized book. After the metadata is generated, an event should be fired to notify other services for further processing (e.g., updating the search index, notifying users who requested this book). How would you set up the Azure function to handle this situation?
+
+```cs
+[FunctionName("ProcessDigitizedBook")]
+public static void Run(
+    /* Triggers and Bindings here */
+
+    string name,
+    ILogger log)
+{
+    // Process the inputBook to generate metadata
+    // Prepare an EventGridEvent with the metadata
+    // Add the event to the 'outputEvents' output binding, which will send it to Event Grid
+}
+```
+
+Answer:
+
+```cs
+[FunctionName("ProcessDigitizedBook")]
+public static void Run(
+    [BlobTrigger("<container-name>/{name}", Connection = "BlobStorageConnectionString")]
+    Stream inputBook,
+
+    [EventGrid(TopicEndpointUri = "<topic-endpoint>", TopicKeySetting = "<topic-key>")]
+    ICollector<EventGridEvent> outputEvents,
+
+    string name,
+    ILogger log)
+{
+    // Process the inputBook to generate metadata
+    var metadata = GenerateMetadata(inputBook);
+
+    // Prepare an EventGridEvent with the metadata
+    var event = new EventGridEvent("/subject/path", "Book.Digitized", "1.0", metadata);
+
+    // Send the event
+    await outputEvents.AddAsync(event);
+
+    log.LogInformation($"Processed blob\n Name:{name} \n Size: {inputBook.Length} Bytes");
+}
+```
+
+---
+
+Question: Write a cron schedule expression that will execute a command every 30th minute of every two hours, for the first 15 days of the summer months (June, July, and August), on weekdays (Monday through Friday).
+
+Answer: 30 \*/2 1-15 6-8 1-5
+
+---
+
+Question: Which of the following cron schedules will be executed every five minutes?
+
+- [x] `0 */5 * * * *`
+- [x] `*/5 * * * *`
+- [ ] `*/5 * * * * *`
+- [ ] `* */5 * * *`
+- [ ] `0 5 * * * *`
+- [ ] `5 * * * *`
+- [ ] `5 * * * * *`
+- [ ] `* 5 * * *`
+
+Answer: Cron schedules supports both 5 and 6 fields (`{minute} {hour} {day} {month} {day-of-week}` or `{second} {minute} {hour} {day} {month} {day-of-week}`). To make them run at every 5 minutes, `*/5` is used.
+
+---
+
+Question: In your e-commerce system, you've built two Azure Functions to handle order processing and retrieval. The `OrderProcessingFunction` is triggered when an order is placed by a customer. The details of this order are then processed and stored into a cloud storage system for later reference. The `OrderRetrievalFunction` is invoked on-demand via a web request, which fetches and returns the previously stored order details.
+
+Given this setup, which bindings are you most likely to use in the `OrderProcessingFunction`? There may be more than one correct answer.
+
+- [x] ServiceBus trigger binding
+- [ ] HTTP trigger binding
+- [ ] Blob trigger binding
+- [ ] Blob input binding
+- [x] Blob output binding
+- [ ] Blob input output binding
+
+Answer: The OrderProcessingFunction uses the ServiceBus trigger binding because it is triggered by new messages (orders) arriving in the Azure Service Bus. It uses the Blob output binding to store the processed order details into Azure Blob Storage, a cloud storage system.
+
+---
+
+Question: In your e-commerce system, you've built two Azure Functions to handle order processing and retrieval. The `OrderProcessingFunction` is triggered when an order is placed by a customer. The details of this order are then processed and stored into a cloud storage system for later reference. The `OrderRetrievalFunction` is invoked on-demand via a web request, which fetches and returns the previously stored order details.
+
+Given this setup, which bindings are you most likely to use in the `OrderRetrievalFunction`? There may be more than one correct answer.
+
+- [ ] ServiceBus trigger binding
+- [x] HTTP trigger binding
+- [ ] Blob trigger binding
+- [x] Blob input binding
+- [ ] Blob output binding
+- [ ] Blob input output binding
+
+Answer: The OrderRetrievalFunction is invoked on-demand via a web request, which corresponds to the HTTP trigger binding. This function fetches the stored order details from a cloud storage system, which corresponds to the Blob input binding.
+
+---

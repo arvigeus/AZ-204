@@ -10,14 +10,20 @@ type CodeEditorProps = Omit<
   ReactCodeMirrorProps,
   "extensions" | "theme" | "basicSetup"
 > & {
-  lang: "cs" | "ps";
+  lang: "cs" | "ps" | "Dockerfile";
 };
 
 function CodeEditor({ lang, ...props }: CodeEditorProps) {
-  const languate = useMemo(
-    () => (lang == "ps" ? langs.powershell() : langs.csharp()),
-    [lang]
-  );
+  const languate = useMemo(() => {
+    switch (lang) {
+      case "ps":
+        return langs.powershell();
+      case "Dockerfile":
+        return langs.dockerfile();
+      default:
+        return langs.csharp();
+    }
+  }, [lang]);
   return (
     <CodeMirror
       theme={githubLight}
