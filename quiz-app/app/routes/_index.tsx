@@ -29,10 +29,9 @@ export let loader = async ({ request }: LoaderArgs) => {
   const url = new URL(request.url);
   const topic = url.searchParams.get("topic");
 
-  const data =
-    process.env.NODE_ENV !== "production" && url.searchParams.has("id")
-      ? getQAById(url.searchParams.get("id")!.toString())
-      : getQA(topic);
+  const data = url.searchParams.has("id")
+    ? getQAById(url.searchParams.get("id")!.toString())
+    : getQA(topic);
 
   if (!data)
     throw new Response(null, {
