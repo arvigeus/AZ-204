@@ -11,7 +11,7 @@ import type {
   V2_MetaFunction as MetaFunction,
   LoaderArgs,
 } from "@remix-run/node";
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import clsx from "clsx";
 
 import { getQA, getQAById, topics } from "~/lib/qa";
@@ -68,6 +68,17 @@ export default function Index() {
 
   const data = actionData || loaderData.data;
 
+  useEffect(() => {
+    let currentURL = new URL(window.location.href);
+    let searchParams = new URLSearchParams(currentURL.search);
+
+    searchParams.delete("index");
+    searchParams.set("id", data.id);
+    currentURL.search = searchParams.toString();
+
+    window.history.replaceState({}, null!, currentURL.toString());
+  });
+
   const answerSet = useRef(new Set<number>());
 
   const answered = useMemo(() => {
@@ -97,11 +108,11 @@ export default function Index() {
   const buttonColor = showAnswer || isCorrectlyAnswered ? "green" : "blue";
 
   return (
-    <div className="antialiased text-gray-700 bg-gray-100 flex w-full h-screen justify-center pt-12">
+    <div className="antialiased text-gray-700 bg-gray-100 flex w-full h-screen justify-center pt-6">
       <div className="w-full max-w-3xl p-3 flex flex-col justify-between">
         <main className="flex-grow prose max-w-3xl">
           <h1 className="font-bold text-5xl text-center text-indigo-700">
-            AZ-204 Quiz
+            <Link to="/">AZ-204 Quiz</Link>
           </h1>
           <div className="bg-white p-12 rounded-lg shadow-lg w-full mt-8">
             <Form method="post" onSubmit={handleSubmit}>
@@ -170,7 +181,7 @@ export default function Index() {
             Exam revision: April 28, 2023
           </small>
         </main>
-        <footer className="text-center">
+        <footer className="text-center mt-6">
           <div className="flex justify-center items-center">
             <a
               href="https://github.com/arvigeus/AZ-204"
