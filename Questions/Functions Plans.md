@@ -171,3 +171,15 @@ Question: Which triggers in Azure Functions are supported on Consumption plan:
 Answer: `Table storage` and `Notification Hubs` are not valid triggers. `RabbitMQ` and `Kafka` are not supported on Consumption plan.
 
 ---
+
+Question: Which of the following plans does support VNet?
+
+- [ ] Premium plan
+- [ ] Standard App Service plan
+- [ ] Premium App Service plan
+- [ ] Isolated App Service plan
+- [x] Free App Service plan
+- [x] Shared App Service plan
+- [x] Basic App Service plan
+
+Answer: VNet is supported only in Premium plan, Standard App Service plan, Premium App Service plan, Isolated App Service plan

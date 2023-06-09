@@ -32,3 +32,15 @@
 - [Queue](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-storage-queue?tabs=in-process%2Cextensionv5%2Cextensionv3&pivots=programming-language-csharp)
 - [ServiceBus](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-service-bus?tabs=in-process%2Cextensionv5%2Cextensionv3&pivots=programming-language-csharp)
 - [Time](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-timer?tabs=python-v2%2Cin-process&pivots=programming-language-csharp)
+
+## Azure Container Registry
+
+- [Azure Container Registry service tiers](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-skus)
+- [Quickstart: Build and run a container image using Azure Container Registry Tasks](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-quickstart-task-cli)
+
+## Docker
+
+- [Quickstart: Docker in Visual Studio](https://learn.microsoft.com/en-us/visualstudio/containers/container-tools?view=vs-2019)
+- [Docker images for ASP.NET Core](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/docker/building-net-docker-images?view=aspnetcore-3.0)
+- [Dockerfile reference](https://docs.docker.com/engine/reference/builder/)
+- [Multi-stage builds](https://docs.docker.com/build/building/multi-stage/)

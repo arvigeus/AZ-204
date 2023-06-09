@@ -372,6 +372,7 @@ Question: What App Service plan the following command will create:
 
 ```powershell
 az appservice plan create --name $planName --resource-group $resourceGroupName --location $location
+
 ```
 
 - [ ] Free

@@ -1,25 +1,5 @@
 # Containers
 
-Question: Which of the following Azure Container Registry options support geo-replication to manage a single registry across multiple regions?
-
-- [ ] Basic
-- [ ] Standard
-- [x] Premium
-
-Answer: The premium tier adds geo-replication as a feature.
-
----
-
-Question: Which Azure container registry tiers benefit from encryption-at-rest?
-
-- [x] Basic
-- [x] Standard
-- [x] Premium
-
-Answer: Encryption-at-rest is supported in all three tiers.
-
----
-
 Question: Which of the following methods is recommended when deploying a multi-container group that includes only containers?
 
 - [ ] Azure Resource Management template
@@ -64,75 +44,13 @@ The security container running the authentication and authorization module doesn
 
 ---
 
-Question: Which of the following docker images is used to build an ASP.NET app?
-
-- [x] dotnet/core/sdk
-- [ ] dotnet/core/aspnet
-- [ ] None of these
-- [ ] Both
-
-Answer: The `dotnet/core/sdk` image includes the Command Line Tools (CLI) and is optimized for local development, debugging, and unit testing.
-
----
-
-Question: Which of the following docker images is used to run an ASP.NET app?
-
-- [ ] dotnet/core/sdk
-- [x] dotnet/core/aspnet
-- [ ] None of these
-- [ ] Both
-
-Answer: The `dotnet/core/aspnet` image contains the ASP.NET Core runtime and libraries and is optimized for running apps in production.
-
----
-
-Question: Which of the following docker images is used to run an ASP.NET app?
-
-- [ ] dotnet/core/sdk
-- [x] dotnet/core/aspnet
-- [ ] None of these
-- [ ] Both
-
-Answer: The `dotnet/core/aspnet` image contains the ASP.NET Core runtime and libraries and is optimized for running apps in production.
-
----
-
-Question: Define a Dockerfile where build and run in different containers (multi-stage)
-
-```Dockerfile
-FROM mcr.microsoft.com/dotnet/core # Fill in details
-```
-
-Answer:
-
-```Dockerfile
-FROM mcr.microsoft.com/dotnet/core/sdk:3.0 AS build
-WORKDIR /app
-
-# copy csproj and restore as distinct layers
-COPY *.sln .
-COPY aspnetapp/*.csproj ./aspnetapp/
-RUN dotnet restore
-
-# copy everything else and build app
-COPY aspnetapp/. ./aspnetapp/
-WORKDIR /app/aspnetapp
-RUN dotnet publish -c Release -o out
-
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.0 AS runtime
-WORKDIR /app
-COPY --from=build /app/aspnetapp/out ./
-ENTRYPOINT ["dotnet", "aspnetapp.dll"]
-```
-
----
-
 Question: You are tasked with deploying a legacy application written in .NET Framework on Azure. This application's container image is stored in an Azure Container Registry with the address `myAcrRegistry.azurecr.io/myNetApp:latest`.
 
 You need to ensure that the application is properly isolated and manageable within Azure's infrastructure. To do this, write the necessary PowerShell commands to host this application in a container group named `"myContainerGroup"` using Azure Container Instances (ACI).
 
 ```ps
 # Code here
+
 ```
 
 Answer: Because the application needs to be isolated, you need to create a new resource group.

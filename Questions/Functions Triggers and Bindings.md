@@ -702,7 +702,7 @@ Answer: 30 \*/2 1-15 6-8 1-5
 
 ---
 
-Question: Which of the following cron schedules will be executed every five minutes?
+Question: You need to create an Azure Function that is triggered every 5 minutes. Which of the following cron schedules can be used?
 
 - [x] `0 */5 * * * *`
 - [x] `*/5 * * * *`
