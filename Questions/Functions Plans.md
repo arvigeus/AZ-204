@@ -172,7 +172,7 @@ Answer: `Table storage` and `Notification Hubs` are not valid triggers. `RabbitM
 
 ---
 
-Question: Which of the following plans does support VNet?
+Question: Which of the following plans does not support VNet?
 
 - [ ] Premium plan
 - [ ] Standard App Service plan

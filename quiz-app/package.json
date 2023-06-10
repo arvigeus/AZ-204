@@ -10,34 +10,34 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@remix-run/css-bundle": "^1.16.0",
-    "@remix-run/node": "^1.16.0",
-    "@remix-run/react": "^1.16.0",
-    "@remix-run/vercel": "^1.16.0",
-    "@uiw/codemirror-extensions-langs": "^4.20.2",
-    "@uiw/codemirror-theme-github": "^4.20.2",
-    "@uiw/react-codemirror": "^4.20.2",
-    "@vercel/node": "^2.10.3",
+    "@remix-run/css-bundle": "^1.17.0",
+    "@remix-run/node": "^1.17.0",
+    "@remix-run/react": "^1.17.0",
+    "@remix-run/vercel": "^1.17.0",
+    "@uiw/codemirror-extensions-langs": "^4.21.2",
+    "@uiw/codemirror-theme-github": "^4.21.2",
+    "@uiw/react-codemirror": "^4.21.2",
+    "@vercel/node": "^2.15.1",
     "clsx": "^1.2.1",
     "highlight.js": "^11.8.0",
-    "isbot": "^3.6.8",
-    "markdown-to-jsx": "^7.2.0",
+    "isbot": "^3.6.10",
+    "markdown-to-jsx": "^7.2.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@remix-run/dev": "^1.16.0",
-    "@remix-run/eslint-config": "^1.16.0",
-    "@remix-run/serve": "^1.16.0",
+    "@remix-run/dev": "^1.17.0",
+    "@remix-run/eslint-config": "^1.17.0",
+    "@remix-run/serve": "^1.17.0",
     "@tailwindcss/typography": "^0.5.9",
-    "@types/react": "^18.0.35",
-    "@types/react-dom": "^18.0.11",
-    "eslint": "^8.40.0",
+    "@types/react": "^18.2.9",
+    "@types/react-dom": "^18.2.4",
+    "eslint": "^8.42.0",
     "tailwindcss": "^3.3.2",
     "ts-node": "^10.9.1",
-    "typescript": "^5.0.4"
+    "typescript": "^5.1.3"
   },
   "engines": {
-    "node": ">=14"
+    "node": ">=16"
   }
 }
