@@ -1,6 +1,6 @@
 import type { FC, Dispatch, SetStateAction, ChangeEventHandler } from "react";
 import clsx from "clsx";
-import Markdown from "markdown-to-jsx";
+import { Markdown } from "~/components/Markdown";
 
 import { InputStyle } from "~/components/Input";
 
@@ -68,7 +68,18 @@ export const AnswerOptions: FC<AnswerOptionsProps> = ({
               name={name}
               disabled={disabled}
             />
-            <Markdown children={option} />
+            <Markdown
+              children={option}
+              components={{
+                p({ node, className, children, ...props }) {
+                  return (
+                    <p className={clsx(className, "my-0")} {...props}>
+                      {children}
+                    </p>
+                  );
+                },
+              }}
+            />
           </label>
         </li>
       ))}

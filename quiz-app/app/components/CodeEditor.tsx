@@ -6,18 +6,42 @@ import { langs } from "@uiw/codemirror-extensions-langs";
 import { InputStyle } from "~/components/Input";
 import { useMemo } from "react";
 
+export type SupportedEditLanguage = "cs" | "ps" | "docker";
+
+export type SupportedLanguage =
+  | "csharp"
+  | "powershell"
+  | "Dockerfile"
+  | SupportedEditLanguage;
+
 type CodeEditorProps = Omit<
   ReactCodeMirrorProps,
   "extensions" | "theme" | "basicSetup"
 > & {
-  lang: "cs" | "ps" | "Dockerfile";
+  lang: SupportedLanguage;
 };
 
-function CodeEditor({ lang, ...props }: CodeEditorProps) {
+export function isLanguageEditSupported(
+  lang: string
+): lang is SupportedEditLanguage {
+  return ["cs", "ps", "docker"].includes(lang);
+}
+
+export function isLanguageSupported(
+  lang: string
+): lang is SupportedEditLanguage {
+  return ["csharp", "cs", "powershell", "ps", "Dockerfile", "docker"].includes(
+    lang
+  );
+}
+
+export const CodeEditor = ({ lang, ...props }: CodeEditorProps) => {
   const languate = useMemo(() => {
     switch (lang) {
       case "ps":
+      case "powershell":
         return langs.powershell();
+      case "docker":
       case "Dockerfile":
         return langs.dockerfile();
       default:
@@ -37,5 +61,4 @@ function CodeEditor({ lang, ...props }: CodeEditorProps) {
       }}
     />
   );
-}
-export default CodeEditor;
+};
