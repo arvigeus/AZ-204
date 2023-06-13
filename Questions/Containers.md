@@ -98,3 +98,41 @@ Question: You are tasked with deploying a .NET Core application on Azure, and yo
 Answer: Azure Container Instances (ACI) are created and managed using the `New-AzContainerGroup` cmdlet. The `New-AzContainerService` cmdlet is used for creating an Azure Kubernetes Service (AKS), which is a different service from ACI.
 
 ---
+
+Question: Which command is used for creating a container image?
+
+- [ ] `az acr create`
+- [x] `az acr build`
+- [ ] `az acr build` then `az acr create`
+
+Answer: `az acr build` is used to create container image  
+`az acr create` is used to create Azure Container registry
+
+---
+
+Question: You are working with a resource group, `MultiContainerGroup1`, which contains several services such as Azure Functions, a CosmosDB instance, and multiple container instances. You need to export this resource group for future deployment. Write the Azure CLI command to export the template for this resource group.
+
+```ps
+# Code here
+```
+
+Answer: You should use a Resource Manager (ARM) template because this format allows the inclusion of multiple Azure services along with the container instances.
+
+```ps
+z group export --name MultiContainerGroup1 --output-template-file "./MultiContainerGroup1.json"
+az deployment group create --resource-group MultiContainerGroup1 --template-file "./MultiContainerGroup1.json"
+```
+
+---
+
+Question: You have just deployed several Azure resources within the `DemoResourceGroup` resource group and you want to capture the template that Azure Resource Manager used for the deployment for future use. How can you accomplish this efficiently?
+
+- [ ] `az group export --name DemoResourceGroup`
+- [x] `az group deployment export --name DemoResourceGroup --deployment-name Deployment1`
+- [ ] Use the Azure portal to manually inspect and copy the JSON of the deployment template.
+- [ ] `Export-AzResourceGroup -Name DemoResourceGroup`
+
+Answer: The `az group deployment export` command is used to export the template that was used for a specific deployment. This command allows you to capture the exact template used by Azure Resource Manager for that particular deployment.  
+Using the Azure portal to manually copy the JSON of the deployment template also is valid way to do it, but is a manual process and inefficient.  
+`az group export --name DemoResourceGroup` and `Export-AzResourceGroup -Name DemoResourceGroup` export the resource group (which may include many deployments)  
+is a manual process that doesn't provide the convenience or automation of a CLI command

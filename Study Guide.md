@@ -36,7 +36,8 @@
 ## Azure Container Registry
 
 - [Azure Container Registry service tiers](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-skus)
-- [Quickstart: Build and run a container image using Azure Container Registry Tasks](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-quickstart-task-cli)
+- [Tutorial: Build and deploy container images in the cloud with Azure Container Registry Tasks](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-tutorial-quick-task)
+- [Import container images to a container registry](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-import-images?tabs=azure-cli)
 
 ## Docker
 
@@ -44,3 +45,8 @@
 - [Docker images for ASP.NET Core](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/docker/building-net-docker-images?view=aspnetcore-3.0)
 - [Dockerfile reference](https://docs.docker.com/engine/reference/builder/)
 - [Multi-stage builds](https://docs.docker.com/build/building/multi-stage/)
+
+## Azure Resource Groups
+
+- [Manage Azure Resource Groups by using Azure CLI](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/manage-resource-groups-cli)
+- [Use Azure portal to export a template](https://learn.microsoft.com/en-us/azure/azure-resource-manager/templates/export-template-portal)
