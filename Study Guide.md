@@ -9,7 +9,7 @@
 - [Automatic scaling in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/manage-automatic-scaling?tabs=azure-cli#set-maximum-number-of-web-app-instances)
 - [az appservice plan](https://learn.microsoft.com/en-us/cli/azure/appservice/plan?view=azure-cli-latest)
 
-## Azure Function
+## Azure Functions
 
 - [Azure Functions overview](https://learn.microsoft.com/en-us/azure/azure-functions/functions-overview?pivots=programming-language-csharp)
 - [Azure Functions developer guide](https://learn.microsoft.com/en-us/azure/azure-functions/functions-reference?tabs=blob)
@@ -33,11 +33,21 @@
 - [ServiceBus](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-service-bus?tabs=in-process%2Cextensionv5%2Cextensionv3&pivots=programming-language-csharp)
 - [Time](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-timer?tabs=python-v2%2Cin-process&pivots=programming-language-csharp)
 
-## Azure Container Registry
+## Azure Containers
+
+### Azure Container Registry
 
 - [Azure Container Registry service tiers](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-skus)
 - [Tutorial: Build and deploy container images in the cloud with Azure Container Registry Tasks](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-tutorial-quick-task)
 - [Import container images to a container registry](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-import-images?tabs=azure-cli)
+
+### Azure Container Apps
+
+- [Deploy Azure Container Apps with the az containerapp up command](https://learn.microsoft.com/en-us/azure/container-apps/containerapp-up)
+- [az containerapp](https://learn.microsoft.com/en-us/cli/azure/containerapp?view=azure-cli-latest)
+- [Disaster recovery guidance for Azure Container Apps](https://learn.microsoft.com/en-us/azure/container-apps/disaster-recovery?tabs=azure-cli)
+- [What are Azure regions and availability zones?](https://learn.microsoft.com/en-us/azure/reliability/availability-zones-overview)
+- [Managed identities in Azure Container Apps](https://learn.microsoft.com/en-us/azure/container-apps/managed-identity?tabs=portal%2Cdotnet)
 
 ## Docker
 
@@ -50,3 +60,7 @@
 
 - [Manage Azure Resource Groups by using Azure CLI](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/manage-resource-groups-cli)
 - [Use Azure portal to export a template](https://learn.microsoft.com/en-us/azure/azure-resource-manager/templates/export-template-portal)
+
+## Azure Active Directory
+
+- [What are managed identities for Azure resources?](https://learn.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview)
