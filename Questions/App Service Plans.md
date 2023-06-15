@@ -386,3 +386,19 @@ az appservice plan create --name $planName --resource-group $resourceGroupName -
 - [ ] IsolatedV2
 
 Answer: Default SKU is `B1` (Basic)
+
+---
+
+Question: Which Azure Monitor log types are only supported on `Premium` (and above) plan?
+
+- [ ] AppServiceConsoleLogs
+- [ ] AppServiceHTTPLogs
+- [ ] AppServiceEnvironmentPlatformLogs
+- [ ] AppServiceAuditLogs
+- [x] AppServiceFileAuditLogs
+- [ ] AppServiceAppLogs
+- [ ] AppServiceIPSecAuditLogs
+- [ ] AppServicePlatformLogs
+- [x] AppServiceAntivirusScanAuditLogs
+
+Answer: Anti-virus scan logs using Microsoft Defender and File changes made to the site content

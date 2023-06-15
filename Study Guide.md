@@ -9,6 +9,11 @@
 - [Automatic scaling in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/manage-automatic-scaling?tabs=azure-cli#set-maximum-number-of-web-app-instances)
 - [az appservice plan](https://learn.microsoft.com/en-us/cli/azure/appservice/plan?view=azure-cli-latest)
 
+### App Service Diagnostics
+
+- [Enable diagnostics logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)
+- [Tutorial: Troubleshoot an App Service app with Azure Monitor](https://learn.microsoft.com/en-us/azure/app-service/tutorial-troubleshoot-monitor)
+
 ## Azure Functions
 
 - [Azure Functions overview](https://learn.microsoft.com/en-us/azure/azure-functions/functions-overview?pivots=programming-language-csharp)
@@ -64,3 +69,18 @@
 ## Azure Active Directory
 
 - [What are managed identities for Azure resources?](https://learn.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview)
+
+## Azure Service Bus
+
+### Azure Service Bus Diagnostics
+
+- [Monitoring Azure Service Bus data reference](https://learn.microsoft.com/en-us/azure/service-bus-messaging/monitor-service-bus-reference)
+
+## Azure Monitor
+
+### Autoscale
+
+- [Get started with autoscale in Azure](https://learn.microsoft.com/en-us/azure/azure-monitor/autoscale/autoscale-get-started?toc=%2Fazure%2Fapp-service%2Ftoc.json)
+- [Flapping in Autoscale](https://learn.microsoft.com/en-us/azure/azure-monitor/autoscale/autoscale-flapping)
+- [Troubleshoot Azure Monitor autoscale](https://learn.microsoft.com/en-us/azure/azure-monitor/autoscale/autoscale-troubleshoot)
+- [Autoscale a web app by using custom metrics](https://learn.microsoft.com/en-us/azure/azure-monitor/autoscale/autoscale-custom-metric)
