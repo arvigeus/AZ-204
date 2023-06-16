@@ -82,3 +82,252 @@ git remote add azure $git_url
 # Push the code to the Azure repository
 git push azure main
 ```
+
+---
+
+Question: You're an Azure developer with the task of deploying a PHP web app from a GitHub repo to Azure App Services. As a part of your workflow, you want to test the new features of your app in a safe, isolated environment before making it live.
+
+Your task is to script the process to deploy the app to an Azure App Service, using a staging deployment slot to validate updates before they go live. This involves creating all necessary resources in Azure, such as a resource group and an App Service plan. After verifying the new version of the app works as expected, swaps the staging slot into production. It should be optimized for cost efficiency.
+
+```ps
+let "randomIdentifier=$RANDOM*$RANDOM"
+location="East US"
+resourceGroup="msdocs-app-service-rg-$randomIdentifier"
+tag="deploy-deployment-slot.sh"
+appServicePlan="msdocs-app-service-plan-$randomIdentifier"
+webapp="msdocs-web-app-$randomIdentifier"
+gitrepo=https://github.com/Azure-Samples/php-docs-hello-world
+
+# Code here
+```
+
+Answer:
+
+```ps
+let "randomIdentifier=$RANDOM*$RANDOM"
+location="East US"
+resourceGroup="msdocs-app-service-rg-$randomIdentifier"
+tag="deploy-deployment-slot.sh"
+appServicePlan="msdocs-app-service-plan-$randomIdentifier"
+webapp="msdocs-web-app-$randomIdentifier"
+gitrepo=https://github.com/Azure-Samples/php-docs-hello-world
+
+# Create a resource group.
+az group create --name $resourceGroup --location "$location" --tag $tag
+
+# Create an App Service plan in STANDARD tier (minimum required by deployment slots).
+echo "Creating $appServicePlan"
+az appservice plan create --name $appServicePlan --resource-group $resourceGroup --location "$location" \
+--sku S1
+
+# Create a web app
+az webapp create --name $webapp --plan $appServicePlan --resource-group $resourceGroup
+
+# Create a deployment slot with the name "staging".
+az webapp deployment slot create --name $webapp --resource-group $resourceGroup --slot staging
+
+# Deploy sample code to "staging" slot from GitHub.
+az webapp deployment source config --name $webapp --resource-group $resourceGroup --slot staging --repo-url $gitrepo --branch master --manual-integration
+
+# Swap the verified/warmed up staging slot into production.
+az webapp deployment slot swap --name $webapp --resource-group $resourceGroup \
+    --slot staging
+```
+
+Note: If there was no deployment slots requirenments, `az webapp deployment slot create` and `az webapp deployment slot swap` (and `--slot staging` in `az webapp deployment source config`) could be dropped, and app service plan can go as low as FREE.
+
+---
+
+Question: You're an Azure developer working on a hobby project, deploying a PHP web app from a GitHub repo to Azure App Services. As part of your hands-on learning, you aim to automate the entire deployment process using a script.
+
+Your mission is to script the deployment of the app to an Azure App Service. This process involves spinning up all the necessary resources in Azure, such as a resource group and an App Service plan. The goal is to have your application live and running on the Azure App Service at the end of the script execution, avoiding unnecessary costs.
+
+```ps
+let "randomIdentifier=$RANDOM*$RANDOM"
+location="East US"
+resourceGroup="msdocs-app-service-rg-$randomIdentifier"
+tag="deploy-github.sh"
+gitrepo=https://github.com/Azure-Samples/php-docs-hello-world
+appServicePlan="msdocs-app-service-plan-$randomIdentifier"
+webapp="msdocs-web-app-$randomIdentifier"
+
+# Code here
+```
+
+Answer:
+
+```ps
+let "randomIdentifier=$RANDOM*$RANDOM"
+location="East US"
+resourceGroup="msdocs-app-service-rg-$randomIdentifier"
+tag="deploy-github.sh"
+gitrepo=https://github.com/Azure-Samples/php-docs-hello-world
+appServicePlan="msdocs-app-service-plan-$randomIdentifier"
+webapp="msdocs-web-app-$randomIdentifier"
+
+# Create a resource group.
+az group create --name $resourceGroup --location "$location" --tag $tag
+
+# Create an App Service plan in `FREE` tier.
+az appservice plan create --name $appServicePlan --resource-group $resourceGroup --sku FREE
+
+# Create a web app.
+az webapp create --name $webapp --resource-group $resourceGroup --plan $appServicePlan
+
+# Deploy code from a public GitHub repository.
+az webapp deployment source config --name $webapp --resource-group $resourceGroup \
+    --repo-url $gitrepo --branch master --manual-integration
+```
+
+Note: If there is deployment slots requirenment, then `az webapp deployment slot create` and `az webapp deployment slot swap` (and `--slot staging` in `az webapp deployment source config`) should be added. Also the app service plan should be bumped to STANDARD.
+
+---
+
+Question: You're building an ASP.NET Core Linux application utilizing Azure App Service Web App for Containers. You aim to deploy the application in a region in which your company's subscription does not currently have a resource group in there. What are the necessary Azure command-line interface (CLI) commands to deploy the application in that appropriate region?
+
+```ps
+location="West Europe"
+resourceGroup="WEurope"
+appServicePlan="WEuropePlan"
+appName="AspApp"
+containerImage="mcr.microsoft.com/dotnet/samples:aspnetapp"
+
+# Code here
+```
+
+Answer:
+
+```ps
+location="West Europe"
+resourceGroup="WEurope"
+appServicePlan="WEuropePlan"
+appName="AspApp"
+containerImage="mcr.microsoft.com/dotnet/samples:aspnetapp"
+
+# Create a new resource group in the West Europe region
+az group create --name $resourceGroup --location "$location"
+
+# Create an App Service plan in the West Europe region
+az appservice plan create --name $appServicePlan --resource-group $resourceGroup --location "$location" --is-linux
+
+# Create a web app in the new App Service Plan
+az webapp create --name $appName --resource-group $resourceGroup --plan $appServicePlan --deployment-container-image-name $containerImage
+```
+
+---
+
+QUestion: Imagine you are tasked with setting up a WordPress application for your company's blog. The application should run in a Docker multi-container environment, with the configuration provided in the `docker-compose-wordpress.yml` file. The WordPress application should connect to a new MySQL database, both to be hosted on Microsoft Azure. After the initial setup, you need to accommodate changes in your WordPress configuration, which will be done by modifying the Docker compose file and applying the changes. How would you handle this?
+
+```ps
+
+location="West Europe"
+resourceGroup="WEurope"
+appServicePlan="WEuropePlan"
+appName="WpApp"
+wordpressDbServer="wp-database"
+wordpressDb="wordpress"
+wordpressAdmin="adminuser"
+wordpressPassword="My5up3rStr0ngPaSw0rd!"
+
+# Code here
+```
+
+Answer:
+
+```ps
+location="West Europe"
+resourceGroup="WEurope"
+appServicePlan="WEuropePlan"
+appName="WpApp"
+wordpressDbServer="wp-database"
+wordpressDb="wordpress"
+wordpressAdmin="adminuser"
+wordpressPassword="My5up3rStr0ngPaSw0rd!"
+
+# Create a new resource group
+az group create --name $resourceGroup --location "$location"
+
+# Create a new App Service plan
+az appservice plan create --name $appServicePlan --resource-group $resourceGroup --location "$location" --is-linux
+
+# Create a new MySQL server
+az mysql server create --resource-group $resourceGroup --name $wordpressDbServer --location "$location" --admin-user $wordpressAdmin --admin-password wordpressPassword
+az mysql db create --resource-group $resourceGroup --server-name $wordpressDbServer --name $wordpressDb
+
+# Create a web app
+az webapp create --resource-group $resourceGroup --plan $appServicePlan --name $appName --multicontainer-config-type compose --multicontainer-config-file docker-compose-wordpress.yml
+# Set environment variables
+az webapp config appsettings set --resource-group $resourceGroup --name $appName --settings WORDPRESS_DB_HOST="$wordpressDbServer.mysql.database.azure.com" WORDPRESS_DB_USER="$wordpressAdmin" WORDPRESS_DB_PASSWORD="wordpressPassword" WORDPRESS_DB_NAME="$wordpressDb"
+
+# Update app after editing docker-compose-wordpress.yml
+az webapp config container set --resource-group $resourceGroup --name $appName --multicontainer-config-type compose --multicontainer-config-file docker-compose-wordpress.yml
+```
+
+---
+
+Question: Suppose you're responsible for migrating your company's online store application to a Kubernetes environment hosted on Azure (AKS). This application has a set of microservices, each defined in `serviceA.yaml`, `serviceB.yaml`, and `serviceC.yaml` YAML files. You need to ensure the successful deployment and management of these microservices. Also, let's say you are required to monitor the performance and health of your application, for which you decide to integrate Azure Monitor for containers. How would you accomplish this task?
+
+```ps
+# Variables
+resourceGroup="MyResourceGroup"
+AKSClusterName="MyAKSCluster"
+location="West Europe"
+monitorWorkspace="MyMonitorWorkspace"
+```
+
+Answer:
+
+```ps
+# Variables
+resourceGroup="MyResourceGroup"
+AKSClusterName="MyAKSCluster"
+location="West Europe"
+monitorWorkspace="MyMonitorWorkspace"
+
+# Create a new resource group in the specified location
+az group create --name $resourceGroup --location "$location"
+
+# Create a new AKS cluster in the resource group
+az aks create --resource-group $resourceGroup --name $AKSClusterName --generate-ssh-keys
+
+# Get the credentials for the AKS cluster
+az aks get-credentials --resource-group $resourceGroup --name $AKSClusterName
+
+# Deploy the microservices to the AKS cluster using their respective YAML files
+kubectl apply -f serviceA.yaml
+kubectl apply -f serviceB.yaml
+kubectl apply -f serviceC.yaml
+
+# Create Log Analytics workspace
+az monitor log-analytics workspace create --resource-group $resourceGroup --workspace-name $monitorWorkspace --location $location
+
+# Enable Azure Monitor for containers
+az aks enable-addons --resource-group $resourceGroup --name $AKSClusterName --addons monitoring --workspace-resource-id $monitorWorkspace
+```
+
+---
+
+Question: Imagine you are tasked with deploying a web application on Azure App Service. As part of the task, you are also expected to set up Application Insights for monitoring the performance and usage data of the application, located in resource group `$resourceGroup` and app service plan `$appServicePlan` in location `$location`. All of these activities should be performed using the Azure CLI. How would you go about accomplishing this?
+
+```ps
+appName="MyWebApp"
+appInsightsName="MyAppInsights"
+```
+
+Answer:
+
+```ps
+appName="MyWebApp"
+appInsightsName="MyAppInsights"
+
+# Create a web app
+az webapp create --name $appName --resource-group $resourceGroup --plan $appServicePlan
+
+# Create a new Application Insights resource in the resource group
+az monitor app-insights component create --app $appInsightsName --location "$location" --resource-group $resourceGroup
+
+# Enable Application Insights for the web app
+az webapp config appsettings set --name $appName --resource-group $resourceGroup --settings APPINSIGHTS_INSTRUMENTATIONKEY="$(az monitor app-insights component show --app $appInsightsName --resource-group $resourceGroup --query instrumentationKey --output tsv)"
+```
+
+In the last command, we are using the Azure CLI to get the Instrumentation Key of the newly created Application Insights resource. The `--query` parameter allows us to specify the data to extract, and `--output tsv` is used to format the output as Tab-separated values, which gives us a clean output to use in setting the `APPINSIGHTS_INSTRUMENTATIONKEY` setting.

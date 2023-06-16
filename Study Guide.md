@@ -9,8 +9,19 @@
 - [Automatic scaling in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/manage-automatic-scaling?tabs=azure-cli#set-maximum-number-of-web-app-instances)
 - [az appservice plan](https://learn.microsoft.com/en-us/cli/azure/appservice/plan?view=azure-cli-latest)
 
+### Deployment
+
+- [Create an App Service app with deployment from GitHub using Azure CLI](https://learn.microsoft.com/en-us/azure/app-service/scripts/cli-deploy-github)
+- [Create an App Service app and deploy code to a staging environment using Azure CLI](https://learn.microsoft.com/en-us/azure/app-service/scripts/cli-deploy-staging-environment)
+- [Create an ASP.NET Core app in a Docker container from Docker Hub using Azure CLI](https://learn.microsoft.com/en-us/azure/app-service/scripts/cli-linux-docker-aspnetcore)
+- [Tutorial: Create a multi-container (preview) app in Web App for Containers](https://learn.microsoft.com/en-us/azure/app-service/tutorial-multi-container-app)
+- [az webapp](https://learn.microsoft.com/en-us/cli/azure/webapp?view=azure-cli-latest)
+- [az webapp create](https://learn.microsoft.com/en-us/cli/azure/webapp?view=azure-cli-latest#az-webapp-create)
+- [az webapp deployment](https://learn.microsoft.com/en-us/cli/azure/webapp/deployment?view=azure-cli-latest)
+
 ### App Service Diagnostics
 
+- [Application monitoring for Azure App Service overview](https://learn.microsoft.com/en-us/azure/azure-monitor/app/azure-web-apps)
 - [Enable diagnostics logging for apps in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)
 - [Tutorial: Troubleshoot an App Service app with Azure Monitor](https://learn.microsoft.com/en-us/azure/app-service/tutorial-troubleshoot-monitor)
 

@@ -105,6 +105,6 @@ Question: You are managing an Azure Subscription named `SubscriptionA`, where an
 
 Answer: Enable `AppServiceAppLogs` sent to `Log Analytics`.
 
-Explanation: The `Azure Log Analytics` service provides a platform for comprehensive log management and analytics. By enabling `AppServiceAppLogs` under `Diagnostics` settings and setting the destination to send logs to `Log Analytics`, you allow the monitoring team to query and analyze these logs. The other `AppServiceAppLogs` options, while valid Azure services, do not provide the same level of log querying and analysis capabilities as `Log Analytics`.  
+The `Azure Log Analytics` service provides a platform for comprehensive log management and analytics. By enabling `AppServiceAppLogs` under `Diagnostics` settings and setting the destination to send logs to `Log Analytics`, you allow the monitoring team to query and analyze these logs. The other `AppServiceAppLogs` options, while valid Azure services, do not provide the same level of log querying and analysis capabilities as `Log Analytics`.  
 `AppServiceConsoleLogs` is incorrect because it is not the appropriate setting for this requirement.  
 `AllMetrics` settings are collected by agents on to the App Service and report the usage of host resources. These are items like CPU usage, memory usage, and disk I/O used.
