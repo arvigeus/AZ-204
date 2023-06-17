@@ -216,7 +216,7 @@ az webapp create --name $appName --resource-group $resourceGroup --plan $appServ
 
 ---
 
-QUestion: Imagine you are tasked with setting up a WordPress application for your company's blog. The application should run in a Docker multi-container environment, with the configuration provided in the `docker-compose-wordpress.yml` file. The WordPress application should connect to a new MySQL database, both to be hosted on Microsoft Azure. After the initial setup, you need to accommodate changes in your WordPress configuration, which will be done by modifying the Docker compose file and applying the changes. How would you handle this?
+Question: Imagine you are tasked with setting up a WordPress application for your company's blog. The application should run in a Docker multi-container environment, with the configuration provided in the `docker-compose-wordpress.yml` file. The WordPress application should connect to a new MySQL database, both to be hosted on Microsoft Azure. After the initial setup, you need to accommodate changes in your WordPress configuration, which will be done by modifying the Docker compose file and applying the changes. How would you handle this?
 
 ```ps
 
@@ -331,3 +331,125 @@ az webapp config appsettings set --name $appName --resource-group $resourceGroup
 ```
 
 In the last command, we are using the Azure CLI to get the Instrumentation Key of the newly created Application Insights resource. The `--query` parameter allows us to specify the data to extract, and `--output tsv` is used to format the output as Tab-separated values, which gives us a clean output to use in setting the `APPINSIGHTS_INSTRUMENTATIONKEY` setting.
+
+---
+
+Question: As an Azure Cloud Engineer, your company needs you to streamline the deployment process of their web applications. To help achieve this, they've asked you to automate the process using a bash script.
+
+Here's your mission: the script needs to set up an environment in Azure that pulls a Docker container named `companywebapp:latest` from your company's private registry and deploys it to an Azure App Service in the East US region.
+
+The resources that need to be created include a resource group (tagged with `deploy-linux-docker-app-only.sh`), an app service plan, and a web app. Can you write a script that fulfills these requirements?
+
+```ps
+let "randomIdentifier=$RANDOM*$RANDOM"
+resourceGroup="msdocs-app-service-rg-$randomIdentifier"
+appServicePlan="msdocs-app-service-plan-$randomIdentifier"
+webapp="msdocs-web-app-$randomIdentifier"
+registryUrl="https://yourCompanyRegistry.azurecr.io"
+
+# Code here
+```
+
+Answer:
+
+```ps
+let "randomIdentifier=$RANDOM*$RANDOM"
+resourceGroup="msdocs-app-service-rg-$randomIdentifier"
+appServicePlan="msdocs-app-service-plan-$randomIdentifier"
+webapp="msdocs-web-app-$randomIdentifier"
+registryUrl="https://yourCompanyRegistry.azurecr.io"
+
+location="East US"
+tag="deploy-linux-docker-app-only.sh"
+dockerHubContainerPath="simplewebapp:latest"
+
+# Create a resource group.
+az group create --name $resourceGroup --location "$location" --tag $tag
+
+# Create an App Service plan
+az appservice plan create --name $appServicePlan --resource-group $resourceGroup
+
+# Create a web app.
+az webapp create --name $webapp --resource-group $resourceGroup --plan $appServicePlan  --runtime "NODE|14-lts"
+
+# Configure the web app to use the Docker container image from your company's custom registry
+az webapp config container set --name $webapp --resource-group $resourceGroup --docker-custom-image-name $dockerHubContainerPath --docker-registry-server-url $registryUrl
+```
+
+Note: `--docker-registry-server-url` is not needed if the image is on DockerHub
+
+---
+
+Question: How to access client certificate for Asp.Net app?
+
+- [x] `HttpRequest.ClientCertificate` property
+- [ ] Through the HTTPS request header
+- [ ] Through a URL query string
+- [ ] Through the client cookie
+
+Answer: For ASP.NET, the client certificate is available through the `HttpRequest.ClientCertificate` property.  
+For other application stacks (Node.js, PHP, etc.), the client cert is available in your app through a base64 encoded value in the `X-ARR-ClientCert` request header.
+
+---
+
+Question: How to access client certificate for Node.js app?
+
+- [ ] `HttpRequest.ClientCertificate` property
+- [x] Through the HTTPS request header
+- [ ] Through a URL query string
+- [ ] Through the client cookie
+
+Answer: For Node.js, the client cert is available in your app through a base64 encoded value in the `X-ARR-ClientCert` request header.
+For ASP.NET, the client certificate is available through the `HttpRequest.ClientCertificate` property.
+
+---
+
+Question: How to enable client certificates through interface?
+
+Answer: `Configuration > General Settings`. Set `Client certificate mode` to **Require**
+
+---
+
+Question: How to require client certificates for a webapp?
+
+```ps
+# Code here
+```
+
+Answer:
+
+```ps
+az webapp update --set clientCertEnabled=true --name <app-name> --resource-group <group-name>
+```
+
+---
+
+Question: As an Azure Cloud Engineer, you received a complaint from a client who is running tests on your web application from `http://localhost:5000`. They reported an error stating: `Access to XMLHttpRequest at 'http://myWebApp.azurewebsites.net' from origin 'http://localhost:5000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.` Fix that!
+
+The web application resides in a resource group named `myResourceGroup`.
+
+```ps
+# Code here
+```
+
+Answer:
+
+```ps
+az webapp cors add --resource-group myResourceGroup --name myWebApp --allowed-origins 'http://localhost:5000'
+```
+
+---
+
+Question: As an Azure Cloud Engineer, you received an email from a client who's trying to access data in one of your Blob Storage accounts from their local machine at `http://localhost:5000`. They've been encountering an error message that says: `Access to XMLHttpRequest at 'https://myStorageAccount.blob.core.windows.net' from origin 'http://localhost:5000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.`. Fix that!
+
+```ps
+# Code here
+```
+
+Answer:
+
+```ps
+az storage cors add --services blob --methods GET POST --origins 'http://localhost:5000' --allowed-headers '*' --exposed-headers '*' --max-age 200 --account-name myStorageAccount
+```
+
+---

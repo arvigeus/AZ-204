@@ -29,18 +29,20 @@ Question: Which of the following statements are true for application logging?
 - [ ] You can choose App Service file system or Blob storage logging, but not both
 - [x] Only .NET application logs can be written to the blob storage
 - [x] You can use other Azure services for logging and monitoring
-- [x] App Service file system will turn itself off in 12 hours
+- [x] App Service file system (Filesystem) will turn itself off in 12 hours
 - [ ] Blob storage logging will turn itself off in 12 hours
 - [x] Blob storage is for long-term logging
 - [ ] App Service file system logging is more detailed than Blob storage logging
 - [x] Logs can be reatained for specified amount of days
 - [x] For logs stored in the App Service file system, you can download the ZIP file in the browser
+- [ ] Filesystem and storage Blob storage are supported for both Windows and Linux apps.
 
 Answer:
 
 - App Service file system logging is temporary logging, Blob storage logging is for long term
 - Blob storage is only applicable for Web server and Application logging
 - Blob storage logging is more detailed than App Service file system
+- Filesystem storage is the only available option for Linux. Windows supports both filesystem and blob storage
 - ZIP file of logs is stored at:
   - For Linux/custom containers: `https://<app-name>.scm.azurewebsites.net/api/logs/docker/zip`
   - For Windows apps: `https://<app-name>.scm.azurewebsites.net/api/dump`
