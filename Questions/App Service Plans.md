@@ -36,7 +36,6 @@ Question: Create an App Service web app `MyAppService` and its prerequisites. Th
 
 ```ps
 # Code here
-
 ```
 
 Answer: `Standard`, `Premium`, `PremiumV2`, and `PremiumV3` all support automatic scaling, but `Standard` is most cost effective in this scenario.
@@ -55,7 +54,6 @@ Question: Create an App Service web app `MyAppService` and its prerequisites. Th
 
 ```ps
 # Code here
-
 ```
 
 Answer: All plans support manual scaling, but `Basic` is most cost effective in this scenario.
@@ -372,7 +370,6 @@ Question: What App Service plan the following command will create:
 
 ```powershell
 az appservice plan create --name $planName --resource-group $resourceGroupName --location $location
-
 ```
 
 - [ ] Free

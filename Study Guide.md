@@ -63,6 +63,7 @@
 - [Azure Container Registry service tiers](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-skus)
 - [Tutorial: Build and deploy container images in the cloud with Azure Container Registry Tasks](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-tutorial-quick-task)
 - [Import container images to a container registry](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-import-images?tabs=azure-cli)
+- [Push your first image to your Azure container registry using the Docker CLI](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-get-started-docker-cli?tabs=azure-cli)
 
 ### Azure Container Apps
 
@@ -71,6 +72,10 @@
 - [Disaster recovery guidance for Azure Container Apps](https://learn.microsoft.com/en-us/azure/container-apps/disaster-recovery?tabs=azure-cli)
 - [What are Azure regions and availability zones?](https://learn.microsoft.com/en-us/azure/reliability/availability-zones-overview)
 - [Managed identities in Azure Container Apps](https://learn.microsoft.com/en-us/azure/container-apps/managed-identity?tabs=portal%2Cdotnet)
+
+### Azure Container Instances
+
+- [Container groups in Azure Container Instances](https://learn.microsoft.com/en-us/azure/container-instances/container-instances-container-groups)
 
 ## Docker
 

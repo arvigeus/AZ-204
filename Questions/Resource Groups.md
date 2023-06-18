@@ -1,6 +1,6 @@
 # Resource Groups
 
-Question: You are managing a resource group named `MyResourceGroup` in Azure. You need to add `environment:production` tag this resource group. After adding the tag, you need to apply a read-only lock to all resource groups with tag. Write the Azure CLI commands that would be needed to accomplish this.
+Question: You are managing a resource group named `MyResourceGroup` in Azure. You need to add `environment:production` tag this resource group. After adding the tag, you need to apply a read-only lock to all resource groups with this tag. Write the Azure CLI commands that would be needed to accomplish this.
 
 ```ps
 # Add tag to resource group
@@ -20,7 +20,6 @@ for rg in $resource_groups
 do
   az lock create --lock-type ReadOnly --name LockForProd --resource-group $rg
 done
-
 ```
 
 ---

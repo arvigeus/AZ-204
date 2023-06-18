@@ -14,7 +14,6 @@ Question: You are assigned to create a function app in Azure which has to automa
 
 ```ps
 # Code here
-
 ```
 
 Answer:
@@ -42,7 +41,6 @@ Question: Your team is working on an application that requires data to be proces
 
 ```ps
 # Code here
-
 ```
 
 Answer: `"data to be processed immediately"` requires pre-warmed instances, supported in `Premium` plan.
@@ -74,7 +72,6 @@ Question: Suppose you are asked to create a function app in Azure where you want
 
 ```ps
 # Code here
-
 ```
 
 Answer: Dedicated plan with `"Always on"` set.

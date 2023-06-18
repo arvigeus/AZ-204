@@ -26,7 +26,6 @@ Question: Define a Dockerfile where build and run in different containers (multi
 
 ```Dockerfile
 FROM mcr.microsoft.com/dotnet/core # Fill in details
-
 ```
 
 Answer:
@@ -57,7 +56,6 @@ Question: Can you compose a Dockerfile for a .NET Core 3.1 web application, name
 
 ```Dockerfile
 FROM mcr.microsoft.com/dotnet/core # Fill in details
-
 ```
 
 Answer: Note: Because we are exposing our app, `FROM mcr.microsoft.com/dotnet/core/aspnet:3.1` is in the first step, not the last
@@ -84,5 +82,36 @@ WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "WebApplication1.dll"]
 ```
+
+---
+
+Question: You're migrating a .NET Core application named `InventoryManager` to run in containers. A Dockerfile has been created for this purpose. Now, you need to build, tag, and publish the `InventoryManager` container image to an Azure container registry named `ProductionRegistry`. Your version tag for this operation is `v1.0`. Considering that you need to authenticate with Azure and with `ProductionRegistry`, what sequence of actions (commands) should you undertake?
+
+```ps
+# Code here
+```
+
+Answer:
+
+```ps
+# Log in to Azure
+az login
+
+# Authenticate with the Azure Container Registry 'ProductionRegistry'
+az acr login --name ProductionRegistry
+
+# Build the image locally
+docker build -t inventorymanager .
+
+# Tag the local image with the version and the ACR Login Server
+docker tag inventorymanager:latest ProductionRegistry.azurecr.io/inventorymanager:v1.0
+
+# Push the image to 'ProductionRegistry' on Azure
+docker push ProductionRegistry.azurecr.io/inventorymanager:v1.0
+```
+
+`inventorymanager:latest` is the image name followed by a tag. The tag part is optional, and if you don't specify it, Docker will automatically use the tag "latest". You can build and tag in one step by running `docker build -t ProductionRegistry.azurecr.io/app1:1.0 .`
+
+To push a container image to an Azure container registry, you need to tag the image following the convention `<registry-name>.azurecr.io/<image-name>`
 
 ---

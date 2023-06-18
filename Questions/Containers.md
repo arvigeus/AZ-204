@@ -50,7 +50,6 @@ You need to ensure that the application is properly isolated and manageable with
 
 ```ps
 # Code here
-
 ```
 
 Answer: Because the application needs to be isolated, you need to create a new resource group.
