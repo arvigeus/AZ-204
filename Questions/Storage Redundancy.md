@@ -178,7 +178,7 @@ Answer: With GRS-RA, data is replicated to a secondary region and users have rea
 
 ---
 
-Question: Facebook, our daily scroll-fest, is powered by Azure's Zone-Redundant Storage (ZRS). However, in an act of divine intervention, the Almighty, having grown disgruntled at humanity's fixation with endless scrolling, decides to express His displeasure. A bolt from the blue strikes their data center in San Francisco! In this divinely dramatic situation, what could be the fate of Facebook's legions of users, thumbing their way to oblivion? Will they continue to share, like, and comment, or are they due for a surprise digital detox?
+Question: Facebook, our daily scroll-fest, is powered by Azure's Zone-Redundant Storage (ZRS). However, in an act of divine intervention, the Almighty, having grown disgruntled at humanity's fixation with endless scrolling, decides to express His displeasure. A bolt from the blue strikes and burns down their data center in San Francisco! In this divinely dramatic situation, what could be the fate of Facebook's legions of users, thumbing their way to oblivion? Will they continue to share, like, and comment, or are they due for a surprise digital detox?
 
 - [ ] A forced hiatus on users' social media activities.
 - [x] Life on Facebook continues as if the Almighty's intervention was a mere blip. Users will scroll on, undeterred.
