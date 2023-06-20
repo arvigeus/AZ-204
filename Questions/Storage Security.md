@@ -124,7 +124,7 @@ Azure CDN is used for content distribution and can provide encryption in transit
 
 ---
 
-Question: Your company uses Azure Storage and wants to serve data from a custom domain. hich service should you use for this requirement?
+Question: Your company uses Azure Storage and wants to serve data from a custom domain. Which service should you use for this requirement?
 
 - [ ] Azure Storage Account Geo-redundancy
 - [x] Azure CDN

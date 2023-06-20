@@ -161,7 +161,7 @@ Answer: GZRS-RA would best serve Gamma Corp's needs as it not only replicates da
 
 ---
 
-ViralTrendz Inc. operates a popular platform for sharing short videos (think TikTok on a dose of creative steroids) and stores users' videos in Azure with Geo-Redundant Storage with Read Access (GRS-RA). Suddenly, day-to-day operation are disturbed by a full-blown zombie outbreak in the region of their primary storage. What will happen to users who rush to the app to save their beloved dance-offs and lip-sync masterpieces in this scenario?
+ViralTrendz Inc. operates a popular platform for sharing short videos (think TikTok on a dose of creative steroids) and stores users' videos in Azure with Geo-Redundant Storage with Read Access (GRS-RA). Suddenly, day-to-day operations are disturbed by a full-blown zombie outbreak in the region of their primary storage. What will happen to users who rush to the app to save their beloved dance-offs and lip-sync masterpieces in this scenario?
 
 - [ ] Users will not be able to access their videos until the zombie outbreak is resolved.
 - [ ] Users will be able to access their videos as usual because the data has been automatically failed over to the secondary region.
@@ -175,3 +175,21 @@ Answer: With GRS-RA, data is replicated to a secondary region and users have rea
 "Users will be able to access their videos as usual because the data has been automatically failed over to the secondary region." is incorrect because automatic failover does not occur with GRS-RA; a manual failover is required.  
 "Users will not be able to access their videos because the secondary region only allows read access during normal operations." is incorrect because while the secondary region does provide read access during normal operations, it also serves as the failover region where both read and write operations can be performed after a manual failover.  
 "Choosing GRS-RA was a mistake" is incorrect because other servers in the same zone might get compromised as well.
+
+---
+
+Question: Facebook, our daily scroll-fest, is powered by Azure's Zone-Redundant Storage (ZRS). However, in an act of divine intervention, the Almighty, having grown disgruntled at humanity's fixation with endless scrolling, decides to express His displeasure. A bolt from the blue strikes their data center in San Francisco! In this divinely dramatic situation, what could be the fate of Facebook's legions of users, thumbing their way to oblivion? Will they continue to share, like, and comment, or are they due for a surprise digital detox?
+
+- [ ] A forced hiatus on users' social media activities.
+- [x] Life on Facebook continues as if the Almighty's intervention was a mere blip. Users will scroll on, undeterred.
+- [ ] Users will find themselves digitally marooned, as the remaining zones, while well-intentioned, buckle under the data weight.
+- [ ] A brief moment of digital silence until Facebook Inc. orchestrates a failover to the unaffected zones.
+- [ ] It turns out, the real misstep might have been Facebook's misguided choice of ZRS for this scenario.
+
+Answer: ZRS ensures data is spread across several zones in a region. If one zone goes offline, the others carry on. So, our Facebook loyalists will scroll on, blissfully oblivious to the celestial drama. The other options paint more drastic scenarios than ZRS - a robust choice - would allow.  
+"A forced hiatus on their social media activities." is not quite accurate because even with one data center under the weather (literally), the remaining zones will keep the network alive.  
+"The remaining zones will buckle under the data weight" doesn't take into account the resilience of ZRS - the unaffected zones are fully equipped to manage the load.  
+"A brief moment of digital silence until Facebook Inc. orchestrates a failover to the unaffected zones." isn't the case here, as ZRS doesn't require a manual failover.  
+"Facebook's misguided choice of ZRS". is incorrect, because ZRS can protect against such occurrences.
+
+---
