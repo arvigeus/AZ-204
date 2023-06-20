@@ -161,7 +161,7 @@ Answer: GZRS-RA would best serve Gamma Corp's needs as it not only replicates da
 
 ---
 
-ViralTrendz Inc. operates a popular platform for sharing short videos (think TikTok on a dose of creative steroids) and stores users' videos in Azure with Geo-Redundant Storage with Read Access (GRS-RA). Suddenly, day-to-day operations are disturbed by a full-blown zombie outbreak in the region of their primary storage. What will happen to users who rush to the app to save their beloved dance-offs and lip-sync masterpieces in this scenario?
+Question: ViralTrendz Inc. operates a popular platform for sharing short videos (think TikTok on a dose of creative steroids) and stores users' videos in Azure with Geo-Redundant Storage with Read Access (GRS-RA). Suddenly, day-to-day operations are disturbed by a full-blown zombie outbreak in the region of their primary storage. What will happen to users who rush to the app to save their beloved dance-offs and lip-sync masterpieces in this scenario?
 
 - [ ] Users will not be able to access their videos until the zombie outbreak is resolved.
 - [ ] Users will be able to access their videos as usual because the data has been automatically failed over to the secondary region.
