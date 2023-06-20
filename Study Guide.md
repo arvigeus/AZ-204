@@ -30,6 +30,7 @@
 
 - [Configure TLS mutual authentication for Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/app-service-web-configure-tls-mutual-auth?tabs=azurecli)
 - [Tutorial: Host a RESTful API with CORS in Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-rest-api)
+- [az webapp cors](https://learn.microsoft.com/en-us/cli/azure/webapp/cors?view=azure-cli-latest)
 
 ## Azure Functions
 
@@ -107,3 +108,7 @@
 - [Flapping in Autoscale](https://learn.microsoft.com/en-us/azure/azure-monitor/autoscale/autoscale-flapping)
 - [Troubleshoot Azure Monitor autoscale](https://learn.microsoft.com/en-us/azure/azure-monitor/autoscale/autoscale-troubleshoot)
 - [Autoscale a web app by using custom metrics](https://learn.microsoft.com/en-us/azure/azure-monitor/autoscale/autoscale-custom-metric)
+
+## Azure Storage
+
+- [Azure Storage redundancy](https://learn.microsoft.com/en-us/azure/storage/common/storage-redundancy)

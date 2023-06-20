@@ -2,9 +2,8 @@
 
 Question: Suppose you are an Azure Architect and you are transferring patient medical data from one hospital to another using Azure services. What method(s) should you use to secure the data?
 
-- [ ] Encryption-at-rest
-- [ ] Encryption-in-transit
-- [x] Both encryption-at-rest and encryption-in-transit
+- [x] Encryption-at-rest
+- [x] Encryption-in-transit
 - [ ] No encryption is necessary
 
 Answer: Both encryption-at-rest and encryption-in-transit. When dealing with sensitive data, especially healthcare data, it's necessary to ensure maximum security both while the data is in storage and while it's being transferred. Therefore, you would use encryption-at-rest to secure the data when it's stored and encryption-in-transit to secure it while it's moving.
