@@ -167,7 +167,7 @@ ViralTrendz Inc. operates a popular platform for sharing short videos (think Tik
 - [ ] Users will be able to access their videos as usual because the data has been automatically failed over to the secondary region.
 - [ ] Users will not be able to access their videos because the secondary region only allows read access during normal operations.
 - [x] Users will experience a short period of downtime until a manual failover is performed by ViralTrendz Inc.
-- [ ] Choosing GRS-RA for this case was a mistake and now the CEO will have to face angry users as soon as society goes back to normal (if he survives)
+- [ ] The biggest disaster is ViralTrendz Inc. choosing GRS-RA for this scenario, and now they will have to face angry mob of users as soon as society goes back to normal (if people working there survive)
 
 Answer: With GRS-RA, data is replicated to a secondary region and users have read access to the replicated data in the secondary region during normal operations. However, in the event of an outage at the primary region, a manual failover to the secondary region needs to be performed by the company. Until this failover is performed, users might experience a short period of downtime.
 
