@@ -193,3 +193,58 @@ Answer: ZRS ensures data is spread across several zones in a region. If one zone
 "Facebook's misguided choice of ZRS". is incorrect, because ZRS can protect against such occurrences.
 
 ---
+
+Question: A company is using Azure Storage services for their data. They are currently using GRS for their data storage and replication. The company is planning a strategy to enhance disaster recovery capabilities and is considering moving to GZRS. What would be the main advantage for the company to switch from GRS to GZRS?
+
+- [ ] The data would be replicated asynchronously to the secondary region after a write operation is committed.
+- [ ] The data would be copied synchronously three times within a single physical location in the primary region.
+- [x] The data would be copied across three Azure availability zones in the primary region, improving disaster resilience.
+- [ ] The durability of the storage resources would increase to at least 99.99999999999999% (16 9's) over a given year.
+
+Answer: The data would be copied across three Azure availability zones in the primary region, improving disaster resilience.
+Explanation: Both GRS and GZRS provide high durability, and both perform synchronous and asynchronous replication. However, GZRS improves resilience by copying data across three Azure availability zones in the primary region, which is beneficial for disaster recovery.  
+Both GRS and GZRS replicate data asynchronously to a secondary region after a write operation, so this does not provide a unique advantage for GZRS.
+Both GRS and GZRS copy data synchronously three times within a single physical location in the primary region, so this characteristic doesn't differentiate GZRS as a better choice for enhancing disaster resilience.
+Both GRS and GZRS provide high durability of 99.99999999999999% (16 9's) over a given year. Therefore, switching to GZRS wouldn't increase this durability.
+
+---
+
+Question: Your organization's application uses Azure GZRS storage account. You have observed that read and write operations can still continue even if an availability zone becomes unavailable or unrecoverable. How does GZRS achieve this level of data availability during an outage?
+
+- [ ] By replicating the data synchronously three times within a single physical location in the primary region.
+- [ ] By replicating the data asynchronously to a single physical location in a secondary region.
+- [ ] By committing a write operation to the primary location before replicating it using LRS.
+- [x] By copying the data across three Azure availability zones in the primary region.
+
+Answer: GZRS improves the availability by storing copies of data across three Azure availability zones. So, even if one zone becomes unavailable, the data is still accessible from the other zones.  
+While GZRS does replicate the data synchronously three times within a single physical location in the primary region, this characteristic doesn't directly contribute to the continued operation during an availability zone outage.  
+Replicating the data asynchronously to a secondary region is more about ensuring geographical redundancy and doesn't provide immediate availability during an outage in the primary region.  
+Committing a write operation to the primary location before replicating it using LRS is part of both GRS and GZRS data flow, and doesn't specifically contribute to data availability during an availability zone outage.
+
+---
+
+Question: Which of the following statements are true about Azure Storage redundancy options: LRS, ZRS, GRS, GRS-RA, GZRS, GZRS-RA? Select all that apply.
+
+- [x] ZRS (Zone-redundant storage) copies data synchronously across multiple data centers within a single region.
+- [x] GRS (Geo-redundant storage) copies your data asynchronously to a single physical location in a secondary region.
+- [x] GRS-RA (Geo-redundant storage with read access) allows read access to your data from the secondary region.
+- [x] GZRS (Geo-zone-redundant storage) copies data asynchronously to a secondary region and synchronously across three Azure availability zones in the primary region.
+- [ ] GZRS does not replicate data across availability zones in the primary region, only to the secondary.
+- [ ] GRS-RA only allows read and write operations from the secondary region.
+- [x] All replication options, including LRS, ZRS, GRS, GRS-RA, GZRS, GZRS-RA, offer the same level of durability over a given year.
+- [ ] Both ZRS and GZRS replicate data synchronously within the primary region, but ZRS only replicates across data centers within a region, while GZRS replicates only to availability zones.
+- [ ] All redundancy options replicate data within the primary region, but LRS and ZRS replicates it synchronously, while GRS and GZRS only use asynchronous replication.
+- [ ] Geo-zone-redundant storage (GZRS) copies your data asynchronously across three Azure availability zones in the secondary region.
+- [ ] Both ZRS and GZRS copy your data asynchronously across three Azure availability zones in the primary region.
+
+ZRS replicates your data synchronously across three Azure availability zones, which can be interpreted as multiple data centers within a single region.  
+GRS first replicates your data within the primary region (LRS replication), and then replicates it asynchronously to a single physical location in a secondary region.  
+GRS-RA is the same as GRS but also provides read access to the data in the secondary region. This can be useful if the primary region is down and you need to read the data.  
+GZRS is like GRS but with the additional benefit of replicating data across three Azure availability zones in the primary region. The replication across zones is synchronous, and the replication to the secondary region is asynchronous.  
+GZRS does replicate data synchronously across availability zones in the primary region, increasing the resilience and availability of data within that region.  
+GRS-RA allows read operations from the secondary region, not write operations. This is beneficial in case the primary region becomes unavailable and data needs to be accessed.  
+All the replication options mentioned provide at least 99.99999999999999% (16 9's) durability over a given year.All the replication options mentioned provide at least 99.99999999999999% (16 9's) durability over a given year.  
+Both ZRS and GZRS replicate data synchronously within the primary region across multiple data centers, organized as availability zones. The distinction is that GZRS additionally replicates data asynchronously to a secondary geographic region for added protection against regional-level disasters, which ZRS does not do.  
+LRS (Locally Redundant Storage) and ZRS (Zone-Redundant Storage) do indeed replicate data synchronously within the primary region. Similarly, GRS (Geo-Redundant Storage) and GZRS (Geo-Zone-Redundant Storage) also copy data synchronously within the primary region using the principles of LRS and ZRS respectively.  
+Geo-zone-redundant storage (GZRS) copies your data asynchronously to a single physical location in the secondary region. Within the secondary region, your data is copied synchronously three times using LRS.  
+All data is copied synchronously in the primary region.
