@@ -1,128 +1,100 @@
 # Storage Redundancy
 
-Question: Company Alpha operates in a region with stringent data governance laws that restrict the replication of data outside the country borders. Their core application requires a large volume of data storage but this data can be regenerated easily if any data loss occurs. Recently, they have decided to migrate their application to the Azure cloud and are considering their options for storage redundancy.
+Question: Your company operates in a region with stringent data governance laws that restrict the replication of data outside the country borders. Their core application requires a large volume of data storage but this data can be regenerated easily if any data loss occurs. Recently, they have decided to migrate their application to the Azure cloud and are considering their options for storage redundancy, considering costs.
 
-1. What type of storage redundancy should Company Alpha consider for their application? Why?
+1. What type of storage redundancy should your company consider for their application? Why?
 1. In their context, what could be a potential issue if they choose geo-redundant storage (GRS) over the recommended storage type?
 1. Considering their data governance requirements, how would the concept of paired regions apply or not apply in their scenario?
 
 Answer:
 
-1. Company Alpha should consider using Locally Redundant Storage (LRS). LRS would be suitable as it allows data replication within the same region which meets the company's data governance requirements. Also, since the data can be regenerated easily in the case of data loss, LRS would be a cost-effective choice.
+1. Your company should consider using Locally Redundant Storage (LRS). LRS would be suitable as it allows data replication within the same region which meets the company's data governance requirements. Also, since the data can be regenerated easily in the case of data loss, LRS would be a cost-effective choice.
 1. If they choose Geo-Redundant Storage (GRS), they might violate data governance laws because GRS replicates data to a secondary, geographically distant region, which might be in a different country.
 1. Paired regions don't apply in this scenario because the data can't be replicated outside the country or region due to data governance requirements.
 
 ---
 
-Question: Beta Corp's infrastructure on Azure uses unmanaged disks for their applications. They initially chose Geo-Redundant Storage (GRS) for its perceived benefits of increased protection. However, they are starting to experience consistency issues and are considering a switch to a different redundancy option.
+Question: Your company's infrastructure on Azure uses unmanaged disks for their applications. They initially chose Geo-Redundant Storage (GRS) for its perceived benefits of increased protection. However, they are starting to experience consistency issues and are considering a switch to a different redundancy option.
 
-1. What could be causing the consistency issues Beta Corp is experiencing with their current storage setup?
-1. What storage redundancy option should Beta Corp consider switching to for their unmanaged disks, and why?
-1. What are the potential trade-offs Beta Corp might face with this new redundancy option compared to GRS?
+1. What could be causing the consistency issues your company is experiencing with their current storage setup?
+1. What storage redundancy option should your company consider switching to for their unmanaged disks, and why?
+1. What are the potential trade-offs your company might face with this new redundancy option compared to GRS?
 
 Answer:
 
-1. The consistency issues Beta Corp is experiencing could be due to the use of GRS with unmanaged disks. This setup is not recommended as it may lead to potential issues with consistency due to the asynchronous nature of GRS.
-1. Beta Corp should consider switching to Locally Redundant Storage (LRS) for their unmanaged disks. LRS is recommended because it avoids the potential consistency issues seen with GRS when used with unmanaged disks.
-1. The trade-off with LRS is that data is not replicated in a secondary, geographically distant region as it is with GRS. Therefore, in the event of a major disaster that affects the entire primary region, Beta Corp might lose their data.
+1. The consistency issues your company is experiencing could be due to the use of GRS with unmanaged disks. This setup is not recommended as it may lead to potential issues with consistency due to the asynchronous nature of GRS.
+1. Your company should consider switching to Locally Redundant Storage (LRS) for their unmanaged disks. LRS is recommended because it avoids the potential consistency issues seen with GRS when used with unmanaged disks.
+1. The trade-off with LRS is that data is not replicated in a secondary, geographically distant region as it is with GRS. Therefore, in the event of a major disaster that affects the entire primary region, your company might lose their data.
 
 ---
 
-Question: Gamma Inc has an application that generates a significant amount of log data. This log data can be reproduced easily and is not subject to stringent data governance laws. However, Gamma Inc wants to ensure that the data loss possibility is minimized while keeping costs controlled.
+Question: Your company has an application that generates a significant amount of log data. This log data can be reproduced easily and is not subject to stringent data governance laws. However, your company wants to ensure that the data loss possibility is minimized while keeping costs controlled.
 
-1. What Azure storage redundancy option would you recommend to Gamma Inc for storing their log data and why?
+1. What Azure storage redundancy option would you recommend to your company for storing their log data and why?
 1. How would the suggested redundancy type handle data loss scenarios?
-1. If Gamma Inc decided to go for Geo-Redundant Storage instead, what potential issues might they encounter?
+1. If your company decided to go for Geo-Redundant Storage instead, what potential issues might they encounter?
 
 Answer:
 
-1. For Gamma Inc's scenario, Locally Redundant Storage (LRS) would be recommended. LRS would ensure three copies of their data exist in the same data center, providing durability and redundancy. Since the log data can be easily reproduced, this option would be cost-effective as well.
+1. For your company's scenario, Locally Redundant Storage (LRS) would be recommended. LRS would ensure three copies of their data exist in the same data center, providing durability and redundancy. Since the log data can be easily reproduced, this option would be cost-effective as well.
 1. In a data loss scenario, LRS would provide resilience by having three copies of the data. If one copy fails, the data can still be accessed from the other copies.
-1. If Gamma Inc opted for Geo-Redundant Storage, it would increase their costs. In addition, they may encounter potential consistency issues since GRS replicates data asynchronously to a secondary region, and in the event of a failover, the data in the secondary region might be slightly out of date compared to the primary region.
+1. If your company opted for Geo-Redundant Storage, it would increase their costs. In addition, they may encounter potential consistency issues since GRS replicates data asynchronously to a secondary region, and in the event of a failover, the data in the secondary region might be slightly out of date compared to the primary region.
 
 ---
 
-Question: Delta Tech, a tech giant, operates a high-traffic application hosted on Azure. Their service level agreement with their clients requires a high level of data availability and redundancy. Their data is not restricted by any data governance law, and data loss is something that cannot be afforded.
+Question: Your company operates a high-traffic application hosted on Azure. Their service level agreement with their clients requires a high level of data availability and redundancy. Their data is not restricted by any data governance law, and data loss is something that cannot be afforded.
 
-1. What type of Azure storage redundancy should Delta Tech consider to meet their high data availability and redundancy requirements?
+1. What type of Azure storage redundancy should your company consider to meet their high data availability and redundancy requirements?
 1. How does the chosen storage redundancy option ensure high data availability and protect against data loss?
-1. What potential issues might Delta Tech encounter if they opted for Locally Redundant Storage instead of the recommended option?
+1. What potential issues might your company encounter if they opted for Locally Redundant Storage instead of the recommended option?
 
 Answer:
 
-1. Delta Tech should consider using Zone-Redundant Storage (ZRS). ZRS would be a great fit because it synchronously replicates data across different availability zones within the same region, providing high availability and durability.
+1. Your company should consider using Zone-Redundant Storage (ZRS). ZRS would be a great fit because it synchronously replicates data across different availability zones within the same region, providing high availability and durability.
 1. ZRS ensures high data availability by maintaining three copies of the data across different availability zones in the same region. In the event of a zone failure, ZRS can still serve data from the remaining zones, minimizing the risk of data loss.
-1. If Delta Tech opted for Locally Redundant Storage (LRS), they would have a higher risk of data loss and downtime. LRS replicates data within a single data center, so if that data center were to go offline due to a catastrophic event, all data could be lost.
+1. If your company opted for Locally Redundant Storage (LRS), they would have a higher risk of data loss and downtime. LRS replicates data within a single data center, so if that data center were to go offline due to a catastrophic event, all data could be lost.
 
 ---
 
-Question: Epsilon Corp is a healthcare company that has stringent data regulations, requiring them to maintain patient data within the same region. They run a critical application on Azure, which can't afford any downtime or data loss. The application generates patient records that can't be recreated.
+Question: You work in a healthcare company that has stringent data regulations, requiring them to maintain patient data within the same region. They run a critical application on Azure, which can't afford any downtime or data loss. The application generates patient records that can't be recreated.
 
-1. What type of Azure storage redundancy should Epsilon Corp consider to meet their high data availability and data governance requirements?
+1. What type of Azure storage redundancy should your company consider to meet their high data availability and data governance requirements?
 1. How does the recommended storage redundancy option work in terms of ensuring data resilience and adherence to data governance rules?
-1. What might be the disadvantages for Epsilon Corp if they decided to choose Geo-Redundant Storage instead?
+1. What might be the disadvantages for your company if they decided to choose Geo-Redundant Storage instead?
 
 Answer:
 
-1. Epsilon Corp should consider Zone-Redundant Storage (ZRS). This option would ensure high data availability and also comply with their data governance requirements, as ZRS keeps all data within the same region.
-1. ZRS replicates data across different availability zones within the same region. This means if one zone experiences issues, the data remains accessible from the other zones. As ZRS doesn't replicate data to a different region, it satisfies Epsilon Corp's data governance rules.
-1. If Epsilon Corp chose Geo-Redundant Storage (GRS), they could potentially violate their data governance requirements. GRS replicates data to a secondary region, which might not be permissible for Epsilon's patient data. Also, GRS performs asynchronous replication, which could lead to potential data loss if a failure occurs before data is replicated.
+1. Your company should consider Zone-Redundant Storage (ZRS). This option would ensure high data availability and also comply with their data governance requirements, as ZRS keeps all data within the same region.
+1. ZRS replicates data across different availability zones within the same region. This means if one zone experiences issues, the data remains accessible from the other zones. As ZRS doesn't replicate data to a different region, it satisfies your company's data governance rules.
+1. If your company chose Geo-Redundant Storage (GRS), they could potentially violate their data governance requirements. GRS replicates data to a secondary region, which might not be permissible for Epsilon's patient data. Also, GRS performs asynchronous replication, which could lead to potential data loss if a failure occurs before data is replicated.
 
 ---
 
-Question: Zeta Inc operates an application that generates non-critical, easily reproducible data. They operate within a region with multiple Availability Zones. They wish to maintain a balance between data redundancy and cost-effectiveness.
+Question: Your company operates an application that generates non-critical, easily reproducible data. They operate within a region with multiple Availability Zones. They wish to maintain a balance between data redundancy and cost-effectiveness.
 
-1. What type of Azure storage redundancy should Zeta Inc consider for their requirements?
+1. What type of Azure storage redundancy should your company consider for their requirements?
 1. How does the recommended storage redundancy option strike a balance between data redundancy and cost?
-1. If Zeta Inc decided to choose Zone-Redundant Storage, what could be the possible implications in terms of cost and data resilience?
+1. If your company decided to choose Zone-Redundant Storage, what could be the possible implications in terms of cost and data resilience?
 
 Answer:
 
-1. Zeta Inc should consider using Locally Redundant Storage (LRS). Since their data is easily reproducible and non-critical, LRS would provide sufficient data redundancy at a lower cost compared to ZRS.
-1. LRS provides three copies of data within the same data center, providing adequate redundancy for Zeta Inc's needs. As it doesn't replicate data across multiple zones, LRS is more cost-effective than ZRS.
-1. If Zeta Inc chose Zone-Redundant Storage, they would be paying for higher data redundancy that might be unnecessary given their data is non-critical and easily reproducible. This would lead to higher costs without substantial benefits in terms of data resilience.
+1. Your company should consider using Locally Redundant Storage (LRS). Since their data is easily reproducible and non-critical, LRS would provide sufficient data redundancy at a lower cost compared to ZRS.
+1. LRS provides three copies of data within the same data center, providing adequate redundancy for your company's needs. As it doesn't replicate data across multiple zones, LRS is more cost-effective than ZRS.
+1. If your company chose Zone-Redundant Storage, they would be paying for higher data redundancy that might be unnecessary given their data is non-critical and easily reproducible. This would lead to higher costs without substantial benefits in terms of data resilience.
 
 ---
 
-Question: Theta Corp, a global e-commerce giant, runs a large-scale application on Azure that serves users around the world. They store massive amounts of transactional data that can't be easily regenerated and is crucial for their business. Their operations aren't restricted by any specific data governance regulations.
+Question: Your company is a global e-commerce giant, running a large-scale application on Azure that serves users around the world. They store massive amounts of transactional data that can't be easily regenerated and is crucial for their business. Their operations aren't restricted by any specific data governance regulations.
 
-1. What type of Azure storage redundancy should Theta Corp consider for their high data availability and durability requirements?
+1. What type of Azure storage redundancy should your company consider for their high data availability and durability requirements?
 1. How does the recommended storage redundancy option ensure high data availability and resilience to data loss?
-1. What potential drawbacks could there be if Theta Corp chooses Locally Redundant Storage instead?
+1. What potential drawbacks could there be if your company chooses Locally Redundant Storage instead?
 
 Answer:
 
-1. Theta Corp should consider using Geo-Redundant Storage (GRS) because it provides the highest level of data resilience available in Azure. Given the crucial nature of their data, it's essential that they have a high level of redundancy.
+1. Your company should consider using Geo-Redundant Storage (GRS) because it provides the highest level of data resilience available in Azure. Given the crucial nature of their data, it's essential that they have a high level of redundancy.
 1. GRS replicates data to a secondary, geographically distant Azure region, which ensures data availability even in the case of a complete regional outage. In addition, GRS maintains six copies of the data (three in the primary region and three in the secondary region), which provides a high level of data durability and protection against data loss.
-1. If Theta Corp opted for Locally Redundant Storage (LRS), they would risk losing all their data in the event of a catastrophic failure at the data center or a disaster that impacts the entire region.
-
----
-
-Question: Iota Inc operates a mission-critical application on Azure that handles sensitive customer data. Their service level agreement mandates a high level of data durability and availability. However, they also need to comply with data governance regulations that require them to keep their data within their country's borders.
-
-1. What type of Azure storage redundancy should Iota Inc consider to balance their high data availability requirements with data governance rules?
-1. What are the potential implications if Iota Inc decided to use Geo-Redundant Storage for their scenario?
-1. How would a Zone-Redundant Storage (ZRS) option meet Iota Inc's data governance regulations and data availability needs?
-
-Answer:
-
-1. Iota Inc should consider using Zone-Redundant Storage (ZRS). ZRS provides a high level of data resilience by replicating data across different availability zones within the same region, satisfying both their high data availability requirement and data governance rules.
-1. If Iota Inc opted for GRS, they could potentially violate their data governance regulations because GRS replicates data to a paired region, which might be in a different country. This could lead to legal implications and penalties for non-compliance.
-1. ZRS ensures high availability by storing data in multiple physically separate zones within the same region. Thus, it provides data resilience while keeping all the data within the same region, adhering to Iota Inc's data governance regulations.
-
----
-
-Question: Lambda Enterprises runs a variety of applications on Azure. Some of these applications generate critical data, while others generate non-critical, easily reproducible data. They want a storage solution that provides them with flexibility, depending on the criticality of the data, without incurring unnecessary costs.
-
-1. What storage redundancy strategy should Lambda Enterprises consider given their diverse needs?
-1. If Lambda Enterprises decided to use Geo-Redundant Storage for all their data, what could be the potential cost and data governance implications?
-1. How could Lambda Enterprises optimize their use of Azure storage redundancy options to balance cost and data resilience?
-
-Answer:
-
-1. Lambda Enterprises should consider using a combination of different storage redundancies depending on the criticality of the data. For critical data, they should consider using Geo-Redundant Storage (GRS) for maximum resilience. For non-critical, easily reproducible data, Locally Redundant Storage (LRS) would be more cost-effective.
-1. If Lambda Enterprises decided to use GRS for all their data, they would incur higher costs due to the high level of redundancy provided by GRS. Additionally, if they have data governance rules that require certain data to remain within the country or region, GRS could potentially violate these rules as it replicates data to a secondary, possibly international, region.
-1. Lambda Enterprises could optimize their use of Azure storage redundancy options by matching the redundancy option to the data criticality. They could use GRS for critical data that cannot be lost, ZRS for data that needs to stay within the region but still requires high availability, and LRS for non-critical or easily reproducible data. This would balance data resilience and cost.
+1. If your company opted for Locally Redundant Storage (LRS), they would risk losing all their data in the event of a catastrophic failure at the data center or a disaster that impacts the entire region.
 
 ---
 
@@ -197,14 +169,14 @@ Answer: ZRS ensures data is spread across several zones in a region. If one zone
 Question: A company is using Azure Storage services for their data. They are currently using GRS for their data storage and replication. The company is planning a strategy to enhance disaster recovery capabilities and is considering moving to GZRS. What would be the main advantage for the company to switch from GRS to GZRS?
 
 - [ ] The data would be replicated asynchronously to the secondary region after a write operation is committed.
-- [ ] The data would be copied synchronously three times within a single physical location in the primary region.
+- [ ] The data would be copied synchronously three times within the primary region.
 - [x] The data would be copied across three Azure availability zones in the primary region, improving disaster resilience.
 - [ ] The durability of the storage resources would increase to at least 99.99999999999999% (16 9's) over a given year.
 
 Answer: The data would be copied across three Azure availability zones in the primary region, improving disaster resilience.
 Explanation: Both GRS and GZRS provide high durability, and both perform synchronous and asynchronous replication. However, GZRS improves resilience by copying data across three Azure availability zones in the primary region, which is beneficial for disaster recovery.  
 Both GRS and GZRS replicate data asynchronously to a secondary region after a write operation, so this does not provide a unique advantage for GZRS.
-Both GRS and GZRS copy data synchronously three times within a single physical location in the primary region, so this characteristic doesn't differentiate GZRS as a better choice for enhancing disaster resilience.
+Both GRS and GZRS copy data synchronously three times within the primary region, so this characteristic doesn't differentiate GZRS as a better choice for enhancing disaster resilience.
 Both GRS and GZRS provide high durability of 99.99999999999999% (16 9's) over a given year. Therefore, switching to GZRS wouldn't increase this durability.
 
 ---
@@ -217,7 +189,7 @@ Question: Your organization's application uses Azure GZRS storage account. You h
 - [x] By copying the data across three Azure availability zones in the primary region.
 
 Answer: GZRS improves the availability by storing copies of data across three Azure availability zones. So, even if one zone becomes unavailable, the data is still accessible from the other zones.  
-While GZRS does replicate the data synchronously three times within a single physical location in the primary region, this characteristic doesn't directly contribute to the continued operation during an availability zone outage.  
+GZRS does not replicate the data synchronously three times within a single physical location in the primary region.  
 Replicating the data asynchronously to a secondary region is more about ensuring geographical redundancy and doesn't provide immediate availability during an outage in the primary region.  
 Committing a write operation to the primary location before replicating it using LRS is part of both GRS and GZRS data flow, and doesn't specifically contribute to data availability during an availability zone outage.
 
@@ -225,26 +197,102 @@ Committing a write operation to the primary location before replicating it using
 
 Question: Which of the following statements are true about Azure Storage redundancy options: LRS, ZRS, GRS, GRS-RA, GZRS, GZRS-RA? Select all that apply.
 
-- [x] ZRS (Zone-redundant storage) copies data synchronously across multiple data centers within a single region.
-- [x] GRS (Geo-redundant storage) copies your data asynchronously to a single physical location in a secondary region.
-- [x] GRS-RA (Geo-redundant storage with read access) allows read access to your data from the secondary region.
-- [x] GZRS (Geo-zone-redundant storage) copies data asynchronously to a secondary region and synchronously across three Azure availability zones in the primary region.
+- [x] ZRS copies data synchronously across multiple data centers within the primary region.
+- [x] GRS copies your data asynchronously to a single physical location in a secondary region.
+- [x] GRS-RA allows read access to your data from the secondary region.
+- [x] GZRS copies data asynchronously to a secondary region and synchronously across three Azure availability zones in the primary region.
 - [ ] GZRS does not replicate data across availability zones in the primary region, only to the secondary.
-- [ ] GRS-RA only allows read and write operations from the secondary region.
-- [x] All replication options, including LRS, ZRS, GRS, GRS-RA, GZRS, GZRS-RA, offer the same level of durability over a given year.
-- [ ] Both ZRS and GZRS replicate data synchronously within the primary region, but ZRS only replicates across data centers within a region, while GZRS replicates only to availability zones.
+- [ ] GZRS replicates data across availability zones in the primary and the secondary regions.
+- [ ] GRS-RA allows read and write operations from the secondary region.
 - [ ] All redundancy options replicate data within the primary region, but LRS and ZRS replicates it synchronously, while GRS and GZRS only use asynchronous replication.
-- [ ] Geo-zone-redundant storage (GZRS) copies your data asynchronously across three Azure availability zones in the secondary region.
+- [ ] GZRS copies your data asynchronously across three Azure availability zones in the secondary region.
 - [ ] Both ZRS and GZRS copy your data asynchronously across three Azure availability zones in the primary region.
+- [ ] If one of datacenters is temporary offline, ZRS will skip it
+- [x] Both GRS and GZRS use LRS in the secondary region
+- [x] GRS and GZRS are not always up to date with the primary region
+- [ ] During failover, GZRS ensures data is always available
+- [ ] Changing redundancy options may cause data loss
 
-ZRS replicates your data synchronously across three Azure availability zones, which can be interpreted as multiple data centers within a single region.  
-GRS first replicates your data within the primary region (LRS replication), and then replicates it asynchronously to a single physical location in a secondary region.  
-GRS-RA is the same as GRS but also provides read access to the data in the secondary region. This can be useful if the primary region is down and you need to read the data.  
-GZRS is like GRS but with the additional benefit of replicating data across three Azure availability zones in the primary region. The replication across zones is synchronous, and the replication to the secondary region is asynchronous.  
-GZRS does replicate data synchronously across availability zones in the primary region, increasing the resilience and availability of data within that region.  
-GRS-RA allows read operations from the secondary region, not write operations. This is beneficial in case the primary region becomes unavailable and data needs to be accessed.  
-All the replication options mentioned provide at least 99.99999999999999% (16 9's) durability over a given year.All the replication options mentioned provide at least 99.99999999999999% (16 9's) durability over a given year.  
-Both ZRS and GZRS replicate data synchronously within the primary region across multiple data centers, organized as availability zones. The distinction is that GZRS additionally replicates data asynchronously to a secondary geographic region for added protection against regional-level disasters, which ZRS does not do.  
-LRS (Locally Redundant Storage) and ZRS (Zone-Redundant Storage) do indeed replicate data synchronously within the primary region. Similarly, GRS (Geo-Redundant Storage) and GZRS (Geo-Zone-Redundant Storage) also copy data synchronously within the primary region using the principles of LRS and ZRS respectively.  
-Geo-zone-redundant storage (GZRS) copies your data asynchronously to a single physical location in the secondary region. Within the secondary region, your data is copied synchronously three times using LRS.  
-All data is copied synchronously in the primary region.
+Answer:
+
+- **Locally redundant storage (LRS)**: LRS replicates data within a single data center in the primary region. It does not replicate across multiple data centers, so it is incorrect to say that all redundancy options replicate data within the primary region.
+- **Zone-redundant storage (ZRS)**: ZRS copies data synchronously across multiple data centers within the primary region. If one of the data centers is temporarily offline, ZRS will not skip it; instead, it ensures that all writes are committed to the durable storage within the zone before being acknowledged to the client.
+- **Geo-redundant storage (GRS)**: GRS copies your data asynchronously to a secondary region, making it correct to say that GRS is not always up to date with the primary region. However, GRS does not provide read access to your data from the secondary region, so it's incorrect to say GRS-RA allows read and write operations from the secondary region.
+- **Read-access geo-redundant storage (GRS-RA)**: GRS-RA extends GRS by providing read access to the data in the secondary region. It doesn't, however, allow write operations from the secondary region, contrary to the false statement.
+- **Geo-zone-redundant storage (GZRS)**: GZRS combines the features of GRS and ZRS. It replicates data asynchronously to a secondary region (like GRS) and synchronously across three Azure availability zones in the primary region (like ZRS). However, it does not replicate data across availability zones in the secondary region, nor does it guarantee data availability during failover.
+- **Read-access geo-zone-redundant storage (GZRS-RA)**: GZRS-RA is the read-access variant of GZRS. It provides the same functionality as GZRS, with the added benefit of read access from the secondary region.
+
+Finally, both GRS and GZRS use LRS in the secondary region for data storage, and changing redundancy options could potentially lead to increased cost or affect data durability but it doesn't directly cause data loss.
+
+---
+
+Question: You are an engineer at Omega Corp, a company that heavily relies on Azure services. Currently, the company's Azure Storage account `omegaStorageAccount` within the resource group `omegaRG` is set up with Locally Redundant Storage (LRS) for data replication.
+
+Recently, there have been growing concerns about the company's disaster recovery strategy. The business is expanding rapidly, serving customers globally, leading to a requirement for high availability, even in the event of a regional failure.
+
+Recently, there have been several instances where the Omega Corp's global clients were unable to access the services due to regional disruptions. This is unacceptable for the business. Furthermore, your boss expressed a desire to have a kind of "backup" option in case the usual data access method fails. The system has to be persistent, to keep trying even if they encounter hiccups.
+
+As an engineer at Omega Corp, your first task is to update the storage account to meet these new requirements:
+
+```ps
+# Code here
+```
+
+Your second task is to modify the existing code below to make use of these changes:
+
+```cs
+var accountName = "omegaStorageAccount";
+var primaryAccountUri = new Uri($"https://{accountName}.blob.core.windows.net/");
+
+var blobClientOptions = new BlobClientOptions()
+{
+    // Configure the retry policy to handle high bursts of user activity, transient faults, and network-related issues.
+    // Take into consideration the number of retry attempts (5), delay between retries (1s), maximum waiting time (100s),
+    // and the smart use of the secondary location.
+    Retry = { /* Options */ }
+    Retry =
+    {
+        // Options here
+    }
+};
+
+var blobServiceClient = new BlobServiceClient(primaryAccountUri, new DefaultAzureCredential(), blobClientOptions);
+```
+
+Bonus question: Your boss asks you when all of this will be completed, assuming coding will take you no time.
+
+Answer: To meet the new requirements, we need to change the replication option to Read-access geo-zone-redundant storage (GZRS-RA) to provide high availability and read access in case of regional outage. The Azure CLI command for this is:
+
+```ps
+az storage account update --name omegaStorageAccount --resource-group omegaRG --sku Standard_GZRS
+```
+
+Given the boss's clear directive to ensure persistent operation even during periods of high user activity, we need to implement retry logic in our application. We'll set the maximum number of retries to `5` and use the `Exponential` retry policy to gradually increase the delay between retries if they are necessary. We'll also set the `GeoRedundantSecondaryUri` property to automatically switch to the secondary URI if the primary is unavailable:
+
+```cs
+var accountName = "omegaStorageAccount";
+var primaryAccountUri = new Uri($"https://{accountName}.blob.core.windows.net/");
+var secondaryAccountUri = new Uri($"https://{accountName}-secondary.blob.core.windows.net/");
+
+var blobClientOptions = new BlobClientOptions()
+{
+    // Determines the policy for how the client should retry its requests upon encountering transient errors
+    Retry =
+    {
+        MaxRetries = 5,
+        Mode = RetryMode.Exponential,
+        Delay = TimeSpan.FromSeconds(1),
+        MaxDelay = TimeSpan.FromSeconds(60),
+        NetworkTimeout = TimeSpan.FromSeconds(100)
+    }
+    // If the secondary Uri response is 404, it won't be used again, indicating possible propagation delay.
+    // Otherwise, retries alternate between primary and secondary Uri.
+    GeoRedundantSecondaryUri = secondaryAccountUri
+};
+
+var blobServiceClient = new BlobServiceClient(primaryAccountUri, new DefaultAzureCredential(), blobClientOptions);
+```
+
+Bonus answer: It takes up to 72 hours for conversion to complete.
+
+---
