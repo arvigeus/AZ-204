@@ -4,7 +4,121 @@
 
 ### [Azure Storage Account](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-overview)
 
+Azure Storage Account is a unique namespace in Azure for your data objects, including blobs, files, queues, and tables. It's accessible from anywhere in the world over HTTP or HTTPS.
+
+#### Types of Storage Accounts
+
+1. **Standard general-purpose v2**: Recommended for most scenarios using Azure Storage, except for network file system (NFS) in Azure Files. It supports all redundancy options.
+
+1. **Premium block blobs**: For block blobs and append blobs. Recommended for scenarios with high transaction rates or those that use smaller objects or require consistently low storage latency. Supports only LRS and ZRS redundancy options.
+
+1. **Premium file shares**: For file shares only - Server Message Block (SMB) and NFS file shares. Recommended for enterprise or high-performance scale applications. Supports only LRS and ZRS redundancy options.
+
+1. **Premium page blobs**: For page blobs only. LRS redundancy only.
+
+Premium performance storage accounts use solid-state drives (SSDs) for low latency and high throughput.
+
+#### Storage Account Name and Endpoints
+
+Storage account names must be unique within Azure, alphanumeric (lowercase), 3-24 chars.
+
+In one subscription, you can have accounts with both standard or Azure DNS Zone endpoints. This means maximum 250 (500 with quota increase) for Standard + 5000 Azure DNS Zone = 5250-5500 accounts per region.
+
+##### Standard Endpoints
+
+| Storage service               | Endpoint                                           |
+| ----------------------------- | -------------------------------------------------- |
+| Blob Storage                  | `https://<storage-account>.blob.core.windows.net`  |
+| Static website (Blob Storage) | `https://<storage-account>.web.core.windows.net`   |
+| Data Lake Storage Gen2        | `https://<storage-account>.dfs.core.windows.net`   |
+| Azure Files                   | `https://<storage-account>.file.core.windows.net`  |
+| Queue Storage                 | `https://<storage-account>.queue.core.windows.net` |
+| Table Storage                 | `https://<storage-account>.table.core.windows.net` |
+
+Example: `https://<mystorageaccount>.blob.core.windows.net/<mycontainer></<myblob>`
+
+##### Azure DNS Zone Endpoints
+
+Storage accounts dynamically get assigned n Azure DNS zone (`z[00-50]`) when created: `https://<storage-account>.z[00-50].<storage-service>b.core.windows.net`
+
+##### Retrieve Endpoints
+
+`GET https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}?api-version=2022-09-01`
+
+##### [Increase Quota](https://learn.microsoft.com/en-us/azure/quotas/storage-account-quota-requests)
+
+`Azure Portal > Quotas > Storage > <subscription> > <region> > Request increase`
+
+View: `az storage account show-usage --location` or `Azure portal > Quotas > Storage > <subscription> > <region>`
+
+#### Migrate Storage Account
+
+##### Change Storage Account Type
+
+**You can't change a storage account to a different type after it's created.** To move your data to a storage account of a different type, you must create a new account and copy the data to the new account.
+
+##### [Move Storage Account to a Different Resource Group (or Subscription)](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/move-resource-group-and-subscription)
+
+```ps
+$webapp=$(az resource show -g OldRG -n ExampleSite --resource-type "Microsoft.Web/sites" --query id --output tsv)
+$plan=$(az resource show -g OldRG -n ExamplePlan --resource-type "Microsoft.Web/serverfarms" --query id --output tsv)
+az resource move --destination-group newgroup --ids $webapp $plan
+```
+
+Add `--destination-subscription-id $newSubscription` to change subsription
+
+##### [Move Storage Account to a Different Region](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-move?tabs=azure-portal)
+
+```ps
+Get-AzSubscription
+New-AzResourceGroup -Name $resourceGroupName -Location "$location"
+New-AzResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateUri "<name of your local template file>"
+```
+
+##### [Upgrade to a General-Purpose V2 Storage Account](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-upgrade?tabs=azure-portal)
+
+Azure Portal: `storage account > Settings > Configuration > Account kind > Upgrade`
+
+CLI: `az storage account update -g <resource-group> -n <storage-account> --set kind=StorageV2 --access-tier=<Hot/Cool>`
+
+##### [Migrate Classic Storage Account to Azure Resource Manager](https://learn.microsoft.com/en-us/azure/virtual-machines/migration-classic-resource-manager-overview#migration-of-storage-accounts)
+
 TODO
+
+##### Transfer data into a storage account
+
+- Discovery phase (determine all sources that need to be migrated)
+
+- Assessment phase
+
+  | Assessment phase steps                     | Options                                                                                                                                 |
+  | ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
+  | Choose a target storage service            | - Azure Blob Storage (REST API) <br>- Azure Files (NFS/SMB) <br>- Azure NetApp Files (low latency or older NFS/NSB) <br>- ISV solutions |
+  | Choose the right plan                      | Latency sensitive ? Premium : Standard                                                                                                  |
+  | Select a migration method                  | - Online <br>- Offline <br>- Combination of both                                                                                        |
+  | Choose the best migration tool for the job | - Commercial tools (Azure and ISV) <br>- Open source (AzCopy)                                                                           |
+
+- Migration phase: Initial migration, Resync, Switchover
+
+**Storage Account Encryption and Billing**
+
+All data in your storage account is automatically encrypted on the service side. Azure Storage bills based on your storage account usage, with costs calculated according to factors like region, account type, access tier, capacity, redundancy, transactions, and data egress.
+
+**Legacy Storage Account Types**
+
+Legacy storage account types are also supported but aren't recommended by Microsoft. They may be used in certain scenarios.
+
+**Scalability Targets for Standard Storage Accounts**
+
+Azure general-purpose v2 (GPv2), general-purpose v1 (GPv1), and Blob storage accounts have default limits for capacity and ingress and egress rates. You can request higher capacity and ingress limits.
+
+**Key Takeaways for Your Exam**
+
+1. Understand the different types of storage accounts and their use cases.
+2. Be aware of the rules for naming storage accounts and how endpoints are formed.
+3. Understand how Azure encrypts data and how billing for storage accounts works.
+4. Be aware of the legacy storage account types and their potential use cases.
+5. Understand the scalability targets for standard storage accounts and how to request higher limits.
 
 #### Working with Storage Account
 
@@ -13,7 +127,7 @@ TODO
 ```ps
 # az group create --name $resourceGroup --location $location
 az storage account create
-    --name
+    --name # ^[0-9a-z]{3,24}$
     --resource-group # `az configure --defaults $resourceGroup`
     [--location] # `az account list-locations` or `az configure --defaults location=$location`
     [--access-tier {Cool, Hot, Premium}] # Premium
