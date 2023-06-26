@@ -57,6 +57,27 @@ View: `az storage account show-usage --location` or `Azure portal > Quotas > Sto
 
 **You can't change a storage account to a different type after it's created.** To move your data to a storage account of a different type, you must create a new account and copy the data to the new account.
 
+```ps
+# create new storage account with the same settings as the old one
+az storage account create --name $new_account_name --resource-group $resource_group --location $location --sku $new_account_type
+
+# get connection strings for the old and new storage accounts
+old_account_conn_string=$(az storage account show-connection-string --name $old_account_name --resource-group $resource_group --query connectionString --output tsv)
+new_account_conn_string=$(az storage account show-connection-string --name $new_account_name --resource-group $resource_group --query connectionString --output tsv)
+
+# get the list of all blob containers in the old storage account
+old_account_containers=$(az storage container list --connection-string $old_account_conn_string --output tsv --query [].name)
+
+# for each container in the old storage account, create a container with the same name in the new storage account, then copy all blobs to it
+for container in $old_account_containers
+do
+    az storage container create --name $container --connection-string $new_account_conn_string
+
+    az storage blob copy start-batch --source-container $container --destination-container $container --connection-string $old_account_conn_string --destination-connection-string $new_account_conn_string
+done
+
+```
+
 ##### [Move Storage Account to a Different Resource Group (or Subscription)](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/move-resource-group-and-subscription)
 
 ```ps
@@ -99,6 +120,67 @@ TODO
   | Choose the best migration tool for the job | - Commercial tools (Azure and ISV) <br>- Open source (AzCopy)                                                                           |
 
 - Migration phase: Initial migration, Resync, Switchover
+
+#### [Azure Storage Account Encryption](https://learn.microsoft.com/en-us/azure/storage/common/storage-service-encryption)
+
+Data and metadata are encrypted and decrypted transparently for free using 256-bit AES server side encryption (SSE), regardless of plan (Standard, Premium), access tier (hot, cold), deployment model (ARM, classic), redundancy, resource type. For greater security, infrastructure can also be encrypted (optionally, with separate Microsoft-managed keys); [CLI](https://learn.microsoft.com/en-us/azure/storage/common/infrastructure-encryption-enable?tabs=azure-cli): `az storage account create --require-infrastructure-encryption`.
+
+| Key management parameter         | Microsoft-managed keys (default)      | Customer-managed keys                 | Customer-provided keys   |
+| -------------------------------- | ------------------------------------- | ------------------------------------- | ------------------------ |
+| Azure Storage services supported | All                                   | Blob Storage, Azure Files             | Blob Storage             |
+| Key storage                      | Microsoft key store                   | Azure Key Vault or Key Vault HSM      | Customer's own key store |
+| Key scope                        | Account (default), container, or blob | Account (default), container, or blob | N/A                      |
+
+NOTE: Customer-managed keys can be optionally enabled for [Queue and Table storage](https://learn.microsoft.com/en-us/azure/storage/common/account-encryption-key-create?tabs=azure-cli) (`az storage account create --encryption-key-type-for-{queue,table} Account`) at higher cost
+
+By default, a storage account is encrypted with a key that is scoped to the entire storage account. For [blob storage scope only](https://learn.microsoft.com/en-us/azure/storage/blobs/encryption-scope-overview):
+
+- Azure Portal: `storage account > Security + networking > Encryption > Encryption Scopes tab.`
+- [CLI](https://learn.microsoft.com/en-us/azure/storage/blobs/encryption-scope-manage?tabs=cli): `az storage account encryption-scope create --resource-group <resource-group> --account-name <storage-account> --name <scope> --key-source Microsoft.Storage`
+
+##### [Customer-managed Keys for Azure Storage Encryption](https://learn.microsoft.com/en-us/azure/storage/common/customer-managed-keys-overview)
+
+![Diagram showing how customer-managed keys work in Azure Storage ](https://learn.microsoft.com/en-us/azure/storage/common/media/customer-managed-keys-overview/encryption-customer-managed-keys-diagram.png)
+
+An Azure Key Vault admin provides access to encryption keys to a managed identity, which can be user or system controlled. Then, an Azure Storage admin implements encryption using a customer-managed key for the storage account. Azure Storage uses this granted identity to verify access to Azure Key Vault via Azure AD. This customer-managed key from the Key Vault is then used to secure the storage account's encryption key. Whenever read or write operations occur, Azure Storage communicates with Azure Key Vault to unlock the encryption key, enabling data to be encrypted or decrypted.
+
+##### Client Side Encryption
+
+- [For queues](https://learn.microsoft.com/en-us/azure/storage/queues/client-side-encryption)
+
+- [For blobs](https://learn.microsoft.com/en-us/azure/storage/blobs/client-side-encryption?tabs=dotnet)
+
+  ```cs
+  // Your key and key resolver instances, either through Azure Key Vault SDK or an external implementation.
+  IKeyEncryptionKey key;
+  IKeyEncryptionKeyResolver keyResolver;
+
+  // Create the encryption options to be used for upload and download.
+  var encryptionOptions = new ClientSideEncryptionOptions(ClientSideEncryptionVersion.V2_0)
+  {
+     KeyEncryptionKey = key,
+     KeyResolver = keyResolver,
+     // String value that the client library will use when calling IKeyEncryptionKey.WrapKey()
+     KeyWrapAlgorithm = "some algorithm name"
+  };
+
+  // Set the encryption options on the client options.
+  var options = new SpecializedBlobClientOptions() { ClientSideEncryption = encryptionOptions };
+
+  // Create blob client with client-side encryption enabled.
+  // Client-side encryption options are passed from service clients to container clients,
+  // and from container clients to blob clients.
+  // Attempting to construct a BlockBlobClient, PageBlobClient, or AppendBlobClient from a BlobContainerClient
+  // with client-side encryption options present will throw, as this functionality is only supported with BlobClient.
+  var blob = new BlobServiceClient(connectionString, options).GetBlobContainerClient("my-container").GetBlobClient("myBlob");
+
+  // Upload the encrypted contents to the blob.
+  blob.Upload(stream);
+
+  // Download and decrypt the encrypted contents from the blob.
+  var outputStream = new MemoryStream();
+  blob.DownloadTo(outputStream);
+  ```
 
 **Storage Account Encryption and Billing**
 
