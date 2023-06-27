@@ -10,13 +10,13 @@ Azure Storage Account is a unique namespace in Azure for your data objects, incl
 
 1. **Standard general-purpose v2**: Recommended for most scenarios using Azure Storage, except for network file system (NFS) in Azure Files. It supports all redundancy options.
 
-1. **Premium block blobs**: For block blobs and append blobs. Recommended for scenarios with high transaction rates or those that use smaller objects or require consistently low storage latency. Supports only LRS and ZRS redundancy options.
+1. **Premium block blobs**: For block blobs and append blobs. Recommended for scenarios with high transaction rates or those that use smaller objects or require consistently low storage latency (Interactive workloads, IoT/ streaming analytics, AI/ML, fast data hydration - load). Supports only LRS and ZRS redundancy options.
 
 1. **Premium file shares**: For file shares only - Server Message Block (SMB) and NFS file shares. Recommended for enterprise or high-performance scale applications. Supports only LRS and ZRS redundancy options.
 
 1. **Premium page blobs**: For page blobs only. LRS redundancy only.
 
-Premium performance storage accounts use solid-state drives (SSDs) for low latency and high throughput.
+Premium performance storage accounts use solid-state drives (SSDs) for low latency and high throughput (lots of writes). They have a higher storage cost, they have a lower transaction cost.
 
 #### Storage Account Name and Endpoints
 
@@ -182,31 +182,20 @@ An Azure Key Vault admin provides access to encryption keys to a managed identit
   blob.DownloadTo(outputStream);
   ```
 
-**Storage Account Encryption and Billing**
+#### Storage Account Billing
 
-All data in your storage account is automatically encrypted on the service side. Azure Storage bills based on your storage account usage, with costs calculated according to factors like region, account type, access tier, capacity, redundancy, transactions, and data egress.
+Based on your storage account usage, with costs calculated according to factors like region, account type, access tier, capacity, redundancy, transactions, and data egress (download).
 
-**Legacy Storage Account Types**
+#### Legacy Storage Account Types
 
-Legacy storage account types are also supported but aren't recommended by Microsoft. They may be used in certain scenarios.
-
-**Scalability Targets for Standard Storage Accounts**
-
-Azure general-purpose v2 (GPv2), general-purpose v1 (GPv1), and Blob storage accounts have default limits for capacity and ingress and egress rates. You can request higher capacity and ingress limits.
-
-**Key Takeaways for Your Exam**
-
-1. Understand the different types of storage accounts and their use cases.
-2. Be aware of the rules for naming storage accounts and how endpoints are formed.
-3. Understand how Azure encrypts data and how billing for storage accounts works.
-4. Be aware of the legacy storage account types and their potential use cases.
-5. Understand the scalability targets for standard storage accounts and how to request higher limits.
+- Standard general-purpose v1: Not recommended by Microsoft. For classic deployment model or transaction-intensive apps.
 
 #### Working with Storage Account
 
 [Create](https://learn.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-create):
 
 ```ps
+# az login
 # az group create --name $resourceGroup --location $location
 az storage account create
     --name # ^[0-9a-z]{3,24}$
@@ -230,6 +219,8 @@ az storage account update
     [--resource-group] `az account list-locations` or `az configure --defaults location=$location` or attempt to resolve the resource group by storage account name (only if globally unique)
     ...
 ```
+
+(You can't change a storage account to a different type after it's created)
 
 ### [Azure Storage Redundancy](https://learn.microsoft.com/en-us/azure/storage/common/storage-redundancy)
 
@@ -308,3 +299,89 @@ Portal: `storage account > Data management > Redundancy`
 #### Supported Azure Storage Services
 
 Different redundancy options are supported by various Azure Storage services, including Blob storage, Queue storage, Table storage, Azure Files (which do not support RA-GRS, RA-GZRS, or failover), and Azure managed disks.
+
+### Azure Blob Storage
+
+For (large) files
+
+#### Blob Blocks
+
+##### [Access tiers](https://learn.microsoft.com/en-us/azure/storage/blobs/access-tiers-overview)
+
+- Hot tier - Frequently accessed or modified data. Highest storage costs.
+
+- Cool tier - Infrequently accessed or modified data. Minimum for 30 days.
+
+- Cold tier - same as cool tier, but for 90 days.
+
+- Archive tier - Rarely accessed, flexible (very high) latency (in matter of hours) data. Minimum for 180 days.  
+  Does not support \*ZRS redundancy.  
+  To access data, either [copy](https://learn.microsoft.com/en-us/azure/storage/blobs/archive-rehydrate-overview#copy-an-archived-blob-to-an-online-tier) or [change](https://learn.microsoft.com/en-us/azure/storage/blobs/archive-rehydrate-overview#change-a-blobs-access-tier-to-an-online-tier) data to online tier. Rehydration copy to a different account is supported if the other account is within the same region. Rehydration can take up to 15 hours (Standard), or up to 1 hour (High). Can be changed any time. Can be checked by `x-ms-rehydrate-priority` header,
+
+Non-hot is perfect for short-term data backup and disaster recovery. There is a penalty for removing data, or moving it to different tier, earlier (copying is fine though). Access tiers are available for block blobs only (other types of blobs are considered "Hot").
+
+###### Blob operations
+
+```ps
+# Copy blob (example: archive tier to online tier)
+az storage blob copy start \
+    --source-container "<source-container>" \
+    --source-blob "<source-blob>" \
+    # For a different storage account or RA-GRS (with "-secondary"), use this instead:
+    # --source-uri $srcBlobUri \
+
+    --destination-container "<dest-container>" \
+    --destination-blob "<dest-blob>" \
+    --account-name "<storage-account>" \
+    --tier hot \
+    --rehydrate-priority Standard \
+    --auth-mode login
+```
+
+```ps
+# Change blob access tier
+az storage blob set-tier \
+    --account-name "<storage-account>" \
+    --container-name "<container>" \
+    --name "<archived-blob>" \
+    --tier Hot \
+    --rehydrate-priority Standard \
+    --auth-mode login
+```
+
+```ps
+# Update the rehydration priority for a blob.
+az storage blob set-tier \
+    --account-name "<storage-account>" \
+    --container-name "<container>" \
+    --name "<blob>" \
+    --rehydrate-priority High \
+    --auth-mode login
+```
+
+```ps
+# Set the default access tier for a storage account
+az storage account update \
+    --resource-group "<resource-group>" \
+    --name "<storage-account>" \
+    --access-tier Cool
+```
+
+```ps
+# Set a blob's tier on upload
+az storage blob upload \
+    --account-name "<storage-account>" \
+    --container-name "<container>" \
+    --name "<blob>" \
+    --file "<file>" \
+    --tier "<tier>" \
+    --auth-mode login
+```
+
+#### Append Blobs
+
+Example: for log files
+
+#### [Page blobs](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-pageblob-overview)
+
+For Virtual Machines (VHD) and Databases. For Hot tier only
