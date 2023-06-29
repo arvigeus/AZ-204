@@ -12,35 +12,50 @@
 - **Standard**: This is the standard general-purpose v2 account and is recommended for most scenarios using Azure Storage (ex: lower price).
 - **Premium**: Premium accounts offer higher performance by using solid-state drives (ex: high transaction rates, using smaller objects, low latency)
 
-![Diagram showing the relationship between a storage account, containers, and blobs](https://learn.microsoft.com/en-us/azure/storage/blobs/media/storage-blobs-introduction/blob1.png)  
-Endpoint: `https://<storage-account>.blob.core.windows.net/<container>/<blob>`  
-`<container>` and `<blob>` are organized akin to filesystem. Container names are 3-63 chars and must start with a letter or number, and can contain only lowercase letters, numbers, and the dash (-) character (no double dash allowed). Blob names are case sensitive and cannot end with dash or dot.
+## Types of resources
 
-Each version of the blob has a unique tag, called an `ETag` that allows to only change a specific instance of the blob.
+![Diagram showing the relationship between a storage account, containers, and blobs](https://learn.microsoft.com/en-us/azure/storage/blobs/media/storage-blobs-introduction/blob1.png)
+
+- The [**storage account**](Storage%20Account.md)
+- A **container** in the storage account: organizes a set of blobs, similar to a directory in a file system. A storage account can include an unlimited number of containers, and a container can store an unlimited number of blobs. Container names are 3-63 chars and must start with a letter or number, and can contain only lowercase letters, numbers, and the dash (-) character (no double dash allowed).
+- A **blob** in a container. Blob names are case sensitive and cannot end with dash or dot. Each version of the blob has a unique tag, called an `ETag` that allows to only change a specific instance of the blob.
+
+Endpoint: `https://<storage-account>.blob.core.windows.net/<container>/<blob>`
+
+```ps
+# az group create --name myresourcegroup --location westus
+az storage account create --name mystorageaccount --resource-group myresourcegroup --location westus --sku Standard_LRS
+az storage container create --name mycontainer --account-name mystorageaccount
+az storage blob upload --account-name mystorageaccount --container-name mycontainer --name myblob --type block --file ./local/path/to/file
+```
+
+## Blobs
 
 [Understanding block blobs, append blobs, and page blobs](https://learn.microsoft.com/en-us/rest/api/storageservices/understanding-block-blobs--append-blobs--and-page-blobs)
 
-## Blob Blocks
+### Blob Blocks
 
-### [Access tiers](https://learn.microsoft.com/en-us/azure/storage/blobs/access-tiers-overview)
+Store text and binary data. Block blobs are made up of blocks of data that can be managed individually
 
-- Hot tier - Frequently accessed or modified data. Highest storage costs.
+#### [Access tiers](https://learn.microsoft.com/en-us/azure/storage/blobs/access-tiers-overview)
+
+- Hot tier (default) - Frequently accessed or modified data. Highest storage costs, lowest access costs.
 
 - Cool tier - Infrequently accessed or modified data. Minimum for 30 days.
 
 - Cold tier - same as cool tier, but for 90 days.
 
-- Archive tier - Rarely accessed, flexible (very high) latency (in matter of hours) data. Minimum for 180 days.  
+- Archive tier - Available only for individual block blobs. Rarely accessed, flexible (very high) latency (in matter of hours) data. Minimum for 180 days.  
   Does not support \*ZRS redundancy.  
-  To access data, either [copy](https://learn.microsoft.com/en-us/azure/storage/blobs/archive-rehydrate-overview#copy-an-archived-blob-to-an-online-tier) or [change](https://learn.microsoft.com/en-us/azure/storage/blobs/archive-rehydrate-overview#change-a-blobs-access-tier-to-an-online-tier) data to online tier. Rehydration copy to a different account is supported if the other account is within the same region. Rehydration can take up to 15 hours (Standard), or up to 1 hour (High). Can be changed any time. Can be checked by `x-ms-rehydrate-priority` header,
+  To access data, either [copy](https://learn.microsoft.com/en-us/azure/storage/blobs/archive-rehydrate-overview#copy-an-archived-blob-to-an-online-tier) or [change](https://learn.microsoft.com/en-us/azure/storage/blobs/archive-rehydrate-overview#change-a-blobs-access-tier-to-an-online-tier) data to online tier. Rehydration copy to a different account is supported if the other account is within the same region. Rehydration can take up to 15 hours (Standard), or up to 1 hour (High). Can be changed any time. Can be checked by `x-ms-rehydrate-priority` header.
 
 Non-hot is perfect for short-term data backup and disaster recovery. There is a penalty for removing data, or moving it to different tier, earlier (copying is fine though). Access tiers are available for block blobs only (other types of blobs are considered "Hot").
 
-## Append Blobs
+### Append Blobs
 
-Example: for log files
+Optimized for append operations. Ideal for scenarios such as logging data from virtual machines.
 
-## [Page blobs](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-pageblob-overview)
+### [Page blobs](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-pageblob-overview)
 
 Stores random access files up to 8 TiB. For virtual hard drive (VHD) files, disks for Azure virtual machines, or databseses.
 
@@ -62,6 +77,98 @@ pageBlobClient.UploadPages(dataStream, startingOffset);
 // Reading pages from a page blob
 var pageBlob = pageBlobClient.Download(new HttpRange(bufferOffset, rangeSize));
 ```
+
+## [Encryption Scope](https://learn.microsoft.com/en-us/azure/storage/blobs/encryption-scope-overview)
+
+Blobs use default encryption scope of the container, or the storage account if no default encryption scope is specified for the container. Individual blobs can be uploaded with custom encryption scope. You also cannot change the access tier for a blob that uses an encryption scope. When you disable an encryption scope, any subsequent read or write operations made with the encryption scope will fail with HTTP error code 403 (Forbidden).
+
+When you enable an encryption scope, you are billed for a minimum of one month (30 days). After the first month, charges for an encryption scope are prorated on an hourly basis.
+
+### [Manage Encryption Scope](https://learn.microsoft.com/en-us/azure/storage/blobs/encryption-scope-manage)
+
+Encryption scope for storage account:
+
+- Azure Portal: `storage account > Security + networking > Encryption > Encryption Scopes tab.`
+- CLI:
+
+```ps
+az storage account encryption-scope create \
+    #--resource-group "<resource-group>" \
+    #--account-name "<storage-account>" \
+    #--name "<scope>" \
+    --key-source Microsoft.Storage
+```
+
+Encryption scope for storage account:
+
+- Azure Portal: `storage account > containers > Add > Advanced > Encryption scope`
+- CLI:
+
+```ps
+az storage container create \
+    #--account-name "<storage-account>" \
+    #--resource-group "<resource-group>" \
+    #--name "<container>" \
+    --default-encryption-scope "<scope>" \
+    --prevent-encryption-scope-override true \ # force all blobs in a container to use the container's default scope
+    #--auth-mode login
+```
+
+Upload a blob with an encryption scope:
+
+- Azure Portal: `storage account > containers > Upload > Advanced > Encryption scope`
+- CLI:
+
+```ps
+az storage blob upload \
+    #--account-name "<storage-account>" \
+    #--container-name "<container>" \
+    #--file "<file>" \
+    #--name "<file>" \
+    --encryption-scope "<scope>"
+```
+
+Change the encryption key for a scope:
+
+- Azure Portal: `storage account > Encryption Scopes > More > Edit encryption scope`
+- CLI:
+
+```ps
+az storage account encryption-scope update \
+    #--account-name "<storage-account>" \
+    #--resource-group "<resource-group>"
+    #--name "<scope>" \
+    --key-source Microsoft.Storage
+
+az storage account encryption-scope update \
+    #--resource-group "<resource-group>" \
+    #--account-name "<storage-account>" \
+    #--name "<scope>" \
+    --key-source Microsoft.KeyVault \
+    --key-uri "<key-uri>"
+
+```
+
+Disable an encryption scope:
+
+- Azure Portal: `storage account > Encryption Scopes > scope > Disable`
+- CLI:
+
+```ps
+az storage account encryption-scope update \
+    #--account-name <storage-account> \
+    #--resource-group <resource-group> \
+    #--name <scope> \
+    --state Disabled
+```
+
+## [Leasing](https://learn.microsoft.com/en-us/rest/api/storageservices/lease-blob)
+
+TODO
+
+## [Static website hosting](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-static-website)
+
+TODO
 
 ## Blob operations
 
