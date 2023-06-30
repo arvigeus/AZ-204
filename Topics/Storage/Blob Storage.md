@@ -49,7 +49,11 @@ Store text and binary data. Block blobs are made up of blocks of data that can b
   Does not support \*ZRS redundancy.  
   To access data, either [copy](https://learn.microsoft.com/en-us/azure/storage/blobs/archive-rehydrate-overview#copy-an-archived-blob-to-an-online-tier) or [change](https://learn.microsoft.com/en-us/azure/storage/blobs/archive-rehydrate-overview#change-a-blobs-access-tier-to-an-online-tier) data to online tier. Rehydration copy to a different account is supported if the other account is within the same region. Rehydration can take up to 15 hours (Standard), or up to 1 hour (High). Can be changed any time. Can be checked by `x-ms-rehydrate-priority` header.
 
-Non-hot is perfect for short-term data backup and disaster recovery. There is a penalty for removing data, or moving it to different tier, earlier (copying is fine though). Access tiers are available for block blobs only (other types of blobs are considered "Hot").
+Non-hot is perfect for short-term data backup and disaster recovery. Access tiers are available for block blobs only (other types of blobs are considered "Hot").
+
+There is a penalty for removing data, or moving it to different tier, earlier (copying is fine though). If needs to be kept for at least X days without early deletion penalty, then a tier with <= days should be chosen. Example: for 45 days you choose cool tier - if you delete data on day 45 on cold tier there will be penalty, while there won't be for cool tier.
+
+**Archive** tier is considered _offline_ (requires rehydration to be accessed). All other tiers are considered _online_ (can be accessed at any time).
 
 ### Append Blobs
 
@@ -77,6 +81,10 @@ pageBlobClient.UploadPages(dataStream, startingOffset);
 // Reading pages from a page blob
 var pageBlob = pageBlobClient.Download(new HttpRange(bufferOffset, rangeSize));
 ```
+
+## [Setting and retrieving properties and metadata](https://learn.microsoft.com/en-us/rest/api/storageservices/setting-and-retrieving-properties-and-metadata-for-blob-resources)
+
+TODO
 
 ## [Encryption Scope](https://learn.microsoft.com/en-us/azure/storage/blobs/encryption-scope-overview)
 
@@ -168,7 +176,13 @@ TODO
 
 ## [Static website hosting](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-static-website)
 
+Static website can be enabled/disbled from Azure Portal (`storage account > Static Website`) or CLI (`az storage blob service-properties update --account-name <storage-account> --static-website {true|false}`). This creates a container called `$web`. During deployment/maintenance, it should be disabled to prevent broken site for users.
+
+![Screenshot showing the locations of the fields to enable and configure static website hosting.](https://learn.microsoft.com/en-us/training/wwl-azure/explore-azure-blob-storage/media/enable-static-website-hosting.png)
+
 TODO
+
+### Disabling access to static website
 
 ## Blob operations
 
@@ -255,3 +269,11 @@ await foreach (var blobItem in containerClient.GetBlobsAsync()) {}
 // Download the blob's contents and save it to a file
 await blobClient.DownloadToAsync(downloadFilePath);
 ```
+
+## [Custom Domains Name](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-custom-domain-name)
+
+TODO
+
+## [Remediate anonymous public read access](https://learn.microsoft.com/en-us/azure/storage/blobs/anonymous-read-access-prevent?tabs=azure-cli)
+
+TODO
