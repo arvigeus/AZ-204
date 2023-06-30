@@ -6,6 +6,8 @@ Question: Which of the following types of blobs are used to store virtual hard d
 - [ ] Append blobs
 - [x] Page blobs
 
+---
+
 Answer: Page blobs store random access files up to 8 TB in size, and are used to store virtual hard drive (VHD) files and serve as disks for Azure virtual machines.  
 Append blobs are optimized for data append operations.  
 Block blobs are made up of blocks of data that can be managed individually.
@@ -20,6 +22,8 @@ Answer: General-purpose v2 supports blobs, files, queues, and tables. It's recom
 FileStorage: This is recommended for enterprise or high-performance scale applications and won't cover most scenarios.  
 General-purpose-v1 is a legacy account type.
 
+---
+
 Question: Which access tier is considered to be offline and can't be read or modified?
 
 - [ ] Cool
@@ -27,6 +31,8 @@ Question: Which access tier is considered to be offline and can't be read or mod
 - [ ] Hot
 
 Answer: Blobs in the archive tier must be rehydrated to either the hot or cool tier before it can be read or modified.
+
+---
 
 Question: Which of the following storage account types supports lifecycle policies?
 
@@ -36,6 +42,8 @@ Question: Which of the following storage account types supports lifecycle polici
 
 Answer: Azure Blob storage lifecycle management offers a rich, rule-based policy for General Purpose v2 and Blob storage accounts.  
 General Purpose v1 accounts need to be upgraded to v2 before lifecycle policies are supported.
+
+---
 
 Question: Which of the following standard HTTP headers are supported for both containers and blobs when setting properties by using REST?
 
@@ -48,6 +56,8 @@ Question: Which of the following standard HTTP headers are supported for both co
 Answer: Last-Modified and ETag are supported on both containers and blobs.  
 Content-Length and Cache-Control are only supported on blobs.
 
+---
+
 Question: Which of the following classes of the Azure Storage client library for .NET allows you to manipulate both Azure Storage containers and their blobs?
 
 - [ ] BlobClient
@@ -57,3 +67,16 @@ Question: Which of the following classes of the Azure Storage client library for
 Answer: The BlobContainerClient can be used to manipulate both containers and blobs.  
 The BlobUriBuilder provides a way to modify the contents of a Uri instance to point to different Azure Storage resources like an account, container, or blob.  
 The BlobClient class is limited to manipulating blobs.
+
+---
+
+Question: You arrive at work donned in your favorite furry costume and discover a task from your supervisor demanding you take the company's website offline in order to perform some maintenance on it. The website consists of a single `_index.html` file stored in Azure Storage's `$web` container. You promptly set the access level of that specific file to private and consider the job done as you dive into some leisurely Reddit browsing. Just half an hour later, your supervisor storms over to your desk and fires you on the spot. What could be the reason behind this unexpected termination?
+
+- [ ] Your choice of unconventional office attire: a furry costume.
+- [ ] You erred in your task; you were supposed to set the access level of the entire `$web` container to private.
+- [ ] To make the site inaccessible to users, you should have set the entire storage account to private.
+- [x] You have a fundamental misunderstanding of how things function within Azure Static Site hosting.
+
+Answer: In this situation, to make the static website inaccessible, you need to turn off the Static Website hosting feature from your Azure Storage account. You know nothing...
+
+You actually cannot set the access level of an individual blob (file), but rather the access level is set on the container level. However, even setting the access level of the `$web` container to private wouldn't take the static website offline. This is due to the fact that Azure's static website feature always serves files in the `$web` container anonymously, regardless of the container's access level setting. Same goes for setting the entire storage account to private.
