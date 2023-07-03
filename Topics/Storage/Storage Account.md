@@ -276,7 +276,7 @@ var blobServiceClient = new BlobServiceClient(primaryAccountUri, new DefaultAzur
 
 ### [Failover Procedure](https://learn.microsoft.com/en-us/azure/storage/common/storage-disaster-recovery-guidance#how-an-account-failover-works)
 
-In case the primary region becomes unavailable, a failover to the secondary region can be manually initiated. During this process, data becomes temporarily inaccessible as Azure Storage updates the DNS entry, transforming the secondary endpoint into the new primary one, and vice versa. This might involve some data loss due to asynchronous copying between regions. Failback can be used to restore the region states.
+In case the primary region becomes unavailable, a failover to the secondary region can be _manually_ initiated. During this process, data becomes temporarily inaccessible as Azure Storage updates the DNS entry, transforming the secondary endpoint into the new primary one, and vice versa. This might involve some data loss due to asynchronous copying between regions. Failback can be used to restore the region states.
 
 Note that _Azure virtual machines (VMs) need to be replicated_, _archived blobs need to be rehydrated to an online tier_ (Archive tier is not available for any \*ZRS), and _Azure Storage resource provider cannot fail over_, so operations must still take place in the former primary region.
 

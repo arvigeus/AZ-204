@@ -158,8 +158,8 @@ Console.WriteLine("Uploading to Blob storage as blob:\n\t {0}\n", blobClient.Uri
 // Open the file and upload its data
 using (FileStream uploadFileStream = File.OpenRead(localFilePath))
 {
-await blobClient.UploadAsync(uploadFileStream);
-uploadFileStream.Close();
+   await blobClient.UploadAsync(uploadFileStream);
+   uploadFileStream.Close();
 }
 
 Console.WriteLine("\nThe file was uploaded. We'll verify by listing" +
@@ -177,7 +177,7 @@ List the blobs in the container by using the `GetBlobsAsync` method. In this cas
 Console.WriteLine("Listing blobs...");
 await foreach (BlobItem blobItem in containerClient.GetBlobsAsync())
 {
-Console.WriteLine("\t" + blobItem.Name);
+   Console.WriteLine("\t" + blobItem.Name);
 }
 
 Console.WriteLine("\nYou can also verify by looking inside the " +
@@ -203,7 +203,7 @@ BlobDownloadInfo download = await blobClient.DownloadAsync();
 
 using (FileStream downloadFileStream = File.OpenWrite(downloadFilePath))
 {
-await download.Content.CopyToAsync(downloadFileStream);
+   await download.Content.CopyToAsync(downloadFileStream);
 }
 Console.WriteLine("\nLocate the local file in the data directory created earlier to verify it was downloaded.");
 Console.WriteLine("The next step is to delete the container and local files.");

@@ -29,6 +29,20 @@ az storage container create --name mycontainer --account-name mystorageaccount
 az storage blob upload --account-name mystorageaccount --container-name mycontainer --name myblob --type block --file ./local/path/to/file
 ```
 
+```cs
+var blobServiceClient = new BlobServiceClient(new Uri($"https://{accountName}.blob.core.windows.net"), new DefaultAzureCredential());
+var containerClient = await blobServiceClient.CreateBlobContainerAsync(containerName);
+// var containerClient = blobServiceClient.GetBlobContainerClient(containerName);
+// var containerClient = new BlobContainerClient(new Uri($"https://{accountName}.blob.core.windows.net/{containerName}"), new DefaultAzureCredential(), clientOptions);
+var blobClient = containerClient.GetBlobClient(blobName);
+using var uploadFileStream = File.OpenRead(localFilePath);
+await blobClient.UploadAsync(uploadFileStream);
+// Download
+var download = await blobClient.DownloadAsync();
+using var downloadFileStream = File.OpenWrite(downloadFilePath);
+await download.Content.CopyToAsync(downloadFileStream);
+```
+
 ## Blobs
 
 [Understanding block blobs, append blobs, and page blobs](https://learn.microsoft.com/en-us/rest/api/storageservices/understanding-block-blobs--append-blobs--and-page-blobs)
@@ -68,7 +82,7 @@ Stores random access files up to 8 TiB. For virtual hard drive (VHD) files, disk
 ```cs
 // Create an empty page blob of a specified size
 var blobServiceClient = new BlobServiceClient(connectionString);
-var blobContainerClient = blobServiceClient.GetBlobContainerClient(Constants.containerName);
+var blobContainerClient = blobServiceClient.GetBlobContainerClient(containerName);
 var pageBlobClient = blobContainerClient.GetPageBlobClient("0s4.vhd");
 pageBlobClient.Create(16 * 1024 * 1024 * 1024 /* 1GB */);
 
@@ -82,9 +96,91 @@ pageBlobClient.UploadPages(dataStream, startingOffset);
 var pageBlob = pageBlobClient.Download(new HttpRange(bufferOffset, rangeSize));
 ```
 
-## [Setting and retrieving properties and metadata](https://learn.microsoft.com/en-us/rest/api/storageservices/setting-and-retrieving-properties-and-metadata-for-blob-resources)
+## Properties and metadata
 
-TODO
+Metadata name/value pairs are valid HTTP headers, and so should adhere to all restrictions governing HTTP headers. Metadata names must be valid HTTP header names and valid C# identifiers, may contain only ASCII characters, and should be treated as case-insensitive.
+
+### [Manage container properties and metadata by using .NET](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-container-properties-metadata)
+
+Blob containers support system properties and user-defined metadata, in addition to the data they contain. Metadata values containing non-ASCII characters should be Base64-encoded or URL-encoded.
+
+- **System properties**: System properties exist on each Blob storage resource. Some of them can be read or set, while others are read-only. Under the covers, some system properties correspond to certain standard HTTP headers.
+- **User-defined metadata**: For your own purposes only, and do not affect how the resource behaves.
+
+```cs
+/// <exception cref="RequestFailedException">Thrown if a failure occurs.</exception>
+Task<Azure.Response<BlobContainerProperties>> GetPropertiesAsync (BlobRequestConditions conditions = default, CancellationToken cancellationToken = default);
+
+/// <exception cref="RequestFailedException">Thrown if a failure occurs.</exception>
+Task<Azure.Response<BlobContainerInfo>> SetMetadataAsync (IDictionary<string,string> metadata, BlobRequestConditions conditions = default, CancellationToken cancellationToken = default);
+```
+
+If two or more metadata headers with the same name are submitted for a resource, Blob storage comma-separates and concatenates the two values and returns HTTP response code `200 (OK)` (Note: Rest cannot do that!)
+
+Example:
+
+```csharp
+private static async Task ReadContainerPropertiesAsync(BlobContainerClient container)
+{
+    try
+    {
+        // Fetch some container properties and write out their values.
+        var properties = await container.GetPropertiesAsync();
+        Console.WriteLine($"Properties for container {container.Uri}");
+        Console.WriteLine($"Public access level: {properties.Value.PublicAccess}");
+        Console.WriteLine($"Last modified time in UTC: {properties.Value.LastModified}");
+
+        var metadata = new Dictionary<string, string>() { { "docType", "textDocuments" }, { "category", "guidance" } };
+        var containerInfo = await container.SetMetadataAsync(metadata); // ETag, LastModified
+    }
+    catch (RequestFailedException e) {}
+}
+```
+
+Read more:
+
+- [BlobContainerClient.GetPropertiesAsync](https://learn.microsoft.com/en-us/dotnet/api/azure.storage.blobs.blobcontainerclient.getpropertiesasync)
+- [BlobContainerClient.SetMetadataAsync](https://learn.microsoft.com/en-us/dotnet/api/azure.storage.blobs.blobcontainerclient.setmetadataasync)
+- [BlobContainerProperties](https://learn.microsoft.com/en-us/dotnet/api/azure.storage.blobs.models.blobcontainerproperties?view=azure-dotnet) (PascalCase properties, `IDictionary<string,string> Metadata` for custom metadata)
+- [BlobRequestConditions](https://learn.microsoft.com/en-us/dotnet/api/azure.storage.blobs.models.blobrequestconditions?view=azure-dotnet)
+
+### [Set and retrieve properties and metadata for blob resources by using REST](https://learn.microsoft.com/en-us/rest/api/storageservices/setting-and-retrieving-properties-and-metadata-for-blob-resources)
+
+Endpoint templates:
+
+- Container: `https://<storage-account>.blob.core.windows.net/<container>?restype=container`
+- Blob: `https://<storage-account>.blob.core.windows.net/<container>/<blob>?comp=metadata # blob`
+
+Retrieving metadata: `GET` or `HEAD` (example: `GET https://<storage-account>.blob.core.windows.net/<container>/<blob>?comp=metadata`)  
+Setting metadata: `PUT` (example: `PUT https://myaccount.blob.core.windows.net/mycontainer?comp=metadata?restype=container`)
+
+If two or more metadata headers with the same name are submitted for a resource, the Blob service returns status code `400 (Bad Request)`.
+
+The total size of all metadata pairs can be up to 8KB in size.
+
+Partial updates are not supported: setting metadata on a resource overwrites any existing metadata values for that resource.
+
+### Standard HTTP Properties for Containers and Blobs
+
+`ETag` and `Last-Modified` are common for containers and blobs.
+
+Containers:
+
+- ETag (`x-ms-meta-etag`)
+- Last-Modified (`x-ms-meta-last-modified`)
+
+Blobs:
+
+- ETag (`x-ms-meta-etag`)
+- Last-Modified (`x-ms-meta-last-modified`)
+- Content-Length (`x-ms-meta-content-length`)
+- Content-Type (`x-ms-meta-content-type`)
+- Content-MD5 (`x-ms-meta-content-md5`)
+- Content-Encoding (`x-ms-meta-content-encoding`)
+- Content-Language (`x-ms-meta-content-language`)
+- Cache-Control (`x-ms-meta-cache-control`)
+- Origin (`x-ms-meta-origin`)
+- Range (`x-ms-meta-range`)
 
 ## [Encryption Scope](https://learn.microsoft.com/en-us/azure/storage/blobs/encryption-scope-overview)
 
