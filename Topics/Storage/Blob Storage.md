@@ -22,27 +22,6 @@
 
 Endpoint: `https://<storage-account>.blob.core.windows.net/<container>/<blob>`
 
-```ps
-# az group create --name myresourcegroup --location westus
-az storage account create --name mystorageaccount --resource-group myresourcegroup --location westus --sku Standard_LRS
-az storage container create --name mycontainer --account-name mystorageaccount
-az storage blob upload --account-name mystorageaccount --container-name mycontainer --name myblob --type block --file ./local/path/to/file
-```
-
-```cs
-var blobServiceClient = new BlobServiceClient(new Uri($"https://{accountName}.blob.core.windows.net"), new DefaultAzureCredential());
-var containerClient = await blobServiceClient.CreateBlobContainerAsync(containerName);
-// var containerClient = blobServiceClient.GetBlobContainerClient(containerName);
-// var containerClient = new BlobContainerClient(new Uri($"https://{accountName}.blob.core.windows.net/{containerName}"), new DefaultAzureCredential(), clientOptions);
-var blobClient = containerClient.GetBlobClient(blobName);
-using var uploadFileStream = File.OpenRead(localFilePath);
-await blobClient.UploadAsync(uploadFileStream);
-// Download
-var download = await blobClient.DownloadAsync();
-using var downloadFileStream = File.OpenWrite(downloadFilePath);
-await download.Content.CopyToAsync(downloadFileStream);
-```
-
 ## Blobs
 
 [Understanding block blobs, append blobs, and page blobs](https://learn.microsoft.com/en-us/rest/api/storageservices/understanding-block-blobs--append-blobs--and-page-blobs)
@@ -61,7 +40,7 @@ Store text and binary data. Block blobs are made up of blocks of data that can b
 
 - Archive tier - Available only for individual block blobs. Rarely accessed, flexible (very high) latency (in matter of hours) data. Minimum for 180 days.  
   Does not support \*ZRS redundancy.  
-  To access data, either [copy](https://learn.microsoft.com/en-us/azure/storage/blobs/archive-rehydrate-overview#copy-an-archived-blob-to-an-online-tier) or [change](https://learn.microsoft.com/en-us/azure/storage/blobs/archive-rehydrate-overview#change-a-blobs-access-tier-to-an-online-tier) data to online tier. Rehydration copy to a different account is supported if the other account is within the same region. Rehydration can take up to 15 hours (Standard), or up to 1 hour (High). Can be changed any time. Can be checked by `x-ms-rehydrate-priority` header.
+  To access data, either [copy](https://learn.microsoft.com/en-us/azure/storage/blobs/archive-rehydrate-overview#copy-an-archived-blob-to-an-online-tier) or [change](https://learn.microsoft.com/en-us/azure/storage/blobs/archive-rehydrate-overview#change-a-blobs-access-tier-to-an-online-tier) data to online tier. Rehydration copy to a different account is supported if the other account is within the same region. Destination cannot be at archive tier. Rehydration can take up to 15 hours (Standard), or up to 1 hour (High). Priority can be upgraded any time. Can be checked by `x-ms-rehydrate-priority` header.
 
 Non-hot is perfect for short-term data backup and disaster recovery. Access tiers are available for block blobs only (other types of blobs are considered "Hot").
 
@@ -96,6 +75,95 @@ pageBlobClient.UploadPages(dataStream, startingOffset);
 var pageBlob = pageBlobClient.Download(new HttpRange(bufferOffset, rangeSize));
 ```
 
+## [Blob storage lifecycle policies](https://learn.microsoft.com/en-us/azure/storage/blobs/lifecycle-management-overview)
+
+Azure Storage lifecycle management offers a rule-based policy that lets you:
+
+- Transition blobs to a cooler storage tier (hot to cool, hot to archive, or cool to archive) to optimize for performance and cost
+- Delete blobs at the end of their lifecycles
+- Define rules to be run once per day at the storage account level
+- Apply rules to containers or a subset of blobs (using prefixes as filters)
+
+Lifecycle management is free of charge and doesn't affect system containers such as the `$logs` or `$web` containers.
+
+```ts
+type ActionRunCondition = {
+  daysAfterModificationGreaterThan: number;
+  daysAfterCreationGreaterThan: number;
+  daysAfterLastAccessTimeGreaterThan: number; // requires last access time tracking
+};
+
+type RuleAction = {
+  tierToCool?: ActionRunCondition;
+  tierToArchive?: {
+    daysAfterModificationGreaterThan: number;
+    daysAfterLastTierChangeGreaterThan: number;
+  };
+  enableAutoTierToHotFromCool?: ActionRunCondition;
+  delete?: ActionRunCondition;
+};
+
+type RelesType = {
+  rules: [
+    {
+      enabled: boolean;
+      name: string;
+      type: "Lifecycle";
+      definition: {
+        actions: {
+          version?: RuleAction;
+          baseBlob?: RuleAction;
+          snapshopt?: Omit<RuleAction, "enableAutoTierToHotFromCool">;
+          appendBlob?: { delete: ActionRunCondition };
+        };
+        filters?: {
+          blobTypes: Array<"appendBlob" | "blockBlob">;
+          // Up to 10 case-sensitive prefixes. A prefix string must start with a container name.
+          // To match the container or blob name exactly, include the trailing forward slash ('/'), e.g., 'sample-container/' or 'sample-container/blob1/'
+          // To match the container or blob name pattern (wildcard), omit the trailing forward slash, e.g., 'sample-container' or 'sample-container/blob1'
+          prefixMatch?: string[];
+          // Each rule can define up to 10 blob index tag conditions.
+          // example, if you want to match all blobs with `Project = Contoso``: `{"name": "Project","op": "==","value": "Contoso"}``
+          blobIndexMatch?: Record<string, string>;
+        };
+      };
+    }
+  ];
+};
+```
+
+Once you configure a policy (create/update), it can take _up to 24 hours to go into effect_. Once the policy is in effect, it could take _up to 24 hours_ for some actions to run for the first time.
+
+Data stored in a premium block blob storage account cannot be tiered to Hot, Cool, or Archive using Set Blob Tier or using Azure Blob Storage lifecycle management.
+
+If you define more than one action on the same blob, lifecycle management applies the least expensive action to the blob: `delete < tierToArchive < tierToCool`.
+
+### Creating a new policy
+
+Portal: `All resources > storage account > Data management > Lifecycle management > List view > Add rule > fill out the Action set form fields > add an optional filter`
+
+CLI:
+
+```ps
+az storage account management-policy create \
+    #--account-name "<storage-account>" \
+    #--resource-group "<resource-group>"
+    --policy @policy.json \
+```
+
+A lifecycle management policy must be read or written in full. Partial updates aren't supported.
+
+### Optionally enable access time tracking
+
+When access time tracking is enabled, a lifecycle management policy can include an action based on the time that the blob was last accessed with a read (tracks only the first in the past 24 hours) or write operation. This adds additional billing.
+
+```ps
+az storage account blob-service-properties update \
+    #--resource-group <resource-group> \
+    #--account-name <storage-account> \
+    --enable-last-access-tracking true
+```
+
 ## Properties and metadata
 
 Metadata name/value pairs are valid HTTP headers, and so should adhere to all restrictions governing HTTP headers. Metadata names must be valid HTTP header names and valid C# identifiers, may contain only ASCII characters, and should be treated as case-insensitive.
@@ -120,7 +188,7 @@ If two or more metadata headers with the same name are submitted for a resource,
 Example:
 
 ```csharp
-private static async Task ReadContainerPropertiesAsync(BlobContainerClient container)
+private static async Task DemoContainerPropertiesAndMetadataAsync(BlobContainerClient container)
 {
     try
     {
@@ -268,19 +336,91 @@ az storage account encryption-scope update \
 
 ## [Leasing](https://learn.microsoft.com/en-us/rest/api/storageservices/lease-blob)
 
-TODO
+Leasing allows a client to create a lease on a Blob, during which time the Blob cannot be deleted or overwritten. This provides exclusive write access to a Blob for a certain client.
+
+```cs
+// Acquire a lease on the blob
+string proposedLeaseId = Guid.NewGuid().ToString();
+var leaseClient = blobClient.GetBlobLeaseClient(proposedLeaseId);
+var lease = leaseClient.Acquire(TimeSpan.FromSeconds(15));
+// leaseClient.Renew();
+// leaseClient.Change(newLeaseId); // change the ID of an existing lease
+// leaseClient.Release();
+// leaseClient.Break(); // end the lease, but ensure that another client can't acquire a new lease until the current lease period has expired
+```
+
+```ps
+leaseId=$(az storage blob lease acquire --connection-string "your_connection_string" --container-name "sample-container" --name "sample-blob" --lease-duration 60 --output tsv)
+# az storage blob lease renew --connection-string "your_connection_string" --container-name "sample-container" --name "sample-blob" --lease-id $leaseId
+# az storage blob lease change --connection-string "your_connection_string" --container-name "sample-container" --name "sample-blob" --lease-id $leaseId --proposed-lease-id $newLeaseId
+# az storage blob lease release --connection-string "your_connection_string" --container-name "sample-container" --name "sample-blob" --lease-id $leaseId
+# az storage blob lease break --connection-string "your_connection_string" --container-name "sample-container" --name "sample-blob"
+```
+
+```http
+PUT https://myaccount.blob.core.windows.net/mycontainer/myblob?comp=lease
+
+Request Headers:
+x-ms-version: 2015-02-21
+x-ms-lease-action: acquire
+x-ms-lease-duration: -1 # In seconds. -1 is infinite
+x-ms-proposed-lease-id: 1f812371-a41d-49e6-b123-f4b542e851c5
+x-ms-date: <date>
+...
+
+Response Status:
+HTTP/1.1 201 Created
+
+Response Headers:
+Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+x-ms-request-id: cc6b209a-b593-4be1-a38a-dde7c106f402
+x-ms-version: 2015-02-21
+x-ms-lease-id: 1f812371-a41d-49e6-b123-f4b542e851c5
+Date: <date>
+...
+```
+
+Lease ID is neede whenever you want to update, delete or change the lease status on this blob. If the lease ID isn't included, these operations fail with `412 – Precondition failed`.
+
+## [Remediate anonymous public read access](https://learn.microsoft.com/en-us/azure/storage/blobs/anonymous-read-access-prevent?tabs=azure-cli)
+
+Anonymous public access to your data is always prohibited by default. If the storage account doesn't allow public access, then no container within it can have public access, regardless of its own settings. If public access is allowed at the storage account level, then a container's access depends on its own settings (**Public access: Container**, or **Public access: Blob**).
 
 ## [Static website hosting](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-static-website)
 
-Static website can be enabled/disbled from Azure Portal (`storage account > Static Website`) or CLI (`az storage blob service-properties update --account-name <storage-account> --static-website {true|false}`). This creates a container called `$web`. During deployment/maintenance, it should be disabled to prevent broken site for users.
+Static website can be enabled/disbled from Azure Portal (`storage account > Static Website`) or CLI (`az storage blob service-properties update --account-name <storage-account> --static-website {true|false}`). This creates a container called `$web`. During deployment/maintenance, it should be disabled to prevent broken site for users (changing container/account access won't have any effect on `web` endpoint, only to `blob` endpoint).
+
+Endpoint: `https://<storage-account>.z[00-50].web.core.windows.net/`
 
 ![Screenshot showing the locations of the fields to enable and configure static website hosting.](https://learn.microsoft.com/en-us/training/wwl-azure/explore-azure-blob-storage/media/enable-static-website-hosting.png)
 
-TODO
+Lifecycle management doesn't affect system containers such as the `$logs` or `$web` containers.
 
-### Disabling access to static website
+### Limitations
+
+- If you want to configure headers, Azure Content Delivery Network (Azure CDN) is required.
+- AuthN and AuthZ are not supported.
+- CORS is not supported with static website.
+
+Use [Azure Static Web Apps](https://azure.microsoft.com/services/app-service/static/) if you need these (plus CI/CD)
+
+### [Mapping a custom domain to a static website URL](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-custom-domain-name?tabs=azure-portal)
+
+To enable HTTPS, you'll have to use Azure CDN
+
+- Get the host name of your storage endpoint: Copy value of `Settings > Endpoints > Static website` (**without** `https://`)
+- Create a CNAME record
+- Register your custom domain with Azure: `az storage account update --custom-domain <custom-domain-name> --use-subdomain false ...` (or `storage account > Networking >  Custom domain > Domain name`)
 
 ## Blob operations
+
+```ps
+# Upload blob
+# az group create --name myresourcegroup --location westus
+# az storage account create --name mystorageaccount --resource-group myresourcegroup --location westus --sku Standard_LRS
+# az storage container create --name mycontainer --account-name mystorageaccount
+az storage blob upload --account-name mystorageaccount --container-name mycontainer --name myblob --type block --file ./local/path/to/file
+```
 
 ```ps
 # Copy blob (example: archive tier to online tier)
@@ -292,50 +432,50 @@ az storage blob copy start \
 
     --destination-container "<dest-container>" \
     --destination-blob "<dest-blob>" \
-    --account-name "<storage-account>" \
+    #--account-name "<storage-account>" \
     --tier hot \
     --rehydrate-priority Standard \
-    --auth-mode login
+    #--auth-mode login
 ```
 
 ```ps
 # Change blob access tier
 az storage blob set-tier \
-    --account-name "<storage-account>" \
-    --container-name "<container>" \
-    --name "<archived-blob>" \
+    #--account-name "<storage-account>" \
+    #--container-name "<container>" \
+    #--name "<archived-blob>" \
     --tier Hot \
     --rehydrate-priority Standard \
-    --auth-mode login
+    #--auth-mode login
 ```
 
 ```ps
 # Update the rehydration priority for a blob.
 az storage blob set-tier \
-    --account-name "<storage-account>" \
-    --container-name "<container>" \
-    --name "<blob>" \
+    #--account-name "<storage-account>" \
+    #--container-name "<container>" \
+    #--name "<blob>" \
     --rehydrate-priority High \
-    --auth-mode login
+    #--auth-mode login
 ```
 
 ```ps
 # Set the default access tier for a storage account
 az storage account update \
-    --resource-group "<resource-group>" \
-    --name "<storage-account>" \
+    #--resource-group "<resource-group>" \
+    #--name "<storage-account>" \
     --access-tier Cool
 ```
 
 ```ps
 # Set a blob's tier on upload
 az storage blob upload \
-    --account-name "<storage-account>" \
-    --container-name "<container>" \
-    --name "<blob>" \
+    #--account-name "<storage-account>" \
+    #--container-name "<container>" \
+    #--name "<blob>" \
     --file "<file>" \
     --tier "<tier>" \
-    --auth-mode login
+    #--auth-mode login
 ```
 
 [AzCopy](https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azcopy-v10):
@@ -348,12 +488,12 @@ azcopy copy "C:\local\path" "https://<storage-account>.blob.core.windows.net/<co
 [Working with blobs](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-dotnet)
 
 ```cs
-var blobServiceClient = new BlobServiceClient(
-        new Uri("https://<storage-account-name>.blob.core.windows.net"),
-        new DefaultAzureCredential());
+var blobServiceClient = new BlobServiceClient(new Uri("https://<storage-account-name>.blob.core.windows.net"), new DefaultAzureCredential());
 
 // Create the container and return a container client object
 var containerClient = await blobServiceClient.CreateBlobContainerAsync("quickstartblobs" + Guid.NewGuid().ToString());
+// var containerClient = blobServiceClient.GetBlobContainerClient(containerName);
+// var containerClient = new BlobContainerClient(new Uri($"https://{accountName}.blob.core.windows.net/{containerName}"), new DefaultAzureCredential(), clientOptions);
 
 var blobClient = containerClient.GetBlobClient(fileName);
 
@@ -365,11 +505,3 @@ await foreach (var blobItem in containerClient.GetBlobsAsync()) {}
 // Download the blob's contents and save it to a file
 await blobClient.DownloadToAsync(downloadFilePath);
 ```
-
-## [Custom Domains Name](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-custom-domain-name)
-
-TODO
-
-## [Remediate anonymous public read access](https://learn.microsoft.com/en-us/azure/storage/blobs/anonymous-read-access-prevent?tabs=azure-cli)
-
-TODO

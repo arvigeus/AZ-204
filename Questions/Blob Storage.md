@@ -80,3 +80,60 @@ Question: You arrive at work donned in your favorite furry costume and discover 
 Answer: In this situation, to make the static website inaccessible, you need to turn off the Static Website hosting feature from your Azure Storage account. You know nothing...
 
 You actually cannot set the access level of an individual blob (file), but rather the access level is set on the container level. However, even setting the access level of the `$web` container to private wouldn't take the static website offline. This is due to the fact that Azure's static website feature always serves files in the `$web` container anonymously, regardless of the container's access level setting. Same goes for setting the entire storage account to private.
+
+---
+
+Question: As an Azure Developer working for a company named Contoso, your task involves managing the company's Azure storage account. The storage account contains numerous block blobs, all of which are tagged with specific metadata indicating the project they are associated with. For instance, some blobs are tagged as "Project: Contoso".
+
+However, due to new privacy regulations, Contoso has decided to delete all blobs tagged with "Project: Contoso" as soon as possible after they have been uploaded to the storage. This is to ensure that sensitive data is not retained longer than necessary.
+
+Your task is to create an Azure Storage lifecycle policy `DeleteContosoData` (as a JSON definition) to automate this process.
+
+```jsonc
+// Code here
+```
+
+Answer:
+
+```json
+{
+  "rules": [
+    {
+      "enabled": true,
+      "name": "DeleteContosoData",
+      "type": "Lifecycle",
+      "definition": {
+        "actions": {
+          "baseBlob": {
+            "delete": {
+              "daysAfterModificationGreaterThan": 0
+            }
+          }
+        },
+        "filters": {
+          "blobIndexMatch": [
+            {
+              "name": "Project",
+              "op": "==",
+              "value": "Contoso"
+            }
+          ],
+          "blobTypes": ["blockBlob"]
+        }
+      }
+    }
+  ]
+}
+```
+
+---
+
+Question: How frequently are Azure Storage lifecycle management policy rules evaluated?
+
+- [ ] Every time a new blob is added or an existing blob is modified.
+- [ ] Once every hour.
+- [x] Once a day
+- [ ] Once a week
+- [ ] They are manually triggered by the user (by default)
+
+Answer: Azure Storage lifecycle management policies are evaluated once a day. In practice, this means that the policies are not necessarily applied immediately after a blob satisfies the policy rule.

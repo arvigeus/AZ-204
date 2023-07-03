@@ -396,7 +396,7 @@ There are two ways to add a policy through the Azure portal: Azure portal List v
 
 #### Azure CLI
 
-To add a lifecycle management policy with Azure CLI, write the policy to a JSON file, then call the a`z storage account management-policy create` command to create the policy.
+To add a lifecycle management policy with Azure CLI, write the policy to a JSON file, then call the `az storage account management-policy create` command to create the policy.
 
 ```sh
 az storage account management-policy create \
