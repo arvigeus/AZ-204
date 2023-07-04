@@ -502,7 +502,7 @@ await foreach (var blobItem in containerClient.GetBlobsAsync()) {}
 await blobClient.DownloadToAsync(downloadFilePath);
 ```
 
-## Authorization
+## [Authorization](https://learn.microsoft.com/en-us/azure/storage/common/authorize-data-access)
 
 Authorization ensures that the client application has the appropriate permissions to access a particular resource in your storage account.
 
@@ -533,14 +533,21 @@ A Shared Access Signature (SAS) is a URI that grants restricted access rights to
 
 A SAS is appropriate when you need to give precise, limited permissions to a client. For instance, you may want a client to have read-only access to a blob for a specific time period.
 
+1. **User Delegation SAS**: This method uses Azure Active Directory (Azure AD) credentials to create a SAS. It's a secure way to grant limited access to your Azure Storage resources without sharing your account key. It's recommended when you want to provide fine-grained access control to clients who are authenticated with Azure AD.
+
+1. **Service SAS**: This method uses your storage account key to create a SAS. It's a straightforward way to grant limited access to your Azure Storage resources. However, it's less secure than the User Delegation SAS because it involves sharing your account key. It's typically used when you want to provide access to clients who are not authenticated with Azure AD.
+
 ```cs
+// Using StorageSharedKeyCredential with account name and key directly for authentication.
+// This key has full permissions to all operations on all resources in your storage account.
+// Works for all SAS types, but less secure.
 var credential = new StorageSharedKeyCredential("<account-name>", "<account-key>");
+
+// Using DefaultAzureCredential with Azure AD. More secure, but doesn't work for Service SAS.
+// TokenCredential credential = new DefaultAzureCredential();
 
 var service = new BlobServiceClient(new Uri("<account-url>"), credential);
 var blobClient = service.GetBlobContainerClient("<container-name>").GetBlobClient("<blob-name>");
-
-// Get a user delegation key for the Blob service that's valid for 1 day
-UserDelegationKey userDelegationKey = await service.GetUserDelegationKeyAsync(DateTimeOffset.UtcNow, DateTimeOffset.UtcNow.AddDays(1));
 
 var sasBuilder = new BlobSasBuilder
 {
@@ -555,19 +562,18 @@ var sasBuilder = new BlobSasBuilder
 
 sasBuilder.SetPermissions(BlobSasPermissions.Read | BlobSasPermissions.Write);
 
-BlobUriBuilder uriBuilder = new BlobUriBuilder(blobClient.Uri)
+// For User Delegation SAS
+UserDelegationKey userDelegationKey = await service.GetUserDelegationKeyAsync(DateTimeOffset.UtcNow, DateTimeOffset.UtcNow.AddDays(1));
+BlobUriBuilder uriBuilderUserDelegation = new BlobUriBuilder(blobClient.Uri)
 {
     // Specify the user delegation key
-    Sas = sasBuilder.ToSasQueryParameters(
-        userDelegationKey,
-        service.AccountName
-        // blobClient
-        //   .GetParentBlobContainerClient()
-        //   .GetParentBlobServiceClient().AccountName
-        )
+    Sas = sasBuilder.ToSasQueryParameters(userDelegationKey, service.AccountName)
 };
+var blobClientSASUserDelegation = new BlobClient(uriBuilderUserDelegation.ToUri());
 
-var blobClientSAS = new BlobClient(uriBuilder.ToUri());
+// For Service SAS
+Uri blobSASURIService = blobClient.GenerateSasUri(sasBuilder);
+var blobClientSASService = new BlobClient(blobSASURIService);
 ```
 
 ```ps
