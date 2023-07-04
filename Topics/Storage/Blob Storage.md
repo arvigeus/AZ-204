@@ -382,10 +382,6 @@ Date: <date>
 
 Lease ID is neede whenever you want to update, delete or change the lease status on this blob. If the lease ID isn't included, these operations fail with `412 – Precondition failed`.
 
-## [Remediate anonymous public read access](https://learn.microsoft.com/en-us/azure/storage/blobs/anonymous-read-access-prevent?tabs=azure-cli)
-
-Anonymous public access to your data is always prohibited by default. If the storage account doesn't allow public access, then no container within it can have public access, regardless of its own settings. If public access is allowed at the storage account level, then a container's access depends on its own settings (**Public access: Container**, or **Public access: Blob**).
-
 ## [Static website hosting](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-static-website)
 
 Static website can be enabled/disbled from Azure Portal (`storage account > Static Website`) or CLI (`az storage blob service-properties update --account-name <storage-account> --static-website {true|false}`). This creates a container called `$web`. During deployment/maintenance, it should be disabled to prevent broken site for users (changing container/account access won't have any effect on `web` endpoint, only to `blob` endpoint).
@@ -505,3 +501,122 @@ await foreach (var blobItem in containerClient.GetBlobsAsync()) {}
 // Download the blob's contents and save it to a file
 await blobClient.DownloadToAsync(downloadFilePath);
 ```
+
+## Authorization
+
+Authorization ensures that the client application has the appropriate permissions to access a particular resource in your storage account.
+
+### [Shared Key (storage account key)](https://learn.microsoft.com/en-us/rest/api/storageservices/authorize-with-shared-key)
+
+The shared key authorization scheme provides access to all operations and resources within a storage account, but not to other storage accounts. It's essentially the equivalent of a root user in a Unix system. Because of the security risk, it's usually not recommended for routine access.
+
+The advantage of using shared keys is their simplicity. They are most appropriate for scenarios such as data migration, where you need high privileges and are willing to accept the security trade-off.
+
+You can obtain your account key from the Azure portal: `storage account > Security + networking > Access keys`. There you will see `key1` and `key2`, either of which can be used as the account key. Alternatevely, as table: `az storage account keys list --account-name myaccount --resource-group myresourcegroup --output table`.
+
+```cs
+var credential = new StorageSharedKeyCredential("<account-name>", "<account-key>");
+var service = new BlobServiceClient(new Uri("<account-url>"), credential);
+```
+
+```ps
+az storage blob upload --account-name myaccount --account-key mykey --name myblob --type block --file ./local/path/to/file --container-name mycontainer
+```
+
+```http
+Authorization: SharedKey myaccount:CY1OP3vGZJe6t2iQp6AU7CmbZjNtsQQ5EGGKkqJl+XI=
+```
+
+### [Shared Access Signature (SAS)](https://learn.microsoft.com/en-us/azure/storage/common/storage-sas-overview)
+
+A Shared Access Signature (SAS) is a URI that grants restricted access rights to Azure Storage resources. You can provide a SAS to clients who should not be trusted with your storage account key but whom you wish to delegate access to certain storage account resources.
+
+A SAS is appropriate when you need to give precise, limited permissions to a client. For instance, you may want a client to have read-only access to a blob for a specific time period.
+
+```cs
+var credential = new StorageSharedKeyCredential("<account-name>", "<account-key>");
+
+var service = new BlobServiceClient(new Uri("<account-url>"), credential);
+var blobClient = service.GetBlobContainerClient("<container-name>").GetBlobClient("<blob-name>");
+
+// Get a user delegation key for the Blob service that's valid for 1 day
+UserDelegationKey userDelegationKey = await service.GetUserDelegationKeyAsync(DateTimeOffset.UtcNow, DateTimeOffset.UtcNow.AddDays(1));
+
+var sasBuilder = new BlobSasBuilder
+{
+    BlobContainerName = blobClient.BlobContainerName,
+    BlobName = blobClient.Name,
+    Resource = "b",
+    StartsOn = DateTimeOffset.UtcNow,
+    ExpiresOn = DateTimeOffset.UtcNow.AddDays(1),
+    IPRange = new SasIPRange(IPAddress.None, IPAddress.None),
+    Protocol = SasProtocol.Https,
+};
+
+sasBuilder.SetPermissions(BlobSasPermissions.Read | BlobSasPermissions.Write);
+
+BlobUriBuilder uriBuilder = new BlobUriBuilder(blobClient.Uri)
+{
+    // Specify the user delegation key
+    Sas = sasBuilder.ToSasQueryParameters(
+        userDelegationKey,
+        service.AccountName
+        // blobClient
+        //   .GetParentBlobContainerClient()
+        //   .GetParentBlobServiceClient().AccountName
+        )
+};
+
+var blobClientSAS = new BlobClient(uriBuilder.ToUri());
+```
+
+```ps
+az storage blob generate-sas --account-name myaccount --account-key mykey --name myblob --permissions r --expiry 2023-07-04T00:00Z --container-name mycontainer
+```
+
+```http
+https://myaccount.blob.core.windows.net/mycontainer/myblob?sv=2018-03-28&ss=b&srt=sco&sp=rw&se=2023-07-04T00:00Z&st=2023-07-04T00:00Z&spr=https&sig=a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a1b2c3d4e5f6
+
+# sv: version
+# ss: services
+# srt: resource types
+# sp: permissions
+# se: expiry time
+# st: start time
+# spr: protocols
+# sig: signature.
+```
+
+### [Azure Active Directory (Azure AD)](https://learn.microsoft.com/en-us/azure/storage/blobs/authorize-access-azure-active-directory)
+
+Azure AD provides identity-based access control, so you can use it to authenticate and authorize users and services. This includes built-in features like multi-factor authentication, conditional access, and identity protection.
+
+Azure AD is the best choice when you need to authorize users and services based on their identity and roles, and when you need to utilize advanced security features. For example, it's ideal for enterprise scenarios where you want to allow employees to access Azure Storage, but you need fine-grained control over who has access and what they can do.
+
+```cs
+TokenCredential credential = new DefaultAzureCredential();
+var service = new BlobServiceClient(new Uri("<account-url>"), credential);
+```
+
+```ps
+az login
+az storage blob upload --account-name myaccount --name myblob --type block --file ./local/path/to/file --container-name mycontainer
+```
+
+#### Using app credentials
+
+`Azure Active Directory > App Registrations`
+
+```cs
+TokenCredential credential = new ClientSecretCredential("<tenant-id>", "<client-id>", "<client-secret>");
+var service = new BlobServiceClient(new Uri("<account-url>"), credential);
+```
+
+```ps
+az login --service-principal --username <client-id> --password <client-secret> --tenant <tenant-id>
+az storage blob upload --account-name myaccount --name myblob --type block --file ./local/path/to/file --container-name mycontainer
+```
+
+### [Anonymous public read access](https://learn.microsoft.com/en-us/azure/storage/blobs/anonymous-read-access-prevent?tabs=azure-cli)
+
+Anonymous public access to your data is always prohibited by default. If the storage account doesn't allow public access, then no container within it can have public access, regardless of its own settings. If public access is allowed at the storage account level, then a container's access depends on its own settings (**Public access: Container**, or **Public access: Blob**).

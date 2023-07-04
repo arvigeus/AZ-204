@@ -310,9 +310,3 @@ Portal: `storage account > Data management > Redundancy`
 ### Supported Azure Storage Services
 
 Different redundancy options are supported by various Azure Storage services, including Blob storage, Queue storage, Table storage, Azure Files (which do not support RA-GRS, RA-GZRS, or failover), and Azure managed disks.
-
-## [Authorize access to data in Azure Storage](https://learn.microsoft.com/en-us/azure/storage/common/authorize-data-access)
-
-### [Authorize requests to Azure Storage](https://learn.microsoft.com/en-us/rest/api/storageservices/authorize-requests-to-azure-storage)
-
-TODO

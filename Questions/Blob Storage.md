@@ -137,3 +137,19 @@ Question: How frequently are Azure Storage lifecycle management policy rules eva
 - [ ] They are manually triggered by the user (by default)
 
 Answer: Azure Storage lifecycle management policies are evaluated once a day. In practice, this means that the policies are not necessarily applied immediately after a blob satisfies the policy rule.
+
+---
+
+Question: As a cloud solutions developer, you're working with an existing codebase that uses Azure's legacy Storage SDK. During a service disruption at the primary data center, you need to configure the Azure Storage client to retry any failed requests on the secondary location using RA-GRS storage.
+
+Which LocationMode option from the `Microsoft.Azure.Storage.RetryPolicies.LocationMode` class should you use?
+
+- [ ] LocationMode.PrimaryOnly
+- [ ] LocationMode.SecondaryOnly
+- [x] LocationMode.PrimaryThenSecondary
+- [ ] LocationMode.SecondaryThenPrimary
+
+Answer: `LocationMode.PrimaryThenSecondary` allows requests to first try the primary location and then retry at the secondary location if necessary.  
+This option is part of the legacy Azure Storage SDK. In the newer Azure SDKs (like Azure.Storage.Blobs), the handling of retries and failovers has been reworked and made more efficient.
+
+---
