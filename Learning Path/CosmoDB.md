@@ -40,7 +40,8 @@ The following image shows the hierarchy of different entities in an Azure Cosmos
 #### Azure Cosmos DB databases
 
 You can create one or multiple Azure Cosmos DB databases under your account. A database is analogous to a namespace. A database is the unit of management for a set of Azure Cosmos DB containers.
-Azure Cosmos DB containers
+
+#### Azure Cosmos DB containers
 
 An Azure Cosmos DB container is the unit of scalability both for provisioned throughput and storage. A container is horizontally partitioned and then replicated across multiple regions. The items that you add to the container are automatically grouped into logical partitions, which are distributed across physical partitions, based on the partition key. The throughput on a container is evenly distributed across the physical partitions.
 
