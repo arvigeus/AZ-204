@@ -383,7 +383,7 @@ function sample(arr) {
 
 #### Bounded execution
 
-All Azure Cosmos DB operations must complete within a limited amount of time. Stored procedures have a limited amount of time to run on the server. All collection functions return a Boolean value that represents whether that operation completes or not
+All Azure Cosmos DB operations must complete within a limited amount of time. Stored procedures have a limited amount of time to run on the server. All collection functions return a Boolean value that represents whether that operation completes or not.
 
 #### Transactions within stored procedures
 

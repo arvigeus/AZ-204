@@ -20,11 +20,17 @@ Azure Cosmos DB is a fully managed NoSQL database service provided by Microsoft 
 
 - [**Cosmos DB Account**](https://docs.microsoft.com/en-us/azure/cosmos-db/manage-account) - The root resource for Azure Cosmos DB.
 
-- **Databases** - A logical container for containers and users. Databases manage users, permissions, and the consistency level.
+- **Databases** - A logical container for containers and users. A database is analogous to a namespace. Databases manage users, permissions, and the consistency level.
 
 - **Containers** - A schema-agnostic abstraction for storing items. You can think of them as tables, collections, or graphs depending on the chosen API. A container is associated with a specific partition key that determines how the data within the container is distributed across the partitions.
 
-- **Items** - Similar to rows or documents in other databases. An item is the smallest unit of data that can be read or written in Cosmos DB. The shape and content of items can vary as they are schema-agnostic.
+  - **Dedicated provisioned throughput mode**: In this mode, a specific amount of throughput (the capacity of the system to process and transfer data) is set aside just for one container. The system assures this through Service Level Agreements (SLAs), which are formal contracts that ensure this throughput is dedicated and maintained only for that container. This means that the processing power of the system is not shared with any other container, providing you with _predictable performance_ and _speeds_ for your specific container.
+
+  - **Shared provisioned throughput mode**: The throughput is shared among multiple containers within the same database. This shared throughput is spread across all containers that are configured to use the shared mode. This allows for flexibility and efficiency in distributing resources, particularly when _dealing with a large number of containers with variable load_. However, it's important to note that any containers in the database that have their own dedicated throughput will not be part of this sharing, they continue to operate independently with their allocated resources.
+
+- **Items** - Similar to rows or documents in other databases. An item is the smallest unit of data that can be read or written in Cosmos DB. The shape and content of items can vary as they are schema-agnostic - depending on which API you use, an item can represent either a document in a collection, a row in a table, or a node or edge in a graph. By default, all items that you add to a container are automatically indexed without requiring explicit index or schema management.
+
+![Image showing the hierarchy of Azure Cosmos DB entities: Database accounts are at the top, Databases are grouped under accounts, Containers are grouped under databases.](https://learn.microsoft.com/en-us/training/wwl-azure/explore-azure-cosmos-db/media/cosmos-entities.png)
 
 ### Examples
 
@@ -67,13 +73,15 @@ await container.CreateItemAsync(testItem, new PartitionKey(testItem.mypartitionk
 
 ## [Consistency Levels](https://docs.microsoft.com/en-us/azure/cosmos-db/consistency-levels)
 
-Offer balance between consistency, availability, and latency. These consistency levels are linearizable across the globe.
+Azure Cosmos DB provides a balanced approach to consistency, availability, and latency. Its globally linearizable consistency (serving requests concurrently) levels remain unaffected by regional settings, operation origins, number of associated regions, or whether your account has one or multiple write regions. 'Read consistency' specifically denotes a singular read operation, scoped within a particular partition-key range or logical partition, initiated by either a remote client or a stored procedure.
+
+![Image showing data consistency as a spectrum.](https://learn.microsoft.com/en-us/training/wwl-azure/explore-azure-cosmos-db/media/five-consistency-levels.png)
 
 - **Strong** - Every reader sees the latest data right away, but it may be slower (higher latency) and less available. Best for serious stuff like bank transactions where accuracy is vital.
 
-- **Bounded staleness** - Readers may see slightly old data, but there's a limit on how old (determined by number of operations K or the time interval T for staleness). Good for things like game leaderboards where a small delay is okay.
+- **Bounded staleness** - Readers may see slightly old data, but there's a limit on how old (determined by number of operations K or the time interval T for staleness - in single-region accounts, the minimum values are 10 write operations or 5 seconds, while in multi-region accounts, they are 100,000 write operations or 300 seconds). Good for things like game leaderboards where a small delay is okay.
 
-- **Session** (default) - Within a single user's session, the data is always up-to-date. Great for scenarios like a personal shopping cart on a website.
+- **Session** (default, can be configured) - Within a single user's session, the data is always up-to-date. Great for scenarios like a personal shopping cart on a website.
 
 - **Consistent prefix** - Readers might be a bit behind, but they always see things in order. Good for situations where sequence matters, like following a chain of events.
 
@@ -124,13 +132,23 @@ If an operation's RU cost exceeds your provisioned RUs, the operation is rate-li
 
 Here's a practical rule of thumb: A read operation on a 1-KB document typically consumes 1 RU.
 
+![Image showing how database operations consume request units.](https://learn.microsoft.com/en-us/training/wwl-azure/explore-azure-cosmos-db/media/request-units.png)
+
 ### [Provisioned Throughput](https://learn.microsoft.com/en-us/azure/cosmos-db/set-throughput)
 
-You can set provisioned throughput at either the database level or the container level.
+You set the number of Request Units (RUs) per second your application needs in multiples of 100.
 
 - **Database-level throughput**: Shared among all the containers in the database. It's a cost-effective option for small workloads with light traffic.
 
 - **Container-level throughput**: Dedicated to a single container. More suitable for workloads with heavy traffic or large data volumes.
+
+```ps
+az cosmosdb sql container create --throughput 400
+```
+
+```cs
+await this.cosmosDatabase.CreateContainerAsync(new ContainerProperties(id, partitionKeyPath), 400);
+```
 
 ### [Serverless mode](https://learn.microsoft.com/en-us/azure/cosmos-db/serverless)
 
@@ -138,19 +156,234 @@ You don't have to assign any throughput when creating resources in your Azure Co
 
 ### [Autoscale Throughput](https://learn.microsoft.com/en-us/azure/cosmos-db/provision-throughput-autoscale)
 
-Autoscale automatically adjusts the provisioned RUs based on the current usage. It scales between 10% and 100% of a set maximum.
+Autoscale automatically adjusts the provisioned RUs based on the current usage. It scales between 10% and 100% of a set maximum. Throughput scales automatically based on usage without affecting performance, suited for workloads with unpredictable traffic requiring high performance and scale SLAs.
+
+```ps
+az cosmosdb sql container create --throughput-type autoscale --max-throughput 4000
+```
+
+```cs
+var autoscaleThroughputProperties = ThroughputProperties.CreateAutoscaleThroughput(4000);  // 4000 max RU/s
+await this.cosmosDatabase.CreateContainerAsync(new ContainerProperties(id, partitionKeyPath), autoscaleThroughputProperties);
+```
 
 ## [API Models](https://learn.microsoft.com/en-us/azure/cosmos-db/choose-api)
 
-- **SQL API** - A JSON-based, document-centric API that provides SQL querying capabilities. Ideal for web, mobile, and gaming applications, and anything that requires handling complex _hierarchical_ data with a _schemaless_ design.
+- **API for NoSQL** - A JSON-based, document-centric API that provides SQL querying capabilities. Ideal for web, mobile, and gaming applications, and anything that requires handling complex _hierarchical_ data with a _schemaless_ design.
 
-- **MongoDB API** - If you're already using MongoDB
+- **API for MongoDB** - stores data in a document structure, via BSON format.
 
-- **Cassandra API** - Allows existing Apache Cassandra workloads to run on Azure Cosmos DB, with minimal code changes.
+- **API for PostgreSQL** - Stores data either on a single node, or distributed in a multi-node configuration.
 
-- **Azure Table API** - A _key-value_ based API that offers compatibility with Azure Table Storage, overcoming its limitations. Ideal for applications that need a simple schemaless _key-value_ store.
+- **API for Apache Cassandra** - Supports a column-oriented schema, aligns with Apache Cassandra's distributed, scalable NoSQL philosophy, and is wire protocol compatible with it.
 
-- **Gremlin API** - _Graph-based_ API for highly _interconnected_ datasets.
+- **API for Table** - A _key-value_ based API that offers compatibility with Azure Table Storage, overcoming its limitations. Ideal for applications that need a simple schemaless _key-value_ store. Only supports OLTP scenarios.
+
+- **API for Apache Gremlin** - _Graph-based_ API for highly _interconnected_ datasets. It's ideal for handling dynamic, complexly related data that exceeds the capabilities of relational databases.
+
+Using these APIs, you can emulate various database technologies, modeling real-world data via documents, key-value, graph, and column-family models, minus the management and scaling overheads.
+
+## [Stored procedures](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/how-to-use-stored-procedures-triggers-udfs?tabs=dotnet-sdk-v3)
+
+Azure Cosmos DB allows transactional execution of JavaScript in the form of stored procedures, triggers, and user-defined functions (UDFs). Each needs to be registered prior to calling.
+
+- **Stored procedures**: JavaScript functions registered per collection, capable of performing CRUD and query operations on any document in that collection. Procedures run within a bounded execution time and can handle transactions (pause and resume lengthy operations using a "continuation token" to manage the process until completion). All collection functions (ex: `collection.createDocument()`) return a Boolean value that represents whether that operation completes or not.
+
+  ```js
+  var helloWorldStoredProc = {
+    id: "helloWorld",
+    serverScript: function () {
+      // context provides access to all operations that can be performed in Azure Cosmos DB
+      // and access to the request and response objects
+      var context = getContext();
+      var response = context.getResponse();
+
+      response.setBody("Hello, World");
+    },
+  };
+  ```
+
+  ```js
+  var createDocumentStoredProc = {
+    id: "createMyDocument",
+    // This stored procedure creates a new item in the Azure Cosmos container
+    body: function createMyDocument(documentToCreate) {
+      var context = getContext();
+      var collection = context.getCollection();
+
+      // Async 'createDocument' operation, depends on JavaScript callbacks
+      // returns true if creation was successful
+      var accepted = collection.createDocument(
+        collection.getSelfLink(),
+        documentToCreate,
+        // Callback function with error and created document parameters
+        function (err, documentCreated) {
+          // Handle or throw error inside the callback
+          if (err) throw new Error("Error" + err.message);
+          // Return the id of the newly created document
+          context.getResponse().setBody(documentCreated.id);
+        }
+      );
+
+      // If the document creation was not accepted, return
+      if (!accepted) return;
+    },
+  };
+  ```
+
+  ```js
+  // Parameter is always string!
+  function sample(arr) {
+    if (typeof arr === "string") arr = JSON.parse(arr);
+
+    arr.forEach(function (a) {
+      // do something here
+      console.log(a);
+    });
+  }
+  ```
+
+- **Triggers**: Pretriggers and post-triggers operate before and after a database item modification, respectively. They aren't automatically executed, and must be registered and specified for each operation where execution is required. For instance, a pretrigger could validate properties of a new Cosmos item or add a timestamp, while a post-trigger might update metadata regarding a newly created item.
+
+  ```js
+  // Pretrigger
+  // Pretriggers can't have any input parameters!
+  function validateToDoItemTimestamp() {
+    var context = getContext();
+    var request = context.getRequest();
+
+    // item to be created in the current operation
+    var itemToCreate = request.getBody();
+
+    // validate properties
+    if (!("timestamp" in itemToCreate)) {
+      var ts = new Date();
+      itemToCreate["timestamp"] = ts.getTime();
+    }
+
+    // update the item that will be created
+    request.setBody(itemToCreate);
+  }
+
+  // Posttrigger
+  function updateMetadata() {
+    var context = getContext();
+    var container = context.getCollection();
+    var response = context.getResponse();
+
+    // item that was created
+    var createdItem = response.getBody();
+
+    // query for metadata document
+    var filterQuery = 'SELECT * FROM root r WHERE r.id = "_metadata"';
+    var accept = container.queryDocuments(
+      container.getSelfLink(),
+      filterQuery,
+      updateMetadataCallback
+    );
+    if (!accept) throw "Unable to update metadata, abort";
+
+    function updateMetadataCallback(err, items, responseOptions) {
+      if (err) throw new Error("Error" + err.message);
+      if (items.length != 1) throw "Unable to find metadata document";
+
+      var metadataItem = items[0];
+
+      // update metadata
+      metadataItem.createdItems += 1;
+      metadataItem.createdNames += " " + createdItem.id;
+      var accept = container.replaceDocument(
+        metadataItem._self,
+        metadataItem,
+        function (err, itemReplaced) {
+          if (err) throw "Unable to update metadata, abort";
+        }
+      );
+      if (!accept) throw "Unable to update metadata, abort";
+      return;
+    }
+  }
+  ```
+
+- **User-defined functions (UDFs)**: These are functions used within a query, such as a function to calculate income tax based on different brackets.
+
+  ```js
+  function tax(income) {
+    if (income == undefined) throw "no input";
+
+    if (income < 1000) return income * 0.1;
+    else if (income < 10000) return income * 0.2;
+    else return income * 0.4;
+  }
+  ```
+
+Do note, Cosmos DB operations must complete within a limited time frame!
+
+## [Change feed](https://docs.microsoft.com/en-us/azure/cosmos-db/change-feed)
+
+Records changes in a container in chronological order. It listens for changes and then returns an ordered list of modified documents, which can be processed asynchronously and incrementally. Currently, the change feed shows all inserts and updates but not deletes. You can add a "deleted" attribute to items you plan to delete, setting its value to "true" and adding a time-to-live (TTL) value for automatic deletion.
+
+There are two ways to interact with the change feed: push and pull models. In the push model, the change feed processor automatically sends work to a client. The pull model requires the client to request work from the server, providing low-level control of processing. The push model is generally recommended. The pull model offers extra control for specific use-cases like reading changes from a specific partition key, controlling change processing speed, or performing a one-time read for tasks like data migration.
+
+NOTE: Change feed does not work with Table and PostgreSQL!
+
+### Change feed processor
+
+The typical lifecycle of a host instance includes reading the change feed, sleeping if no changes are detected, sending changes to the delegate for processing, and updating the lease store with the latest processed point in time.
+
+```cs
+private static async Task<ChangeFeedProcessor> StartChangeFeedProcessorAsync(
+    CosmosClient cosmosClient,
+    IConfiguration configuration)
+{
+    string databaseName = configuration["SourceDatabaseName"];
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    // Monitored Container: Houses data. Inserts and updates are reflected in the change feed. //
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    string sourceContainerName = configuration["SourceContainerName"];
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    // Lease Container: Serves as state storage and manages change feed processing across workers. //
+    // It can be in the same or different account as the monitored container.                      //
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    string leaseContainerName = configuration["LeasesContainerName"];
+
+    Container leaseContainer = cosmosClient.GetContainer(databaseName, leaseContainerName);
+    // When implementing the change feed processor, the monitored container is always the point of entry
+    ChangeFeedProcessor changeFeedProcessor = cosmosClient.GetContainer(databaseName, sourceContainerName)
+        .GetChangeFeedProcessorBuilder<ToDoItem>(processorName: "changeFeedSample", onChangesDelegate: HandleChangesAsync)
+            // Compute Instance: Hosts change feed processor to listen for changes.
+            // Can be a VM, Kubernetes pod, Azure App Service instance, or a physical machine,
+            // identified by a unique instance name.
+            .WithInstanceName("consoleHost")
+            .WithLeaseContainer(leaseContainer)
+            .Build();
+
+    Console.WriteLine("Starting Change Feed Processor...");
+    await changeFeedProcessor.StartAsync();
+    Console.WriteLine("Change Feed Processor started.");
+    return changeFeedProcessor;
+}
+
+//////////////////
+// The delegate //
+//////////////////
+static async Task HandleChangesAsync(
+    ChangeFeedProcessorContext context,
+    IReadOnlyCollection<ToDoItem> changes,
+    CancellationToken cancellationToken)
+{
+    Console.WriteLine($"Started handling changes for lease {context.LeaseToken}...");
+    Console.WriteLine($"Change Feed request consumed {context.Headers.RequestCharge} RU.");
+    // SessionToken if needed to enforce Session consistency on another client instance
+    Console.WriteLine($"SessionToken ${context.Headers.Session}");
+
+    foreach (ToDoItem item in changes)
+    {
+        Console.WriteLine($"Detected operation for item with id {item.id}, created at {item.creationTime}.");
+        await Task.Delay(10);
+    }
+}
+```
 
 ## [Global Distribution](https://docs.microsoft.com/en-us/azure/cosmos-db/distribute-data-globally)
 
