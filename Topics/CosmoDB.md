@@ -16,17 +16,45 @@ Azure Cosmos DB is a fully managed NoSQL database service provided by Microsoft 
 
 - **Comprehensive SLAs:** Microsoft provides comprehensive SLAs (Service Level Agreements) that cover latency, throughput, consistency, and availability.
 
-## [Core Components](<(https://docs.microsoft.com/en-us/azure/cosmos-db/databases-containers-items)>)
+## [Core Components](https://docs.microsoft.com/en-us/azure/cosmos-db/databases-containers-items)
 
-- [**Cosmos DB Account**](https://docs.microsoft.com/en-us/azure/cosmos-db/manage-account) - The root resource for Azure Cosmos DB.
+- [**Cosmos DB Account**](https://docs.microsoft.com/en-us/azure/cosmos-db/manage-account) - The root resource for Azure Cosmos DB. It contains a unique DNS name and can be managed using various tools. It can virtually manage an unlimited amount of data and provisioned throughput. You can create one or more databases within your account, and then one or more containers to store your data.
 
 - **Databases** - A logical container for containers and users. A database is analogous to a namespace. Databases manage users, permissions, and the consistency level.
 
-- **Containers** - A schema-agnostic abstraction for storing items. You can think of them as tables, collections, or graphs depending on the chosen API. A container is associated with a specific partition key that determines how the data within the container is distributed across the partitions.
+- **Containers** - A container in Azure Cosmos DB is where data is stored. Data is stored on one or more servers, called partitions. When a container is created, you need to supply a partition key. The partition key is a property you select from your items to help Azure Cosmos DB distribute the data efficiently across partitions. Containers are schema-agnostic, meaning items within a container can have arbitrary schemas or different entities so long as they share the same partition key.
 
-  - **Dedicated provisioned throughput mode**: In this mode, a specific amount of throughput (the capacity of the system to process and transfer data) is set aside just for one container. The system assures this through Service Level Agreements (SLAs), which are formal contracts that ensure this throughput is dedicated and maintained only for that container. This means that the processing power of the system is not shared with any other container, providing you with _predictable performance_ and _speeds_ for your specific container.
+  - **Dedicated provisioned throughput mode**: In this mode, a specific amount of throughput (the capacity of the system to process and transfer data) is set aside just for _one container_. The system assures this through Service Level Agreements (SLAs), which are formal contracts that ensure this throughput is dedicated and maintained only for that container. This means that the processing power of the system is not shared with any other container, providing you with _predictable performance_ and _speeds_ for your specific container.
 
-  - **Shared provisioned throughput mode**: The throughput is shared among multiple containers within the same database. This shared throughput is spread across all containers that are configured to use the shared mode. This allows for flexibility and efficiency in distributing resources, particularly when _dealing with a large number of containers with variable load_. However, it's important to note that any containers in the database that have their own dedicated throughput will not be part of this sharing, they continue to operate independently with their allocated resources.
+    ```ps
+    az cosmosdb sql container create \
+      -a $accountName -g $resourceGroupName \
+      -d $databaseName -n $containerName \
+      -p $partitionKey --throughput $throughput
+    ```
+
+    ```cs
+    await this.cosmosClient.GetDatabase(databaseName).CreateContainerAsync(
+      id: containerName,
+      partitionKeyPath: "/myPartitionKey",
+      throughput: 1000);
+    ```
+
+  - **Shared provisioned throughput mode**: The throughput is shared among _multiple containers within the same database_. This shared throughput is spread across all containers that are configured to use the shared mode. This allows for flexibility and efficiency in distributing resources, particularly when _dealing with a large number of containers with variable load_. However, it's important to note that any containers in the database that have their own dedicated throughput will not be part of this sharing, they continue to operate independently with their allocated resources.
+
+    ```ps
+    az cosmosdb sql database create \
+      -a $accountName \
+      -g $resourceGroupName \
+      -n $databaseName \
+      --throughput $throughput
+    ```
+
+    ```cs
+    await this.cosmosClient.CreateDatabaseIfNotExistsAsync(
+          id: databaseName,
+          throughput: 1000);
+    ```
 
 - **Items** - Similar to rows or documents in other databases. An item is the smallest unit of data that can be read or written in Cosmos DB. The shape and content of items can vary as they are schema-agnostic - depending on which API you use, an item can represent either a document in a collection, a row in a table, or a node or edge in a graph. By default, all items that you add to a container are automatically indexed without requiring explicit index or schema management.
 
@@ -420,23 +448,15 @@ static async Task HandleChangesAsync(
 
 ## [Backup and Restore](https://docs.microsoft.com/en-us/azure/cosmos-db/online-backup-and-restore)
 
-Azure Cosmos DB provides automated and manual backup capabilities to protect your data and provide recovery from both regional disasters and accidental deletes.
+Azure Cosmos DB takes automatic backups of data regularly without affecting database performance. Backups are stored separately, encrypted (with Microsoft managed service keys), and transferred securely.
 
-### Automated Backups
+Restores can only be done between accounts within the same subscription and you can't restore into an account with lower Request Units per second (RU/s) or fewer partitions.
 
-Cosmos DB automatically takes backups of your data at regular intervals without affecting the performance or availability of your database operations.
+### Backup modes
 
-### Manual Backups (Point-in-time Restore)
+- **Continuous backup mode** has two tiers: 7-day retention and 30-day retention. You can restore to any point within these retention periods, into a new or existing account. You select the tier when creating a Cosmos DB account. Note that if you configure a new account with continuous backup, you can do self-service restore but you can't switch it back to periodic mode.
 
-You can manually trigger backups using the Point-in-time Restore (PITR) feature. This allows you to restore your data to any point within the last 30 days.
-
-### Backup Storage and Retention
-
-The backup storage is separate from your provisioned throughput and data storage, and it doesn't affect the performance of database operations. You can set the backup retention period up to 30 days.
-
-### Restore
-
-You can restore both manual and automatic backups to a new Cosmos DB account in case of accidental delete or write operations, or regional disasters.
+- **Periodic backup mode** is the default for all existing accounts. Backups are taken at intervals you configure, with data restored through a request to the support team. The maximum retention period is a month, and the minimum backup interval is an hour.
 
 ## [Monitoring and Diagnostics](https://docs.microsoft.com/en-us/azure/cosmos-db/how-to-monitor-account)
 
