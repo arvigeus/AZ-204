@@ -18,45 +18,59 @@ Azure Cosmos DB is a fully managed NoSQL database service provided by Microsoft 
 
 ## [Core Components](https://docs.microsoft.com/en-us/azure/cosmos-db/databases-containers-items)
 
-- [**Cosmos DB Account**](https://docs.microsoft.com/en-us/azure/cosmos-db/manage-account) - The root resource for Azure Cosmos DB. It contains a unique DNS name and can be managed using various tools. It can virtually manage an unlimited amount of data and provisioned throughput. You can create one or more databases within your account, and then one or more containers to store your data.
+### [Cosmos DB Account](https://docs.microsoft.com/en-us/azure/cosmos-db/manage-account)
 
-- **Databases** - A logical container for containers and users. A database is analogous to a namespace. Databases manage users, permissions, and the consistency level.
+The root resource for Azure Cosmos DB. It contains a unique DNS name and can be managed using various tools. It can virtually manage an unlimited amount of data and provisioned throughput. You can create one or more databases within your account, and then one or more containers to store your data. 50 max (soft limit)
 
-- **Containers** - A container in Azure Cosmos DB is where data is stored. Data is stored on one or more servers, called partitions. When a container is created, you need to supply a partition key. The partition key is a property you select from your items to help Azure Cosmos DB distribute the data efficiently across partitions. Containers are schema-agnostic, meaning items within a container can have arbitrary schemas or different entities so long as they share the same partition key.
+### Databases
 
-  - **Dedicated provisioned throughput mode**: In this mode, a specific amount of throughput (the capacity of the system to process and transfer data) is set aside just for _one container_. The system assures this through Service Level Agreements (SLAs), which are formal contracts that ensure this throughput is dedicated and maintained only for that container. This means that the processing power of the system is not shared with any other container, providing you with _predictable performance_ and _speeds_ for your specific container.
+A logical container for containers and users. A database is analogous to a namespace. Databases manage users, permissions, and the consistency level.
 
-    ```ps
-    az cosmosdb sql container create \
-      -a $accountName -g $resourceGroupName \
-      -d $databaseName -n $containerName \
-      -p $partitionKey --throughput $throughput
-    ```
+### Containers
 
-    ```cs
-    await this.cosmosClient.GetDatabase(databaseName).CreateContainerAsync(
-      id: containerName,
-      partitionKeyPath: "/myPartitionKey",
-      throughput: 1000);
-    ```
+A container in Azure Cosmos DB is where data is stored. Data is stored on one or more servers, called partitions. When a container is created, you need to supply a partition key. The partition key is a property you select from your items to help Azure Cosmos DB distribute the data efficiently across partitions. Containers are schema-agnostic, meaning items within a container can have arbitrary schemas or different entities so long as they share the same partition key. They have two throughput modes that _cannot be changed later_:
 
-  - **Shared provisioned throughput mode**: The throughput is shared among _multiple containers within the same database_. This shared throughput is spread across all containers that are configured to use the shared mode. This allows for flexibility and efficiency in distributing resources, particularly when _dealing with a large number of containers with variable load_. However, it's important to note that any containers in the database that have their own dedicated throughput will not be part of this sharing, they continue to operate independently with their allocated resources.
+- **Dedicated provisioned throughput mode**: In this mode, a specific amount of throughput (the capacity of the system to process and transfer data) is set aside just for _one container_. The system assures this through Service Level Agreements (SLAs), which are formal contracts that ensure this throughput is dedicated and maintained only for that container. This means that the processing power of the system is not shared with any other container, providing you with _predictable performance_ and _speeds_ for your specific container.
 
-    ```ps
-    az cosmosdb sql database create \
-      -a $accountName \
-      -g $resourceGroupName \
-      -n $databaseName \
-      --throughput $throughput
-    ```
+  ```ps
+  az cosmosdb sql container create \
+    -a $accountName -g $resourceGroupName \
+    -d $databaseName -n $containerName \
+    -p $partitionKey --throughput $throughput
+  ```
 
-    ```cs
-    await this.cosmosClient.CreateDatabaseIfNotExistsAsync(
-          id: databaseName,
-          throughput: 1000);
-    ```
+  ```cs
+  await this.cosmosClient.GetDatabase(databaseName).CreateContainerAsync(
+    id: containerName,
+    partitionKeyPath: "/myPartitionKey",
+    throughput: 1000);
+  ```
 
-- **Items** - Similar to rows or documents in other databases. An item is the smallest unit of data that can be read or written in Cosmos DB. The shape and content of items can vary as they are schema-agnostic - depending on which API you use, an item can represent either a document in a collection, a row in a table, or a node or edge in a graph. By default, all items that you add to a container are automatically indexed without requiring explicit index or schema management.
+- **Shared provisioned throughput mode**: The throughput is shared among _multiple containers within the same database_. This shared throughput is spread across all containers that are configured to use the shared mode. This allows for flexibility and efficiency in distributing resources, particularly when _dealing with a large number of containers with variable load_. Any containers in the database that have their own dedicated throughput will not be part of this sharing, they continue to operate independently with their allocated resources.
+
+  ```ps
+  az cosmosdb sql database create \
+    -a $accountName \
+    -g $resourceGroupName \
+    -n $databaseName \
+    --throughput $throughput
+  ```
+
+  ```cs
+  await this.cosmosClient.CreateDatabaseIfNotExistsAsync(
+        id: databaseName,
+        throughput: 1000);
+  ```
+
+### Items
+
+Similar to rows or documents in other databases. An item is the smallest unit of data that can be read or written in Cosmos DB. The shape and content of items can vary as they are schema-agnostic - depending on which API you use, an item can represent either a document in a collection, a row in a table, or a node or edge in a graph. By default, all items that you add to a container are automatically indexed without requiring explicit index or schema management.
+
+#### [Time to live (TTL)](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/time-to-live)
+
+Auto-deletes items after a specified time period based on their last modified time, without requiring a client-initiated delete operation. The TTL value is set in seconds at either the container or item level, with item-level settings overriding the container level.
+
+Deletion uses leftover Request Units (RUs), and if RUs are insufficient due to heavy load, deletion is delayed but expired data isn't returned in queries. If container-level TTL is absent or null, items don't auto-expire. If it's -1, items also don't expire unless they have their own TTL. If container's TTL isn't set, item-level TTL is ineffective.
 
 ![Image showing the hierarchy of Azure Cosmos DB entities: Database accounts are at the top, Databases are grouped under accounts, Containers are grouped under databases.](https://learn.microsoft.com/en-us/training/wwl-azure/explore-azure-cosmos-db/media/cosmos-entities.png)
 
@@ -105,7 +119,7 @@ Azure Cosmos DB provides a balanced approach to consistency, availability, and l
 
 ![Image showing data consistency as a spectrum.](https://learn.microsoft.com/en-us/training/wwl-azure/explore-azure-cosmos-db/media/five-consistency-levels.png)
 
-- **Strong** - Every reader sees the latest data right away, but it may be slower (higher latency) and less available. Best for serious stuff like bank transactions where accuracy is vital.
+- **Strong** - Every reader sees the latest data right away, but it may be slower (higher latency) and less available. Best for serious stuff like bank transactions where accuracy is vital. Clients will never receive a partial write.
 
 - **Bounded staleness** - Readers may see slightly old data, but there's a limit on how old (determined by number of operations K or the time interval T for staleness - in single-region accounts, the minimum values are 10 write operations or 5 seconds, while in multi-region accounts, they are 100,000 write operations or 300 seconds). Good for things like game leaderboards where a small delay is okay.
 
@@ -113,7 +127,7 @@ Azure Cosmos DB provides a balanced approach to consistency, availability, and l
 
 - **Consistent prefix** - Readers might be a bit behind, but they always see things in order. Good for situations where sequence matters, like following a chain of events.
 
-- **Eventual** - Readers might see things out of order (non-consistent) or slightly old, but it eventually catches up. Best when speed and availability are more important than immediate consistency, like a social media like counter.
+- **Eventual** - Readers might see things out of order (non-consistent) or slightly old, but it eventually catches up. Best when speed and availability are more important than immediate consistency, like a social media like counter. Lowest latency and highest availability.
 
 ### Managing consistency levels
 
@@ -349,7 +363,7 @@ Do note, Cosmos DB operations must complete within a limited time frame!
 
 ## [Change feed](https://docs.microsoft.com/en-us/azure/cosmos-db/change-feed)
 
-Records changes in a container in chronological order. It listens for changes and then returns an ordered list of modified documents, which can be processed asynchronously and incrementally. Currently, the change feed shows all inserts and updates but not deletes. You can add a "deleted" attribute to items you plan to delete, setting its value to "true" and adding a time-to-live (TTL) value for automatic deletion.
+Enabled by default. Records changes in a container in chronological order. Order is guaranteed within each logical partition key value, but not across them. It listens for changes and then returns an ordered list of modified documents, which can be processed asynchronously and incrementally. Currently, the change feed shows all inserts and updates but not deletes. You can add a "deleted" attribute to items you plan to delete, setting its value to "true" and adding a time-to-live (TTL) value for automatic deletion.
 
 There are two ways to interact with the change feed: push and pull models. In the push model, the change feed processor automatically sends work to a client. The pull model requires the client to request work from the server, providing low-level control of processing. The push model is generally recommended. The pull model offers extra control for specific use-cases like reading changes from a specific partition key, controlling change processing speed, or performing a one-time read for tasks like data migration.
 
@@ -413,6 +427,58 @@ static async Task HandleChangesAsync(
 }
 ```
 
+## Querying data
+
+- Data in Azure Cosmos DB is stored as JSON documents. This means you can query nested properties and arrays directly.
+- Queries in Azure Cosmos DB are case sensitive.
+- Azure Cosmos DB automatically **indexes all properties** in your data (configurable: `containerProperties.IndexingPolicy.ExcludedPaths.Add(new ExcludedPath{ Path = "/nonQueriedProperty/*" });` to exclude property you never query on). This makes queries fast, but it can also increase the cost of writes.
+- Azure Cosmos DB supports ACID transactions within a single partition.
+- Azure Cosmos DB uses optimistic concurrency control to prevent conflicts when multiple clients are trying to update the same data. This is done using `ETags` and HTTP headers.
+
+```sql
+SELECT
+  c.name,
+  c.age,
+  {
+    "phoneNumber": p.number,
+    "phoneType": p.type
+  } AS phoneInfo
+FROM c
+JOIN p IN c.phones
+WHERE c.age > 21 AND ARRAY_CONTAINS(c.tags, 'student') AND STARTSWITH(p.number, '123')
+ORDER BY c.age DESC
+OFFSET 10 LIMIT 20
+
+```
+
+- Column names **require** specifiers, e.g. `c.name`, **not** `name`.
+- `FROM` clause is just an alias (no need to specify container name).
+- You can only join within a single container. You can't join data across different containers.
+- Aggregation functions are not supported.
+
+### Flattening data
+
+The `VALUE` keyword is used to flatten the result of a `SELECT` statement (not individual fields within that statement)
+
+```sql
+SELECT VALUE {
+  "name": p.name,
+  "sku": p.sku,
+  "vendor": p.manufacturer.name
+}
+FROM products p
+WHERE p.sku = "teapo-surfboard-72109"
+```
+
+This is similar to aliasing `SELECT p.name AS name`
+
+### Using UDF
+
+```sql
+SELECT c.id, udf.GetMaxNutritionValue(c.nutrients) AS MaxNutritionValue
+FROM c
+```
+
 ## [Global Distribution](https://docs.microsoft.com/en-us/azure/cosmos-db/distribute-data-globally)
 
 - **Multi-region Writes** - Perform writes in all configured regions. This enhances write latency and availability.
@@ -424,6 +490,13 @@ static async Task HandleChangesAsync(
 - **Manual Failover** - For testing purposes, you can trigger a manual failover to see how your application behaves during regional failures.
 
 - **No downtime when adding or removing regions**
+
+### [Conflict resolution](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/how-to-manage-conflicts)
+
+In a multi-master setup, multiple regions can simultaneously read from and write to your Azure Cosmos DB database to maximize availability and performance. Conflicts can occur when the same data is modified concurrently in different regions. Conflict resolution policies determine how these conflicts should be resolved automatically or through custom procedures.
+
+- **Automatic**: Uses a Last Writer Wins (LWW) policy based on a system or user-defined property.
+- **Custom**: Uses a user-defined stored procedure to handle conflicts.
 
 ## [Security](https://docs.microsoft.com/en-us/azure/cosmos-db/database-security)
 

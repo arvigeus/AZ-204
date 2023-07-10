@@ -56,6 +56,19 @@ Answer: The Bounded staleness consistency level allows for some lag in data prop
 
 ---
 
+Question: What is the most suitable consistency level for a database solution that ensures sequential data writes are returned with no gaps, can process data using either its most recent or previous version, strives to minimize latency and negative impacts on data availability, and also keeps processing overhead as minimal as possible?
+
+- [ ] Strong
+- [ ] Session
+- [x] Bounded staleness
+- [ ] Consistent prefix
+- [ ] Eventual
+
+Answer: The bounded Staleness consistency level ensures that data writes are returned sequentially (no gaps). You have the flexibility to set up staleness, deciding the version of data to be returned, based on either the count of versions or the time elapsed.  
+All other options (except Eventual) also enabless gapless reads, but cannot configure staleness.
+
+---
+
 Question: Your company operates a financial application which handles sensitive transactions. It's critical that all operations are immediately consistent across all regions, even if it might impact performance. What consistency level would be most suitable for this scenario?
 
 - [x] Strong
@@ -291,3 +304,250 @@ Dedicated throughput is specified at the container (not at dayabase level) level
 Shared throughput is not assigned at the container level but at the database level.
 
 ---
+
+Question: What is the correct syntax to select all properties from items in a Cosmos DB container?
+
+- [x] `SELECT *`
+- [x] `SELECT c.*`
+- [ ] `SELECT ALL`
+- [ ] `SELECT c.ALL`
+- [x] `SELECT c FROM root AS c`
+
+Answer: Same as SQL. Note: The `SELECT *` syntax is only valid if FROM clause has declared exactly one alias.
+
+---
+
+Question: Given the following query, which option correctly selects all properties from items in the container?
+
+```sql
+FROM c
+JOIN p IN c.phones
+```
+
+- [ ] `SELECT *`
+- [x] `SELECT c.*`
+- [ ] `SELECT p.*`
+- [ ] `SELECT c.*, p.*`
+
+Answer: `SELECT c.*`
+The `SELECT *` syntax is only valid if the FROM clause has declared exactly one alias. In this case, the FROM clause has declared two aliases (`c` and `p`), so `SELECT *` is not valid.  
+The `SELECT p.*` syntax would select all properties from the items in the phones array  
+The `SELECT c.*, p.*` would select all properties from both the items in the container and the phones array. However, in this context, SELECT c.\* is the correct answer because the question asks for all properties from items in the container.
+
+---
+
+Question: Given the following data:
+
+```json
+[
+  {
+    "id": "6e9f51c1-6b45-440f-af5a-2abc96cd083d",
+    "categoryName": "Sleeping Bags",
+    "name": "Vareno Sleeping Bag (6') Turmeric",
+    "price": 120,
+    "closeout": true,
+    "manufacturer": {
+      "name": "Vareno"
+    },
+    "tags": [{ "name": "Color Group: Yellow" }, { "name": "Bag Shape: Mummy" }]
+  }
+]
+```
+
+What result this query will produce:
+
+```cosmodb
+SELECT {
+  "name": p.name,
+  "sku": p.sku,
+  "vendor": p.manufacturer.name
+} AS product
+FROM products p
+WHERE p.sku = "teapo-surfboard-72109"
+```
+
+Answer:
+
+```json
+[
+  {
+    "product": {
+      "name": "Teapo Surfboard (6'10\") Grape",
+      "sku": "teapo-surfboard-72109",
+      "vendor": "Taepo"
+    }
+  }
+]
+```
+
+---
+
+Question: Given the following data:
+
+```json
+[
+  {
+    "id": "6e9f51c1-6b45-440f-af5a-2abc96cd083d",
+    "categoryName": "Sleeping Bags",
+    "name": "Vareno Sleeping Bag (6') Turmeric",
+    "price": 120,
+    "closeout": true,
+    "manufacturer": {
+      "name": "Vareno"
+    },
+    "tags": [{ "name": "Color Group: Yellow" }, { "name": "Bag Shape: Mummy" }]
+  }
+]
+```
+
+Write a query that will return this result, filtering by `teapo-surfboard-72109`:
+
+```json
+[
+  {
+    "name": "Teapo Surfboard (6'10\") Grape",
+    "sku": "teapo-surfboard-72109",
+    "vendor": "Taepo"
+  }
+]
+```
+
+```sql
+-- Code here
+```
+
+Answer:
+
+```sql
+SELECT VALUE {
+  "name": p.name,
+  "sku": p.sku,
+  "vendor": p.manufacturer.name
+}
+FROM products p
+WHERE p.sku = "teapo-surfboard-72109"
+```
+
+---
+
+Question: Which of the following best describes the format of data returned by a Cosmos DB query when using the PostgreSQL API?
+
+- [ ] XML, since XML is a widely used format for data interchange.
+- [ ] Tabular data, since the PostgreSQL API transforms the data to resemble traditional SQL results.
+- [x] JSON, because Cosmos DB internally stores data in a JSON-like format, regardless of the API used.
+- [ ] Binary data, encoded in a PostgreSQL-specific format.
+
+Answer: Cosmos DB internally stores data in a JSON-like format, regardless of the API used.
+
+---
+
+When executing a query in Azure Cosmos DB utilizing the Table API as follows:
+
+```cosmodb
+SELECT
+FROM Invoices i
+WHERE i.id =1
+```
+
+What kind of outcome can you anticipate from this query?
+
+- [ ] Data in an XML format
+- [x] Data in a JSON format
+- [ ] An error due to incorrect syntax
+- [ ] A table structured in rows and columns
+
+Answer: Cosmos DB internally stores data in a JSON-like format, regardless of the API used.
+
+---
+
+Question: Given the following statements about Azure Cosmos DB's Change Feed, identify which ones are true:
+
+- [x] Change Feed in Azure Cosmos DB is automatically enabled upon creation of a container.
+- [x] The Change Feed presents changes to a container in a chronological sequence.
+- [ ] Change Feed natively displays all modifications, including inserts, updates, and deletions.
+- [ ] There is only one interaction model with Change Feed, which is the push model.
+- [x] A soft-delete pattern is supported in Azure Cosmos DB where a "deleted" attribute can be appended to items intended for deletion.
+- [x] In the push model, the Change Feed processor independently dispatches tasks to a client.
+- [ ] Change Feed functionality is available across all API models in Azure Cosmos DB.
+- [x] The pull model in Change Feed allows for manual checkpointing and control over processing speed.
+- [x] Items can have a time-to-live (TTL) value attached for automatic deletion.
+- [ ] Change Feed functionality is limited to the SQL (Core) API in Azure Cosmos DB.
+- [ ] In the push model, the Change Feed processor requires manual intervention to dispatch tasks to a client.
+- [x] Change Feed shows all inserts and updates, excluding deletions.
+- [x] The Change Feed feature isn't compatible with Azure Cosmos DB's Table and PostgreSQL APIs.
+- [ ] Change Feed doesn't have a provision for distributing processing tasks across multiple instances.
+- [ ] The Change Feed feature is an add-on and comes with an additional cost.
+- [x] Change Feed allows microservices to independently react to data changes.
+- [x] Change Feed supports reading changes from a specific partition key.
+- [ ] The Change Feed retains the changes indefinitely until they are consumed.
+- [x] Change Feed can be used to implement event sourcing patterns where the stream of events in Change Feed forms the source of truth and can be used to materialize the application’s state.
+- [ ] Change Feed cannot be used in scenarios that require triggering a function or a logic app, real-time processing, or distributed database updates.
+- [x] With Change Feed, you can create low-latency, real-time data processing solutions.
+- [ ] Change feed guarantees order across the partition key values.
+
+Answer:
+
+The retention time depends on the configured time-to-live of the items and the change feed retention period set on the container, by default it's 7 days.  
+Change Feed is used in scenarios that require triggering a function or a logic app, real-time processing, or distributed database updates.  
+In the change feed, order is guaranteed within each logical partition key value, but not across them.
+
+---
+
+Question: Your organization has deployed a multi-region Azure Cosmos DB database to ensure high availability. Each region can simultaneously read from and write to the database. There is a chance that the same document is updated concurrently in different regions, potentially leading to conflicts. To handle this, you've decided to use the automatic conflict resolution policy provided by Azure Cosmos DB. Based on your understanding of this policy, which strategy best describes how Azure Cosmos DB would resolve these conflicts?
+
+- [ ] The update from the region that first modified the document is always retained.
+- [ ] The update from a randomly selected region is retained.
+- [x] The update from the region that last modified the document is retained.
+- [ ] All updates from all regions are retained in some manner.
+
+Answer: Last Writer Wins
+
+---
+
+Question: You're running a global highly available e-commerce application with Azure Cosmos DB, where updates to product inventory are made concurrently across multiple regions. However, you've noticed that sometimes inventory data gets out of sync across different regions. To ensure consistency in inventory data, what feature can you use in Azure Cosmos DB?
+
+- [ ] Increase Request Units (RUs)
+- [ ] Implement strong consistency level
+- [ ] Disable multi-region writes
+- [x] Set up a conflict resolution policy
+
+Answer: Setting up a conflict resolution policy helps manage conflicts that arise from concurrent writes across different regions, ensuring data consistency across regions.  
+The other options are related to performance, consistency levels, and write capabilities, but they don't directly address data conflicts arising from concurrent writes.  
+Disabling multi-region writes could potentially avoid conflicts, but it would also negate the benefits of having a globally distributed application, like reduced latency for writes in different regions.
+
+---
+
+Question: An e-commerce company is implementing a data migration operation on their Azure Cosmos DB database. The operation needs to be precisely controlled, allowing the engineering team to manually request the server for a set of changes, process them, and then request the next set. Which Change Feed interaction model best fits this use case?
+
+- [x] Pull Model
+- [ ] Push Model
+- [ ] Either Model
+- [ ] None of the Models
+
+Answer: The pull model offers extra control for specific use-cases, especially for data migration.
+
+---
+
+Question: A financial technology company is developing a real-time fraud detection system using Azure Cosmos DB. The system needs to react instantaneously to changes in the database, with minimal latency. Which Change Feed interaction model best fits this use case?
+
+- [ ] Pull Model
+- [x] Push Model
+- [ ] Either Model
+- [ ] None of the Models
+
+Answer: In the push model, the change feed processor automatically sends work to a client.
+
+---
+
+Question: Which of the following statements about Time to Live (TTL) in Azure Cosmos DB are true? Select all that apply.
+
+- [x] TTL can be set at the container level and can be overridden on a per-item basis.
+- [ ] TTL can be set only at item level.
+- [ ] When TTL has expired, if the container is overloaded with requests, data is immediately deleted.
+- [x] Items with TTL set to "-1" don't expire by default.
+- [x] If TTL is not set on a container, then the TTL on an item in this container has no effect.
+- [ ] If a container's TTL is null or missing, items without a specific TTL will not expire, while others adhere to their own TTL.
+- [ ] TTL is used for automatically deleting items after a certain period, based on their creation time.
+
+Answer: Even after TTL has expired, if the container is overloaded with requests and there aren't enough Request Units available, the data deletion is delayed until there are enough resources.  
+Items are removed after specific time period, since the time they were **last modified**.
