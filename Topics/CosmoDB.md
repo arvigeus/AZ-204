@@ -24,43 +24,11 @@ The root resource for Azure Cosmos DB. It contains a unique DNS name and can be 
 
 ### Databases
 
-A logical container for containers and users. A database is analogous to a namespace. Databases manage users, permissions, and the consistency level.
+A logical container for containers and users. A database is analogous to a namespace. Databases manage users, permissions, and the consistency level. Database names should be 3-63 characters long, start with a lowercase letter or number, and only contain lowercase letters, numbers, or dashes.
 
 ### Containers
 
-A container in Azure Cosmos DB is where data is stored. Data is stored on one or more servers, called partitions. When a container is created, you need to supply a partition key. The partition key is a property you select from your items to help Azure Cosmos DB distribute the data efficiently across partitions. Containers are schema-agnostic, meaning items within a container can have arbitrary schemas or different entities so long as they share the same partition key. They have two throughput modes that _cannot be changed later_:
-
-- **Dedicated provisioned throughput mode**: In this mode, a specific amount of throughput (the capacity of the system to process and transfer data) is set aside just for _one container_. The system assures this through Service Level Agreements (SLAs), which are formal contracts that ensure this throughput is dedicated and maintained only for that container. This means that the processing power of the system is not shared with any other container, providing you with _predictable performance_ and _speeds_ for your specific container.
-
-  ```ps
-  az cosmosdb sql container create \
-    -a $accountName -g $resourceGroupName \
-    -d $databaseName -n $containerName \
-    -p $partitionKey --throughput $throughput
-  ```
-
-  ```cs
-  await this.cosmosClient.GetDatabase(databaseName).CreateContainerAsync(
-    id: containerName,
-    partitionKeyPath: "/myPartitionKey",
-    throughput: 1000);
-  ```
-
-- **Shared provisioned throughput mode**: The throughput is shared among _multiple containers within the same database_. This shared throughput is spread across all containers that are configured to use the shared mode. This allows for flexibility and efficiency in distributing resources, particularly when _dealing with a large number of containers with variable load_. Any containers in the database that have their own dedicated throughput will not be part of this sharing, they continue to operate independently with their allocated resources.
-
-  ```ps
-  az cosmosdb sql database create \
-    -a $accountName \
-    -g $resourceGroupName \
-    -n $databaseName \
-    --throughput $throughput
-  ```
-
-  ```cs
-  await this.cosmosClient.CreateDatabaseIfNotExistsAsync(
-        id: databaseName,
-        throughput: 1000);
-  ```
+A container in Azure Cosmos DB is where data is stored. Data is stored on one or more servers, called partitions. When a container is created, you need to supply a partition key. The partition key is a property you select from your items to help Azure Cosmos DB distribute the data efficiently across partitions. Containers are schema-agnostic, meaning items within a container can have arbitrary schemas or different entities so long as they share the same partition key. Container names should be 3-63 characters long, start with a lowercase letter or number, and only contain lowercase letters, numbers, or dashes.
 
 ### Items
 
@@ -152,19 +120,21 @@ cosmosClient.ConsistencyLevel = ConsistencyLevel.BoundedStaleness;
 
 Azure Cosmos DB employs partitioning to efficiently distribute and manage data across multiple machines or regions. This technique enhances performance by providing high throughput and low latency. It also offers the flexibility to scale storage capacity and throughput independently.
 
-- **Partition Key**: This is a specific property in your data that Cosmos DB uses to distribute the data across multiple partitions. Selecting an optimal partition key is a critical decision for the performance and scalability of a Cosmos DB. A well-chosen partition key evenly disperses the workload across all partitions, thereby avoiding 'hot' partitions that could become a performance bottleneck.
+- **Partition Key**: This is a specific property in your data that Cosmos DB uses to distribute the data across multiple partitions. Selecting an optimal partition key is a critical decision for the performance and scalability of a Cosmos DB. A well-chosen partition key evenly disperses the workload across all partitions, thereby avoiding 'hot' partitions that could become a performance bottleneck. They can be _string_ value only.
 
 - **Logical Partitions**: Each logical partition comprises a set of items sharing the same partition key value. Cosmos DB uses logical partitions to organize data, which enables rapid and efficient query processing and transaction management. Each logical partition can store up to 20 GB of data and can serve up to 10,000 RU/s.
 
-- **Physical Partitions**: These are internal resources that Azure Cosmos DB manages. They host one or more logical partitions, providing the computational resources (CPU, I/O, memory) for them. Cosmos DB automatically splits and merges physical partitions to evenly distribute the workload as the data volume and throughput.
+- **Physical Partitions**: These are internal resources that Azure Cosmos DB manages. They host one or more logical partitions, providing the computational resources (CPU, I/O, memory) for them. Cosmos DB automatically splits and merges physical partitions to evenly distribute the workload as the data volume and throughput. Max throughput: 10 000 RU/s.
 
 - **Partition Sets**: A partition set is essentially a group of physical partitions. A container might start with a single partition set, but as the data volume or throughput requirements increase, Cosmos DB can split the partition set into multiple subsets to maintain performance.
 
+For example, a container holds items. Each item has a unique value for the UserID property. If UserID serves as the partition key for the items in the container and there are 1,000 unique UserID values, 1,000 logical partitions are created for the container.
+
 ### Partitioning Strategies
 
-Picking the right partition key is vital. It should distribute your data and workload evenly to avoid overloading any single partition, which could degrade performance.
+Choosing the right partition key is crucial to evenly distribute data and workload, preventing performance degradation caused by overloaded partitions.
 
-Consider choosing a partition key that is frequently used in the WHERE clause of your queries and has a large number of distinct values. For instance, in a multi-tenant application, using the tenant ID as the partition key may be advantageous. It would ensure that each tenant's data is localized to specific partitions, improving read/write performance while keeping the tenants' data isolated.
+To optimize, consider selecting a partition key that is commonly used in the `WHERE` clause of your queries and has numerous distinct values. For example, in a multi-tenant application, utilizing the tenant ID as the partition key offers advantages. This approach localizes each tenant's data to specific partitions, enhancing read/write performance and maintaining data isolation for tenants.
 
 ## [Request Units (RUs)](https://learn.microsoft.com/en-us/azure/cosmos-db/request-units)
 
@@ -178,11 +148,43 @@ Here's a practical rule of thumb: A read operation on a 1-KB document typically 
 
 ### [Provisioned Throughput](https://learn.microsoft.com/en-us/azure/cosmos-db/set-throughput)
 
-You set the number of Request Units (RUs) per second your application needs in multiples of 100.
+You set the number of Request Units (RUs) per second your application needs in multiples of 100. Minimum value: 400.
 
-- **Database-level throughput**: Shared among all the containers in the database. It's a cost-effective option for small workloads with light traffic.
+- **Database-level throughput**: Shared among all the containers in the database. It's a cost-effective option for small workloads with light traffic. Suitable for multitenant applications
 
-- **Container-level throughput**: Dedicated to a single container. More suitable for workloads with heavy traffic or large data volumes.
+- **Container-level throughput**: Dedicated to a single container. More suitable for workloads with heavy traffic or large data volumes. They have two throughput modes that _cannot be changed later_:
+
+  - **Dedicated provisioned throughput mode**: In this mode, a specific amount of throughput (the capacity of the system to process and transfer data) is set aside just for _one container_. The system assures this through Service Level Agreements (SLAs), which are formal contracts that ensure this throughput is dedicated and maintained only for that container. This means that the processing power of the system is not shared with any other container, providing you with _predictable performance_ and _speeds_ for your specific container.
+
+    ```ps
+    az cosmosdb sql container create \
+      -a $accountName -g $resourceGroupName \
+      -d $databaseName -n $containerName \
+      -p $partitionKey --throughput $throughput
+    ```
+
+    ```cs
+    await this.cosmosClient.GetDatabase(databaseName).CreateContainerAsync(
+      id: containerName,
+      partitionKeyPath: "/myPartitionKey",
+      throughput: 1000);
+    ```
+
+  - **Shared provisioned throughput mode**: The throughput is shared among _multiple containers within the same database_. This shared throughput is spread across all containers that are configured to use the shared mode. This allows for flexibility and efficiency in distributing resources, particularly when _dealing with a large number of containers with variable load_. Any containers in the database that have their own dedicated throughput will not be part of this sharing, they continue to operate independently with their allocated resources.
+
+    ```ps
+    az cosmosdb sql database create \
+      -a $accountName \
+      -g $resourceGroupName \
+      -n $databaseName \
+      --throughput $throughput
+    ```
+
+    ```cs
+    await this.cosmosClient.CreateDatabaseIfNotExistsAsync(
+          id: databaseName,
+          throughput: 1000);
+    ```
 
 ```ps
 az cosmosdb sql container create --throughput 400
@@ -198,7 +200,7 @@ You don't have to assign any throughput when creating resources in your Azure Co
 
 ### [Autoscale Throughput](https://learn.microsoft.com/en-us/azure/cosmos-db/provision-throughput-autoscale)
 
-Autoscale automatically adjusts the provisioned RUs based on the current usage. It scales between 10% and 100% of a set maximum. Throughput scales automatically based on usage without affecting performance, suited for workloads with unpredictable traffic requiring high performance and scale SLAs.
+Autoscale automatically adjusts the provisioned RUs based on the current usage. It scales between 10% and 100% of a set maximum - from 100 to 1000 RU/s. Throughput scales automatically based on usage without affecting performance, suited for workloads with unpredictable traffic requiring high performance and scale SLAs.
 
 ```ps
 az cosmosdb sql container create --throughput-type autoscale --max-throughput 4000
@@ -210,6 +212,8 @@ await this.cosmosDatabase.CreateContainerAsync(new ContainerProperties(id, parti
 ```
 
 ## [API Models](https://learn.microsoft.com/en-us/azure/cosmos-db/choose-api)
+
+All API models return JSON formatted objects.
 
 - **API for NoSQL** - A JSON-based, document-centric API that provides SQL querying capabilities. Ideal for web, mobile, and gaming applications, and anything that requires handling complex _hierarchical_ data with a _schemaless_ design.
 

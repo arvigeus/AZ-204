@@ -551,3 +551,49 @@ Question: Which of the following statements about Time to Live (TTL) in Azure Co
 
 Answer: Even after TTL has expired, if the container is overloaded with requests and there aren't enough Request Units available, the data deletion is delayed until there are enough resources.  
 Items are removed after specific time period, since the time they were **last modified**.
+
+---
+
+Question: You aim to create a Cosmos DB client, a database, and finally a container using the Azure Cosmos DB NoSQL API. Your intention is to utilize this container to manage a collection of IoT device telemetry data. Implementing .NET for this task, you find that after running the following code snippet, errors are encountered and no elements are created as anticipated. Several discrepancies in the code prevent its successful execution. What corrections should you apply to address these issues?
+
+```cs
+using Azure.CosmosDb;
+
+CosmosClient cosmosClient = new CosmosClient("https://myCosmosAccount.documents.core.windows.net:443/", configuration["CosmosKey"]);
+
+Database database = await cosmosClient.CreateDatabaseIfNotExistsAsync("db");
+
+Container container = await database.CreateContainerAsync(
+    id: "id",
+    partitionKeyPath: "pk",
+    throughput: 200
+);
+```
+
+Answer:
+
+```cs
+using Microsoft.Azure.Cosmos;
+
+CosmosClient cosmosClient = new CosmosClient("https://mycosmosdbaccount.documents.azure.com:443/", configuration["CosmosKey"]);
+
+Database database = await cosmosClient.CreateDatabaseIfNotExistsAsync("dbName");
+
+Container container = await database.CreateContainerAsync(
+    id: "containerId",
+    partitionKeyPath: "/pk",
+    throughput: 400
+);
+```
+
+- **Incorrect using** - should use `Microsoft.Azure.Cosmos`.
+
+- **Incorrect Cosmos DB account endpoint** - The endpoint used to initialize the CosmosClient object is incorrect. The provided endpoint URL contains `core.windows.net` instead of `documents.azure.com`.
+
+- **Incorrect database name** - should be between 3 and 63 chars, `db` is just 2.
+
+- **Incorrect container id** - should be between 3 and 63 chars, `id` is just 2.
+
+- **Incorrect partition key path** - The partition key path doesn't start with a `/`.
+
+- **Incorrect throughput value** - The throughput argument is set to 200, but minimum is 400 or higher.
