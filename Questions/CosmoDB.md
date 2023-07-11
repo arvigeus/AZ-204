@@ -597,3 +597,61 @@ Container container = await database.CreateContainerAsync(
 - **Incorrect partition key path** - The partition key path doesn't start with a `/`.
 
 - **Incorrect throughput value** - The throughput argument is set to 200, but minimum is 400 or higher.
+
+---
+
+Question: You are developing an application that requires the efficient and rapid addition of a large number of items using Azure Cosmos DB. Which of the following practices can be employed to optimize performance for this use case?
+
+- [x] Set the `EnableContentResponseOnWrite` request option to false.
+- [ ] Use `FeedIterator` for iterating multiple pages of query results.
+- [x] Exclude unused paths from indexing.
+- [ ] Use `PartitionKey` for point read.
+
+Answer: Setting `EnableContentResponseOnWrite` to false for workloads with heavy create/write payloads and excluding unused paths from indexing can improve performance by eliminating the return of created or updated resources to the SDK and facilitating faster writes, respectively, benefiting write-heavy workloads.
+
+Using `FeedIterator` can improve performance when reading multiple pages of query results, but it doesn't directly optimize write-heavy workloads.  
+Using `PartitionKey` for point read can reduce the Request Unit (RU) charge and improve performance for read-heavy workloads, but it doesn't directly optimize write-heavy workloads.
+
+---
+
+Question: You are developing an application with a read-heavy workload using Azure Cosmos DB. Which of the following practices could help improve performance?
+
+- [x] Use `PartitionKey` for point read.
+- [ ] Set the `EnableContentResponseOnWrite` request option to false.
+- [x] Use `FeedIterator` for iteratin multiple pages of query results.
+- [ ] Increase the size of your documents.
+
+Answer: Utilizing `PartitionKey` for point read can reduce Request Unit (RU) charges and enhance performance, particularly for read-heavy workloads, while employing `FeedIterator` can improve performance when handling multiple pages of query results, a common scenario in read-heavy workloads.
+
+Setting `EnableContentResponseOnWrite` to false can improve performance for write-heavy workloads, but it doesn't directly optimize read-heavy workloads.  
+Increasing the size of your documents can actually increase the Request Unit (RU) charge and potentially lead to more errors, so it's not a good practice for optimizing performance.
+
+---
+
+Question: Your application is experiencing latency issues when connecting to Azure Cosmos DB. Which of the following could be a potential cause and how would you address it?
+
+- [ ] The application is not using the latest version of the Azure Cosmos DB SDK.
+- [x] The application is running in a different Azure region than your Azure Cosmos DB account.
+- [ ] The application is using a single instance of CosmosClient for the lifetime of the application.
+- [x] The application is using Gateway mode for connectivity.
+
+Answer: Running your application in the same Azure region as your Azure Cosmos DB account and using Direct mode for connectivity can significantly reduce latency, optimizing the performance of your application.
+
+While using the latest version of the Azure Cosmos DB SDK can generally improve performance, it doesn't specifically target latency issues.  
+Using a single instance of CosmosClient for the lifetime of your application is a best practice for better performance and resource utilization, so it's unlikely to be the cause of latency issues.
+
+---
+
+Question: You are developing an application that needs to upload a large number of items into Azure Cosmos DB as quickly as possible. Which of the following practices could help improve performance?
+
+- [x] Enable Bulk support.
+- [x] Use ThroughputProperties to manage throughput.
+- [x] Use Direct mode for connectivity.
+- [ ] Use Windows 64-bit host processing.
+- [ ] Use single instance of CosmosClient.
+- [x] Set the EnableContentResponseOnWrite request option to false.
+
+Answer: Enabling Bulk support, utilizing `ThroughputProperties` for managing throughput, setting connectivity mode to `Direct`, and setting `EnableContentResponseOnWrite` to false can collectively enhance performance when efficiently handling large volumes of data in Azure Cosmos DB by optimizing high-volume write operations, balancing resource usage, and minimizing network and serialization costs.  
+Using Windows 64-bit host processing and a single instance of CosmoCLient can generally improve performance, but it doesn't specifically target scenarios where large volumes of data are being dumped into the database.
+
+---

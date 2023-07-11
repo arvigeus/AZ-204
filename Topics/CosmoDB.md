@@ -483,6 +483,14 @@ SELECT c.id, udf.GetMaxNutritionValue(c.nutrients) AS MaxNutritionValue
 FROM c
 ```
 
+## Performance and best practices
+
+For best performance, always use the latest SDK version and ensure the application is in the same Azure region as the Cosmos DB account. Utilize a single instance of `CosmosClient` throughout the application's lifetime and adopt `Direct` mode for lower latency and higher throughput. Leverage `PartitionKey` for efficient point reads and writes, and implement retry logic for handling transient errors.
+
+For read-heavy operations use the `Stream API` and `FeedIterator` for better memory usage and efficient reading of multiple query result pages. Use `ChangeFeedProcessor` for reading changes in containers, and SQL Query Metrics for detailed logging of backend query executions.
+
+For write-heavy operations enable bulk support for dealing with large data volumes, and set `EnableContentResponseOnWrite` to false for workloads with heavy payloads. Exclude unused paths from indexing and keep the size of your documents minimal to facilitate faster writes.
+
 ## [Global Distribution](https://docs.microsoft.com/en-us/azure/cosmos-db/distribute-data-globally)
 
 - **Multi-region Writes** - Perform writes in all configured regions. This enhances write latency and availability.
