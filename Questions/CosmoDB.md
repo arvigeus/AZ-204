@@ -655,3 +655,32 @@ Answer: Enabling Bulk support, utilizing `ThroughputProperties` for managing thr
 Using Windows 64-bit host processing and a single instance of CosmoCLient can generally improve performance, but it doesn't specifically target scenarios where large volumes of data are being dumped into the database.
 
 ---
+
+Question: You are a software developer tasked with creating a C# utility that interacts with Azure Cosmos DB. Your script should establish a connection, create a database and a container if they don't exist, and finally create an item in the container. Use placeholders like `"<connection-string>"`, `"<database>"`, `"<container>"`.
+
+```cs
+// Code here
+```
+
+Answer:
+
+```cs
+var cosmosClient = new CosmosClient("<connection-string>");
+
+// Create a database
+var database = await cosmosClient.CreateDatabaseIfNotExistsAsync("<database>");
+
+// Create a container
+var container = await database.CreateContainerIfNotExistsAsync("<container>", "/mypartitionkey");
+
+// Create an item
+dynamic testItem = new
+{
+    id = "1",
+    mypartitionkey = "mypartitionvalue",
+    description = "mydescription"
+};
+await container.CreateItemAsync(testItem, new PartitionKey(testItem.mypartitionkey));
+```
+
+---
