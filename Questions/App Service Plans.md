@@ -38,7 +38,7 @@ Question: Create an App Service web app `MyAppService` and its prerequisites. Th
 # Code here
 ```
 
-Answer: `Standard`, `Premium`, `PremiumV2`, and `PremiumV3` all support automatic scaling, but `Standard` is most cost effective in this scenario.
+Answer: `Standard`, `Premium`, `PremiumV2`, and `PremiumV3` all support autoscale, but `Standard` is most cost effective in this scenario.
 
 ```ps
 az group create --name MyResourceGroup --location "West US"
@@ -82,6 +82,22 @@ az webapp update --minimum-elastic-instance-count X --prewarmed-instance-count Y
 
 ---
 
+Question: Your company has developed a web application that experiences intermittent high traffic volumes. However, the company has noticed that during the sudden traffic spikes, the performance of their application temporarily degrades before it starts to stabilize. The degradation is especially apparent when the application hasn't received any significant traffic for a while. How can you mitigate this performance degradation issue?
+
+- [ ] Manually adjust the number of instances when traffic increases.
+- [ ] Set up custom scaling rules based on traffic using Azure Autoscale.
+- [x] Implement Azure Automatic Scaling with prewarming of instances.
+- [ ] Monitor performance using Azure Application Insights Live Metrics.
+
+Bonus question: You are running on a `Standard` plan, do you need to chenge it in order to implement your solution?
+
+Answer: The problem your company experiences is called _cold boot_. In order to mitigate it, you need Automatic Scaling with pre-warmed/always ready instances. This requires at least `PremiumV2` plan.  
+Azure Manual Scaling lacks real-time adjustment capabilities, making it inefficient for sudden traffic spikes.  
+Although Azure Autoscale scales based on traffic, it can still experience "cold starts" during sudden traffic spikes.  
+Azure Application Insights Live Metrics: This is a monitoring tool, not a scaling solution.
+
+---
+
 Question: Which of the following App Service plans supports pre-warmed instances:
 
 - [ ] Free
@@ -94,11 +110,11 @@ Question: Which of the following App Service plans supports pre-warmed instances
 - [ ] Isolated
 - [ ] IsolatedV2
 
-Answer: Only `PremiumV2` and `PremiumV3` support pre-warmed instances.
+Answer: Pre-warmed instances is a feature of Automatic scaling, which is supported only on `PremiumV2` and `PremiumV3` plans.
 
 ---
 
-Question: Which of the following App Service plans supports always ready instances:
+Question: Which of the following App Service plans you can have always ready instances?
 
 - [ ] Free
 - [ ] Shared
@@ -125,12 +141,12 @@ Question: Which of the following App Service plans supports schedule based scali
 - [ ] Basic
 - [x] Standard
 - [x] Premium
-- [ ] PremiumV2
-- [ ] PremiumV3
+- [x] PremiumV2
+- [x] PremiumV3
 - [ ] Isolated
 - [ ] IsolatedV2
 
-Answer: Only `Standard` and `Premium` support schedule based scaling.
+Answer: Only `Standard` to `Premium` support schedule based scaling.
 
 ---
 
@@ -186,7 +202,7 @@ Question: How apps are charged in Isolated App Service plan:
 - [ ] Each VM instance in the App Service plan is charged
 - [x] The number of isolated workers that run your apps
 
-Answer: CPU quota
+Answer: The number of isolated workers that run your apps
 
 ---
 
@@ -202,7 +218,7 @@ Question: You want to move to another App Service plan. Which of following state
 - [x] You can move an app to another App Service plan only of the same OS type
 - [ ] You can move an app to another App Service plan of any OS type
 
-Answer: You can move an app to another App Service plan, as long as the source plan and the target plan are in the same resource group, geographical region,and of the same OS type, and supports the currently used features.
+Answer: You can move an app to another App Service plan, as long as the source plan and the target plan are in the same resource group, geographical region, and of the same OS type, and supports the currently used features.
 
 ---
 
@@ -285,7 +301,7 @@ New-AzResourceGroup -Name DestinationAzureResourceGroup -Location "North Central
 # Create new 'Standard' App Service plan for that group (and set staging environments leter)
 New-AzAppServicePlan -Location "North Central US" -ResourceGroupName DestinationAzureResourceGroup -Name DestinationAppServicePlan -Tier Standard
 
-Clone `MyAppService` into new web app and place it in the new App Service plan
+# Clone `MyAppService` into new web app and place it in the new App Service plan
 $srcapp = Get-AzWebApp -ResourceGroupName SourceAzureResourceGroup -Name MyAppService
 $destapp = New-AzWebApp -ResourceGroupName DestinationAzureResourceGroup -Name MyAppService2 -Location "North Central US" -AppServicePlan DestinationAppServicePlan -SourceWebApp $srcapp
 ```
