@@ -40,7 +40,7 @@ Answer: WebJobs content is swapped.
 
 ---
 
-Question: Suppose you are a developer tasked with deploying a new .NET web application `using` on Microsoft Azure. Your first task is to create a new resource group `myResourceGroup` located in the South Central US region. Following that, you need to establish a deployment user for the web application. You are then required to create `myAppServicePlan` App Service plan within a Linux environment that is cost-efficient. The web application should be created within this resource group and App Service plan, using .NET as its runtime. You are also required to configure the application settings to set the deployment branch to 'main'. Lastly, you are provided with a sample application from GitHub. You need to clone this application, rename the default branch to 'main', add the Azure remote repository using the URL from the webapp create command, and push the code to the Azure repository. How would you accomplish these tasks using Azure CLI commands?
+Question: Suppose you are a developer tasked with deploying a new .NET web application using on Microsoft Azure. Your first task is to create a new resource group `myResourceGroup` located in the South Central US region. Following that, you need to establish a deployment user for the web application. You are then required to create `myAppServicePlan` App Service plan within a Linux environment that is cost-efficient. The web application should be created within this resource group and App Service plan, using .NET as its runtime. You are also required to configure the application settings to set the deployment branch to `main`. Lastly, you are provided with a sample application from GitHub: `https://github.com/Azure-Samples/App-Service-Troubleshoot-Azure-Monitor`. You need to clone this application, rename the default branch to `main`, add the Azure remote repository using the URL from the webapp create command, and push the code to the Azure repository. How would you accomplish these tasks using Azure CLI commands?
 
 ```ps
 # Code here
@@ -59,7 +59,7 @@ az webapp deployment user set --user-name <username> --password <password>
 az appservice plan create --name myAppServicePlan --resource-group myResourceGroup --sku B1 --is-linux
 
 # Create the web application within the resource group and the App Service plan, using .NET as its runtime
-az webapp create --resource-group myResourceGroup --plan myAppServicePlan --name MyApp --runtime "DOTNET|5.0" --deployment-local-git
+az webapp create --resource-group myResourceGroup --plan myAppServicePlan --name MyApp --runtime "DOTNET|6.0" --deployment-local-git
 
 # Capture the Git URL from the output of the previous command
 git_url=$(az webapp show --name MyApp --resource-group myResourceGroup --query gitUrl --output tsv)

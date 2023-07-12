@@ -118,7 +118,7 @@ Question: You are working with a resource group, `MultiContainerGroup1`, which c
 Answer: You should use a Resource Manager (ARM) template because this format allows the inclusion of multiple Azure services along with the container instances.
 
 ```ps
-z group export --name MultiContainerGroup1 --output-template-file "./MultiContainerGroup1.json"
+az group export --name MultiContainerGroup1 --output-template-file "./MultiContainerGroup1.json"
 az deployment group create --resource-group MultiContainerGroup1 --template-file "./MultiContainerGroup1.json"
 ```
 
@@ -135,3 +135,5 @@ Answer: The `az group deployment export` command is used to export the template 
 Using the Azure portal to manually copy the JSON of the deployment template also is valid way to do it, but is a manual process and inefficient.  
 `az group export --name DemoResourceGroup` and `Export-AzResourceGroup -Name DemoResourceGroup` export the resource group (which may include many deployments)  
 is a manual process that doesn't provide the convenience or automation of a CLI command
+
+---
