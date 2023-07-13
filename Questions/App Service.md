@@ -10,6 +10,119 @@ Answer: Hybrid Connections are an outbound network feature.
 
 ---
 
+Question: Which of the following networking features of App Service are outbound?
+
+- [ ] App-assigned address
+- [x] Hybrid Connections
+- [ ] Service endpoints
+- [x] Virtual network integration
+- [x] Gateway-required virtual network integration
+- [ ] Access restrictions
+- [ ] Private endpoints
+
+Answer: What's listed.
+
+---
+
+Question: Which of the following networking features of App Service are inbound?
+
+- [x] App-assigned address
+- [ ] Hybrid Connections
+- [x] Service endpoints
+- [ ] Virtual network integration
+- [ ] Gateway-required virtual network integration
+- [x] Access restrictions
+- [x] Private endpoints
+
+Answer: What's listed.
+
+---
+
+Question: When would you use the App-assigned address feature?
+
+- [ ] To access an on-premises database server.
+- [x] To support IP-based SSL for your app.
+- [ ] To access resources in your Azure virtual network.
+- [x] To restrict access to your app from a set of well-defined IP addresses.
+- [ ] To support a dedicated inbound address for your app.
+
+Answer: To support IP-based SSL for your app, To support a dedicated inbound address for your app.
+
+---
+
+When would you use Access restrictions feature?
+
+- [x] To restrict access to your app from a set of well-defined IP addresses.
+- [ ] To access an on-premises system securely.
+- [ ] To access resources in your Azure virtual network.
+- [ ] To support IP-based SSL for your app.
+- [ ] To restrict access to your Azure Service Resources to only your virtual network.
+
+Answer: To restrict access to your app from a set of well-defined IP addresses.
+
+---
+
+When would you use Service endpoints/Private endpoints feature?
+
+- [x] To restrict access to your Azure Service Resources to only your virtual network.
+- [ ] To support IP-based SSL for your app.
+- [ ] To access an on-premises system securely.
+- [ ] To access resources in your Azure virtual network or on-premises network over ExpressRoute or site-to-site VPN.
+- [ ] To restrict access to your app from a set of well-defined IP addresses.
+
+Answer: To restrict access to your Azure Service Resources to only your virtual network.
+
+---
+
+When would you use Private endpoints features?
+
+- [x] To restrict access to your Azure Service Resources to only your virtual network.
+- [x] To expose your app on a private IP in your virtual network
+- [ ] To support IP-based SSL for your app.
+- [ ] To access an on-premises system securely.
+- [ ] To access resources in your Azure virtual network or on-premises network over ExpressRoute or site-to-site VPN.
+- [ ] To restrict access to your app from a set of well-defined IP addresses.
+
+Answer: To restrict access to your Azure Service Resources to only your virtual network; to expose your app on a private IP in your virtual network.
+
+---
+
+When would you use Hybrid Connections feature?
+
+- [x] To access an on-premises system or service securely.
+- [ ] To restrict access to your app from a set of well-defined IP addresses.
+- [ ] To support IP-based SSL for your app.
+- [ ] To restrict access to your Azure Service Resources to only your virtual network.
+- [ ] To access resources in your Azure virtual network.
+
+Answer: To access an on-premises system or service securely.
+
+---
+
+When would you use Gateway-required virtual network integration feature?
+
+- [x] To access resources in your Azure virtual network or on-premises network over ExpressRoute or site-to-site VPN.
+- [ ] To restrict access to your Azure Service Resources to only your virtual network.
+- [ ] To support IP-based SSL for your app.
+- [ ] To access an on-premises system securely.
+- [ ] To support a dedicated inbound address for your app.
+
+Answer: To access resources in your Azure virtual network or on-premises network over ExpressRoute or site-to-site VPN.
+
+---
+
+When would you use Virtual network integration feature?
+
+- [x] To access resources in your Azure virtual network.
+- [ ] To restrict access to your app from a set of well-defined IP addresses.
+- [ ] To access an on-premises system securely.
+- [ ] To support IP-based SSL for your app.
+- [ ] To restrict access to your Azure Service Resources to only your virtual network.
+
+Answer: To access resources in your Azure virtual network.
+
+---
+
 Question: In which of the following app configuration settings categories would you set the language and SDK version?
 
 - [ ] Application settings

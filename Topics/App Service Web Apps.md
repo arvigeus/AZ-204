@@ -4,7 +4,9 @@
 
 ### Features
 
+- Multi-tenant workers: Free and Shared
 - Custom DNS Name: Shared+
+- Dedicated workers: Basic+
 - Scalability (scaling out): Basic+
 - TLS Bindings: Basic+
 - Always On: Basic+
@@ -15,6 +17,7 @@
 - AppServiceFileAuditLogs: Premium+
 - AppServiceAntivirusScanAuditLogs: Premium+
 - Automatic scaling: PremiumV2+
+- Single-tenant setup (App Service Environment - ASE): Isolated+
 - Dedicated Azure Virtual Networks: Isolated+
 - Maximum scale-out: Isolated+
 
@@ -85,8 +88,6 @@ Deploy to staging, then swap slots to warm up instances and eliminate downtime. 
 |                                                | Settings that end with the suffix `\_EXTENSION_VERSION` |
 
 `x-ms-routing-name=`: `self` for production slot, `staging` for staging slot.
-
-By default, new slots are given a routing rule of `0%` (users won't randomly be transfered to other slot).
 
 By default, all client requests go to the production slot. You can route a portion of the traffic to another slot. The default rule for a new deployment slot is 0% (no random transfers to other slots).
 
@@ -159,6 +160,93 @@ az group delete --name $resourceGroup
 
 ## Security
 
+### Authentication
+
+#### [Service Identity](https://learn.microsoft.com/en-us/azure/app-service/overview-managed-identity)
+
+Managed identities from Azure Active Directory (Azure AD) allow your app to access other Azure AD-protected resources without needing to provision or rotate any secrets.
+
+- **System-assigned identity**: Tied to specific application and is deleted if the app gets deleted. An app can only have one system-assigned identity.
+- **User-assigned identity**: A standalone Azure resource that can be assigned to any app. An app can have multiple user-assigned identities.
+
+Each deployment slot / app has it's own managed identity configuration.
+
+Managed identities won't behave as expected if your app is migrated across subscriptions or tenants.
+
+Add a system-assigned identity: `az webapp identity assign --name $app --resource-group $resourceGroup`
+
+Add a user-assigned identity:
+
+```ps
+az identity create --name $identityName --resource-group $resourceGroup
+az webapp identity assign --identities $identityName --resource-group $resourceGroup --name $app
+```
+
+##### Connect to Azure services in app code
+
+When you're using managed identities in Azure, you need to configure the target resource to allow access from your app or function.
+
+From Azure Portal: `Settings > Access policies > Add Access Policy` select the permissions you want to grant to the managed identity, then the name of the managed identity (system or user assigned). Removing policy may take up to 24hrs to take effect (cache).
+
+Using SDK:
+
+```cs
+// This will return a token using the Managed Identity if available (either System-assigned or User-assigned).
+new DefaultAzureCredential();
+
+// This will return a token using the specified User-Assigned Managed Identity.
+new DefaultAzureCredential(new DefaultAzureCredentialOptions { ManagedIdentityClientId = "<your managed identity client Id>" });
+```
+
+##### REST endpoint reference
+
+`IDENTITY_ENDPOINT` environment variable contains an endpoint from which apps can request tokens.
+
+- Required parameters: `resource`, `api-version`, `X-IDENTITY-HEADE` (header)
+- Optional parameters: `client_id`, `principal_id`, `mi_res_id`
+
+For user-assigned identities, include an optional property; without it, a system-assigned identity token is requested.
+
+Example:
+
+```http
+GET {IDENTITY_ENDPOINT}?resource=https://vault.azure.net&api-version=2019-08-01&client_id=XXX
+X-IDENTITY-HEADER: {IDENTITY_HEADER}
+```
+
+#### [On-Behalf-Of (OBO)](https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization)
+
+an OAuth feature allowing an application to access resources using a user's permissions, without needing their credentials. Azure App Service's built-in authentication module manages this process, handling sessions and OAuth tokens. It can authenticate all or specific requests, redirecting unauthenticated users appropriately (login page for web and 401 for mobile). When enabled, user tokens are managed in a token store.
+
+In Linux and containers the auth module runs in a separate container, isolated from application code.
+
+##### Authentication flows
+
+- **Server-directed** (no SDK): handled by App Service, for browser apps
+- **Client-directed** (SDK): handled by the app, for non-browser apps
+
+| Step                            | Server-directed                                               | Client-directed                                                                              |
+| ------------------------------- | ------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| Sign user in                    | Redirects client to `/.auth/login/aad` (MS Identity Platform) | Client code signs user in directly with provider's SDK and receives an authentication token. |
+| Post-authentication             | Provider redirects client to `/.auth/login/aad/callback`      | Client code posts token from provider to `/.auth/login/aad` for validation.                  |
+| Establish authenticated session | App Service adds authenticated cookie to response             | App Service returns its own authentication token to client code                              |
+| Serve authenticated content     | Client includes authentication cookie in subsequent requests  | Client code presents authentication token in `X-ZUMO-AUTH` header                            |
+
+Access another app: Add header `Authorization: Bearer ${req.headers['x-ms-token-aad-access-token']}`
+
+#### Other Authentication Options
+
+```cs
+// Use a Service Principal with its details stored in environment variables: AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET
+new EnvironmentCredential(); // or new DefaultAzureCredential() when variables are set
+
+// Use a Service Principal with its details provided directly
+new ClientSecretCredential("<Tenant ID>", "<Client ID>", "<Client Secret>");
+
+// Use interactive authentication (a browser window will open for you to log in)
+new DefaultAzureCredential(includeInteractiveCredentials: true);
+```
+
 ### [Certificates](https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-certificate?tabs=apex)
 
 A certificate is accessible to all apps in the same resource group and region combination.
@@ -191,6 +279,31 @@ For storage: `az storage cors add --services blob --methods GET POST --origins $
 
 To enable the sending of credentials like cookies or authentication tokens in your app, the browser may require the `ACCESS-CONTROL-ALLOW-CREDENTIALS` header in the response: `az resource update --set properties.cors.supportCredentials=true --namespace Microsoft.Web --resource-type config --parent sites/<app-name> ...`
 
+## Networking
+
+- **Deployment Types**
+
+  - Multi-tenant setup where your application shares resources with other applications.
+  - Single-tenant setup, called App Service Environment (ASE), where your application gets its own dedicated resources within your Azure virtual network.
+
+- [**Networking Features**](https://learn.microsoft.com/en-us/azure/app-service/networking-features): Manage both incoming (inbound) and outgoing (outbound) network traffic.
+
+  | Feature                                      | Type     | Use Cases                                                                           |
+  | -------------------------------------------- | -------- | ----------------------------------------------------------------------------------- |
+  | App-assigned address                         | Inbound  | Support IP-based SSL for your app; Support a dedicated inbound address for your app |
+  | Access restrictions                          | Inbound  | Restrict access to your app from a set of well-defined IP addresses                 |
+  | Service endpoints/Private endpoints          | Inbound  | Restrict access to your Azure Service Resources to only your virtual network        |
+  | Hybrid Connections                           | Outbound | Access an on-premises system or service securely                                    |
+  | Gateway-required virtual network integration | Outbound | Access Azure or on-premises resources via ExpressRoute or VPN                       |
+  | Virtual network integration                  | Outbound | Access Azure network resources                                                      |
+
+- **Default Networking Behavior**: Free and Shared plans use multi-tenant workers, meaning your application shares resources with others. Plans from Basic and above use dedicated workers, meaning your application gets its own resources.
+
+- **Outbound Addresses**: When your application needs to make a call to an external service, it uses an outbound IP address. This address is shared among all applications running on the same type of worker VM.
+
+  - To find the current outbound IP addresses: `az webapp show --query outboundIpAddresses ...`
+  - To find all possible outbound IP addresses: `az webapp show --query possibleOutboundIpAddresses ...`
+
 ## [Diagnostics](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)
 
 | Type                    | Platform       | Location                                           | Notes                                                                           |
@@ -213,7 +326,9 @@ Accessing log files:
 
 ### [Health Checks](https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check?tabs=dotnet)
 
-TODO
+Health Check pings the specified path every minute. If an instance fails to respond with a valid status code after 10 requests, it's marked unhealthy and removed from the load balancer. If it recovers, it's returned to the load balancer. If it stays unhealthy for an hour, it's replaced (only for Basic+).
+
+For private endpoints check if `x-ms-auth-internal-token` request header equals the hashed value of `WEBSITE_AUTH_ENCRYPTION_KEY` environment variable.
 
 ## Read more
 
@@ -228,3 +343,6 @@ TODO
 - [az webapp deployment](https://learn.microsoft.com/en-us/cli/azure/webapp/deployment?view=azure-cli-latest)
 - [az webapp config](https://learn.microsoft.com/en-us/cli/azure/webapp/config?view=azure-cli-latest)
 - [az webapp cors](https://learn.microsoft.com/en-us/cli/azure/webapp/cors?view=azure-cli-latest)
+- [az webapp show](https://learn.microsoft.com/en-us/cli/azure/webapp?view=azure-cli-latest#az-webapp-show)
+- [az webapp identity](https://learn.microsoft.com/en-us/cli/azure/webapp/identity?view=azure-cli-latest)
+- [az identity](https://learn.microsoft.com/en-us/cli/azure/identity?view=azure-cli-latest)
