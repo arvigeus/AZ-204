@@ -69,6 +69,25 @@
 - Monitor and analyze metrics, logs, and traces
 - Implement Application Insights web tests and alerts
 
+### Connect to and consume Azure services and third-party services (15–20%)
+
+#### Implement API Management
+
+- Create an APIM instance
+- Create and document APIs
+- Configure authentication for APIs
+- Implement policies for APIs
+
+#### Develop event-based solutions
+
+- Implement solutions that use Azure Event Grid
+- Implement solutions that use Azure Event Hub
+
+#### Develop message-based solutions
+
+- Implement solutions that use Azure Service Bus
+- Implement solutions that use Azure Queue Storage queues
+
 ## Topics
 
 1. [Azure App Service Web Apps](https://docs.microsoft.com/en-us/azure/app-service/)

@@ -12,7 +12,8 @@
 - Autoscale: Standard+
 - Staging environments (deployment slots): Standard+
 - Linux: Standard+
-- AppServiceFileAuditLogs: Premium
+- AppServiceFileAuditLogs: Premium+
+- AppServiceAntivirusScanAuditLogs: Premium+
 - Automatic scaling: PremiumV2+
 - Dedicated Azure Virtual Networks: Isolated+
 - Maximum scale-out: Isolated+
@@ -29,7 +30,7 @@ You can move an app to another App Service plan, as long as the source plan and 
 
 App Service plans that have no apps associated with them still incur charges because they continue to reserve the configured VM instances.
 
-Deployment slots (deploy to staging, then swap slots to warm up instances and eliminate downtime), diagnostic logs, perforing backups, and WebJobs _run on the same VM instances_.
+Deployment slots, diagnostic logs, perforing backups, and WebJobs _run on the same VM instances_.
 
 When to isolate an app into a new App Service plan:
 
@@ -66,24 +67,28 @@ $destapp = New-AzWebApp -ResourceGroupName DestinationAzureResourceGroup -Name M
 
 ## [Deployment](https://learn.microsoft.com/en-us/azure/app-service/deploy-best-practices)
 
-| Settings that are swapped                                           | Settings that aren't swapped                            |
-| ------------------------------------------------------------------- | ------------------------------------------------------- |
-| General settings, such as framework version, 32/64-bit, web sockets | Publishing endpoints                                    |
-| App settings (can be configured to stick to a slot)                 | Custom domain names                                     |
-| Connection strings (can be configured to stick to a slot)           | Non-public certificates and TLS/SSL settings            |
-| Handler mappings                                                    | Scale settings                                          |
-| Public certificates                                                 | WebJobs schedulers                                      |
-| WebJobs content                                                     | IP restrictions                                         |
-| Hybrid connections \*                                               | Always On                                               |
-| Azure Content Delivery Network \*                                   | Diagnostic log settings                                 |
-| Service endpoints \*                                                | Cross-origin resource sharing (CORS)                    |
-| Path mappings                                                       | Virtual network integration                             |
-|                                                                     | Managed identities                                      |
-|                                                                     | Settings that end with the suffix `\_EXTENSION_VERSION` |
+Deploy to staging, then swap slots to warm up instances and eliminate downtime. Requires Standard+.
+
+| Settings that are swapped                      | Settings that aren't swapped                            |
+| ---------------------------------------------- | ------------------------------------------------------- |
+| General settings: framework, arch, web sockets | Publishing endpoints                                    |
+| App settings: authentication (can be disabled) | Custom domain names                                     |
+| Connection strings (can be disabled)           | Non-public certificates and TLS/SSL settings            |
+| Handler mappings                               | Scale settings                                          |
+| Public certificates                            | WebJobs schedulers                                      |
+| WebJobs content                                | IP restrictions                                         |
+| Hybrid connections                             | Always On                                               |
+| Azure Content Delivery Network                 | Diagnostic log settings                                 |
+| Service endpoints                              | Cross-origin resource sharing (CORS)                    |
+| Path mappings                                  | Virtual network integration                             |
+|                                                | Managed identities                                      |
+|                                                | Settings that end with the suffix `\_EXTENSION_VERSION` |
 
 `x-ms-routing-name=`: `self` for production slot, `staging` for staging slot.
 
 By default, new slots are given a routing rule of `0%` (users won't randomly be transfered to other slot).
+
+By default, all client requests go to the production slot. You can route a portion of the traffic to another slot. The default rule for a new deployment slot is 0% (no random transfers to other slots).
 
 ```ps
 let "randomIdentifier=$RANDOM*$RANDOM"
@@ -152,6 +157,64 @@ compose_deployment() {
 az group delete --name $resourceGroup
 ```
 
+## Security
+
+### [Certificates](https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-certificate?tabs=apex)
+
+A certificate is accessible to all apps in the same resource group and region combination.
+
+- **Free Managed Certificate**: Auto renewed every 6 months, no wildcard certificates or private DNS, and can't be exported.
+- **App Service Certificate**: A private certificate that is managed by Azure. Automated certificate management, renewal and export options.
+- **Using Key Vault**: Store private certificates (same requerenments) in Key Vault. Automatic renewal, except for non-integrated certificates (`az keyvault certificate create ...`)
+- **Uploading a Private Certificate**: Requires a password-protected PFX file encrypted with triple DES, with 2048-bit private key and all intermediate/root certificates in the chain.
+- **Uploading a Public Certificate**: For accessing remote resources.
+
+#### [TLS mutual authentication](https://learn.microsoft.com/en-us/azure/app-service/app-service-web-configure-tls-mutual-auth?tabs=azurecli)
+
+Requires Basic+ plan; set from `Configuration > General Settings`.
+
+TLS termination is handled by frontend load balancer. When enabling client certificates (`az webapp update --set clientCertEnabled=true ...`), `X-ARR-ClientCert` header is added. Accessing client certificate: `HttpRequest.ClientCertificate`:
+
+```cs
+// Configure the application to client certificate forwarded the frontend load balancer
+services.AddCertificateForwarding(options => { options.CertificateHeader = "X-ARR-ClientCert"; });
+
+// Add certificate authentication so when authorization is performed the user will be created from the certificate
+services.AddAuthentication(CertificateAuthenticationDefaults.AuthenticationScheme).AddCertificate();
+```
+
+### CORS
+
+For apps: `az webapp cors add --allowed-origins $website ...`
+
+For storage: `az storage cors add --services blob --methods GET POST --origins $website --allowed-headers '*' --exposed-headers '*' --max-age 200 ...`
+
+To enable the sending of credentials like cookies or authentication tokens in your app, the browser may require the `ACCESS-CONTROL-ALLOW-CREDENTIALS` header in the response: `az resource update --set properties.cors.supportCredentials=true --namespace Microsoft.Web --resource-type config --parent sites/<app-name> ...`
+
+## [Diagnostics](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)
+
+| Type                    | Platform       | Location                                           | Notes                                                                           |
+| ----------------------- | -------------- | -------------------------------------------------- | ------------------------------------------------------------------------------- |
+| Application logging     | Windows, Linux | App Service file system and/or Azure Storage blobs |                                                                                 |
+| Web server logging      | Windows        | App Service file system or Azure Storage blobs     | Raw HTTP request data.                                                          |
+| Detailed Error Messages | Windows        | App Service file system                            | Copies of the .htm error pages that would have been sent to the client browser. |
+| Failed request tracing  | Windows        | App Service file system                            |                                                                                 |
+| Deployment logging      | Windows, Linux | App Service file system                            | Logs for when you publish content to an app.                                    |
+
+The _App Service file system_ option is for temporary debugging purposes, and turns itself off in 12 hours.  
+_The Blob_ option is for long-term logging, includes additional information. Only available for .Net application.
+
+Accessing log files:
+
+- Linux/custom containers: `https://<app-name>.scm.azurewebsites.net/api/logs/docker/zip`
+- Windows apps: `https://<app-name>.scm.azurewebsites.net/api/dump`
+
+`AppServiceFileAuditLogs` and `AppServiceAntivirusScanAuditLogs` log types are available only for Premium+.
+
+### [Health Checks](https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check?tabs=dotnet)
+
+TODO
+
 ## Read more
 
 - [Manage an App Service plan in Azure](https://learn.microsoft.com/en-us/azure/app-service/app-service-plan-manage)
@@ -164,3 +227,4 @@ az group delete --name $resourceGroup
 - [az webapp create](https://learn.microsoft.com/en-us/cli/azure/webapp?view=azure-cli-latest#az-webapp-create)
 - [az webapp deployment](https://learn.microsoft.com/en-us/cli/azure/webapp/deployment?view=azure-cli-latest)
 - [az webapp config](https://learn.microsoft.com/en-us/cli/azure/webapp/config?view=azure-cli-latest)
+- [az webapp cors](https://learn.microsoft.com/en-us/cli/azure/webapp/cors?view=azure-cli-latest)
