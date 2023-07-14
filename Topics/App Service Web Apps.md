@@ -21,7 +21,7 @@
 - Dedicated Azure Virtual Networks: Isolated+
 - Maximum scale-out: Isolated+
 
-### Overview
+### Tiers
 
 - **Shared compute**: **Free** and **Shared** tiers run apps on the same Azure VM with other customer apps, sharing resources and limited CPU quotas. They are suitable for _development_ and _testing_ only. Each app is charged for _CPU quota_.
 
@@ -65,6 +65,8 @@ $destapp = New-AzWebApp -ResourceGroupName DestinationAzureResourceGroup -Name M
       --elastic-scale false
   ```
 
+Horizontal scaling: Adding/removing virtual machines.
+
 **Scale out**: If _any_ of the rules are met  
 **Scale in**: If _all_ rules are met
 
@@ -86,6 +88,8 @@ Deploy to staging, then swap slots to warm up instances and eliminate downtime. 
 | Path mappings                                  | Virtual network integration                             |
 |                                                | Managed identities                                      |
 |                                                | Settings that end with the suffix `\_EXTENSION_VERSION` |
+
+To enable settings swapping, add `WEBSITE_OVERRIDE_PRESERVE_DEFAULT_STICKY_SLOT_SETTINGS` as an app setting in every slot and set it to 0 or false. All settings are either swappable or not. Managed identities are never swapped.
 
 `x-ms-routing-name=`: `self` for production slot, `staging` for staging slot.
 
@@ -259,7 +263,7 @@ az webapp config set --name <app-name> --resource-group <resource-group-name> \
     --always-on [true|false] \
     --http20-enabled \
     --auto-heal-enabled [true|false] \
-    --remote-debugging-enabled [true|false] \
+    --remote-debugging-enabled [true|false] \ # turn itself off after 48 hours
     --number-of-workers
 
 az webapp config appsettings set --name <app-name> --resource-group <resource-group-name> /
@@ -270,6 +274,32 @@ az webapp config appsettings set --name <app-name> --resource-group <resource-gr
         ASPNETCORE_ENVIRONMENT="Development"
 
 ```
+
+### Handler Mappings
+
+Add custom script processors to handle requests for specific file extensions.
+
+- **Extension**: The file extension you want to handle, such as _\*.php_ or _handler.fcgi_.
+- **Script processor**: The absolute path of the script processor. Requests to files that match the file extension are processed by the script processor. Use the path `D:\home\site\wwwroot` to refer to your app's root directory.
+- **Arguments**: Optional command-line arguments for the script processor.
+
+### Map a URL path to a directory
+
+```jsonc
+// json.txt
+[
+  {
+    "physicalPath"':' "site\\wwwroot\\public", // serve app from /public instead of root (site\\wwwroot)
+    "preloadEnabled"':' false,
+    "virtualDirectories"':' null,
+    "virtualPath"':' "/" // any path can be mapped
+  }
+]
+
+// az resource update --set properties.virtualApplications=@json.txt --resource-type Microsoft.Web/sites/config --resource-group <group-name> --name <app-name>
+```
+
+This works for both Windows and Linux apps.
 
 ## Security
 
@@ -437,11 +467,39 @@ Accessing log files:
 
 `AppServiceFileAuditLogs` and `AppServiceAntivirusScanAuditLogs` log types are available only for Premium+.
 
+### Stream logs
+
+Logs written to .txt, .log, or .htm files in `/LogFiles`. Note, some logs may appear out of order due to buffering.
+
+CLI: `az webapp log tail ...`
+
 ### [Health Checks](https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check?tabs=dotnet)
 
 Health Check pings the specified path every minute. If an instance fails to respond with a valid status code after 10 requests, it's marked unhealthy and removed from the load balancer. If it recovers, it's returned to the load balancer. If it stays unhealthy for an hour, it's replaced (only for Basic+).
 
 For private endpoints check if `x-ms-auth-internal-token` request header equals the hashed value of `WEBSITE_AUTH_ENCRYPTION_KEY` environment variable.
+
+## [Mount Azure Storage as a local share in App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-connect-to-azure-storage)
+
+- Built-in Linux images use Azure Storage with higher latency. For heavy read-only file access, custom containers are better as they reduce latency by storing files in the container filesystem.
+- Supports Azure Files (read/write) and Azure Blobs (read-only for Linux).
+- Storage failover requires app restart or remounting of Azure Storage.
+
+- Use `az webapp config storage-account add` to mount.
+- Use `az webapp config storage-account list` to verify.
+
+### Limitations
+
+- Storage firewall support via service and private endpoints only.
+- No FTP/FTPS for custom-mounted storage.
+- Mapping restrictions.
+- Azure Storage billed separately from App Service.
+
+### Best Practices
+
+- Place app and storage in the same Azure region.
+- Avoid regenerating access key.
+- Don't use for local databases or apps relying on file handles and locks.
 
 ## Read more
 
@@ -455,7 +513,14 @@ For private endpoints check if `x-ms-auth-internal-token` request header equals 
 - [az webapp create](https://learn.microsoft.com/en-us/cli/azure/webapp?view=azure-cli-latest#az-webapp-create)
 - [az webapp deployment](https://learn.microsoft.com/en-us/cli/azure/webapp/deployment?view=azure-cli-latest)
 - [az webapp config](https://learn.microsoft.com/en-us/cli/azure/webapp/config?view=azure-cli-latest)
+- [az webapp config appsettings](https://learn.microsoft.com/en-us/cli/azure/webapp/config/appsettings?view=azure-cli-latest)
+- [az webapp config connection-string](https://learn.microsoft.com/en-us/cli/azure/webapp/config/connection-string?view=azure-cli-latest)
 - [az webapp cors](https://learn.microsoft.com/en-us/cli/azure/webapp/cors?view=azure-cli-latest)
 - [az webapp show](https://learn.microsoft.com/en-us/cli/azure/webapp?view=azure-cli-latest#az-webapp-show)
 - [az webapp identity](https://learn.microsoft.com/en-us/cli/azure/webapp/identity?view=azure-cli-latest)
 - [az identity](https://learn.microsoft.com/en-us/cli/azure/identity?view=azure-cli-latest)
+- [az webapp log](https://learn.microsoft.com/en-us/cli/azure/webapp/log?view=azure-cli-latest)
+- [az resource update](https://learn.microsoft.com/en-us/cli/azure/resource?view=azure-cli-latest#az-resource-update)
+- [az webapp log](https://learn.microsoft.com/en-us/cli/azure/webapp/log?view=azure-cli-latest)
+- [az webapp config storage-account](https://learn.microsoft.com/en-us/cli/azure/webapp/config/storage-account?view=azure-cli-latest)
+- [az webapp list-runtimes](https://learn.microsoft.com/en-us/cli/azure/webapp?view=azure-cli-latest#az-webapp-list-runtimes)

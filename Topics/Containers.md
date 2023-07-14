@@ -8,8 +8,6 @@
 
 ## [Settings](https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container)
 
-App settings are always encrypted when stored (encrypted-at-rest).
-
 App Service passes app settings to the container using the `--env` flag to set the environment variable in the container.
 
 ```ps
