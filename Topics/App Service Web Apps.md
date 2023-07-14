@@ -158,6 +158,119 @@ compose_deployment() {
 az group delete --name $resourceGroup
 ```
 
+## [Configuration](https://learn.microsoft.com/en-us/azure/app-service/configure-common?tabs=cli)
+
+App settings are always encrypted when stored (encrypted-at-rest).
+
+### App Settings
+
+Variables passed as environment variables to the application code, injected into app environment at startup. When you add, remove, or edit app settings, App Service triggers an app restart. The values in App Service override the ones in `Web.config` (`<appSettings>`) or `appsettings.json`.
+
+```ps
+az webapp config appsettings set --settings <setting-name>="<value>" ...
+```
+
+Example:
+
+```cs
+// az webapp config appsettings set --settings MySetting="MyValue" --name <app-name> --resource-group <group-name>
+string mySettingValue = Configuration["MySetting"];
+```
+
+Buk editing:
+
+```jsonc
+// Save: az webapp config appsettings list --name <app-name> --resource-group <group-name> > settings.json
+
+// settings.json
+[
+  {
+    "name": "key1",
+    "slotSetting": false,
+    "value": "value1"
+  },
+  {
+    "name": "key2",
+    "value": "value2"
+  }
+  // ...
+]
+
+// Load: az webapp config appsettings set --resource-group <group-name> --name <app-name> --settings @settings.json
+```
+
+Configuration data is hierarchical (settings can have sub-settings). In Azure CLI `__` denotes the hierarchy.
+
+Example:
+
+```cs
+// az webapp config appsettings set --settings MySetting__MySubSetting="MyValue" --name <app-name> --resource-group <group-name>
+Configuration["MySetting__MySubSetting"];
+Configuration["MySetting:MySubSetting"];
+Configuration["MySetting/MySubSetting"];
+```
+
+### Connection Strings
+
+Like setting them in `<connectionStrings>` in `Web.config`. Available as environment variables at runtime, prefixed with the connection types like SQLServer, MySQL, SQLAzure, Custom, PostgreSQL.
+
+```ps
+az webapp config connection-string set --connection-string-type <type> --settings <string-name>='<value> ...'
+```
+
+Example:
+
+```cs
+//az webapp config connection-string set --connection-string-type SQLServer --settings MyDb="Server=myserver;Database=mydb;User Id=myuser;Password=mypassword; --name <app-name> --resource-group <group-name>"
+string myConnectionString = Configuration.GetConnectionString("MyDb");
+string myConnectionStringEnv = Environment.GetEnvironmentVariable("SQLServer_MyDb");
+```
+
+Buk editing:
+
+```jsonc
+// Save: az webapp config connection-string list --name <app-name> --resource-group <group-name> > settings.json
+
+// settings.json
+[
+  {
+    "name": "name-1",
+    "value": "conn-string-1",
+    "type": "SQLServer",
+    "slotSetting": false
+  },
+  {
+    "name": "name-2",
+    "value": "conn-string-2",
+    "type": "PostgreSQL"
+  }
+  // ...
+]
+
+// Load: az webapp config connection-string set --resource-group <group-name> --name <app-name> --settings @settings.json
+```
+
+### General Settings
+
+```ps
+az webapp config set --name <app-name> --resource-group <resource-group-name> \
+    --use-32bit-worker-process [true|false] \
+    --web-sockets-enabled [true|false] \
+    --always-on [true|false] \
+    --http20-enabled \
+    --auto-heal-enabled [true|false] \
+    --remote-debugging-enabled [true|false] \
+    --number-of-workers
+
+az webapp config appsettings set --name <app-name> --resource-group <resource-group-name> /
+    --settings \
+        PRE_BUILD_COMMAND="echo foo, scripts/prebuild.sh" \
+        POST_BUILD_COMMAND="echo foo, scripts/postbuild.sh" \
+        PROJECT="<project-name>/<project-name>.csproj" \ # Deploy multi-project solutions
+        ASPNETCORE_ENVIRONMENT="Development"
+
+```
+
 ## Security
 
 ### Authentication
