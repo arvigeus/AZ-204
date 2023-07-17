@@ -30,18 +30,6 @@ az container create --name $containerName --resource-group $resourceGroup --imag
 
 ---
 
-Question: Your organization has opted to use Azure Container Instances (ACI) to deploy an array of microservices for a new application that require large storage capacity, but must be cost effective as well. Which plan would you choose to ensure the best storage capacity for your Azure Container Instances?
-
-- [ ] Basic
-- [ ] Standard
-- [ ] Premium
-- [ ] Any of the listed
-- [x] None of the listed
-
-Answer: In Azure Container Instances, the concept of service plans doesn't exist, and storage is based on the container's image size and volume mounts. You're billed based on the resources (CPU and memory) that your containers use.
-
----
-
 Question: Suppose you have an ASP.NET Core application running within an Azure Container Instance (ACI) and your monitoring team has a unique container image loaded with their monitoring tools. To ensure compliance, you have been tasked with attaching a "sidecar" container (an auxiliary container that works alongside the main application container) from the same host. However, you must take into account that the solution should be cost-effective and require minimal changes to the current application, keeping the setup simple. What Azure service would you employ to realize this objective?
 
 - [x] ACI Container Groups

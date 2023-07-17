@@ -26,4 +26,4 @@ Question: You exceed your Azure Container Registry plan limit, what happens?
 - [ ] Have to upgrade tier to continue
 - [ ] Services will run slower
 
-Answer: You might experience [throttling](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-skus#throttlin)
+Answer: You might experience [throttling](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-skus#throttling)

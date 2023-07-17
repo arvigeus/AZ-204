@@ -126,17 +126,60 @@ staging_deployment() {
 
     echo "Deploying to Staging Slot"
     gitrepo=https://github.com/Azure-Samples/dotnet-core-sample
-    az webapp deployment source config --name $webapp --resource-group $resourceGroup --slot staging --repo-url $gitrepo --branch master --manual-integration
+    az webapp deployment source config \
+      --slot staging \
+      --repo-url $gitrepo \
+      --branch master --manual-integration \
+      --name $webapp --resource-group $resourceGroup
 
     echo "Swapping staging slot into production"
     az webapp deployment slot swap --name $webapp --resource-group $resourceGroup --slot staging
 }
 
-# https://learn.microsoft.com/en-us/azure/app-service/scripts/cli-linux-docker-aspnetcore
+# https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container?tabs=debian&pivots=container-linux#change-the-docker-image-of-a-custom-container
 docker_deployment() {
-    echo "Deploying from DockerHub"
-    dockerHubContainerPath="mcr.microsoft.com/dotnet/samples:aspnetapp" #format: <username>/<container-or-image>:<tag>
-    az webapp config container set --docker-custom-image-name $dockerHubContainerPath --name $webapp --resource-group $resourceGroup
+    echo "Deploying from DockerHub" # Custom container
+    az webapp config container set \
+      --docker-custom-image-name <docker-hub-repo>/<image> \
+      --name $webapp --resource-group $resourceGroup
+}
+
+# https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container?tabs=debian&pivots=container-linux#use-an-image-from-a-private-registry
+private_registry_deployment() {
+    echo "Deploying from a private registry"
+    az webapp config container set \
+      --docker-custom-image-name <image-name> \
+      --docker-registry-server-url <private-repo-url> \
+      --docker-registry-server-user <username> \
+      --docker-registry-server-password <password> \
+      --name $webapp --resource-group $resourceGroup
+}
+
+# https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container?tabs=debian&pivots=container-linux#change-the-docker-image-of-a-custom-container
+managed_entity_registry_deployment() {
+  # Enable the system-assigned managed identity for the web app
+  az webapp identity assign --query principalId --output tsv --resource-group $resourceGroup --name $webapp
+
+  # Get the resource ID of your Azure Container Registry
+  az acr show --name <registry-name> --query id --output tsv --resource-group $resourceGroup
+
+  # Grant the managed identity permission to access the container registry
+  az role assignment create --assignee <principal-id> --scope <registry-resource-id> --role "AcrPull"
+
+  # Configure your app to use the managed identity to pull from Azure Container Registry
+  az webapp config set --generic-configurations '{"acrUseManagedIdentityCreds": true}' --resource-group $resourceGroup --name $webapp
+
+  # (Optional) If your app uses a user-assigned managed identity, get its client ID
+  az identity show --name <identity-name> --query clientId --output tsv --resource-group $resourceGroup
+
+  # (Optional) Set the user-assigned managed identity ID for your app
+  az  webapp config set --generic-configurations '{"acrUserManagedIdentityID": "<client-id>"}' --resource-group $resourceGroup --name $webapp
+
+  # # Set the web application to use the Docker image from ACR
+  az webapp config container set \
+    --docker-custom-image-name <acr-login-server>/<image>:<tag> \
+    --docker-registry-server-url https://<acr-login-server> \
+    --resource-group $resourceGroup --name $webapp
 }
 
 # https://learn.microsoft.com/en-us/azure/app-service/tutorial-multi-container-app
@@ -151,7 +194,10 @@ compose_deployment() {
     az mysql db create --resource-group $resourceGroup --server-name <mysql-server-name> --name wordpress
 
     echo "Setting app settings for WordPress"
-    az webapp config appsettings set --resource-group $resourceGroup --name wordpressApp --settings WORDPRESS_DB_HOST="<mysql-server-name>.mysql.database.azure.com" WORDPRESS_DB_USER="adminuser" WORDPRESS_DB_PASSWORD="letmein" WORDPRESS_DB_NAME="wordpress" MYSQL_SSL_CA="BaltimoreCyberTrustroot.crt.pem"
+      --settings WORDPRESS_DB_HOST="<mysql-server-name>.mysql.database.azure.com" WORDPRESS_DB_USER="adminuser" WORDPRESS_DB_PASSWORD="letmein" WORDPRESS_DB_NAME="wordpress" MYSQL_SSL_CA="BaltimoreCyberTrustroot.crt.pem" \
+    az webapp config appsettings set \
+      --resource-group $resourceGroup \
+      --name wordpressApp
 
 }
 
@@ -161,6 +207,8 @@ az group delete --name $resourceGroup
 ## [Configuration](https://learn.microsoft.com/en-us/azure/app-service/configure-common?tabs=cli)
 
 App settings are always encrypted when stored (encrypted-at-rest).
+
+App Service passes app settings to the container using the `--env` flag to set the environment variable in the container.
 
 ### App Settings
 
@@ -264,12 +312,44 @@ az webapp config set --name <app-name> --resource-group <resource-group-name> \
 
 az webapp config appsettings set --name <app-name> --resource-group <resource-group-name> /
     --settings \
+        WEBSITES_PORT=8000
         PRE_BUILD_COMMAND="echo foo, scripts/prebuild.sh" \
         POST_BUILD_COMMAND="echo foo, scripts/postbuild.sh" \
         PROJECT="<project-name>/<project-name>.csproj" \ # Deploy multi-project solutions
         ASPNETCORE_ENVIRONMENT="Development"
+        # Custom environment variables
+        DB_HOST="myownserver.mysql.database.azure.com"
 
 ```
+
+### ARM Templates
+
+`az group export --name $resourceGroup` - create ARM template
+
+`az group deployment export --name $resourceGroup --deployment-name $deployment` - create ARM template for specific deploy
+
+`az deployment group create --resource-group $resourceGroup --template-file $armTemplateJsonFile` - create deployment group from ARM template
+
+## [Persistence](https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container?tabs=debian&pivots=container-linux#use-persistent-shared-storage)
+
+When persistent storage is _on_ (default for Linux containers), the `/home` directory allows file persistence and sharing. All writes to `/home` are accessible by all instances, but existing files overwrite /home's contents on start.
+
+`/home/LogFiles` always persists if logging is enabled, regardless of persistent storage status.
+
+Disable default persistent storage on Linux containers: `az webapp config appsettings set --settings WEBSITES_ENABLE_APP_SERVICE_STORAGE=false ...`
+
+### [Mount Azure Storage as a local share in App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-connect-to-azure-storage?tabs=cli&pivots=container-linux)
+
+Mount: `az webapp config storage-account add --custom-id <custom-id> --storage-type AzureFiles --share-name <share-name> --account-name <storage-account-name> --access-key "<access-key>" --mount-path <mount-path-directory> ...`  
+Check: `az webapp config storage-account list ...`
+
+- Don't map to `/`, `/home`, or `/tmp` to avoid issues.
+- App backups don't include storage mounts.
+- Storage mount changes will restart the app.
+- Keep your app and Azure Storage in the same region.
+- Deleting Azure Storage requires corresponding mount configuration removal.
+- Don't use mounts for local databases or apps needing file locks.
+- Storage failover disconnects the mount until app restart or mount reconfiguration.
 
 ## Security
 
