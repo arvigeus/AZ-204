@@ -112,3 +112,7 @@
 1. [Azure Event Hub](https://docs.microsoft.com/en-us/azure/event-hubs/)
 1. [Azure Service Bus](https://docs.microsoft.com/en-us/azure/service-bus-messaging/)
 1. [Azure Queue Storage](https://docs.microsoft.com/en-us/azure/storage/queues/)
+
+## Exam
+
+[Practice Assessments for Microsoft Certifications](https://learn.microsoft.com/en-us/certifications/exams/az-204/practice/assessment?assessment-type=practice&assessmentId=35)

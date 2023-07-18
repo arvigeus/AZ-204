@@ -161,7 +161,18 @@ Fully managed (no need to manage other Azure infrastructure) environment. Common
 
 Cannot run privileged containers requiring _root_ access and strictly requires _Linux-based (linux/amd64)_ container images.
 
-**Auth**: The platform's authentication and authorization middleware component runs as a _sidecar_ container on each application replica, screening all incoming HTTP requests before they reach your application. [See more](./App%20Service%20Web%20Apps.md)
+### [Auth](https://learn.microsoft.com/en-us/azure/container-apps/managed-identity?tabs=cli%2Cdotnet)
+
+The platform's authentication and authorization middleware component runs as a _sidecar_ container on each application replica, screening all incoming HTTP requests before they reach your application. [See more](./App%20Service%20Web%20Apps.md)
+
+Add a system-assigned identity: `az containerapp identity assign --name myApp --resource-group myResourceGroup --system-assigned`
+
+Add a user-assigned identity:
+
+```ps
+# az identity create --resource-group <GROUP_NAME> --name <IDENTITY_NAME> --output json
+az containerapp identity assign --user-assigned <IDENTITY_RESOURCE_ID> --resource-group <GROUP_NAME> --name <APP_NAME>
+```
 
 ### [Scaling](https://learn.microsoft.com/en-us/azure/container-apps/scale-app?pivots=azure-cli)
 
@@ -255,6 +266,15 @@ CLI:
 # ContainerAppConsoleLogs_CL or ContainerAppSystemLogs_CL
 az monitor log-analytics query --workspace $WORKSPACE_CUSTOMER_ID --analytics-query "ContainerAppConsoleLogs_CL | where ContainerAppName_s == 'album-api' | project Time=TimeGenerated, AppName=ContainerAppName_s, Revision=RevisionName_s, Container=ContainerName_s, Message=Log_s, LogLevel_s | take 5" --out table
 ```
+
+## [Disaster and Recovery](https://learn.microsoft.com/en-us/azure/container-apps/disaster-recovery?tabs=azure-cli)
+
+In the event of a full region outage, you have two strategies:
+
+- **Manual recovery**:
+  - Manually deploy to a new region
+  - Wait for the region to recover, and then manually redeploy all environments and apps.
+- **Resilient recovery**: Deploy your container apps in advance to multiple regions. Use a traffic management service (ex: Azure Front Door) to direct requests to your main region. In case of an outage, reroute traffic from the affected region.
 
 ## CLI
 
