@@ -2,6 +2,13 @@
 
 ## [Container Registry](https://learn.microsoft.com/en-us/azure/container-registry/)
 
+Example: `docker pull <registry>/<repository>/<image-or-artifact>:<tag>`
+
+- `<registry>`: name of the Docker registry (for Azure, it would be something like myregistry.azurecr.io).
+- `<repository>`: name of the repository where your image is stored.
+- `<image-or-artifact>`: name of the image or artifact you want to pull.
+- `<tag>`: version tag of the image or artifact.
+
 ### [Tiers](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-skus)
 
 All tiers support the same basic features, the main difference is image storage / throughput.
@@ -45,7 +52,17 @@ az acr build --registry MyRegistry --image MyImage:tag --platform Windows/amd64 
 az acr create --name mycontainerregistry --sku Basic --resource-group myResourceGroup
 
 # Login to container registry
+## Using Azure ID
 az acr login --name "<registry-name>"
+
+
+# Login using service principal
+ACR_REGISTRY_ID=$(az acr show --name $ACR_NAME --query "id" --output tsv)
+PASSWORD=$(az ad sp create-for-rbac --name $SERVICE_PRINCIPAL_NAME --scopes $ACR_REGISTRY_ID --role acrpull --query "password" --output tsv)
+SERVICE_PRINCIPAL_ID=$(az ad sp list --display-name $SERVICE_PRINCIPAL_NAME --query "[].appId" --output tsv)
+az role assignment create --assignee $SERVICE_PRINCIPAL_ID --scope $ACR_REGISTRY_ID --role acrpull # acrpush, or acrowner
+docker login myregistry.azurecr.io --username $SP_APP_ID --password $SP_PASSWD
+
 
 # Push image to registry
 ## Pull 'hello-world' image from Microsoft's Registry
@@ -66,8 +83,182 @@ az acr repository show-tags --name <registry-name> --repository hello-world --ou
 
 ## [Container Instances](https://learn.microsoft.com/en-us/azure/container-instances/)
 
+```ps
+# Container from image
+az container create --name mycontainer --image mycontainerimage --resource-group myResourceGroup
+
+# Container from yaml file
+az container create --file mycontainer.yaml --resource-group myResourceGroup
+
+# Create an Azure Container Instance with a public DNS name (must be unique)
+# Accessible from <dns-name-label>.<region>.azurecontainer.io
+az container create --dns-name-label mydnslabel --ip-address public --name mycontainer --image myImage --resource-group myResourceGroup
+
+# Verify container is running
+az container show --resource-group az204-aci-rgb--name mycontainerbb --query "{FQDN:ipAddress.fqdn,ProvisioningState:provisioningState}" --out table
+```
+
+**Container Groups** - the top-level resource. It consists of multiple containers scheduled on a single host machine, sharing lifecycle, resources, network, and storage volumes (similar to Kubernetes pod). Multi-container groups support Linux containers. For Windows containers, Azure Container Instances allow only single-instance deployment.
+
+**Restart policies**: `Always`, `Never`, `OnFailure`. When ACI stops a container with a restart policy of `Never` or `OnFailure`, its status is set to **Terminated**.  
+Example: `az container create --restart-policy OnFailure ...`.
+
+**Environment variables**: `az container create --environment-variables 'NumWords'='5' 'MinLength'='8' ...`
+
+```yaml
+# Define environment variables for the container
+environmentVariables:
+  # Public environment variable
+  - name: "NOTSECRET"
+    value: "my-exposed-value"
+
+  # Secure environment variable, externally (Azure portal or Azure CLI) visible only by name
+  - name: "SECRET"
+    secureValue: "my-secret-value"
+```
+
+### Mount an Azure file share in Azure Container Instances
+
+Azure Files shares can only be mounted to _Linux containers_ _running as root_, limited by the requirement of CIFS support.
+
+Azure CLI:
+
+```ps
+az container create \
+    --azure-file-volume-account-name $ACI_PERS_STORAGE_ACCOUNT_NAME \
+    --azure-file-volume-account-key $STORAGE_KEY \
+    --azure-file-volume-share-name $ACI_PERS_SHARE_NAME \
+    --azure-file-volume-mount-path /aci/logs/ \
+    # ...
+```
+
+YAML:
+
+```yaml
+volumes:
+- name: filesharevolume
+    azureFile:
+    sharename: acishare
+    storageAccountName: <Storage account name>
+    storageAccountKey: <Storage account key>
+properties:
+  containers:
+      properties:
+        # ...
+        volumeMounts:
+          - mountPath: /aci/logs/
+            name: filesharevolume
+```
+
+## [Azure Container Apps](https://learn.microsoft.com/en-us/azure/container-apps/)
+
+Fully managed (no need to manage other Azure infrastructure) environment. Common use cases:
+
+- Deploying API endpoints
+- Hosting background processing applications
+- Handling event-driven processing
+- Running microservices
+
+Cannot run privileged containers requiring _root_ access and strictly requires _Linux-based (linux/amd64)_ container images.
+
+**Auth**: The platform's authentication and authorization middleware component runs as a _sidecar_ container on each application replica, screening all incoming HTTP requests before they reach your application. [See more](./App%20Service%20Web%20Apps.md)
+
+### [Scaling](https://learn.microsoft.com/en-us/azure/container-apps/scale-app?pivots=azure-cli)
+
+Scaling is driven by three different categories of triggers:
+
+- HTTP: Based on the number of concurrent HTTP requests to your revision.
+- TCP: Based on the number of concurrent TCP connections to your revision.
+- Custom: Based on CPU, memory (_cannot scale to 0_), or supported event-driven data sources such as:
+  - Azure Service Bus
+  - Azure Event Hubs
+  - Apache Kafka
+  - Redis
+
+As a container app revision scales out, new instances of the revision are created on-demand. These instances are known as replicas (default: 0-10). Adding or editing scaling rules creates a new revision of the container app.
+
+Example:
+
+```ps
+az containerapp create \
+ # ...
+ --min-replicas 0 \
+ --max-replicas 5 \
+
+ #  HTTP Scaling Rule
+ --scale-rule-name azure-http-rule \
+ --scale-rule-type http \
+ --scale-rule-http-concurrency 100
+
+ # TCP Scaling Rule
+ --scale-rule-name azure-tcp-rule \
+ --scale-rule-type tcp \
+ --scale-rule-tcp-concurrency 100
+
+ # Custom Scaling rule
+  --secrets "connection-string-secret=<SERVICE_BUS_CONNECTION_STRING>" \
+ --scale-rule-name azure-servicebus-queue-rule \
+ --scale-rule-type azure-servicebus \
+ --scale-rule-metadata "queueName=my-queue" \
+ "namespace=service-bus-namespace" \
+ "messageCount=5" \
+ --scale-rule-auth "connection=connection-string-secret"
+```
+
+Without a scale rule, the default (HTTP, 0-10) applies to your app. Create a rule or set minReplicas to 1+ if ingress is disabled. Without minReplicas or a custom rule, your app can scale to zero and won't restart.
+
+### [Revisions](https://learn.microsoft.com/en-us/azure/container-apps/revisions)
+
+Immutable snapshots of a container app version. The first revision is auto-created upon deployment. Any revision-scope change triggers a new revision. Up to 100 revisions can be stored for history. Multiple revisions can run at once, with HTTP traffic split among them.
+
+State doesn't persist inside a container due to regular restarts. Use external caches for in-memory cache requirements.
+
+In single revision mode, Container Apps prevents downtime during updates, keeping the old revision active until the new one is ready.  
+In multiple revision mode, you control revision activation and traffic distribution, with traffic only switching to the latest revision when it's ready.
+
+Revision Labels: direct traffic to specific revisions. A label provides a unique URL that you can use to route traffic to the revision that the label is assigned.
+
+Scopes:
+
+- Revision-scope changes trigger a new revision when you deploy your app (trigger: changing [properties.template](https://learn.microsoft.com/en-us/azure/container-apps/azure-resource-manager-api-spec?tabs=arm-template#propertiestemplate))
+- Application-scope changes are globally applied to all revisions. A new revision isn't created (trigger: changing [properties.configuration](https://learn.microsoft.com/en-us/azure/container-apps/azure-resource-manager-api-spec?tabs=arm-template#propertiesconfiguration))
+
+### [Secrets](https://learn.microsoft.com/en-us/azure/container-apps/manage-secrets?tabs=azure-cli)
+
+Secrets are scoped to an application, outside of any specific revision of an application. Once secrets are defined at the application level, secured values are available to container apps. Adding, removing, or changing secrets doesn't generate new revisions.
+
+Defining secrets: `--secrets "queue-connection-string=<CONNECTION_STRING>"`
+
+Referencing Secrets in Environment Variables (`secretref:`): `--env-vars "QueueName=myqueue" "ConnectionString=secretref:queue-connection-string"`
+
+Mounting Secrets in a Volume (secret name is filename, secret value is content): `--secret-volume-mount "/mnt/secrets"`
+
+### [Logging](https://learn.microsoft.com/en-us/azure/container-apps/log-monitoring?tabs=bash)
+
+- System Logs (at the container app level)
+- Console Logs (from the `stderr` and `stdout` messages inside container app)
+
+#### Query Log with Log Analytics
+
+Kusto:
+
+```kusto
+ContainerAppConsoleLogs_CL # or ContainerAppSystemLogs_CL
+| where ContainerAppName_s == 'album-api'
+| project Time=TimeGenerated, AppName=ContainerAppName_s, Revision=RevisionName_s, Container=ContainerName_s, Message=Log_s
+| take 100
+```
+
+CLI:
+
+```ps
+# ContainerAppConsoleLogs_CL or ContainerAppSystemLogs_CL
+az monitor log-analytics query --workspace $WORKSPACE_CUSTOMER_ID --analytics-query "ContainerAppConsoleLogs_CL | where ContainerAppName_s == 'album-api' | project Time=TimeGenerated, AppName=ContainerAppName_s, Revision=RevisionName_s, Container=ContainerName_s, Message=Log_s, LogLevel_s | take 5" --out table
+```
+
 ## CLI
 
 - [az acr update](https://learn.microsoft.com/en-us/cli/azure/acr?view=azure-cli-latest#az-acr-update)
 - [az acr build](https://learn.microsoft.com/en-us/cli/azure/acr?view=azure-cli-latest#az-acr-build)
 - [az acr task create](https://learn.microsoft.com/en-us/cli/azure/acr/task?view=azure-cli-latest#az-acr-task-create)
+- [az container create](https://learn.microsoft.com/en-us/cli/azure/container?view=azure-cli-latest#az-container-create)

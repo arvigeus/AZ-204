@@ -226,23 +226,3 @@ Question: A software company is developing a multi-tenant SaaS application that 
 Answer: This scenario is best suited for User-assigned managed identities. User-assigned managed identities are standalone Azure resources that can be assigned to one or more instances of an Azure service. In this case, each tenant can have a User-assigned managed identity that is granted access to their Azure Storage account. The Azure Container App can then use these identities to authenticate to the storage accounts on behalf of the tenants. When a tenant leaves, the User-assigned managed identity can be removed from the Azure Container App and deleted.
 
 ---
-
-Question: A media company is hosting a high-traffic web application on Azure Container Apps. The application experiences significant fluctuations in traffic throughout the day, and the company wants to implement auto-scaling to handle these changes in demand. They are considering using managed identities to control the scaling rules, with the aim of dynamically adjusting the number of container instances based on the current load. Which type of managed identity would fit this scenario?
-
-- [ ] System-assigned identity
-- [ ] User-assigned identity
-- [ ] Any of these
-- [x] None of these
-
-Answer: None. Currently, Azure does not support the use of managed identities in scale rules. Auto-scaling in Azure Container Apps is controlled by defining scaling rules in the application's deployment configuration, and these rules cannot be controlled or modified by managed identities.
-
----
-
-Question: A data analytics company is developing a data processing application that will be hosted on Azure Container Apps. The application needs to access Azure Blob Storage to retrieve and store data. The company is considering using managed identities to secure access to the Blob Storage. They want to have automatically enabled managed identity when they create an Azure Container App. Which type of managed identity would fit this scenario?
-
-- [ ] System-assigned identity
-- [ ] User-assigned identity
-- [ ] Any of these
-- [x] None of these
-
-Answer: Both System-assigned and User-assigned managed identities require explicit enabling. Neither type of managed identity is automatically enabled when you create an Azure Container App. You need to explicitly enable and configure the managed identity in the Azure portal, Azure CLI, or Azure PowerShell. Once enabled, you can use either a System-assigned or User-assigned managed identity to secure access to Azure Blob Storage, depending on your specific requirements. However, remember to grant the necessary permissions to the managed identity in the Azure Blob Storage access control (IAM).
