@@ -151,3 +151,71 @@ Question: What is needed to enable authentication on your Azure Container App?
 Answer: Auth works only with HTTPS, requires any identity provider and specified provider within app settings. Authough AAD is a valid option, it's incorrect to state it's required.
 
 ---
+
+Question: You want to store and manage private Docker images that your application will use. Which Azure CLI command would be most appropriate to achieve this?
+
+- [ ] `az containerapp create`
+- [x] `az acr create`
+- [ ] `az container create`
+- [ ] `az containerapp up`
+
+Answer: `az acr create` - The Azure Container Registry (ACR) service stores and manages private Docker container images. Using the `az acr create` command creates a new ACR, allowing you to handle and manage your Docker images.
+
+---
+
+Question: You have a single-container application that doesn't require advanced orchestration features like scaling or networking with other containers. Which Azure CLI command would be the most suitable for this purpose?
+
+- [ ] `az acr create`
+- [x] `az container create`
+- [ ] `az containerapp create`
+- [ ] `az acr build`
+- [ ] `az containerapp up`
+
+Answer: `az container create` - Azure Container Instances (ACI) is a service that allows you to run containers directly without the need for any orchestration service. The `az container create` command is used to create these instances, which are ideal for single, isolated workloads.
+
+---
+
+Question 3: Your team has developed a new microservices-based application, and you need to deploy these services on Azure. Which command allows you to deploy these applications with scaling and orchestration features?
+
+- [ ] `az container create`
+- [ ] `az acr create`
+- [ ] `az acr build`
+- [x] `az containerapp create`
+
+Answer: `az containerapp create` - Azure Container Apps is a serverless container service that provides advanced features such as scaling and orchestration. The `az containerapp create` command is used to create a new Azure Container App, which is ideal for deploying microservices.
+
+---
+
+Question: In the context of Dapr, what is the purpose of a Dapr sidecar and how does it interact with a container app?
+
+- [ ] The Dapr sidecar is used to manage the lifecycle of the container app and has no direct interaction with the app itself.
+- [x] The Dapr sidecar is used to expose Dapr APIs to the container app, which can be invoked via HTTP or gRPC.
+- [ ] The Dapr sidecar is used to provide a user interface for managing the container app and can be accessed via a web browser.
+- [ ] The Dapr sidecar is used to store the state of the container app and periodically syncs this state with the app.
+
+Answer: A Dapr sidecar exposes Dapr's APIs to your application, enabling features like service invocation and state management over HTTP or gRPC.  
+While Dapr does provide state management capabilities, it's not the sidecar's responsibility to store the state of the container app and periodically sync it.
+
+---
+
+Question: What is the default behavior of Dapr-enabled container apps regarding the loading of Dapr components?
+
+- [ ] They load no components by default.
+- [ ] They load only the components specified in the application's configuration.
+- [x] They load the full set of deployed components.
+- [ ] They load components based on the runtime context.
+
+Answer: They load the full set of deployed components.
+
+---
+
+Question: What is the primary function of the "Observability" feature in Dapr?
+
+- [ ] It provides a user interface for monitoring the state of your application.
+- [x] It sends tracing information to an Application Insights backend.
+- [ ] It allows you to observe the behavior of other services in your application.
+- [ ] It provides a dashboard for visualizing the performance of your application.
+
+Answer: It sends tracing information to an Application Insights backend.
+
+---

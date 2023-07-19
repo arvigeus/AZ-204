@@ -352,6 +352,22 @@ In the event of a full region outage, you have two strategies:
   - Wait for the region to recover, and then manually redeploy all environments and apps.
 - **Resilient recovery**: Deploy your container apps in advance to multiple regions. Use a traffic management service (ex: Azure Front Door) to direct requests to your main region. In case of an outage, reroute traffic from the affected region.
 
+### Explore Dapr integration with Azure Container Apps
+
+Azure Container Apps offers a managed Dapr integration, simplifying version upgrades and developer interaction. Dapr is activated per container app using specific arguments. Its APIs are accessible via a Dapr sidecar using HTTP or gRPC. Dapr's modular design allows shared or app-specific components, which can connect to external services and securely access configuration metadata. To load components only for the right apps, application scopes are used.
+
+Enable Dapr: `az containerapp create --dapr-enabled ...`
+
+Main APIs provided by Dapr:
+
+- [**Service-to-service invocation**](https://docs.dapr.io/developing-applications/building-blocks/service-invocation/service-invocation-overview/): Enables secure, direct service calls.
+- [**State management**](https://docs.dapr.io/developing-applications/building-blocks/state-management/state-management-overview/): Manages transactions and CRUD operations.
+- [**Pub/sub**](https://docs.dapr.io/developing-applications/building-blocks/pubsub/pubsub-overview): Facilitates communication between container apps via message broker.
+- [**Bindings**](https://docs.dapr.io/developing-applications/building-blocks/bindings/bindings-overview/): Triggers apps based on events.
+- [**Actors**](https://docs.dapr.io/developing-applications/building-blocks/actors/actors-overview/): Supports scalable, message-driven units of work.
+- [**Observability**](https://learn.microsoft.com/en-us/azure/container-apps/observability): Sends tracing information to an Application Insights backend.
+- [**Secrets**](https://docs.dapr.io/developing-applications/building-blocks/secrets/secrets-overview/): Accesses secrets or references secure values in Dapr components.
+
 ## Docker
 
 - `dotnet/core/sdk` - build an ASP.NET app
