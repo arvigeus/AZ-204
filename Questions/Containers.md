@@ -137,3 +137,17 @@ Using the Azure portal to manually copy the JSON of the deployment template also
 is a manual process that doesn't provide the convenience or automation of a CLI command
 
 ---
+
+Question: What is needed to enable authentication on your Azure Container App?
+
+- [x] A configured ingress rule with `allowInsecure` set to disabled
+- [x] Any Identity provider
+- [x] A specified Authentication / Authorization provider within the app settings
+- [ ] A secret key to be embedded in the app's code
+- [ ] A Premium Azure service tier subscription
+- [ ] An Azure Container App certificate issued by Microsoft
+- [ ] Azure Active Directory is required as an Identity provider
+
+Answer: Auth works only with HTTPS, requires any identity provider and specified provider within app settings. Authough AAD is a valid option, it's incorrect to state it's required.
+
+---

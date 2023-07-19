@@ -46,6 +46,8 @@ az acr build --registry MyRegistry --image MyImage:tag --platform Windows/amd64 
 
 ### [Working with Azure Container Registry](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-get-started-azure-cli)
 
+Pushes and run a Docker image
+
 ```ps
 # Create container registry
 # az group create --name myResourceGroup --location eastus
@@ -78,7 +80,26 @@ docker run <login-server>/hello-world:v1
 # List container images abd tags
 az acr repository list --name <registry-name> --output table
 az acr repository show-tags --name <registry-name> --repository hello-world --output table
+```
 
+Build and run a container image:
+
+```ps
+# Create a resource group
+az group create --name myResourceGroup --location eastus
+
+# Create Azure Container Registry
+az acr create --resource-group myResourceGroup --name myAcr --sku Basic --admin-enabled true
+
+# Log in to ACR
+az acr login --name myAcr
+
+# Build Docker image and push to ACR
+az acr build --registry myAcr --image myimage:latest .
+
+# Run the Docker image from ACR
+# Last parameter is the source location for the task. It's not needed when not building an image, so '/dev/null' is used.
+az acr run --registry myAcr --cmd '$Registry/myimage:latest' /dev/null
 ```
 
 ## [Container Instances](https://learn.microsoft.com/en-us/azure/container-instances/)
@@ -163,7 +184,7 @@ Cannot run privileged containers requiring _root_ access and strictly requires _
 
 ### [Auth](https://learn.microsoft.com/en-us/azure/container-apps/managed-identity?tabs=cli%2Cdotnet)
 
-The platform's authentication and authorization middleware component runs as a _sidecar_ container on each application replica, screening all incoming HTTP requests before they reach your application. [See more](./App%20Service%20Web%20Apps.md)
+The platform's authentication and authorization middleware component runs as a _sidecar_ container on each application replica, screening all incoming HTTPS (_disable_ `allowInsecure` in ingress config) requests before they reach your application. [See more](./App%20Service%20Web%20Apps.md)
 
 Add a system-assigned identity: `az containerapp identity assign --name myApp --resource-group myResourceGroup --system-assigned`
 
@@ -267,7 +288,62 @@ CLI:
 az monitor log-analytics query --workspace $WORKSPACE_CUSTOMER_ID --analytics-query "ContainerAppConsoleLogs_CL | where ContainerAppName_s == 'album-api' | project Time=TimeGenerated, AppName=ContainerAppName_s, Revision=RevisionName_s, Container=ContainerName_s, Message=Log_s, LogLevel_s | take 5" --out table
 ```
 
-## [Disaster and Recovery](https://learn.microsoft.com/en-us/azure/container-apps/disaster-recovery?tabs=azure-cli)
+### [Deployment](https://learn.microsoft.com/en-us/azure/container-apps/get-started?tabs=bash)
+
+```ps
+# Upgrade Azure CLI version on the workstation
+az upgrade
+
+# Add and upgrade the containerapp extension for managing containerized services
+az extension add --name containerapp --upgrade
+
+# Login to Azure
+az login
+
+# Register providers for Azure App Services (for hosting APIs) and Azure Operational Insights (for telemetry)
+az provider register --namespace Microsoft.App
+az provider register --namespace Microsoft.OperationalInsights
+
+# Create an environment 'prod' in Azure Container Apps
+az containerapp env create --resource-group MyResourceGroup --name prod
+
+# Deploy the API service to the 'prod' environment, using the source code from a repository
+# https://learn.microsoft.com/en-us/azure/container-apps/quickstart-code-to-cloud?tabs=bash
+function deploy_repo() {
+  az containerapp up \
+    --name MyAPI \
+    --resource-group MyResourceGroup \
+    --location eastus \
+    --environment prod \
+    --context-path ./src \
+    --repo myuser/myrepo
+
+  # Display the Fully Qualified Domain Name (FQDN) of the app after it's deployed. This is the URL you would use to access your application.
+  az containerapp show --name MyAPI --resource-group MyResourceGroup --query properties.configuration.ingress.fqdn
+}
+
+# Deploy a containerized application in Azure Container Apps, using an existing public Docker image
+# https://learn.microsoft.com/en-us/azure/container-apps/get-started?tabs=bash
+function deploy_image() {
+  # Alt: az containerapp create
+  az containerapp up \
+    --name MyContainerApp \
+    --resource-group MyResourceGroup \
+    --environment prod \
+    --image mcr.microsoft.com/azuredocs/containerapps-helloworld:latest \
+    --target-port 80 \
+    --ingress 'external' \ # allows the application to be accessible from the internet.
+    # Display the Fully Qualified Domain Name (FQDN) of the app after it's deployed. This is the URL you would use to access your application.
+    --query properties.configuration.ingress.fqdn
+
+    # Alt: Deploy from a Docker Image in Azure Container Registry (ACR)
+    # --image myAcr.azurecr.io/myimage:latest \
+    # --registry-username myAcrUsername \
+    # --registry-password myAcrPassword \
+}
+```
+
+### [Disaster and Recovery](https://learn.microsoft.com/en-us/azure/container-apps/disaster-recovery?tabs=azure-cli)
 
 In the event of a full region outage, you have two strategies:
 
@@ -276,9 +352,79 @@ In the event of a full region outage, you have two strategies:
   - Wait for the region to recover, and then manually redeploy all environments and apps.
 - **Resilient recovery**: Deploy your container apps in advance to multiple regions. Use a traffic management service (ex: Azure Front Door) to direct requests to your main region. In case of an outage, reroute traffic from the affected region.
 
+## Docker
+
+- `dotnet/core/sdk` - build an ASP.NET app
+- `dotnet/core/aspnet` - run an ASP.NET app
+
+[Multi-stage](https://docs.docker.com/build/building/multi-stage/) (build and run in different containers):
+
+```Dockerfile
+FROM mcr.microsoft.com/dotnet/core/sdk:3.0 AS build
+WORKDIR /app
+
+# copy csproj and restore as distinct layers
+COPY *.sln .
+COPY aspnetapp/*.csproj ./aspnetapp/
+RUN dotnet restore
+
+# copy everything else and build app
+COPY aspnetapp/. ./aspnetapp/
+WORKDIR /app/aspnetapp
+RUN dotnet publish -c Release -o out
+
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.0 AS runtime
+WORKDIR /app
+COPY --from=build /app/aspnetapp/out ./
+ENTRYPOINT ["dotnet", "aspnetapp.dll"]
+```
+
+[Serving both secure and non-secure web traffic](https://learn.microsoft.com/en-us/visualstudio/containers/container-tools?view=vs-2019#dockerfile-overview):
+
+```Dockerfile
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS base
+WORKDIR /app
+EXPOSE 80
+EXPOSE 443
+
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
+WORKDIR /src
+COPY ["WebApplication1/WebApplication1.csproj", "WebApplication1/"]
+RUN dotnet restore "WebApplication1/WebApplication1.csproj"
+COPY . .
+WORKDIR "/src/WebApplication1"
+RUN dotnet build "WebApplication1.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "WebApplication1.csproj" -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "WebApplication1.dll"]
+```
+
 ## CLI
 
+- [az acr login](https://learn.microsoft.com/en-us/cli/azure/acr?view=azure-cli-latest#az-acr-login)
+- [az acr create](https://learn.microsoft.com/en-us/cli/azure/acr?view=azure-cli-latest#az-acr-create)
 - [az acr update](https://learn.microsoft.com/en-us/cli/azure/acr?view=azure-cli-latest#az-acr-update)
 - [az acr build](https://learn.microsoft.com/en-us/cli/azure/acr?view=azure-cli-latest#az-acr-build)
 - [az acr task create](https://learn.microsoft.com/en-us/cli/azure/acr/task?view=azure-cli-latest#az-acr-task-create)
+- [az acr repository](https://learn.microsoft.com/en-us/cli/azure/acr/repository?view=azure-cli-latest)
+- [az acr run](https://learn.microsoft.com/en-us/cli/azure/acr?view=azure-cli-latest#az-acr-run)
+- [az acr show](https://learn.microsoft.com/en-us/cli/azure/acr?view=azure-cli-latest#az-acr-show)
 - [az container create](https://learn.microsoft.com/en-us/cli/azure/container?view=azure-cli-latest#az-container-create)
+- [az container show](https://learn.microsoft.com/en-us/cli/azure/container?view=azure-cli-latest#az-container-show)
+- [az containerapp create](https://learn.microsoft.com/en-us/cli/azure/containerapp?view=azure-cli-latest#az-containerapp-create)
+- [az containerapp up](https://learn.microsoft.com/en-us/cli/azure/containerapp?view=azure-cli-latest#az-containerapp-up)
+- [az containerapp env create](https://learn.microsoft.com/en-us/cli/azure/containerapp/env?view=azure-cli-latest#az-containerapp-env-create)
+- [az containerapp show](https://learn.microsoft.com/en-us/cli/azure/containerapp?view=azure-cli-latest#az-containerapp-show)
+- [az containerapp identity assign](https://learn.microsoft.com/en-us/cli/azure/containerapp/identity?view=azure-cli-latest#az-containerapp-identity-assign)
+- [az upgrade](https://learn.microsoft.com/en-us/cli/azure/reference-index?view=azure-cli-latest#az-upgrade)
+- [az provider register](https://learn.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az-provider-register)
+- [az extension add](https://learn.microsoft.com/en-us/cli/azure/extension?view=azure-cli-latest#az-extension-add)
+- [az identity create](https://learn.microsoft.com/en-us/cli/azure/identity?view=azure-cli-latest#az-identity-create)
+- [az role assignment create](https://learn.microsoft.com/en-us/cli/azure/role/assignment?view=azure-cli-latest#az-role-assignment-create)
+- [az ad sp](https://learn.microsoft.com/en-us/cli/azure/ad/sp?view=azure-cli-latest)
+- [az monitor log-analytics query](https://learn.microsoft.com/en-us/cli/azure/monitor/log-analytics?view=azure-cli-latest#az-monitor-log-analytics-query)

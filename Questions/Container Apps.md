@@ -1,6 +1,6 @@
 # Container Apps
 
-As a developer in a startup, you're helping your team transition to Microsoft Azure. Your task is to deploy a containerized API service, `MyAPI`, on Azure from an older Linux workstation. The source code for `MyAPI` is stored locally in the `./src` directory and is also tracked on the GitHub repository `myuser/myrepo`.
+Question: As a developer in a startup, you're helping your team transition to Microsoft Azure. Your task is to deploy a containerized API service, `MyAPI`, on Azure from an older Linux workstation. The source code for `MyAPI` is stored locally in the `./src` directory and is also tracked on the GitHub repository `myuser/myrepo`.
 
 Before deploying, you'll need to create a production environment named `prod`. The Azure CLI on your workstation should be up-to-date, but given its age and the type of service you're deploying, you're unsure if all necessary tools and extensions are available.
 
@@ -165,7 +165,7 @@ Question: You want to use managed identity across multiple container apps. Which
 
 - [ ] System-assigned identity
 - [x] User-assigned identity
-- [ ] Both
+- [ ] Any
 - [ ] None
 
 Answer: A user-assigned identity is a standalone Azure resource that can be assigned to your container app and other resources.
