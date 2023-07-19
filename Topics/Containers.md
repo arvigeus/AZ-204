@@ -352,7 +352,7 @@ In the event of a full region outage, you have two strategies:
   - Wait for the region to recover, and then manually redeploy all environments and apps.
 - **Resilient recovery**: Deploy your container apps in advance to multiple regions. Use a traffic management service (ex: Azure Front Door) to direct requests to your main region. In case of an outage, reroute traffic from the affected region.
 
-### Explore Dapr integration with Azure Container Apps
+### [Dapr integration with Azure Container Apps](https://learn.microsoft.com/en-us/azure/container-apps/dapr-overview)
 
 Azure Container Apps offers a managed Dapr integration, simplifying version upgrades and developer interaction. Dapr is activated per container app using specific arguments. Its APIs are accessible via a Dapr sidecar using HTTP or gRPC. Dapr's modular design allows shared or app-specific components, which can connect to external services and securely access configuration metadata. To load components only for the right apps, application scopes are used.
 
