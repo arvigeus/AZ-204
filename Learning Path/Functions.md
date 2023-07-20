@@ -94,8 +94,8 @@ The following table shows the default and maximum values (in minutes) for specif
 | Plan             | Default | Maximum   |
 | ---------------- | ------- | --------- |
 | Consumption plan | 5       | 10        |
-| Premium plan     | 302     | Unlimited |
-| Dedicated plan   | 302     | Unlimited |
+| Premium plan     | 30      | Unlimited |
+| Dedicated plan   | 30      | Unlimited |
 
 #### Storage account requirements
 
