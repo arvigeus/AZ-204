@@ -27,13 +27,13 @@ Limitations:
 - Direct migration to a Dedicated (App Service) plan isn't currently supported
 - Migration isn't supported on Linux.
 
-| Hosting Plan                                                                                               | Unique Features                                                                                                                                                                                         | Limitations                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| [**Consumption**](https://learn.microsoft.com/en-us/azure/azure-functions/consumption-plan)                | - Default hosting plan.<br>- Pay only when your functions are running.<br>- Scales automatically (instances: 100 Linux, 200 Windows), even during periods of high load.                                 | - Does not support Docker containers.<br>- Maximum timeout duration is 10 minutes (unlimited for others).<br>- Does not support inbound private endpoints, virtual network integration, virtual network triggers, and hybrid connections.<br>- Apps may scale to zero when idle (_cold startup_).<br>-Limited to 1.5 GB memory and one CPU per function app.<br>- Shared resources and simultaneous scaling.<br>- Does not support the following triggers: Table storage, RabbitMQ, Kafka, Notification Hubs |
-| [**Premium**](https://learn.microsoft.com/en-us/azure/azure-functions/functions-premium-plan)              | - Automatically scales based on demand using pre-warmed workers, which run applications with no delay after being idle.<br>- Data is to be processed immediately.<br>- Runs on more powerful instances. | - At least one instance per plan must always be kept warm.                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| [**Dedicated**](https://learn.microsoft.com/en-us/azure/azure-functions/dedicated-plan)                    | - Run your functions within an App Service plan at regular App Service plan rates.<br>- Best for long-running scenarios where Durable Functions can't be used.<br>- Predictable cost and scaling.       | - Manual/autoscale (10-20 instances).<br>- You pay the same as you would for other App Service resources, like web apps.                                                                                                                                                                                                                                                                                                                                                                                     |
-| [**ASE (App Service Environment)**](https://learn.microsoft.com/en-us/azure/app-service/environment/intro) | - Provides a fully isolated and dedicated environment for securely running App Service apps at high scale.                                                                                              | - There's a flat monthly rate for an ASE that pays for the infrastructure and doesn't change with the size of the ASE. There's also a cost per App Service plan vCPU.                                                                                                                                                                                                                                                                                                                                        |
-| [**Kubernetes**](https://learn.microsoft.com/en-us/azure/azure-functions/functions-kubernetes-keda)        | - Provides a fully isolated and dedicated environment running on top of the Kubernetes platform.<br>- You pay only the costs of your Kubernetes cluster; no additional billing for Functions.           | - Depends on the configuration of the Kubernetes cluster.                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| Hosting Plan                                                                                               | Unique Features                                                                                                                                                                                         | Limitations                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [**Consumption**](https://learn.microsoft.com/en-us/azure/azure-functions/consumption-plan)                | - Default hosting plan.<br>- Pay only when your functions are running.<br>- Scales automatically (instances: 100 Linux, 200 Windows), even during periods of high load.                                 | - Does not support Docker containers.<br>- Maximum timeout duration is 10 minutes (unlimited for others).<br>- Does not support inbound private endpoints, virtual network integration, virtual network triggers, and hybrid connections ([source](https://learn.microsoft.com/en-us/azure/azure-functions/functions-networking-options)).<br>- Apps may scale to zero when idle (_cold startup_).<br>-Limited to 1.5 GB memory and one CPU per function app.<br>- Shared resources and simultaneous scaling.<br>- Does not support the following triggers: Table storage, RabbitMQ, Kafka, Notification Hubs |
+| [**Premium**](https://learn.microsoft.com/en-us/azure/azure-functions/functions-premium-plan)              | - Automatically scales based on demand using pre-warmed workers, which run applications with no delay after being idle.<br>- Data is to be processed immediately.<br>- Runs on more powerful instances. | - At least one instance per plan must always be kept warm.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| [**Dedicated**](https://learn.microsoft.com/en-us/azure/azure-functions/dedicated-plan)                    | - Run your functions within an App Service plan at regular App Service plan rates.<br>- Best for long-running scenarios where Durable Functions can't be used.<br>- Predictable cost and scaling.       | - Manual/autoscale (10-20 instances).<br>- You pay the same as you would for other App Service resources, like web apps.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| [**ASE (App Service Environment)**](https://learn.microsoft.com/en-us/azure/app-service/environment/intro) | - Provides a fully isolated and dedicated environment for securely running App Service apps at high scale.                                                                                              | - There's a flat monthly rate for an ASE that pays for the infrastructure and doesn't change with the size of the ASE. There's also a cost per App Service plan vCPU.                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| [**Kubernetes**](https://learn.microsoft.com/en-us/azure/azure-functions/functions-kubernetes-keda)        | - Provides a fully isolated and dedicated environment running on top of the Kubernetes platform.<br>- You pay only the costs of your Kubernetes cluster; no additional billing for Functions.           | - Depends on the configuration of the Kubernetes cluster.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 
 ```ps
 az functionapp plan create
@@ -156,7 +156,338 @@ type LocalSettings = {
 
 ## [Triggers and Bindings](https://learn.microsoft.com/en-us/azure/azure-functions/functions-triggers-bindings?tabs=csharp)
 
-Triggers cause a function to run. A trigger defines how a function is invoked and a function must have exactly one trigger. Binding to a function is a way of declaratively connecting another resource to the function; bindings may be connected as _input bindings_, _output bindings_, or both.
+Triggers cause a function to run. A trigger defines how a function is invoked and a function must have exactly one trigger. Binding to a function is a way of declaratively connecting another resource to the function; bindings may be connected as _input bindings_ (read), _output bindings_ (write), or both.
+
+Cannot be trigger: _Table Storage_  
+Cannot be input binding: _Event Grid_, _Event Hubs_, _HTTP & webhooks_, _IoT Hub_, _Queue storage_, _SendGrid_, _Service Bus_, _Timer_  
+Cannot be output binding: _IoT Hub_, _Timer_  
+Available by default ([others need to be installed as separate package](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-register)): _Timer_, _HTTP & webhooks_  
+Not supported on Consumption plan ([requires runtime-driven triggers](https://learn.microsoft.com/en-us/azure/azure-functions/functions-networking-options?tabs=azure-cli#premium-plan-with-virtual-network-triggers)): _RabbitMQ_, _Kafka_
+
+### Code samples
+
+```cs
+////////////////////////////////////
+// Blob
+////////////////////////////////////
+
+[FunctionName("BlobTrigger")]
+public static void RunBlob([BlobTrigger("container/{name}")] string myBlob, string name, ILogger log)
+{
+    log.LogInformation($"Blob trigger function processed blob\n Name:{name} \n Data: {myBlob}");
+}
+
+
+[FunctionName("BlobStorageInputBinding")]
+public static void RunBlobStorageInputBinding(
+    [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "blob/{name}")] HttpRequest req, string name,
+    [Blob("container/{name}", FileAccess.Read)] Stream myBlob,
+    ILogger log)
+{
+    // Reads the content from the blob storage for further processing
+    using StreamReader reader = new StreamReader(myBlob);
+    string content = reader.ReadToEnd();
+    log.LogInformation($"Blob Content: {content}");
+}
+
+// [CosmosDBTrigger(...)] IReadOnlyList<Document> input,
+// [Blob("container/{input[0].Id}", FileAccess.Read)] Stream myBlob
+
+[FunctionName("BlobStorageOutputBinding")]
+public static async Task<IActionResult> RunBlobStorageOutputBinding(
+    [HttpTrigger(AuthorizationLevel.Function, "post", Route = "blob/{name}")] HttpRequest req, string name,
+    [Blob("container/{name}", FileAccess.Write)] Stream myBlob,
+    ILogger log)
+{
+    // Writes the request body to a blob
+    string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+    using StreamWriter writer = new StreamWriter(myBlob);
+    writer.Write(requestBody);
+    log.LogInformation($"Blob written: {name}");
+    return new OkResult();
+}
+
+////////////////////////////////////
+// CosmosDB
+////////////////////////////////////
+
+[FunctionName("CosmosDBTrigger")]
+public static void RunCosmos([CosmosDBTrigger(
+    databaseName: "database",
+    collectionName: "collection",
+    ConnectionStringSetting = "CosmosDBConnection",
+    LeaseCollectionName = "leases")]IReadOnlyList<Document> input, ILogger log)
+{
+    if (input != null && input.Count > 0)
+    {
+        log.LogInformation("Documents modified " + input.Count);
+        log.LogInformation("First document Id " + input[0].Id);
+    }
+}
+
+[FunctionName("CosmosDBInputBinding")]
+public static void RunCosmosDBInputBinding(
+    [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "doc/{id}")] HttpRequest req, string id,
+    [CosmosDB(databaseName:"myDb", collectionName:"collection", Id = "{id}", PartitionKey ="{partitionKey}")] dynamic document,
+    ILogger log)
+{
+    // Retrieves a specific document from Cosmos DB for further processing
+    log.LogInformation($"Document Content: {document}");
+}
+
+[FunctionName("CosmosDBOutputBinding")]
+public static IActionResult RunCosmosDBOutputBinding(
+    [HttpTrigger(AuthorizationLevel.Function, "post", Route = "doc/{id}")] HttpRequest req, string id,
+    [CosmosDB(databaseName:"myDb", collectionName:"collection", CreateIfNotExists =true)] out dynamic document,
+    ILogger log)
+{
+    // Writes a new document to Cosmos DB
+    string requestBody = new StreamReader(req.Body).ReadToEnd();
+    document = new { id = id, content = requestBody };
+    log.LogInformation($"Document written: {id}");
+    return new OkResult();
+}
+
+////////////////////////////////////
+// EventGrid
+////////////////////////////////////
+
+[FunctionName("EventGridTrigger")]
+public static async Task RunEventGrid([EventGridTrigger]EventGridEvent eventGridEvent, ILogger log)
+{
+    log.LogInformation(eventGridEvent.Data.ToString());
+}
+
+// No Input binding
+
+[FunctionName("EventGridOutputBinding")]
+[return: EventGrid(TopicEndpointUri = "EventGridTopicUriAppSetting", TopicKeySetting = "EventGridTopicKeyAppSetting")]
+public static async Task<EventGridEvent> RunEventGridOutputBinding(
+    [HttpTrigger(AuthorizationLevel.Function, "post", Route = "event/{subject}")] HttpRequest req, string subject,
+    ILogger log)
+{
+    // Sends an event to Event Grid Topic
+    string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+    var eventGridEvent = new EventGridEvent(Guid.NewGuid().ToString(), subject, requestBody, "MyEventType", DateTime.UtcNow, "1.0");
+    log.LogInformation($"Event sent: {subject}");
+    return eventGridEvent;
+}
+
+// Output with out eventGridEvent
+[FunctionName("EventGridOutputBinding")]
+[return: EventGrid(TopicEndpointUri = "EventGridTopicUriAppSetting", TopicKeySetting = "EventGridTopicKeyAppSetting")]
+public static async void RunEventGridOutputBinding(
+    [HttpTrigger(AuthorizationLevel.Function, "post", Route = "event/{subject}")] HttpRequest req, string subject,
+    EventGrid(TopicEndpointUri = "EventGridTopicUriAppSetting", TopicKeySetting = "EventGridTopicKeyAppSetting") out eventGridEvent
+    ILogger log)
+{
+    // Sends an event to Event Grid Topic
+    string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+    eventGridEvent = new EventGridEvent(Guid.NewGuid().ToString(), subject, requestBody, "MyEventType", DateTime.UtcNow, "1.0");
+    log.LogInformation($"Event sent: {subject}");
+}
+
+// Output with out batch processing
+[FunctionName("EventGridOutputBinding")]
+public static async Task RunEventGridOutputBinding(
+    [HttpTrigger(AuthorizationLevel.Function, "post", Route = "event/{subject}")] HttpRequest req, string subject,
+    [EventGrid(TopicEndpointUri = "EventGridTopicUriAppSetting", TopicKeySetting = "EventGridTopicKeyAppSetting")]IAsyncCollector<EventGridEvent> outputEvents,
+    ILogger log)
+{
+    // Sends an event to Event Grid Topic
+    string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+    var myEvent = new EventGridEvent(Guid.NewGuid().ToString(), subject, requestBody, "MyEventType", DateTime.UtcNow, "1.0");
+    await outputEvents.AddAsync(myEvent);
+    log.LogInformation($"Event sent: {subject}");
+}
+
+////////////////////////////////////
+// EventHub
+////////////////////////////////////
+
+[FunctionName("EventHubTrigger")]
+public static async Task RunEventHub([EventHubTrigger("hub", Connection = "EventHubConnectionAppSetting")] EventData[] events, ILogger log)
+{
+    foreach (EventData eventData in events)
+    {
+        string messageBody = Encoding.UTF8.GetString(eventData.Body.Array, eventData.Body.Offset, eventData.Body.Count);
+        log.LogInformation($"Event Hub trigger function processed a message: {messageBody}");
+    }
+}
+
+// No Input binding
+
+[FunctionName("EventHubOutputBinding")]
+[return: EventHub("outputEventHubMessage", Connection = "EventHubConnectionAppSetting")]
+public static async string RunEventHubOutputBinding(
+    [HttpTrigger(AuthorizationLevel.Function, "post", Route = "event/{message}")] HttpRequest req, string message
+    ILogger log)
+{
+    // Sends an event to Event Hub
+    log.LogInformation($"Event sent: {message}");
+    return message;
+}
+
+// Output with out batch processing
+[FunctionName("EventHubOutputBinding")]
+public static async Task RunEventHubOutputBinding(
+    [HttpTrigger(AuthorizationLevel.Function, "post", Route = "event/{message}")] HttpRequest req, string message,
+    [EventHub("outputEventHubMessage", Connection = "EventHubConnectionAppSetting")] IAsyncCollector<string> outputEvents,
+    ILogger log)
+{
+    // Sends an event to Event Hub
+    await outputEvents.AddAsync(message);
+    log.LogInformation($"Event sent: {message}");
+}
+
+////////////////////////////////////
+// IoTHub
+////////////////////////////////////
+
+[FunctionName("IoTHubTrigger")]
+public static async Task RunIoTHub([IoTHubTrigger("messages/events", Connection = "IoTHubConnectionAppSetting")]EventData message, ILogger log)
+{
+    log.LogInformation($"IoT Hub trigger function processed a message: {Encoding.UTF8.GetString(message.Body.Array)}");
+}
+
+// No Input binding
+
+////////////////////////////////////
+// Http
+////////////////////////////////////
+
+[FunctionName("HttpTriggerFunction")]
+public static async Task<HttpResponseMessage> Run(
+    // AuthorizationLevel.Function means that the function requires a function key in the request.
+    // Other options for AuthorizationLevel include:
+    // - Anonymous: No API key is required.
+    // - Admin or System: Requires a key. Example: https://<app_name>.azurewebsites.net/api/<function_name>?code=<key>
+    // "get" and "post" specify that the function can be triggered by a GET or POST request.
+    // Route = null means that the function is accessible at the root of the function app's URL.
+    // You can specify a custom route by setting Route to a string. For example, Route = "products/{id}" would make the function accessible at /products/{id}.
+    [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequestMessage req, ILogger log)
+{
+    log.LogInformation("C# HTTP trigger function processed a request.");
+    return req.CreateResponse(HttpStatusCode.OK, "Hello from Azure Functions!");
+}
+
+// No Input binding
+
+// No Output binding
+
+////////////////////////////////////
+// Queue
+////////////////////////////////////
+
+[FunctionName("QueueTrigger")]
+public static void RunQueue([QueueTrigger("queue", Connection = "StorageConnectionAppSetting")]string myQueueItem, ILogger log)
+{
+    log.LogInformation($"Queue trigger function processed: {myQueueItem}");
+}
+
+// No Input binding
+
+[FunctionName("QueueStorageOutputBinding")]
+[return: Queue("queue")]
+public static string RunQueueStorageOutputBinding(
+    [HttpTrigger(AuthorizationLevel.Function, "post", Route = "queue/{message}")] HttpRequest req, string message
+    ILogger log)
+{
+    // Sends a message to Azure Queue Storage
+    log.LogInformation($"Message sent: {message}");
+    return message;
+}
+
+////////////////////////////////////
+// ServiceBus
+////////////////////////////////////
+
+[FunctionName("ServiceBusTrigger")]
+public static async Task RunServiceBus([ServiceBusTrigger("queue", Connection = "ServiceBusConnectionAppSetting")] string myQueueItem, ILogger log)
+{
+    log.LogInformation($"Service Bus Queue trigger function processed message: {myQueueItem}");
+}
+
+// No Input binding
+
+[FunctionName("ServiceBusOutputBinding")]
+[return: ServiceBus("queue", Connection = "ServiceBusConnectionAppSetting")]
+public static string RunServiceBusOutputBinding(
+    [HttpTrigger(AuthorizationLevel.Function, "post", Route = "servicebus/{message}")] HttpRequest req, string message,
+    ILogger log)
+{
+    // Sends a message to Service Bus Queue
+    log.LogInformation($"Message sent: {message}");
+    return message;
+}
+
+////////////////////////////////////
+// Timer
+////////////////////////////////////
+
+[FunctionName("TimerTriggerFunction")]
+public static void Run(
+    // The format with 6 fields is {second} {minute} {hour} {day} {month} {day-of-week}.
+    // The format with 5 fields is {minute} {hour} {day} {month} {day-of-week}, and it assumes that the seconds field is 0.
+    // Each field can have a specific value, a comma-separated list of values, a range of values, or a step value.
+    // The "*" character means any value, "/" is used to specify step values, and "-" is used for ranges.
+    // For example, "*/5 * * * *" means "every 5 minutes", and "0 9-17 * * MON-FRI" means "every hour from 9 AM to 5 PM on weekdays".
+    [TimerTrigger("0 */5 * * * *")] TimerInfo myTimer, ILogger log)
+{
+    log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
+}
+
+// No Input binding
+
+// No Output bindong
+
+////////////////////////////////////
+// TableStorage
+////////////////////////////////////
+
+// No Trigger
+
+[FunctionName("TableStorageInputBinding")]
+public static void RunTableStorageInputBinding(
+    [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "table/{partitionKey}/{rowKey}")] HttpRequest req, string partitionKey, string rowKey,
+    [Table("MyTable", "{partitionKey}", "{rowKey}")] MyTableEntity entity,
+    ILogger log)
+{
+    // Retrieves an entity from Azure Table Storage for further processing
+    log.LogInformation($"Table Entity: {entity.PartitionKey} - {entity.RowKey}");
+}
+
+[FunctionName("TableStorageInputBinding")]
+public static void RunTableStorageInputBinding(
+    [CosmosDBTrigger(
+        databaseName: "ToDoItems",
+        collectionName: "Items",
+        ConnectionStringSetting = "CosmosDBConnection",
+        LeaseCollectionName = "leases")]
+    IReadOnlyList<Document> input,
+    [Table("MyTable", "{input[0].Id}", "{input[0].PartitionKey}")] MyTableEntity entity,
+    ILogger log)
+{
+    // Retrieves an entity from Azure Table Storage for further processing
+    log.LogInformation($"Table Entity: {entity.PartitionKey} - {entity.RowKey}");
+}
+
+// [CosmosDBTrigger(...)] IReadOnlyList<Document> input,
+// [Table("MyTable", "{input[0].Id}", "{input[0].PartitionKey}")] MyTableEntity entity
+
+[FunctionName("TableStorageOutputBinding")]
+[return: Table("MyTable")]
+public static MyTableEntity RunTableStorageOutputBinding(
+    [HttpTrigger(AuthorizationLevel.Function, "post", Route = "table/{partitionKey}/{rowKey}")] HttpRequest req, string partitionKey, string rowKey,
+    ILogger log)
+{
+    // Writes an entity to Azure Table Storage
+    string requestBody = new StreamReader(req.Body).ReadToEnd();
+    entity = new MyTableEntity { PartitionKey = partitionKey, RowKey = rowKey, Content = requestBody };
+    log.LogInformation($"Entity written: {partitionKey} - {rowKey}");
+    return entity
+}
+```
 
 ## Working with Azure Functions
 
