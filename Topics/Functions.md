@@ -93,6 +93,9 @@ az functionapp plan list --resource-group <MY_RESOURCE_GROUP> --query "[?sku.fam
 - `functionTimeout`: Default: 5 min for Consumption, 30 for rest.
 - `logging.applicationInsights`
 - `aggregator` - Specifies how many function invocations are aggregated when calculating metrics for Application Insights.
+- `extensions.blobsmaxDegreeOfParallelism`: concurrent invocations allowed for all blob-triggered functions (min: 1, default: 8)
+- `extensions.cosmosDB.connectionMode`: _Gateway_ (default) or _Direct_. _Gateway_ is preferable for _Consumption_ plan due to connections limit. _Direct_ has better performance.
+- `extensions.cosmosDB.userAgentSuffix`: Appends the given string to all service requests from the trigger or binding, enhancing tracking in Azure Monitor by function app and User Agent filtering.
 
 ### [function.json](https://github.com/Azure/azure-functions-host/wiki/function.json)
 
@@ -100,6 +103,7 @@ Auto generated for compiled languages.
 
 - For triggers, the direction is always `in`
 - Input and output bindings use `in` and `out`, or `inout` in some cases.
+- `connection`: refers to an environment variable that holds the service connection string. **The property does not contain the actual connection string!**
 
 ```jsonc
 {
@@ -219,7 +223,7 @@ public static async Task<IActionResult> RunBlobStorageOutputBinding(
 public static void RunCosmos([CosmosDBTrigger(
     databaseName: "database",
     collectionName: "collection",
-    ConnectionStringSetting = "CosmosDBConnection",
+    ConnectionStringSetting = "CosmosDBConnection", // Note: this refers to env var name, not an actual connection string
     LeaseCollectionName = "leases")]IReadOnlyList<Document> input, ILogger log)
 {
     if (input != null && input.Count > 0)
@@ -458,6 +462,9 @@ public static string RunServiceBusOutputBinding(
 // Timer
 ////////////////////////////////////
 
+// - `WEBSITE_TIME_ZONE` and `TZ` are not currently supported on the Linux Consumption plan.
+// - RunOnStartup is not recommended for production. Schedule, RunOnStartup and UseMonitor can be set in local.settings.json > Values
+
 [FunctionName("TimerTriggerFunction")]
 public static void Run(
     // The format with 6 fields is {second} {minute} {hour} {day} {month} {day-of-week}.
@@ -495,7 +502,7 @@ public static void RunTableStorageInputBinding(
     [CosmosDBTrigger(
         databaseName: "ToDoItems",
         collectionName: "Items",
-        ConnectionStringSetting = "CosmosDBConnection",
+        ConnectionStringSetting = "CosmosDBConnection", // Note: this refers to env var name, not an actual connection string
         LeaseCollectionName = "leases")]
     IReadOnlyList<Document> input,
     [Table("MyTable", "{input[0].Id}", "{input[0].PartitionKey}")] MyTableEntity entity,

@@ -483,6 +483,12 @@ SELECT c.id, udf.GetMaxNutritionValue(c.nutrients) AS MaxNutritionValue
 FROM c
 ```
 
+## [Connectivity modes](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/sdk-connection-modes)
+
+- **Gateway mode** (default): For environments that have a limited number of socket connections, or corporate network with strict firewall restrictions. It uses HTTPS port and a single DNS endpoint.
+
+- **Direct mode**: Connectivity through TCP protocol, using TLS for initial authentication and encryption. Better performance.
+
 ## Performance and best practices
 
 For best performance, always use the latest SDK version and ensure the application is in the same Azure region as the Cosmos DB account. Utilize a single instance of `CosmosClient` throughout the application's lifetime and adopt `Direct` mode for lower latency and higher throughput. Leverage `PartitionKey` for efficient point reads and writes, and implement retry logic for handling transient errors.
