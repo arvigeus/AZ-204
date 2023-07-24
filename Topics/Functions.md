@@ -2,7 +2,7 @@
 
 ## [Introduction](https://learn.microsoft.com/en-us/azure/azure-functions/functions-overview)
 
-Azure Functions is a service that allows you to run code without worrying about servers. It works by triggering your code when certain events happen and makes it easier to handle input and output data.
+Azure Functions, a serverless compute service, allows you to execute small code snippets in response to events or on a schedule, eliminating the need to manage servers. It triggers your code based on specific events and simplifies data handling. Typical use cases include processing file uploads, handling real-time data streams, performing machine learning tasks, running scheduled tasks, building scalable web APIs, orchestrating serverless workflows, responding to database changes, and establishing reliable message systems.
 
 ## [Azure Functions vs Azure Logic Apps vs WebJobs](https://docs.microsoft.com/en-us/azure/azure-functions/functions-compare-logic-apps-ms-flow-webjobs)
 
@@ -34,6 +34,8 @@ Limitations:
 | [**Dedicated**](https://learn.microsoft.com/en-us/azure/azure-functions/dedicated-plan)                    | - Run your functions within an App Service plan at regular App Service plan rates.<br>- Best for long-running scenarios where Durable Functions can't be used.<br>- Predictable cost and scaling.       | - Manual/autoscale (10-20 instances).<br>- You pay the same as you would for other App Service resources, like web apps.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | [**ASE (App Service Environment)**](https://learn.microsoft.com/en-us/azure/app-service/environment/intro) | - Provides a fully isolated and dedicated environment for securely running App Service apps at high scale.                                                                                              | - There's a flat monthly rate for an ASE that pays for the infrastructure and doesn't change with the size of the ASE. There's also a cost per App Service plan vCPU.                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | [**Kubernetes**](https://learn.microsoft.com/en-us/azure/azure-functions/functions-kubernetes-keda)        | - Provides a fully isolated and dedicated environment running on top of the Kubernetes platform.<br>- You pay only the costs of your Kubernetes cluster; no additional billing for Functions.           | - Depends on the configuration of the Kubernetes cluster.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+
+The _scale controller_ adjusts resources based on event rates and trigger types. It uses heuristics for each trigger type (for Queue storage trigger, it scales based on the queue length and the age of the oldest queue message). The number of host instances can be scaled to zero when no functions are running (_cold start_).
 
 ```ps
 az functionapp plan create
@@ -89,6 +91,8 @@ az functionapp plan list --resource-group <MY_RESOURCE_GROUP> --query "[?sku.fam
 ### [host.json](https://learn.microsoft.com/en-us/azure/azure-functions/functions-host-json)
 
 - `functionTimeout`: Default: 5 min for Consumption, 30 for rest.
+- `logging.applicationInsights`
+- `aggregator` - Specifies how many function invocations are aggregated when calculating metrics for Application Insights.
 
 ### [function.json](https://github.com/Azure/azure-functions-host/wiki/function.json)
 
@@ -356,16 +360,16 @@ public static async Task RunIoTHub([IoTHubTrigger("messages/events", Connection 
 // Http
 ////////////////////////////////////
 
+// Accessible via GET https://<APP_NAME>.azurewebsites.net/api/<FUNCTION_NAME>
+// You can specify a custom route by setting Route to a string.
+// For example, Route = "products/{id}" would make the function accessible at https://<APP_NAME>.azurewebsites.net/api/<FUNCTION_NAME>/products/{id}.
+
+// Request length limit: 100 MB
+// URL length limit: 4 KB
+// Timeout: 230s (502 error)
+
 [FunctionName("HttpTriggerFunction")]
-public static async Task<HttpResponseMessage> Run(
-    // AuthorizationLevel.Function means that the function requires a function key in the request.
-    // Other options for AuthorizationLevel include:
-    // - Anonymous: No API key is required.
-    // - Admin or System: Requires a key. Example: https://<app_name>.azurewebsites.net/api/<function_name>?code=<key>
-    // "get" and "post" specify that the function can be triggered by a GET or POST request.
-    // Route = null means that the function is accessible at the root of the function app's URL.
-    // You can specify a custom route by setting Route to a string. For example, Route = "products/{id}" would make the function accessible at /products/{id}.
-    [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequestMessage req, ILogger log)
+public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequestMessage req, ILogger log)
 {
     log.LogInformation("C# HTTP trigger function processed a request.");
     return req.CreateResponse(HttpStatusCode.OK, "Hello from Azure Functions!");
@@ -396,6 +400,35 @@ public static string RunQueueStorageOutputBinding(
     // Sends a message to Azure Queue Storage
     log.LogInformation($"Message sent: {message}");
     return message;
+}
+
+// Alt: Write to a storage queue and an HTTP success message.
+public class MultiResponse
+{
+    [QueueOutput("queue",Connection = "AzureWebJobsStorage")]
+    public string[] Messages { get; set; }
+    public HttpResponseData HttpResponse { get; set; }
+}
+[Function("HttpExample")]
+public static MultiResponse Run(
+    [HttpTrigger(AuthorizationLevel.Function, "post", Route = "queue/{message}")] HttpRequestData req,
+    string message,
+    FunctionContext executionContext)
+{
+    var logger = executionContext.GetLogger("HttpExample");
+    logger.LogInformation("C# HTTP trigger function processed a request.");
+
+    var response = req.CreateResponse(HttpStatusCode.OK);
+    response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
+    response.WriteString(message);
+
+    // Return a response to both HTTP trigger and storage output binding.
+    return new MultiResponse()
+    {
+        // Write a single message.
+        Messages = new string[] { message },
+        HttpResponse = response
+    };
 }
 
 ////////////////////////////////////
@@ -511,7 +544,37 @@ az rest --method POST --uri $path --query functionKeys.default --output tsv
 
 ## [Security](https://learn.microsoft.com/en-us/azure/azure-functions/security-concepts)
 
-TODO
+### [Authorization level](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-http-webhook-trigger#http-auth)
+
+Indicates the kind of authorization key that's required to access the function endpoint, via `code` param: `https://<APP_NAME>.azurewebsites.net/api/<FUNCTION_NAME>?code=<API_KEY>`.
+
+- **Anonymous**: No API key is required.
+- **Function** (default): A function-specific or host-wide API key is required.
+- **Admin**: The master key is required.
+
+#### Access scopes
+
+- **Function** keys grant access only to the specific function they're defined under.
+- **Host** keys allow access to all functions within the function app.
+  - **master**. provides administrative access to the runtime REST APIs. This key can't be revoked.
+
+Each key is named, with a `default` key at both levels. If a function and a host key share a name, the function key takes precedence.
+
+#### [Working with access keys](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-http-webhook-trigger#obtaining-keys)
+
+Base URL: `https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/{scope}/{host-or-function-name}/{action}?api-version=2022-03-01`
+
+Scope can be `functions` or `host`. For slots add `/slots/{slot-name}/` before scope.
+
+List keys: `POST`, action: `listkeys`  
+Create or update keys: `PUT`, action: `keys/{keyName}`
+Delete or revoke keys: `DELETE`, action: `/keys/{keyName}`
+
+### Client identities
+
+`ClaimsPrincipal identities = req.HttpContext.User;` available via `X-MS-CLIENT-PRINCIPAL` [header](https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-user-identities#access-user-claims-in-app-code).
+
+### CORS
 
 ```ps
 # Add a domain to the allowed origins list
@@ -523,9 +586,45 @@ az functionapp cors show
 
 ## [Monitoring](https://learn.microsoft.com/en-us/azure/azure-functions/functions-monitoring)
 
+Automatic collection of Performance Counters isn't supported when running on Linux.
+
+Application Insights are configured in [host.json](https://learn.microsoft.com/en-us/azure/azure-functions/functions-host-json#applicationinsights) (`logging.applicationInsights` and `aggregator`)
+
+```kusto
+# Monitor all functions app logs
+FunctionAppLogs
+| order by TimeGenerated desc
+
+# Select fields
+FunctionAppLogs
+| project TimeGenerated, HostInstanceId, Message, _ResourceId
+| order by TimeGenerated desc
+
+# Monitor a specific functions app logs
+FunctionAppLogs
+| where FunctionName == "<Function name>"
+
+# Monitor exceptions on a specific functions app logs
+FunctionAppLogs
+| where ExceptionDetails != ""
+| where FunctionName == "<Function name>"
+| order by TimeGenerated asc
+```
+
+### [Configure monitorung](https://learn.microsoft.com/en-us/azure/azure-functions/configure-monitoring)
+
 TODO
 
 ## CLI
 
 - [az functionapp plan create](https://learn.microsoft.com/en-us/cli/azure/functionapp/plan?view=azure-cli-latest#az-functionapp-plan-create)
 - [az functionapp plan update](https://learn.microsoft.com/en-us/cli/azure/functionapp/plan?view=azure-cli-latest#az-functionapp-plan-update)
+- [az functionapp plan list](https://learn.microsoft.com/en-us/cli/azure/functionapp/plan?view=azure-cli-latest#az-functionapp-plan-list)
+- [az appservice plan list](https://learn.microsoft.com/en-us/cli/azure/appservice/plan?view=azure-cli-latest#az-appservice-plan-list)
+- [az functionapp show](https://learn.microsoft.com/en-us/cli/azure/functionapp?view=azure-cli-latest#az-functionapp-show)
+- [az functionapp create](https://learn.microsoft.com/en-us/cli/azure/functionapp?view=azure-cli-latest#az-functionapp-create)
+- [az functionapp config appsettings](https://learn.microsoft.com/en-us/cli/azure/functionapp/config/appsettings?view=azure-cli-latest)
+- [az functionapp cors add](https://learn.microsoft.com/en-us/cli/azure/functionapp/cors?view=azure-cli-latest#az-functionapp-cors-add)
+- [az functionapp cors show](https://learn.microsoft.com/en-us/cli/azure/functionapp/cors?view=azure-cli-latest#az-functionapp-cors-show)
+- [az resource update](https://learn.microsoft.com/en-us/cli/azure/resource?view=azure-cli-latest#az-resource-update)
+- [az rest](https://learn.microsoft.com/en-us/cli/azure/reference-index?view=azure-cli-latest#az-rest)

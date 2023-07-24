@@ -457,6 +457,58 @@ In Linux and containers the auth module runs in a separate container, isolated f
 
 Access another app: Add header `Authorization: Bearer ${req.headers['x-ms-token-aad-access-token']}`
 
+##### Access user claims in app code
+
+```cs
+private class ClientPrincipalClaim
+{
+    [JsonPropertyName("typ")]
+    public string Type { get; set; }
+    [JsonPropertyName("val")]
+    public string Value { get; set; }
+}
+
+private class ClientPrincipal
+{
+    [JsonPropertyName("auth_typ")]
+    public string IdentityProvider { get; set; }
+    [JsonPropertyName("name_typ")]
+    public string NameClaimType { get; set; }
+    [JsonPropertyName("role_typ")]
+    public string RoleClaimType { get; set; }
+    [JsonPropertyName("claims")]
+    public IEnumerable<ClientPrincipalClaim> Claims { get; set; }
+}
+
+public static ClaimsPrincipal Parse(HttpRequest req)
+{
+    var principal = new ClientPrincipal();
+
+    if (req.Headers.TryGetValue("x-ms-client-principal", out var header))
+    {
+        var data = header[0];
+        var decoded = Convert.FromBase64String(data);
+        var json = Encoding.UTF8.GetString(decoded);
+        principal = JsonSerializer.Deserialize<ClientPrincipal>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+    }
+
+    /**
+      *  At this point, the code can iterate through `principal.Claims` to
+      *  check claims as part of validation. Alternatively, we can convert
+      *  it into a standard object with which to perform those checks later
+      *  in the request pipeline. That object can also be leveraged for
+      *  associating user data, etc. The rest of this function performs such
+      *  a conversion to create a `ClaimsPrincipal` as might be used in
+      *  other .NET code.
+      */
+
+    var identity = new ClaimsIdentity(principal.IdentityProvider, principal.NameClaimType, principal.RoleClaimType);
+    identity.AddClaims(principal.Claims.Select(c => new Claim(c.Type, c.Value)));
+
+    return new ClaimsPrincipal(identity);
+}
+```
+
 #### Other Authentication Options
 
 ```cs
@@ -474,7 +526,7 @@ new DefaultAzureCredential(includeInteractiveCredentials: true);
 
 A certificate is accessible to all apps in the same resource group and region combination.
 
-- **Free Managed Certificate**: Auto renewed every 6 months, no wildcard certificates or private DNS, and can't be exported.
+- **Free Managed Certificate**: Auto renewed every 6 months, no wildcard certificates or private DNS, can't be exported.
 - **App Service Certificate**: A private certificate that is managed by Azure. Automated certificate management, renewal and export options.
 - **Using Key Vault**: Store private certificates (same requerenments) in Key Vault. Automatic renewal, except for non-integrated certificates (`az keyvault certificate create ...`)
 - **Uploading a Private Certificate**: Requires a password-protected PFX file encrypted with triple DES, with 2048-bit private key and all intermediate/root certificates in the chain.
