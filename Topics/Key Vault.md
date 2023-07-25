@@ -13,11 +13,19 @@ Key Vault is managed through Azure Resource Manager. Azure role-based access con
 `az keyvault create --name <YourKeyVaultName> --resource-group <YourResourceGroupName> --location <YourLocation>`
 
 ```cs
+var client = new KeyClient(vaultUri: new Uri(vaultUrl), credential: new DefaultAzureCredential());
 KeyVaultSecret secret = await client.GetSecretAsync("<YourSecretName>");
 string secretValue = secret.Value;
+
+// The CryptographyClient allows for cryptographic operations (encrypting and decrypting data, signing and verifying signatures, wrapping and unwrapping keys, etc.), using a key stored in Azure Key Vault.
+CryptographyClient  cryptoClient = client.GetCryptographyClient(key.Name, key.Properties.Version);
+EncryptResult encryptResult = cryptoClient.Encrypt(EncryptionAlgorithm.RsaOaep, Encoding.UTF8.GetBytes(plaintext));
+DecryptResult decryptResult = cryptoClient.Decrypt(EncryptionAlgorithm.RsaOaep, encryptResult.Ciphertext);
 ```
 
-## Security
+## [Security](https://learn.microsoft.com/en-us/azure/key-vault/general/security-features)
+
+TODO
 
 ### Authentication
 
@@ -34,6 +42,10 @@ For applications, there are two ways to obtain a service principal:
 PUT https://<your-key-vault-name>.vault.azure.net/keys/<your-key-name>?api-version=7.2 HTTP/1.1
 Authorization: Bearer <access_token> # token obtained from Azure Active Directory
 ```
+
+### Restricting access
+
+For secure access to Azure Key Vault secrets, restricted to a single Azure resource only, use System Managed Identities. This removes the need to include any credentials in your code. Managed identities (for example Azure AD application) can be used from other resources, thus exposing the Key Vault. Even using environment variable makes them potentially exposed to anyone with an access.
 
 ### Data Transit Encryption
 
