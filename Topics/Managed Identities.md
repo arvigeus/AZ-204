@@ -69,14 +69,27 @@ az role assignment create --assignee <PrincipalId> --role <RoleName> --scope <Sc
 
 **DefaultAzureCredential**: This class attempts multiple methods of authentication based on the available environment or sign-in details, stopping once it's successful. It checks the following sources in order:
 
-1. Environment variables. (`AZURE_TENANT_ID`, `AZURE_CLIENT_ID`, `AZURE_CLIENT_SECRET`, `AZURE_CLIENT_CERTIFICATE_PATH`)
+1. Environment variables ([`EnvironmentCredential`](https://learn.microsoft.com/en-us/dotnet/api/azure.identity.environmentcredential?view=azure-dotnet)) - `AZURE_TENANT_ID`, `AZURE_CLIENT_ID`, in addition to:
+   - Service principle with secret ([`ClientSecretCredential`](https://learn.microsoft.com/en-us/dotnet/api/azure.identity.clientsecretcredential?view=azure-dotnet)): `AZURE_CLIENT_SECRET`
+   - Service principal with certificate ([`ClientCertificateCredential`](https://learn.microsoft.com/en-us/dotnet/api/azure.identity.clientcertificatecredential?view=azure-dotnet)): `AZURE_CLIENT_SECRET`, `AZURE_CLIENT_CERTIFICATE_PATH`, `AZURE_CLIENT_CERTIFICATE_PASSWORD`, `AZURE_CLIENT_SEND_CERTIFICATE_CHAIN`
+   - Username and password ([`UsernamePasswordCredential`](https://learn.microsoft.com/en-us/dotnet/api/azure.identity.usernamepasswordcredential?view=azure-dotnet)): `AZURE_USERNAME`, `AZURE_PASSWORD`
 1. Managed Identity if the application is deployed on an Azure host with this feature enabled.
+
+   ```cs
+   new ManagedIdentityCredential(); // system-assigned
+   new ManagedIdentityCredential(clientId: userAssignedClientId); // user-assigned
+   new DefaultAzureCredential(new DefaultAzureCredentialOptions { ManagedIdentityClientId = userAssignedClientId }); // user-assigned
+   ```
+
 1. Visual Studio if the developer has authenticated through it.
-1. Azure CLI if the developer has authenticated through `az login` command.
+1. Azure CLI (`AzureCliCredential`) if the developer has authenticated through `az login` command.
 1. Azure PowerShell if the developer has authenticated via the `Connect-AzAccount` command.
 1. Interactive browser, though this option is disabled by default.
 
-Authenticate a user-assigned identity: `new DefaultAzureCredential(new DefaultAzureCredentialOptions { ManagedIdentityClientId = userAssignedClientId })`
+   ```cs
+   new InteractiveBrowserCredential();
+   new DefaultAzureCredential(includeInteractiveCredentials: true);
+   ```
 
 **ChainedTokenCredential**: Enables users to combine multiple credential instances to define a customized chain of credentials.
 

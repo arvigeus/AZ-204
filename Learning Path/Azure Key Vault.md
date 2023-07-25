@@ -92,7 +92,7 @@ PUT /keys/MYKEY?api-version=<api_version>  HTTP/1.1
 Authorization: Bearer <access_token>
 ```
 
-When an access token isn't supplied, or when a token isn't accepted by the service, an H`TTP 401` error is returned to the client and will include the `WWW-Authenticate` header, for example:
+When an access token isn't supplied, or when a token isn't accepted by the service, an `HTTP 401` error is returned to the client and will include the `WWW-Authenticate` header, for example:
 
 ```http
 401 Not Authorized

@@ -509,19 +509,6 @@ public static ClaimsPrincipal Parse(HttpRequest req)
 }
 ```
 
-#### Other Authentication Options
-
-```cs
-// Use a Service Principal with its details stored in environment variables: AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET
-new EnvironmentCredential(); // or new DefaultAzureCredential() when variables are set
-
-// Use a Service Principal with its details provided directly
-new ClientSecretCredential("<Tenant ID>", "<Client ID>", "<Client Secret>");
-
-// Use interactive authentication (a browser window will open for you to log in)
-new DefaultAzureCredential(includeInteractiveCredentials: true);
-```
-
 ### [Certificates](https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-certificate?tabs=apex)
 
 A certificate is accessible to all apps in the same resource group and region combination.
