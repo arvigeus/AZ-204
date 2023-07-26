@@ -100,7 +100,7 @@
 1. [Azure Blob Storage](https://docs.microsoft.com/en-us/azure/storage/blobs/)
 1. [Microsoft Identity Platform](https://docs.microsoft.com/en-us/azure/active-directory/develop/)
 1. [Microsoft Azure Active Directory (Azure AD)](https://docs.microsoft.com/en-us/azure/active-directory/)
-1. [Microsoft Graph](https://docs.microsoft.com/en-us/graph/overview)
+1. [Microsoft Graph](https://learn.microsoft.com/en-us/graph/)
 1. [Azure App Configuration](https://learn.microsoft.com/en-us/azure/azure-app-configuration/)
 1. [Azure Key Vault](https://docs.microsoft.com/en-us/azure/key-vault/)
 1. [Azure Managed Identities](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/)

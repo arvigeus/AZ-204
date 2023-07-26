@@ -99,3 +99,28 @@ az role assignment create --assignee <PrincipalId> --role <RoleName> --scope <Sc
 // authenticate using managed identity, and fall back to authenticating via the Azure CLI if managed identity is unavailable in the current environment
 var credential = new ChainedTokenCredential(new ManagedIdentityCredential(), new AzureCliCredential());
 ```
+
+## [Logging](https://github.com/Azure/azure-sdk-for-net/blob/Azure.Identity_1.9.0/sdk/core/Azure.Core/samples/Diagnostics.md#logging)
+
+```cs
+// Ensure AzureEventSourceListener is in scope and active while using the client library for log collection.
+// Create it as a top-level member of the class using the Event Hubs client.
+using AzureEventSourceListener listener = AzureEventSourceListener.CreateConsoleLogger();
+
+DefaultAzureCredentialOptions options = new DefaultAzureCredentialOptions
+{
+    Diagnostics =
+    {
+        LoggedHeaderNames = { "x-ms-request-id" },
+        LoggedQueryParameters = { "api-version" },
+        IsAccountIdentifierLoggingEnabled = true, // enable logging of sensitive information
+        IsLoggingContentEnabled = true // log details about the account that was used to attempt authentication and authorization
+    }
+};
+```
+
+Exceptions: Service client methods raise `AuthenticationFailedException` for token issues.
+
+## [Token caching](https://github.com/Azure/azure-sdk-for-net/blob/Azure.Identity_1.9.0/sdk/identity/Azure.Identity/samples/TokenCache.md)
+
+Tokens can be stored in _memory_ (default) or on _disk_ (opt-in). Use `TokenCachePersistenceOptions()` for default cache, specify a `Name` for isolated cache, and `UnsafeAllowUnencryptedStorage` for unencrypted storage. Different credentials support different caching types - CLI: None, Default and Managed - only cache, rest: both.

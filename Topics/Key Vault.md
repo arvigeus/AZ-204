@@ -25,9 +25,17 @@ DecryptResult decryptResult = cryptoClient.Decrypt(EncryptionAlgorithm.RsaOaep, 
 
 ## [Security](https://learn.microsoft.com/en-us/azure/key-vault/general/security-features)
 
-TODO
+**Network Security**: You can specify which IP addresses have access to your vaults, reducing exposure. This is done through virtual network service endpoints for Azure Key Vault.
+
+**TLS and HTTPS**: Azure Key Vault uses the HTTPS protocol and TLS (min 1.2) for secure communication.
+
+### Access Model
+
+Access to a key vault is controlled through two interfaces: the management plane (for managing Key Vault itself) and the data plane (for working with the data stored in a key vault). Both planes use Azure Active Directory (Azure AD) for authentication. For authorization, the management plane uses Azure role-based access control (Azure RBAC) and the data plane uses a Key Vault access policy and Azure RBAC for Key Vault data plane operations.
 
 ### Authentication
+
+Key Vault is associated with the Azure AD tenant of the subscription and all callers must register in this tenant and authenticate to access the key vault.
 
 For applications, there are two ways to obtain a service principal:
 
@@ -95,4 +103,83 @@ az vm encryption enable -g "MyResourceGroup" --name "myVM" --disk-encryption-key
 # Obtain <kek-url>
 az keyvault key show --vault-name "<keyvault-id>" --name "myKEK" --query "key.kid"
 az vm encryption enable -g "MyResourceGroup" --name "MyVM" --disk-encryption-keyvault "<keyvault-id>" --key-encryption-key-url <kek-url> --volume-type All
+```
+
+## [Logging](https://learn.microsoft.com/en-us/azure/key-vault/key-vault-insights-overview)
+
+```kusto
+// Old TLS?
+AzureDiagnostics
+| where TimeGenerated > ago(90d)
+| where ResourceProvider =="MICROSOFT.KEYVAULT"
+| where isnotempty(tlsVersion_s) and strcmp(tlsVersion_s,"TLS1_2") <0
+| project TimeGenerated,Resource, OperationName, requestUri_s, CallerIPAddress, OperationVersion,clientInfo_s,tlsVersion_s,todouble(tlsVersion_s)
+| sort by TimeGenerated desc
+
+// Slow requests?
+AzureDiagnostics
+| where ResourceProvider =="MICROSOFT.KEYVAULT"
+| where DurationMs > 1000
+| summarize count() by OperationName, _ResourceId
+
+// How fast is this KeyVault serving requests?
+AzureDiagnostics
+| where ResourceProvider =="MICROSOFT.KEYVAULT"
+| summarize avg(DurationMs) by requestUri_s, bin(TimeGenerated, 1h) // requestUri_s contains the URI of the request
+| render timechart
+
+// Failures?
+AzureDiagnostics
+| where ResourceProvider =="MICROSOFT.KEYVAULT"
+| where httpStatusCode_d >= 300 and not(OperationName == "Authentication" and httpStatusCode_d == 401)
+| summarize count() by requestUri_s, ResultSignature, _ResourceId
+// ResultSignature contains HTTP status, e.g. "OK" or "Forbidden"
+// httpStatusCode_d contains HTTP status code returned
+
+// Shows errors caused due to malformed events that could not be deserialized by the job.
+AzureDiagnostics
+| where ResourceProvider == "MICROSOFT.KEYVAULT" and parse_json(properties_s).DataErrorType in ("InputDeserializerError.InvalidData", "InputDeserializerError.TypeConversionError", "InputDeserializerError.MissingColumns", "InputDeserializerError.InvalidHeader", "InputDeserializerError.InvalidCompressionType")
+| project TimeGenerated, Resource, Region_s, OperationName, properties_s, Level, _ResourceId
+
+// How active has this KeyVault been?
+AzureDiagnostics
+| where ResourceProvider =="MICROSOFT.KEYVAULT"
+| summarize count() by bin(TimeGenerated, 1h), OperationName // Aggregate by hour
+| render timechart
+
+// Who is calling this KeyVault?
+AzureDiagnostics
+| where ResourceProvider =="MICROSOFT.KEYVAULT"
+| summarize count() by CallerIPAddress
+```
+
+### [Monitoring Key Vault with Azure Event Grid](https://learn.microsoft.com/en-us/azure/key-vault/general/event-grid-overview)
+
+`Portal > All Services > Key Vaults > key vault > Events > Event Grid Subscriptions > + Event Subscription` and fill in the details including name, event types, and endpoint (like an Azure Function).
+
+```cs
+[FunctionName("KeyVaultMonitoring")]
+public static async Task<IActionResult> Run(
+    [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
+    ILogger log)
+{
+    var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+    var eventGridEvent = EventGridEvent.Parse(new BinaryData(requestBody));
+
+    switch(eventGridEvent.EventType)
+    {
+        case SystemEventNames.KeyVaultCertificateNewVersionCreated:
+        case SystemEventNames.KeyVaultSecretNewVersionCreated:
+            log.LogInformation($"New Key Vault secret/certificate version created event. Data: {eventGridEvent.Data}");
+            break;
+        case SystemEventNames.KeyVaultKeyNewVersionCreated:
+            log.LogInformation($"New Key Vault key version created event. Data: {eventGridEvent.Data}");
+            break;
+        default:
+            log.LogInformation($"Event Grid Event of type {eventGridEvent.EventType} occurred, but it's not processed.");
+            break;
+    }
+
+    return new OkResult();
+}
 ```
