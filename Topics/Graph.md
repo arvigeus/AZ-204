@@ -6,7 +6,11 @@ Provides a unified programmability model that you can use to access data in Micr
 
 - [Microsoft Graph connectors](https://learn.microsoft.com/en-us/microsoftsearch/connectors-overview) work in the incoming direction, **delivering data external to the Microsoft cloud into Microsoft Graph services and applications**, to enhance Microsoft 365 experiences such as Microsoft Search. Connectors exist for many commonly used data sources such as Box, Google Drive, Jira, and Salesforce.
 
-- [Microsoft Graph Data Connect](https://learn.microsoft.com/en-us/graph/overview#access-microsoft-graph-data-at-scale-using-microsoft-graph-data-connect) provides a set of tools to streamline secure and scalable delivery of **Microsoft Graph data to popular Azure data stores**. The cached data serves as data sources for Azure development tools that you can use to build intelligent applications.
+- [Microsoft Graph Data Connect](https://learn.microsoft.com/en-us/graph/data-connect-concept-overview) provides a set of tools to streamline secure and scalable delivery of **Microsoft Graph data to popular Azure data stores**. The cached data serves as data sources for Azure development tools that you can use to build intelligent applications.
+
+## Resources
+
+Resource specify the entity or complex type you're interacting with, like `me`, `user`, `group`, `drive`, or `site`. Top-level resources may have relationships, allowing access to other resources, like `me/messages` or `me/drive`. Interactions with resources are done through methods, e.g., `me/sendMail` for sending an email. Permissions needed for each resource may vary, with higher permissions often required for creation or updates compared to reading. [More on permissions](https://learn.microsoft.com/en-us/graph/permissions-reference).
 
 ## Query Microsoft Graph by using REST
 
@@ -25,7 +29,7 @@ Metadata in Microsoft Graph provides insight into its data model, including enti
 ```
 
 - HTTP _Authorization_ request header, as a _Bearer_ token
-- Pagination is handled via `@odata.nextLink`.
+- [Pagination](https://learn.microsoft.com/en-us/graph/paging) is handled via `@odata.nextLink`.
 
 | Method | Description                                  |
 | ------ | -------------------------------------------- |
@@ -38,15 +42,49 @@ Metadata in Microsoft Graph provides insight into its data model, including enti
 - For the CRUD methods `GET` and `DELETE`, no request body is required.
 - The `POST`, `PATCH`, and `PUT` methods require a request body specified in JSON format.
 
-### Examples
+#### Examples
 
-My photo: `https://graph.microsoft.com/v1.0/me/photo/$value`  
-Items in my drive: `https://graph.microsoft.com/v1.0/me/drive/root/children`  
-My todos: `https://graph.microsoft.com/v1.0/me/todo/lists`  
-My manager: `https://graph.microsoft.com/v1.0/me/manager`  
-Trending insights: `https://graph.microsoft.com/v1.0/me/insights/trending`  
-Alerts, filter by Category, top 5: `https://graph.microsoft.com/v1.0/security/alerts?$filter=Category eq 'ransomware'&$top=5`  
-Filter by relationship value, select specific fields: `https://graph.microsoft.com/v1.0/groups?$filter=adatumisv_courses/id eq '123'&$select=id,displayName,adatumisv_courses`
+Sure, here's the table based on the provided information:
+
+| Operation                                | URL                                                                                                                      |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| GET my profile                           | `https://graph.microsoft.com/v1.0/me`                                                                                    |
+| GET my files                             | `https://graph.microsoft.com/v1.0/me/drive/root/children`                                                                |
+| GET my photo                             | `https://graph.microsoft.com/v1.0/me/photo/$value`                                                                       |
+| GET my mail                              | `https://graph.microsoft.com/v1.0/me/messages`                                                                           |
+| GET my high importance email             | `https://graph.microsoft.com/v1.0/me/messages?$filter=importance eq 'high'`                                              |
+| GET my calendar events                   | `https://graph.microsoft.com/v1.0/me/events`                                                                             |
+| GET my manager                           | `https://graph.microsoft.com/v1.0/me/manager`                                                                            |
+| GET last user to modify file foo.txt     | `https://graph.microsoft.com/v1.0/me/drive/root/children/foo.txt/lastModifiedByUser`                                     |
+| GET Microsoft 365 groups I'm a member of | `https://graph.microsoft.com/v1.0/me/memberOf/$/microsoft.graph.group?$filter=groupTypes/any(a:a eq 'unified')`          |
+| GET users in my organization             | `https://graph.microsoft.com/v1.0/users`                                                                                 |
+| GET groups in my organization            | `https://graph.microsoft.com/v1.0/groups`                                                                                |
+| GET people related to me                 | `https://graph.microsoft.com/v1.0/me/people`                                                                             |
+| GET items trending around me             | `https://graph.microsoft.com/beta/me/insights/trending`                                                                  |
+| GET my notes                             | `https://graph.microsoft.com/v1.0/me/onenote/notebooks`                                                                  |
+| Select specific fields                   | `https://graph.microsoft.com/v1.0/groups?$filter=adatumisv_courses/id eq '123'&$select=id,displayName,adatumisv_courses` |
+| Alerts, filter by Category, top 5        | `https://graph.microsoft.com/v1.0/security/alerts?$filter=Category eq 'ransomware'&$top=5`                               |
+
+#### Using MSAL
+
+```cs
+var authority = "https://login.microsoftonline.com/" + tenantId;
+var scopes = { "https://graph.microsoft.com/.default" };
+
+var app = ConfidentialClientApplicationBuilder.Create(clientId)
+    .WithAuthority(authority)
+    .WithClientSecret(clientSecret)
+    .Build();
+
+var result = await app.AcquireTokenForClient(scopes).ExecuteAsync();
+
+var httpClient = new HttpClient();
+var request = new HttpRequestMessage(HttpMethod.Get, "https://graph.microsoft.com/v1.0/me");
+request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", result.AccessToken);
+
+var response = await httpClient.SendAsync(request);
+var content = await response.Content.ReadAsStringAsync();
+```
 
 ### Using SDK
 
