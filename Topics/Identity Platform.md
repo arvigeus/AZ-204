@@ -1,1 +1,116 @@
 # [Microsoft Identity Platform](https://docs.microsoft.com/en-us/azure/active-directory/develop/)
+
+Implements [OAuth 2.0](https://learn.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-protocols) authorization protocol, allowing third-party apps to access web-hosted resources on behalf of users. These resources have a unique _application ID URI_.
+
+## [Service principals](https://learn.microsoft.com/en-us/azure/active-directory/develop/app-objects-and-service-principals?tabs=browser)
+
+Azure AD uses application and service principal objects for identity and access management.
+
+You can use the **Enterprise applications** page in the Azure portal to list and manage the service principals in a tenant.
+
+### Application Registration
+
+Applications must register with Azure AD to delegate identity and access management. This creates an application object and a globally unique ID (app/client ID).
+
+- **Application Object**: Resides in the Azure AD tenant where the application was registered. It's a template for creating service principal objects and defines how the service can issue tokens, the resources the application might need, and the actions it can take.
+
+- **Service Principal Object**: Represents the entity requiring access to resources secured by an Azure AD tenant. There are three types:
+
+  - **Application** - A local representation of a global application object in a tenant, defining the app's capabilities, access, and resources. A service principal object is created when an application gets permission to access resources.
+
+  - **Managed Identity** - It provides an identity for applications connecting to resources supporting Azure AD authentication. A service principal for the managed identity is created when enabled, which can be granted access and permissions but can't be directly modified.
+
+  - **Legacy** - Represents a legacy app, created before app registrations or through legacy experiences. It can only be used in the tenant where it was created.
+
+### Relationship between Application Objects and Service Principals
+
+The application object is the global representation of your application for use across all tenants, and the service principal is the local representation for use in a specific tenant. The application object serves as the template from which common and default properties are derived for use in creating corresponding service principal objects. A service principal must be created in each tenant where the application is used.
+
+An application object has:
+
+- A one-to-one relationship with the software application
+- A one-to-many relationship with its corresponding service principal object(s)
+
+### Modifying and Deleting Applications
+
+Any changes made to your application object are also reflected in its service principal object in the application's home tenant only. Deleting an application object will also delete its home tenant service principal object. However, restoring that application object won't restore its corresponding service principal.
+
+### Examples
+
+List service principals associated with an app: `az ad sp list --filter "appId eq '{AppId}'"`
+
+## Permissions and consent
+
+### [Permissions (Scopes)](https://learn.microsoft.com/en-us/azure/active-directory/develop/permissions-consent-overview)
+
+An app requests the permissions it needs by specifying the permission in the `scope` query parameter. if the resource identifier is omitted in the scope parameter, the resource is assumed to be Microsoft Graph. For example, `scope=User.Read` is equivalent to `https://graph.microsoft.com/User.Read`.
+
+| Permission types | Delegated permissions                                                                               | Application permissions                            |
+| ---------------- | --------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| Types of apps    | Web / Mobile / single-page app (SPA)                                                                | Web / Daemon                                       |
+| Access context   | Get access on behalf of a user                                                                      | Get access without a user                          |
+| Who can consent  | - Users can consent for their data<br>- Admins can consent for all users                            | Only admin can consent                             |
+| Consent methods  | - Static: configured list on app registration<br>- Dynamic: request individual permissions at login | - Static ONLY: configured list on app registration |
+| Other names      | - Scopes<br>- OAuth2 permission scopes                                                              | - App<br>- App-only permissions roles              |
+
+### [Consent](https://learn.microsoft.com/en-us/azure/active-directory/manage-apps/user-admin-consent-overview)
+
+- **Static user consent**: requires specifying all app permissions in Azure portal config. If users haven't consented, they're prompted. Issues: long permission lists and knowing all resources in advance.
+
+- **Incremental user consent**: lets you request permissions gradually using Microsoft identity platform endpoint. Specify scopes when requesting access token without predefining them. Only for delegated permissions, not app-only access.
+
+- **Admin consent**: needed for high-privilege permissions. Admins authorize apps to access privileged data. Requires static permissions registration.
+
+#### Requesting individual user consent
+
+```http
+GET https://login.microsoftonline.com/common/oauth2/v2.0/authorize?
+client_id=6731de76-14a6-49ae-97bc-6eba6914391e
+&response_type=code
+&redirect_uri=http%3A%2F%2Flocalhost%2Fmyapp%2F
+&response_mode=query
+&scope=
+https%3A%2F%2Fgraph.microsoft.com%2Fcalendars.read%20
+https%3A%2F%2Fgraph.microsoft.com%2Fmail.send
+&state=12345
+```
+
+If permissions haven't been granted before by the user or the administrator on behalf of the organization, the Microsoft identity platform prompts the user to grant the requested permissions.
+
+## [Conditional Access](https://learn.microsoft.com/en-us/azure/active-directory/conditional-access/overview)
+
+It allows you to set extra security measures or conditions before users can access a service or app. This could mean multi-factor authentication, device restrictions (enrolled in Microsoft's Intune service), or certain physical locations or IP ranges.
+
+Apps typically don't require any changes to adhere to these conditions. However, in certain instances, especially when an app must access a service indirectly or silently, code modifications may be necessary.
+
+Examples:
+
+1. A Conditional Access policy that prompts additional verification (e.g., second password or fingerprint) when users sign in.
+
+1. Using a middle tier service to access an API with Conditional Access policy: The app communicates with the middle tier, which in turn interacts with the API presenting a "challenge." The app must meet this challenge according to the policy.
+
+## MSAL (Microsoft Authentication Library)
+
+Enables secure access to various APIs, with a unified API across platforms.
+
+- Obtains tokens for users or applications (when applicable).
+- Manages token cache and refreshes tokens automatically.
+- Helps specify the desired audience for application sign-in.
+- Assists with application setup from configuration files.
+- Provides actionable exceptions, logging, and telemetry for troubleshooting.
+
+### Authentication flows
+
+| Flow               | Description                                                                   | Application Type |
+| ------------------ | ----------------------------------------------------------------------------- | ---------------- |
+| Authorization code | Native and web apps securely obtain tokens in the name of the user            | Public           |
+| Client credentials | Service applications run without user interaction                             | Confidential     |
+| On-behalf-of       | The application calls a service/web API, which in turn calls Microsoft Graph  | Both             |
+| Implicit           | Used in browser-based applications                                            | Public           |
+| Device code        | Enables sign-in to a device by using another device that has a browser        | Public           |
+| Integrated Windows | Windows computers silently acquire an access token when they're domain joined | Both             |
+| Interactive        | Mobile and desktop applications call Microsoft Graph in the name of a user    | Public           |
+| Username/password  | The application signs in a user by using their username and password          | Both             |
+
+- **Public client applications**: User-facing apps without the ability to securely store secrets. They interact with web APIs on the user's behalf.
+- **Confidential client applications**: Server-based apps that can securely handle secrets. Each instance maintains a unique configuration, including identifiers and secrets.
