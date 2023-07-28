@@ -12,6 +12,10 @@ Provides a unified programmability model that you can use to access data in Micr
 
 Resource specify the entity or complex type you're interacting with, like `me`, `user`, `group`, `drive`, or `site`. Top-level resources may have relationships, allowing access to other resources, like `me/messages` or `me/drive`. Interactions with resources are done through methods, e.g., `me/sendMail` for sending an email. Permissions needed for each resource may vary, with higher permissions often required for creation or updates compared to reading. [More on permissions](https://learn.microsoft.com/en-us/graph/permissions-reference).
 
+## [Headers](https://learn.microsoft.com/en-us/graph/use-the-api#headers)
+
+Include standard and custom HTTP types. Certain APIs might need extra headers in requests. Mandatory headers like the `request-id` are always returned by Microsoft Graph, and certain headers, like `Retry-After` during throttling or `Location` for long-running operations, are specific to certain APIs or features.
+
 ## Query Microsoft Graph by using REST
 
 [Graph Explorer](https://developer.microsoft.com/en-us/graph/graph-explorer)
@@ -51,6 +55,7 @@ Sure, here's the table based on the provided information:
 | GET my profile                           | `https://graph.microsoft.com/v1.0/me`                                                                                    |
 | GET my files                             | `https://graph.microsoft.com/v1.0/me/drive/root/children`                                                                |
 | GET my photo                             | `https://graph.microsoft.com/v1.0/me/photo/$value`                                                                       |
+| GET my photo metadata                    | `https://graph.microsoft.com/v1.0/me/photo/`                                                                             |
 | GET my mail                              | `https://graph.microsoft.com/v1.0/me/messages`                                                                           |
 | GET my high importance email             | `https://graph.microsoft.com/v1.0/me/messages?$filter=importance eq 'high'`                                              |
 | GET my calendar events                   | `https://graph.microsoft.com/v1.0/me/events`                                                                             |

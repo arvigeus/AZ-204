@@ -56,30 +56,6 @@ Using HTTPS prevents man-in-the-middle attacks but isn't the most flexible and s
 
 ---
 
-Question: Which HTTP method below is used to update a resource with new values?
-
-- [ ] POST
-- [x] PATCH
-- [ ] PUT
-
-Answer: The PATCH method does update a resource with a new value.  
-The POST method creates a new resource.  
-The PUT method replaces a resource with a new one.
-
----
-
-Question: Which of the components of the Microsoft 365 platform is used to deliver data external to Azure into Microsoft Graph services and applications?
-
-- [ ] Microsoft Graph API
-- [x] Microsoft Graph connectors
-- [ ] Microsoft Graph Data Connect
-
-Answer: Microsoft Graph connectors work in the incoming direction. Connectors exist for many commonly used data sources such as Box, Google Drive, Jira, and Salesforce.  
-The Microsoft Graph API offers a single endpoint to use with APIs and SDKs.  
-Microsoft Graph Data Connect provides a set of tools to streamline secure and scalable delivery of Microsoft Graph data to popular Azure data stores.
-
----
-
 Question: What does the Microsoft Identity platform assume if the resource identifier is omitted in the scope parameter during requests to authorization, token, or consent endpoints?
 
 - [ ] The resource is Microsoft Outlook.
@@ -89,17 +65,6 @@ Question: What does the Microsoft Identity platform assume if the resource ident
 - [ ] The resource is Key Vault.
 
 Answer: if the resource identifier is omitted in the scope parameter, the resource is assumed to be Microsoft Graph.
-
----
-
-Question: Which of the following endpoints may assume the resource as Microsoft Graph when the resource identifier is omitted in the scope parameter?
-
-- [ ] Synchronization
-- [x] Consent
-- [ ] Processing
-- [ ] Access
-
-Answer: Consent
 
 ---
 

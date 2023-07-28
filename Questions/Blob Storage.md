@@ -153,3 +153,37 @@ Answer: `LocationMode.PrimaryThenSecondary` allows requests to first try the pri
 This option is part of the legacy Azure Storage SDK. In the newer Azure SDKs (like Azure.Storage.Blobs), the handling of retries and failovers has been reworked and made more efficient.
 
 ---
+
+Question: In the Azure Blob Storage .NET SDK, you want to ensure that you only update a blob if it has not been modified since you last fetched it. Here is the initial code you have:
+
+```cs
+BlobServiceClient blobServiceClient = new BlobServiceClient(connectionString);
+BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient("mycontainer");
+BlobClient blobClient = containerClient.GetBlobClient("myblob");
+
+BlobProperties properties = await blobClient.GetPropertiesAsync();;
+
+// perform the update
+BlobUploadOptions options = new BlobUploadOptions
+{
+    Metadata = new Dictionary<string, string>
+    {
+        { "key", "value" }
+    },
+    // Fill in this part
+};
+
+await blobClient.UploadAsync(BinaryData.FromString("data"), options);
+```
+
+What should you put in the `// Fill in this part` section to ensure the blob is only updated if it has not been modified since you last fetched it?
+
+Answer: The missing code should be as follows:
+
+```cs
+Conditions = new BlobRequestConditions { IfMatch = properties.Value.ETag }
+```
+
+The `IfMatch` property of the `BlobRequestConditions` object can be set to the ETag of the blob. The `ETag` is a version identifier for the blob, and it changes whenever the blob is modified. By setting `IfMatch` to the `ETag` you got when you fetched the blob's properties, you're specifying that the update should only occur if the blob has not been modified since then. If the blob has been modified, its `ETag` will have changed, the IfMatch condition will not be met, and the update operation will fail with a `412 Precondition Failed` error. This approach is used to implement optimistic concurrency control, preventing unexpected overwrites due to concurrent modifications.
+
+---

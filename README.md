@@ -113,6 +113,9 @@
 1. [Azure Service Bus](https://docs.microsoft.com/en-us/azure/service-bus-messaging/)
 1. [Azure Queue Storage](https://docs.microsoft.com/en-us/azure/storage/queues/)
 
-## Exam
+## Exam preparation
 
-[Practice Assessments for Microsoft Certifications](https://learn.microsoft.com/en-us/certifications/exams/az-204/practice/assessment?assessment-type=practice&assessmentId=35)
+- [Practice Assessments for Microsoft Certifications](https://learn.microsoft.com/en-us/certifications/exams/az-204/practice/assessment?assessment-type=practice&assessmentId=35)
+- [AZ-204: Developing solutions for Microsoft Azure](https://github.com/MicrosoftLearning/AZ-204-DevelopingSolutionsforMicrosoftAzure)
+- [MeasureUp](https://www.measureup.com/catalogsearch/result/?q=az-204)
+- [WhizLabs](https://www.whizlabs.com/microsoft-azure-certification-az-204/)
