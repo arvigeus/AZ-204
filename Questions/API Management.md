@@ -10,6 +10,8 @@ Answer: The Developer portal serves as the main web presence for developers, and
 The API gateway routes calls, performs API transforms, and verifies keys.  
 The Azure portal is the administrative interface where you set up your API program.
 
+---
+
 Question: Which of the following API Management policies would one use if one wants to apply a policy based on a condition?
 
 - [ ] forward-request
@@ -19,3 +21,5 @@ Question: Which of the following API Management policies would one use if one wa
 Answer: The choose policy applies enclosed policy statements based on the outcome of evaluation of boolean expressions.  
 The forward-request policy forwards the incoming request to the backend service specified in the request context.  
 The return-response policy aborts pipeline execution and returns either a default or custom response to the caller.
+
+---

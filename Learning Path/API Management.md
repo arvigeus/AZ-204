@@ -184,7 +184,7 @@ The snippet assumes that response content is formatted as JSON and contains root
            }
           return response.ToString();
           }
-    </set-body>
+        </set-body>
       </when>
     </choose>
   </outbound>
