@@ -1,5 +1,17 @@
 # [Azure API Management](https://docs.microsoft.com/en-us/azure/api-management/)
 
+## [Tiers](https://learn.microsoft.com/en-us/azure/api-management/api-management-features)
+
+- **Consumption Tier**: No Azure AD integration, private endpoint support for inbound connections, developer portal, built-in cache, built-in analytics, backup and restore, management over Git, direct management API, Azure Monitor and Log Analytics request logs, Static IP.
+
+- **Developer Tier**: Like Premium, without multi-region deployment and availability zones.
+
+- **Basic Tier**: No Azure AD integration, and workspaces.
+
+- **Standard Tier**: Has Azure AD Integration and worspaces.
+
+- **Premium Tier**: Has VNET, multiple custom domain names, self-hosted gateway
+
 ## Components
 
 - **API Gateway**: Endpoint that routes API calls, verifies credentials, enforces quotas and limits, transforms requests/responses specified in policy statements, caches responses, and produces logs/metrics for monitoring.
@@ -185,3 +197,33 @@ context.Request.Certificate == null || !context.Request.Certificate.Verify() || 
 // Checks if the request doesn't contain a certificate or if the issuer of the certificate isn't trusted or if the subject name of the certificate doesn't match the expected one
 context.Request.Certificate == null || context.Request.Certificate.Issuer != "trusted-issuer" || context.Request.Certificate.SubjectName.Name != "expected-subject-name"
 ```
+
+## [Error handling](https://learn.microsoft.com/en-us/azure/api-management/api-management-error-handling-policies)
+
+- Azure API Management uses a `ProxyError` object, accessed via `context.LastError`, for handling errors during request processing.
+- Policies are divided into inbound, backend, outbound, and on-error sections. Processing jumps to the on-error section if an error occurs.
+- If there's no on-error section, callers receive `400` or `500` HTTP response messages during an error.
+- Predefined errors exist for built-in steps and policies, each with a source, condition, reason, and message.
+- Custom behavior, like logging errors or creating new responses, can be configured in the on-error section.
+
+## Working with API management
+
+Create a new Azure API Management service:
+
+```ps
+az apim create --name myapim --resource-group myResourceGroup \
+  --publisher-name Contoso --publisher-email admin@contoso.com \
+  --no-wait
+```
+
+Create revision (release):
+
+```ps
+az apim create --name myapim --resource-group myResourceGroup \
+  --publisher-name Contoso --publisher-email admin@contoso.com \
+  --no-wait
+```
+
+## [Monitoring](https://learn.microsoft.com/en-us/azure/api-management/api-management-howto-use-azure-monitor)
+
+Azure API Management emits metrics every minute, providing near real-time visibility into the state and health of your APIs. The most frequently used metrics are 'Capacity' and 'Requests'. 'Capacity' helps you make decisions about upgrading/downgrading your API Management services, while 'Requests' helps you analyze API traffic.
