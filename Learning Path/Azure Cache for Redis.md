@@ -54,7 +54,7 @@ The name must be between 1 and 63 characters, composed of numbers, letters, and 
 
 You should always place your cache instance and your application in the same region. Connecting to a cache in a different region can significantly increase latency and reduce reliability. If you're connecting to the cache outside of Azure, then select a location close to where the application consuming the data is running.
 
-Cache type
+##### Cache type
 
 The tier determines the size, performance, and features that are available for the cache. For more information, visit [Azure Cache for Redis pricing](https://azure.microsoft.com/pricing/details/cache/).
 
@@ -82,7 +82,7 @@ Here are some common commands you can use:
 | `incr [key]`            | Increment the given value associated with the **key** by '1'. The value must be an integer or double value. This returns the new value.                  |
 | `incrby [key] [amount]` | Increment the given value associated with the **key** by the specified amount. The value must be an integer or double value. This returns the new value. |
 | `del [key]`             | Deletes the value associated with the **key**.                                                                                                           |
-| flushdb                 | Delete all keys and values in the database.                                                                                                              |
+| `flushdb`               | Delete all keys and values in the database.                                                                                                              |
 
 Following is an example of a command:
 
