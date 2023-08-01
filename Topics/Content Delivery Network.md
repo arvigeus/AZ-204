@@ -1,1 +1,101 @@
 # [Azure Content Delivery Network (CDN)](https://docs.microsoft.com/en-us/azure/cdn/)
+
+Deliver high-bandwidth content quickly by storing it at various global locations. It can also speed up dynamic non-cacheable content, including bypassing the Border Gateway Protocol (BGP) for route optimization. Benefits include improved performance, handling high traffic, and reducing load on the original server by distributing user requests and serving content from edge servers.
+
+How it works: When a user requests a file using a special URL (ex: `<endpoint name>.azureedge.net`), the request is directed to the nearest server location (_Point of Presence - POP_). If the file isn't in the server's cache, it's fetched from the origin server, which could be an Azure service or any public web server. The file is then sent to the user from the POP server and stored there for future requests. This cached file can be quickly sent to any other users requesting the same file, providing a faster user experience. The file stays in the cache until its time-to-live (TTL) expires, defaulting to _7 days_ if not specified.
+
+To use Azure CDN, you need to set up a CDN profile containing CDN endpoints, each with its own content delivery and access settings. You can have multiple profiles for different domains or applications. Pricing is based on the profile level.
+
+There are [limits](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#azure-cdn-limits) on the number of profiles (up to 25), endpoints per profile (up to 10), and custom domains per endpoint (up to 25) in each Azure subscription.
+
+Azure CDN offers features like _dynamic site acceleration_, _caching rules_, _HTTPS custom domain support_, _diagnostics logs_, _file compression_, and _geo-filtering_.
+
+## [Content Caching and Optimization](https://learn.microsoft.com/en-us/azure/frontdoor/front-door-caching)
+
+### Content Caching
+
+Content is cached based on the `Time to Live` (TTL), which is determined by the `Cache-Control` header from the origin server. If the content's age is less than the TTL, it's considered fresh and delivered to the client directly from the cache. If it's older, it's deemed stale, and a fresh copy is fetched from the server. If no TTL is set, Azure CDN assigns a default TTL value, which can be further modified by caching rules. Default TTL varies according to the type of optimization:
+
+- Generalized web delivery optimizations: 7 days
+- Large file optimizations: 1 day
+- Media streaming optimizations: one year
+
+### File Version Management
+
+To ensure users receive the latest version of a file, include a version string in the URL or purge cached content. Purging can be performed on an endpoint basis, by specifying a file, or using wildcards. Below is an example of purging assets:
+
+```ps
+az cdn endpoint purge \
+    --content-paths '/css/*' '/js/app.js' \
+    --name ContosoEndpoint \
+    --profile-name DemoProfile \
+    --resource-group ExampleGroup
+```
+
+Additionally, you can preload assets into an endpoint to enhance user experience, as shown below:
+
+```ps
+az cdn endpoint load \
+    --content-paths '/img/*' '/js/module.js' \
+    --name ContosoEndpoint \
+    --profile-name DemoProfile \
+    --resource-group ExampleGroup
+```
+
+### Geo-filtering
+
+Geo-filtering allows for the control of content access by country/region codes. The **Standard** tier allows only site-wide allowance or blocking, while the **Verizon** and **Akamai** tiers offer additional directory path restrictions.
+
+### Caching Rules
+
+Caching rules provide configuration options for your content at the endpoint level. The options vary depending on the selected tier.
+
+#### Standard Tier Caching Rules
+
+- **Global caching rules**: Apply to all content from a specified endpoint.
+- **Custom caching rules**: Specific to paths and file extensions.
+- **Query string caching**: Azure CDN's response to a query string, which doesn't affect uncachable files.
+
+The caching behavior for query strings can be adjusted in the `Caching rules > Endpoint pane`:
+
+- **Ignore query strings** (default): The CDN Point of Presence (POP) passes the request and query strings to the origin server on the first request and caches the asset. Subsequent requests for the same asset ignore query strings until the TTL expires.
+- **Bypass caching for query strings**: Each query request from the client is passed directly to the origin server with no caching.
+- **Cache every unique URL**: When a client generates a unique URL, that URL is passed back to the origin server, and the response is cached with its own TTL. This method is inefficient for unique URL requests as the cache-hit ratio becomes low.
+
+Other tiers of Azure CDN provide additional configuration options.
+
+## Working with SDK
+
+```cs
+public static void ManageCdnEndpoint(string subscriptionId, TokenCredentials authResult, string resourceGroupName, string profileName, string endpointName, string resourceLocation)
+{
+    // Create CDN client
+    CdnManagementClient cdn = new CdnManagementClient(new TokenCredentials(authResult.AccessToken)) { SubscriptionId = subscriptionId };
+
+    // List all the CDN profiles in this resource group
+    var profileList = cdn.Profiles.ListByResourceGroup(resourceGroupName);
+    foreach (Profile p in profileList)
+    {
+        // List all the CDN endpoints on this CDN profile
+        var endpointList = cdn.Endpoints.ListByProfile(p.Name, resourceGroupName);
+        foreach (Endpoint e in endpointList) { }
+    }
+
+    // Create a new CDN profile (check if not exist first!)
+    var profileParms = new ProfileCreateParameters() { Location = resourceLocation, Sku = new Sku(SkuName.StandardVerizon) };
+    cdn.Profiles.Create(profileName, profileParms, resourceGroupName);
+
+    // Create a new CDN endpoint (check if not exist first!)
+    var endpointParms = new EndpointCreateParameters()
+    {
+        Origins = new List<DeepCreatedOrigin>() { new DeepCreatedOrigin("Contoso", "www.contoso.com") },
+        IsHttpAllowed = true,
+        IsHttpsAllowed = true,
+        Location = resourceLocation
+    };
+    cdn.Endpoints.Create(endpointName, endpointParms, profileName, resourceGroupName);
+
+    // Purge content from the endpoint
+    cdn.Endpoints.PurgeContent(resourceGroupName, profileName, endpointName, new List<string>() { "/*" });
+}
+```
