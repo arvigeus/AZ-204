@@ -10,8 +10,7 @@ Answer: Flapping happens when a scale event triggers the opposite scale event.
 
 ---
 
-Question: Question:
-You are configuring autoscaling rules for different Azure resources. For each of the following scenarios, indicate whether you should check the "Metric Namespace" checkbox when configuring the autoscaling rule.
+Question: You are configuring autoscaling rules for different Azure resources. For each of the following scenarios, indicate whether you should check the "Metric Namespace" checkbox when configuring the autoscaling rule.
 
 - [x] You are scaling an Azure Virtual Machine based on CPU usage. The relevant metric is "Percentage CPU".
 - [x] You are scaling an Azure App Service based on the number of HTTP requests. The relevant metric is "Http Queue Length".

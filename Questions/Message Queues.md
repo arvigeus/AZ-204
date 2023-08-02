@@ -10,6 +10,8 @@ Answer: To create a first-in, first-out (FIFO) guarantee in Service Bus, use ses
 Scheduled delivery: Messages can be submitted to a queue or topic for delayed processing, but that doesn't guarantee a FIFO.  
 A transaction groups two or more operations together into an execution scope.
 
+---
+
 Question: In Azure Service Bus messages are durably stored which enables a load-leveling benefit. Which of the following correctly describes the load-leveling benefit relative to a consuming application's performance?
 
 - [ ] Performance needs to handle peak load
@@ -17,3 +19,5 @@ Question: In Azure Service Bus messages are durably stored which enables a load-
 - [ ] Performance needs to handle low loads
 
 Answer: Intermediating message producers and consumers with a queue means that the consuming application only has to be able to handle average load instead of peak load.
+
+---
