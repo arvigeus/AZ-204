@@ -125,6 +125,16 @@ Task ErrorHandler(ProcessErrorEventArgs args)
 }
 ```
 
+```ps
+az servicebus namespace create --name mynamespace --resource-group myresourcegroup --location eastus
+az servicebus queue create --name myqueue --namespace-name mynamespace --resource-group myresourcegroup
+az servicebus queue list --namespace-name mynamespace --resource-group myresourcegroup
+az servicebus namespace authorization-rule keys list --name RootManageSharedAccessKey --namespace-name mynamespace --resource-group myresourcegroup --query primaryConnectionString
+# Send, Peek, Delete - You would use an SDK or other tooling
+az servicebus queue delete --name myqueue --namespace-name mynamespace --resource-group myresourcegroup
+az servicebus namespace delete --name mynamespace --resource-group myresourcegroup
+```
+
 ### Azure Queue Storage
 
 - May contain millions of messages, up to the total capacity limit of a storage account.
@@ -181,4 +191,15 @@ if (queueClient.Exists())
     // Delete the queue
     queueClient.Delete();
 }
+```
+
+```ps
+az storage account create --name mystorageaccount --resource-group myresourcegroup --location eastus --sku Standard_LRS
+az storage queue create --name myqueue --account-name mystorageaccount
+az storage queue list --account-name mystorageaccount --output table
+az storage message put --queue-name myqueue --account-name mystorageaccount --content "Hello, World!"
+az storage message peek --queue-name myqueue --account-name mystorageaccount
+az storage message get --queue-name myqueue --account-name mystorageaccount
+az storage message delete --queue-name myqueue --account-name mystorageaccount --message-id <message-id> --pop-receipt <pop-receipt>
+az storage queue delete --name myqueue --account-name mystorageaccount
 ```
