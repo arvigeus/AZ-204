@@ -18,7 +18,7 @@
 | Duplicate Detection        | Yes                                                                       | No                                                                    |
 | Global Access              | Part ofAzure messaging infrastructure, accessible via supported protocols | Accessible globally through authenticated HTTP or HTTPS calls         |
 
-### Service Bus Queues
+### [Service Bus Queues](https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-messaging-overview)
 
 Supports AMQP 1.0, enabling applications to work with Service Bus, and on-premises brokers like ActiveMQ or RabbitMQ.
 
@@ -135,7 +135,7 @@ az servicebus queue delete --name myqueue --namespace-name mynamespace --resourc
 az servicebus namespace delete --name mynamespace --resource-group myresourcegroup
 ```
 
-### Azure Queue Storage
+### [Azure Queue Storage](https://learn.microsoft.com/en-us/azure/storage/queues/storage-queues-introduction)
 
 - May contain millions of messages, up to the total capacity limit of a storage account.
 - Commonly used to create a backlog of work to process asynchronously.
