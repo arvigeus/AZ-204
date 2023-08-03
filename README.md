@@ -1,5 +1,10 @@
 # Developing Solutions for Microsoft Azure
 
+TLDR;
+
+- Go through [Topics](/Topics/)
+- Practice with [quiz app](https://az-204.vercel.app/)
+
 ## [Study guide for Exam AZ-204: Developing Solutions for Microsoft Azure](https://learn.microsoft.com/en-us/certifications/resources/study-guides/az-204#skills-measured-as-of-april-28-2023)
 
 ### Develop Azure compute solutions (25–30%)
@@ -120,3 +125,21 @@
 - [MeasureUp](https://www.measureup.com/catalogsearch/result/?q=az-204)
 - [WhizLabs](https://www.whizlabs.com/microsoft-azure-certification-az-204/)
 - [Learn Azure App](https://learnazure.app/)
+
+## Study resources
+
+- [Microsoft Learnigh Path](https://learn.microsoft.com/en-us/certifications/exams/az-204/) (also [/Learning Path](/Learning%20Path/))
+- [/Topics](/Topics/)
+- [AZ-204: Developing Solutions for Microsoft Azure (Alan Rodrigues)](https://www.youtube.com/watch?v=wWBW6ojr-Nw&list=PLLc2nQDXYMHpekgrToMrDpVtFtvmRSqVt)
+- [Azure Developer Associate (AZ-204) — Full Course Pass the Exam! (freeCodeCamp.org)](https://www.youtube.com/watch?v=jZx8PMQjobk&t=832s&pp=ygUGYXotMjA0)
+- [Exam AZ-204: Developing Solutions for Microsoft Azure Course (A Guide To Cloud)](https://www.youtube.com/watch?v=tB_tBPfQJMI&list=PLhLKc18P9YODdrbyuA52Zn9-kwboIOz2W)
+
+## Disclaimer
+
+The content found in this repository is a result of my personal study and understanding of the AZ-204 exam topics. While I have made every effort to ensure accuracy, there may be inaccuracies, or even incorrect or missing information contained within these notes.
+
+I welcome corrections and contributions from others to enhance the quality and accuracy of this material. If you find any errors or have suggestions for improvement, please feel free to open an issue or submit a pull request.
+
+Please use these notes at your own discretion and cross-reference with official materials and resources to ensure complete understanding of the subject matter.
+
+Wish you good luck in your preparation for the AZ-204 exam!
