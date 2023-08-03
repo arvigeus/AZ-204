@@ -215,6 +215,8 @@ If Event Grid receives a 400 (Bad Request) or 413 (Request Entity Too Large) res
 
 There's a five-minute delay between the last attempt to deliver an event and when it's delivered to the dead-letter location. This delay is intended to reduce the number of Blob storage operations. If the dead-letter location is unavailable for four hours, the event is dropped.
 
+Before setting the dead-letter location, you must have a storage account with a container. You provide the endpoint for this container when creating the event subscription.
+
 #### Custom delivery properties
 
 Event subscriptions allow you to set up HTTP headers that are included in delivered events. This capability allows you to set custom headers that are required by a destination. You can set up to 10 headers when creating an event subscription. Each header value shouldn't be greater than 4,096 bytes. You can set custom headers on the events that are delivered to the following destinations:
@@ -223,8 +225,6 @@ Event subscriptions allow you to set up HTTP headers that are included in delive
 - Azure Service Bus topics and queues
 - Azure Event Hubs
 - Relay Hybrid Connections
-
-Before setting the dead-letter location, you must have a storage account with a container. You provide the endpoint for this container when creating the event subscription.
 
 ### Control access to events
 
