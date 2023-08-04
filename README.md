@@ -128,11 +128,14 @@ TLDR;
 
 ## Study resources
 
-- [Microsoft Learnigh Path](https://learn.microsoft.com/en-us/certifications/exams/az-204/) (also [/Learning Path](/Learning%20Path/))
+- [Microsoft Learnigh Path](https://learn.microsoft.com/en-us/certifications/exams/az-204/) (or [/Learning Path](/Learning%20Path/))
 - [/Topics](/Topics/)
 - [AZ-204: Developing Solutions for Microsoft Azure (Alan Rodrigues)](https://www.youtube.com/watch?v=wWBW6ojr-Nw&list=PLLc2nQDXYMHpekgrToMrDpVtFtvmRSqVt)
 - [Azure Developer Associate (AZ-204) — Full Course Pass the Exam! (freeCodeCamp.org)](https://www.youtube.com/watch?v=jZx8PMQjobk&t=832s&pp=ygUGYXotMjA0)
 - [Exam AZ-204: Developing Solutions for Microsoft Azure Course (A Guide To Cloud)](https://www.youtube.com/watch?v=tB_tBPfQJMI&list=PLhLKc18P9YODdrbyuA52Zn9-kwboIOz2W)
+- [AZ-204 Exam Preparation: Developing Solutions for Microsoft Azure (Cloud Academy)](https://cloudacademy.com/learning-paths/az-204-exam-preparation-developing-solutions-for-microsoft-azure-1208/)
+- [Developing Solutions for Microsoft Azure (AZ-204) - Pluralsight](https://www.pluralsight.com/paths/developing-solutions-for-microsoft-azure-az-204)
+- [AZ-204 Developing Solutions for Microsoft Azure - Udemy](https://www.udemy.com/course/70532-azure/)
 
 ## Disclaimer
 

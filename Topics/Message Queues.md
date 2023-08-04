@@ -1,26 +1,35 @@
 # Message Queues
 
-## Type of queues
+## [Type of queues](https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-azure-and-service-bus-queues-compared-contrasted)
 
-| Features                   | Azure Service Bus                                                         | Azure Queue Storage                                                   |
-| -------------------------- | ------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| Purpose                    | A fully managed enterprise integration message broker                     | A service for storing large numbers of messages                       |
-| Message size limit         | Up to 100 MB (Premium), up to 256 KB (Standard)                           | Up to 64 KB                                                           |
-| Real-time message delivery | Long-polling via TCP, no need to poll the queue to receive messages       | Traditional polling                                                   |
-| Pricing                    | Fixed pricing (Premium), Pay as you go variable pricing (Standard)        | Pay as you go                                                         |
-| Throughput                 | High throughput (Premium), Variable throughput (Standard)                 | N/A                                                                   |
-| Performance                | Predictable performance (Premium), Variable latency (Standard)            | N/A                                                                   |
-| Scale ability              | Ability to scale workload up and down (Premium)                           | N/A                                                                   |
-| Message delivery model     | FIFO message delivery, 1:n relationships through topics and subscriptions | FIFO message delivery                                                 |
-| Receive modes              | Receive and delete, Peek lock                                             | N/A                                                                   |
-| URL format                 | `https://<namespace>.servicebus.windows.net/<queue>`                      | `https://<storage account>.queue.core.windows.net/<queue>`            |
-| Message expiration         | N/A                                                                       | Any positive number, or -1 indicating that the message doesn't expire |
-| Duplicate Detection        | Yes                                                                       | No                                                                    |
-| Global Access              | Part ofAzure messaging infrastructure, accessible via supported protocols | Accessible globally through authenticated HTTP or HTTPS calls         |
+| Features                   | Azure Service Bus                                                          | Azure Queue Storage                                                   |
+| -------------------------- | -------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| Purpose                    | A fully managed enterprise integration message broker                      | A service for storing large numbers of messages                       |
+| Message size limit         | Up to 100 MB (Premium), up to 256 KB (Standard)                            | Up to 64 KB                                                           |
+| Ordering guarantee         | Yes (by using message sessions)                                            | No                                                                    |
+| Real-time message delivery | Long-polling via TCP, no need to poll the queue to receive messages        | Traditional polling                                                   |
+| Pricing                    | Fixed pricing (Premium), Pay as you go variable pricing (Standard)         | Pay as you go                                                         |
+| Throughput                 | High throughput (Premium), Variable throughput (Standard)                  | N/A                                                                   |
+| Delivery guarantee         | At-Least-Once (PeekLock)<br/>At-Most-Once (ReceiveAndDelete)               | At-Least-Once                                                         |
+| Atomic operation support   | Yes                                                                        | No                                                                    |
+| Exclusive access mode      | Lock-based                                                                 | Lease-based                                                           |
+| Receive modes              | Receive and delete, Peek lock                                              | Peek & Lease                                                          |
+| Lease/Lock precision       | Queue level                                                                | Message level                                                         |
+| Automatic dead lettering   | Yes                                                                        | No                                                                    |
+| Performance                | Predictable performance (Premium), Variable latency (Standard)             | N/A                                                                   |
+| Scale ability              | Ability to scale workload up and down (Premium)                            | N/A                                                                   |
+| Message delivery model     | FIFO message delivery, 1:n relationships through topics and subscriptions  | FIFO message delivery (not guaranteed)                                |
+| URL format                 | `https://<namespace>.servicebus.windows.net/<queue>`                       | `https://<storage account>.queue.core.windows.net/<queue>`            |
+| Message expiration         | N/A                                                                        | Any positive number, or -1 indicating that the message doesn't expire |
+| Message groups             | Yes                                                                        | No                                                                    |
+| Duplicate Detection        | Yes                                                                        | No                                                                    |
+| Global Access              | Part of Azure messaging infrastructure, accessible via supported protocols | Accessible globally through authenticated HTTP or HTTPS calls         |
 
 ### [Service Bus Queues](https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-messaging-overview)
 
 Supports AMQP 1.0, enabling applications to work with Service Bus, and on-premises brokers like ActiveMQ or RabbitMQ.
+
+Up to 80 GB only.
 
 - **Queue**: Only one consumer receives and processes each message at a time, and since messages are stored durably in the queue, producers and consumers don't need to handle messages concurrently.
 - **Load-leveling**: Effectively buffering against fluctuating system loads, ensuring the system is optimized to manage the average load, instead of peaks.
