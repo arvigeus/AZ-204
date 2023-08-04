@@ -128,7 +128,9 @@ Event subscriptions support custom headers for delivered events. _Up to 10 heade
 - Azure Event Hubs
 - Relay Hybrid Connections.
 
-### Retry schedule
+### [delivery and retry](https://learn.microsoft.com/en-us/azure/event-grid/delivery-and-retry)
+
+#### Retry schedule
 
 Event Grid handles errors during event delivery by deciding based on the error type whether to retry, dead-letter (only if enabled), or drop the event. Timeout is 30 sec, then event is rescheduled for retry (exponentially). Retries may be skipped or delayed (up to several hours) for consistently unhealthy endpoints (**delayed delivery**). If the endpoint responds within 3 minutes, Event Grid tries to remove the event from the retry queue. Duplicates may occur due to how things work.
 
@@ -137,7 +139,7 @@ Event Grid handles errors during event delivery by deciding based on the error t
 | Azure Resources | 400 Bad Request, 413 Request Entity Too Large, 403 Forbidden                                  |
 | Webhook         | 400 Bad Request, 413 Request Entity Too Large, 403 Forbidden, 404 Not Found, 401 Unauthorized |
 
-### Retry policy
+#### Retry policy
 
 An event is dropped if either of the limits of the retry policy is reached.
 
@@ -153,18 +155,38 @@ az eventgrid event-subscription create \
   --max-delivery-attempts 18
 ```
 
-### Dead-Letter Events
+#### [Dead-Letter Events](https://learn.microsoft.com/en-us/azure/event-grid/manage-event-delivery)
 
 Occurs if the event isn't delivered within the retry policy limits. To enable, specify a storage account for undelivered events, and provide the endpoint for this container during event subscription creation. A five-minute delay exists between the last attempt and delivery to the dead-letter location, to reduce Blob storage operations.
 
-### Output Batching
+The time-to-live expiration is checked **only** at the next scheduled delivery attempt.
 
-For better HTTP performance in handling a large number of events. Off by default.
+```ps
+az eventgrid event-subscription create \
+  --source-resource-id $topicid \
+  --name <event_subscription_name> \
+  --endpoint <endpoint_URL> \
+  # To turn off dead-lettering, rerun this command, but don't provide a value for deadletter-endpoint
+  --deadletter-endpoint $storageid/blobServices/default/containers/$containername
+```
+
+#### Output Batching
+
+For better HTTP performance in handling a large number of events. _Off by default_. It doesn't support partial success of a batch delivery (_All or None_). The settings for batching are not strict and are respected on a best-effort basis, possibly resulting in smaller batches at low event rates (_Optimistic Batching_).
 
 Settings:
 
-- **Max events per batch**: 1 - 5,000. If no other events are available at the time of publishing, fewer events may be delivered.
-- **Preferred batch size in kilobytes**: Smaller if not enough events are available. If a single event is larger than the preferred size, it will be delivered as its own batch.
+- **Max events per batch**: 1 - 5,000 (default: 1?). If no other events are available at the time of publishing, fewer events may be delivered.
+- **Preferred batch size in kilobytes**: 1 - 1024 (default: 64KB?). Smaller if not enough events are available. If a single event is larger than the preferred size, it will be delivered as its own batch.
+
+```ps
+az eventgrid event-subscription create \
+  --resource-id $storageid \
+  --name <event_subscription_name> \
+  --endpoint $endpoint \
+  --max-events-per-batch 1000 \
+  --preferred-batch-size-in-kilobytes 512
+```
 
 ## Control access to events
 

@@ -566,3 +566,14 @@ az storage cors add --services blob --methods GET POST --origins 'http://localho
 ```
 
 ---
+
+Question: Several users have reported receiving HTTP 500 errors when attempting to connect to the web app you have developed using Azure App Service. To allow developers to see the connection error details in real-time, what action is required on your part?
+
+- [x] Enable the Web Server Logging feature.
+- [ ] Create a security playbook.
+- [ ] Enable the Application Logging feature.
+- [ ] Create resource health alerts.
+
+Answer: You must enable Web Server Logging in Azure App Service when handling raw HTTP requests data. The logs contain details like HTTP method, resource URI, client IP and port, user agent, response code, etc. You can save these logs in storage or a file system, and specify the number of days for retaining them.
+
+---

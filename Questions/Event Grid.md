@@ -38,3 +38,17 @@ Answer: Only events up to 64KB are covered by SLA.
 Math.roof(130 / 64) = 3
 
 ---
+
+Question: What best describes the optimistic batching behavior in Azure Event Grid?
+
+- [ ] Optimistic batching ensures that the batch size is always equal to the requested maximum events per batch.
+- [x] Optimistic batching respects policy settings on a best-effort basis, often leading to smaller batch sizes at low event rates.
+- [ ] Optimistic batching operates with flexible semantics, allowing partial success of a batch delivery.
+- [ ] Optimistic batching is responsible for handling events that cannot be delivered to the endpoint.
+- [ ] Optimistic batching requires both the Maximum events per batch and Approximate batch size in kilobytes to be specified.
+
+Answer: Optimistic batching results in smaller batch sizes at low event rates.  
+Event Grid works on _All-or-None_ policy, no partial delivery allowed when batching.  
+It's not necessary to specify both the settings (Maximum events per batch and Approximate batch size in kilobytes).
+
+---
