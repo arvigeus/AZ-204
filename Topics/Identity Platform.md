@@ -124,6 +124,7 @@ When building web apps or public client apps that require a broker, ensure to se
 IPublicClientApplication app = PublicClientApplicationBuilder.Create(clientId).Build();
 
 // Confidential application that handles tokens from Microsoft Azure users using a shared client secret for identification.
+// Example: A daemon application that does not interact with the user and acts on its own behalf, like a service accessing Graph API
 IConfidentialClientApplication app = ConfidentialClientApplicationBuilder.Create(clientId)
     .WithClientSecret(clientSecret)
     .WithRedirectUri(redirectUri )

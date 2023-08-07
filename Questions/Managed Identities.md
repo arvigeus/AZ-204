@@ -17,3 +17,98 @@ Question: A client app requests managed identities for an access token for a giv
 
 Answer: The token is based on the managed identities for Azure resources service principal.  
 Oauth 2.0 is a protocol that can be used to acquire a token, but isn't the basis for the token.
+
+---
+
+You are the administrator of an Azure SQL database that is set up to allow Azure AD-based access. You want your developers to connect to this database using Microsoft SQL Server Management Studio (SSMS) using their on-premises Active Directory credentials without frequent (minimizing) login prompts. Which approach should you adopt?
+
+- [ ] Azure AD B2C.
+- [ ] Azure Conditional Access.
+- [x] Active Directory integrated authentication.
+- [ ] Azure AD guest user access.
+- [ ] Azure AD token.
+
+Answer: Active Directory integrated authentication allows seamless authentication using on-premises AD credentials.  
+Azure AD B2C is designed for customer identity access, not for on-premises AD integration.  
+Azure Conditional Access sets access policies but doesn't ensure seamless on-premises AD authentication.  
+Azure AD guest user access allows external users to access company resources, not related to on-premises AD authentication.  
+Azure AD token can be used for Azure SQL Database, they would not necessarily reduce the number of authentication prompts.
+
+---
+
+Question: You are managing an Azure subscription and want to delegate the management of virtual machines to a user, but you don't want to give them access to other resources. Which role should you assign to the user?
+
+- [ ] Owner
+- [ ] Contributor
+- [x] Virtual Machine Contributor
+- [ ] Reader
+
+Answer: The Virtual Machine Contributor role allows a user to create and manage virtual machines, but not the virtual network or storage account they're connected to. The Owner and Contributor roles would give the user access to all resources, not just virtual machines. The Reader role would only allow the user to view resources, not manage them.
+
+---
+
+Question: You have assigned a user the Reader role at the subscription scope. Later, you decide to assign the same user the Contributor role at a resource group scope within that subscription. However, you want to limit their Contributor access to only certain resources within the resource group. What should you do?
+
+- [x] Assign the Contributor role at the resource scope for the specific resources.
+- [ ] Remove the Reader role at the subscription scope.
+- [ ] Assign the Contributor role at the subscription scope.
+- [ ] Assign the Reader role at the resource scope for the specific resources.
+
+Answer: Assigning the Contributor role at the resource scope for the specific resources would limit the user's Contributor access to those resources. The other options would either broaden the user's access or limit their access too much.
+
+---
+
+Question: What is the effect of assigning the Reader role at the subscription scope to a user who already has the Contributor role at a resource group scope within that subscription?
+
+- [x] The user will have Contributor access to the resource group and Reader access to the rest of the subscription.
+- [ ] The user will have Reader access to the entire subscription, including the resource group.
+- [ ] The user will have Contributor access to the entire subscription.
+- [ ] The user will have both Reader and Contributor access to the entire subscription.
+
+Answer: Azure RBAC is an additive model, so a user's effective permissions are the sum of their role assignments. However, a more specific scope (like a resource group) takes precedence over a broader scope (like a subscription). So in this case, the user would have Contributor access to the resource group and Reader access to the rest of the subscription.
+
+---
+
+Question: What is a security principal in Azure RBAC?
+
+- [ ] A collection of permissions
+- [ ] The set of resources that the access applies to
+- [x] An object that represents a user, group, service principal, or managed identity
+- [ ] The process of attaching a role definition to a user, group, service principal, or managed identity
+
+Answer: A security principal in Azure RBAC is an object that represents a user, group, service principal, or managed identity that is requesting access to Azure resources. It's not a collection of permissions (that's a role definition), it's not the set of resources that the access applies to (that's scope), and it's not the process of attaching a role definition to a user, group, service principal, or managed identity (that's a role assignment).
+
+---
+
+Question: You have assigned a user the Contributor role at the resource group scope. Later, you decide to assign a deny assignment at the subscription scope that blocks the user from deleting resources. However, you want to allow the user to delete resources within a specific resource group. What should you do?
+
+- [ ] Assign the Contributor role at the subscription scope.
+- [ ] Remove the deny assignment at the subscription scope.
+- [ ] Assign the Owner role at the resource group scope.
+- [ ] Allow delete operations for the resource group.
+- [x] None of the listed.
+
+Answer: Deny assignments in Azure RBAC take precedence over role assignments. Therefore, even if the user has the Contributor or Owner role at the resource group scope, the deny assignment at the subscription scope would still block them from deleting resources. The only way to allow the user to delete resources within the specific resource group would be to remove (not applicable per requirement) or change the scope of the deny assignment at the subscription scope (not listed). Allowing delete operations for the resource group would not override the deny assignment at the subscription scope.
+
+---
+
+Question: You have developed a web API hosted on Azure App Services. You are required to secure this web API using OAuth 2.0 and integrate it with your organization's Azure AD tenant. Which two actions should you take?
+
+- [x] Register an application in Azure AD.
+- [x] Configure an Azure API Management instance.
+- [ ] Create an application proxy.
+- [ ] Establish an Azure VPN Gateway.
+- [ ] Implement Azure Traffic Manager.
+
+Answer:
+
+- **Register an application in Azure AD**: Essential for setting up OAuth 2.0 authentication.
+- **Configure an Azure API Management instance**: Can validate OAuth tokens and manage APIs.
+
+Incorrect options:
+
+- **Create an application proxy**: Used for accessing on-premises web applications remotely, not for OAuth 2.0 setup.
+- **Establish an Azure VPN Gateway**: Connects on-premises networks to Azure, not used for OAuth 2.0 setup.
+- **Implement Azure Traffic Manager**: Manages distribution of user traffic, not related to OAuth 2.0 setup.
+
+---

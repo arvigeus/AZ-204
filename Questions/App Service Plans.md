@@ -415,3 +415,16 @@ Question: Which Azure Monitor log types are only supported on `Premium` (and abo
 - [x] AppServiceAntivirusScanAuditLogs
 
 Answer: Anti-virus scan logs using Microsoft Defender and File changes made to the site content
+
+---
+
+Question: When you execute the following command `az webapp create --name MyWebApp --plan D1 --resource-group MyResourceGroup` you notice that page load times are longer during peak traffic hours. You aim to automate scaling when the CPU load surpasses 80 percent, ensuring minimal costs. Which az cli command should you execute first?
+
+- [ ] `az monitor autoscale create --resource MyWebApp --condition "Percentage CPU > 80 avg 5m`
+- [ ] `az appservice plan update --name <YourPlanName> --resource-group MyResourceGroup --sku P1v2
+- [x] `az appservice plan update --name <YourPlanName> --resource-group MyResourceGroup --sku S1
+- [ ] None of the listed. You need to switch to Consumption plan first.
+
+Answer: The app is on Shared plan, Standard is the minimum for autoscale (`--sku S1`).
+
+---

@@ -40,3 +40,32 @@ Answer: Enable a System-assigned Managed Identity for 'mySensitiveFunction' and 
 System-assigned Managed Identities are automatically managed by Azure and provide an identity for your Azure resource. This ensures that only the Azure resource can access the secrets in the Key Vault, without any risk of credential exposure. The other options involve storing sensitive information in environment variables, which can potentially be accessed by unauthorized users, thus they are not secure.
 
 ---
+
+Question: You have downloaded an Azure Functions codebase that is set to be triggered by an HTTP request. This function needs to access a database, and for that, it requires a connection string. You need to ensure the connection string is not stored in plain text within the code or configuration files. You are preparing to create the necessary components to achieve your goal. Which of the following should you create to achieve your goal? Answer by selecting the correct options from the list below.
+
+- [x] Azure Key Vault
+- [x] Access Policy
+- [ ] Azure Active Directory Identity Protections
+- [ ] Azure Storage Account
+- [ ] Azure Policy
+
+Answer: **Azure Key Vault**: Provides secure storage for secrets like connection strings. **Access Policy**: Determines access to secrets in Azure Key Vault.  
+Azure Active Directory Identity Protections: Focuses on risk-based conditional access, not secret storage.  
+Azure Storage Account: Used for data storage, not secret storage.  
+Azure Policy: Evaluates resource properties against business rules, not for secret storage.
+
+---
+
+Question: Your organization is migrating sensitive data to Azure and has decided to use Azure Key Vault for secure storage. To enhance data protection, the IT team wants to ensure that if any key vault or its associated objects are unintentionally deleted, they can be recovered. Moreover, they want to ensure that once an item is marked as deleted, it cannot be permanently removed until a specified retention period elapses. Which Azure CLI commands should the IT team execute to implement these protective measures?
+
+- [x] `az keyvault update --name <YourKeyVaultName> --enable-soft-delete true`
+- [x] `az keyvault update --name <YourKeyVaultName> --enable-purge-protection true`
+- [ ] `az keyvault create --name <YourKeyVaultName> --retention-days 90`
+- [ ] `az keyvault set-policy --name <YourKeyVaultName> --object-id <ObjectId> --key-permissions purge`
+- [ ] `az keyvault backup --name <YourKeyVaultName> --file <BackupFileName>`
+- [ ] `az keyvault delete --name <YourKeyVaultName> --force-immediate`
+
+Answer: You need to enablesoft delete (`--enable-soft-delete true`) and purge protection (`--enable-purge-protection true`)  
+`az keyvault create --name <YourKeyVaultName> --retention-days 90` is not a valid command  
+`az keyvault set-policy --name <YourKeyVaultName> --object-id <ObjectId> --key-permissions purge` grants a user the permission to purge objects from the Key Vault. However, it doesn't prevent purging during the retention period.  
+`az keyvault delete --name <YourKeyVaultName> --force-immediate` is not a valid command
