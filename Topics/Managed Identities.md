@@ -62,10 +62,21 @@ Both system-assigned and user-assigned managed identities can be assigned specif
 az role assignment create --assignee <PrincipalId> --role <RoleName> --scope <Scope>
 ```
 
-- **Contributor**: Grants full access to manage all resources, but does not allow you to assign roles in Azure RBAC, manage assignments in Azure Blueprints, or share image galleries.
+[Roles](<(https://docs.microsoft.com/en-us/azure/role-based-access-control/role-definitions)>) can be high-level, like owner, or specific, like virtual machine reader.
+
 - **Owner**: Grants full access to manage all resources, including the ability to assign roles in Azure RBAC.
+- **Contributor**: Grants full access to manage all resources, but does not allow you to assign roles in Azure RBAC, manage assignments in Azure Blueprints, or share image galleries.
 - **Reader**: Allows you to view all resources, but does not allow you to make any changes.
 - **User Access Administrator**: Lets you manage user access to Azure resources.
+
+Roles can be assigned at different [scopes](https://docs.microsoft.com/en-us/azure/role-based-access-control/scope-overview), which could be a management group, a subscription, a resource group, or a single resource. Scope is the set of resources that the access applies to. When you assign a role, you can further limit the actions allowed by defining a scope. This is helpful if you want to make someone a Website Contributor, but only for one resource group. The scope at which the role is assigned determines what resources the user, group, or application has access to.
+
+- **Management Group Scope**: This is the highest level of scope. When you assign a role at this level, the access is applied to all the subscriptions and resources under that management group. It's useful for providing access across many subscriptions.
+- **Subscription Scope**: When you assign a role at the subscription level, the access is applied to all resource groups and resources within that subscription. It's useful when you want to provide access across all resources in a single subscription.
+- **Resource Group Scope**: When you assign a role at the resource group level, the access is applied to all resources within that resource group. It's useful when you want to provide access to a specific group of resources organized within the same resource group.
+- **Resource Scope**: This is the lowest level of scope. When you assign a role at this level, the access is applied only to that specific resource. It's useful when you want to limit access to a single resource, like a virtual machine, storage account, or database.
+
+[Deny assignments](https://docs.microsoft.com/en-us/azure/role-based-access-control/deny-assignments) block users from performing specified actions even if a role assignment grants them access. **Deny assignments take precedence over role assignments**.
 
 ## Acquiring an Access Token with Azure Managed Identities
 

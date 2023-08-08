@@ -32,7 +32,7 @@ Groups control product visibility to developers. API Management has three unchan
 
 Apart from system groups, admins can form custom groups or use external groups from related Azure Active Directory tenants.
 
-## API Gateways
+## [API Gateways](https://learn.microsoft.com/en-us/azure/architecture/microservices/design/gateway)
 
 API gateways, such as Azure's API Management gateway, manage communication between clients and multiple front- and back-end services, which eliminates the need for clients to know specific endpoints. These gateways streamline service integration, particularly when services are updated or introduced. They also take care of tasks like SSL termination, authentication, and rate limiting. Azure's API Management gateway specifically proxies API requests, enforces policies, and gathers telemetry data.
 
