@@ -81,6 +81,12 @@ If permissions haven't been granted before by the user or the administrator on b
 
 It allows you to set extra security measures or conditions before users can access a service or app. This could mean multi-factor authentication, device restrictions (enrolled in Microsoft's Intune service), or certain physical locations or IP ranges.
 
+Requires _Premium_ tier.
+
+Risk-based policies require access to Azure AD Identity Protection, which is an Azure AD Premium P2 feature.
+
+When licenses required for Conditional Access expire, the policies aren't automatically disabled or deleted. They remain active and can be viewed and deleted, but they can no longer be updated.
+
 Apps typically don't require any changes to adhere to these conditions. However, in certain instances, especially when an app must access a service indirectly or silently, code modifications may be necessary.
 
 Examples:
