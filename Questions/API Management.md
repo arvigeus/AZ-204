@@ -23,3 +23,14 @@ The forward-request policy forwards the incoming request to the backend service 
 The return-response policy aborts pipeline execution and returns either a default or custom response to the caller.
 
 ---
+
+Question: Your organization offers web services to third-party clients. These services require non-anonymous access, authentication through OpenID Connect, and are accessed via APIs. To ensure secure Azure AD authentication, you decide to base it on a specific value embedded in the request query parameter. Which policy within Azure API Management should you enforce to meet this requirement?
+
+- [ ] check-header
+- [x] validate-jwt
+- [ ] set-header
+- [ ] control-client-flow
+
+Answer: The JWT Validation or "validate-jwt" policy in Azure API Management is used to validate the JWT (JSON Web Token) extracted from a specified HTTP Header or a URI query parameter. In this scenario, it allows you to securely support Azure AD authentication based on a value passed as a request query parameter. The other options do not provide this specific functionality.
+
+---

@@ -71,3 +71,36 @@ Question: In Azure AD, what happens to Conditional Access policies when the lice
 Answer: When licenses required for Conditional Access expire, the policies aren't automatically disabled or deleted. They remain active and can be viewed and deleted, but they can no longer be updated.
 
 ---
+
+Question: You are developing an application that uses Azure Active Directory for authentication. The application needs to authorize users based on their group membership in the organization. The application should receive this information in the user's token when they authenticate. How would you configure your application in Azure AD to achieve this?
+
+- [ ] Enable the `OAuth2AllowImplicitFlow` attribute in the application manifest.
+- [ ] Set the `requiredResourceAccess` attribute in the application manifest to include the group IDs.
+- [x] Configure the `groupMembershipClaims` attribute in the application manifest.
+- [ ] Add the group IDs to the `knownClientApplications` attribute in the application manifest.
+
+Answer: `groupMembershipClaims` is used to emit group claims in the token that the application receives when a user authenticates. The other options do not directly influence the emission of group claims in the token.
+
+---
+
+Question: You are developing an application that uses Azure Active Directory for authentication. The application needs to authorize users based on their group membership in the organization. However, due to the large number of groups in your organization, you want to limit the groups included in the user's token to only Security Groups. How would you configure the `groupMembershipClaims` attribute in your application's manifest in Azure AD to achieve this?
+
+- [ ] Set `groupMembershipClaims` to `All`
+- [ ] Set `groupMembershipClaims` to `None`
+- [x] Set `groupMembershipClaims` to `SecurityGroup`
+- [ ] Set `groupMembershipClaims` to `DirectoryRole`
+
+Answer: Set `groupMembershipClaims` to `SecurityGroup` will ensure that only Security Group memberships are included in the user's token. The other options either include too many groups ("All"), no groups ("None"), or a different type of group ("DirectoryRole").
+
+---
+
+Question: In the context of Azure Active Directory, which of the following statements correctly describes the difference between AppRoles and Groups?
+
+- [ ] AppRoles and Groups are both specific to an application and are removed when the application is removed.
+- [ ] AppRoles are specific to an Azure AD tenant, while Groups are specific to an application.
+- [x] AppRoles are specific to an application and are removed with the app registration, while Groups are tenant-specific and persist even after the app is removed.
+- [ ] Groups are removed with the app registration, while AppRoles are tenant-specific and persist even after the app is removed.
+
+Answer: AppRoles are specific to an application and are removed with the app registration, while Groups are tenant-specific and persist even after the app is removed.
+
+---
