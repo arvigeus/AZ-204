@@ -8,6 +8,8 @@ A Shared Access Signature (SAS) is a URI that grants restricted access rights to
 
 1. [**Service SAS**](https://learn.microsoft.com/en-us/azure/storage/blobs/sas-service-create-dotnet): This method uses your storage account key to create a SAS. It's a straightforward way to grant limited access to your Azure Storage resources. However, it's less secure than the User Delegation SAS because it involves sharing your account key. It's typically used when you want to provide access to clients who are not authenticated with Azure AD.
 
+1. [**Account (SAS)**](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-sas-create-dotnet): This method uses your storage account key to create a SAS. It's created at the storage account level, allowing access to multiple services within the account. It's typically used when you need to provide access to several services in your storage account. However, it involves sharing your account key, similar to the Service SAS.
+
 ## How SAS Works
 
 A SAS requires two components: a URI to the resource you want to access and a SAS token that you've created to authorize access to that resource.
@@ -141,6 +143,31 @@ Uri blobSASURIService = blobClient.GenerateSasUri(sasBuilder);
 var blobClientSASService = new BlobClient(blobSASURIService);
 ```
 
+Account SAS:
+
+````cs
+var sharedKeyCredential = new StorageSharedKeyCredential("<account-name>", "<account-key>");
+
+// Create a SAS token that's valid for one day
+var sasBuilder = new AccountSasBuilder()
+{
+    Services = AccountSasServices.Blobs | AccountSasServices.Queues,
+    ResourceTypes = AccountSasResourceTypes.Service,
+    ExpiresOn = DateTimeOffset.UtcNow.AddDays(1),
+    Protocol = SasProtocol.Https
+};
+sasBuilder.SetPermissions(AccountSasPermissions.Read | AccountSasPermissions.Write);
+
+// Use the key to get the SAS token
+// NOTE: You can pass sharedKeyCredential to ToSasQueryParameters (also valid for Service SAS)
+var sasToken = sasBuilder.ToSasQueryParameters(sharedKeyCredential).ToString();
+
+// Create a BlobServiceClient object with the account SAS appended
+var blobServiceURI = $"https://{accountName}.blob.core.windows.net";
+var blobServiceClientAccountSAS = new BlobServiceClient(
+    new Uri($"{blobServiceURI}?{sasToken}"));
+    ```
+
 ```ps
 # Assign the necessary permissions to the user
 az role assignment create \
@@ -172,4 +199,4 @@ az storage blob generate-sas \
 az storage account revoke-delegation-keys \
  --name <storage-account> \
  --resource-group <resource-group>
-```
+````
