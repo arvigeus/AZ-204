@@ -153,3 +153,159 @@ Question: Which of the following is NOT a function of the Microsoft Authenticati
 Answer: MSAL does not provide proactive security threat alerts as this is typically handled by dedicated security tools or systems, and it doesn't automatically resolve API versioning conflicts as this is typically a function of the API management or the individual application logic. The API is unified across platforms.
 
 ---
+
+Question: You have an application registered in Azure AD and you have configured `appsettings.json` as follows:
+
+```json
+{
+  "clientId": "your-client-id",
+  "tenantId": "your-tenant-id"
+}
+```
+
+Your application is currently configured to perform requests to Microsoft Graph API on behalf of a user. Here is the relevant code snippet:
+
+```cs
+private static IAuthenticationProvider CreateAuthorizationProvider(string authType)
+{
+    var config = new ConfigurationBuilder()
+        .SetBasePath(System.IO.Directory.GetCurrentDirectory())
+        .AddJsonFile("appsettings.json", false, true).Build();
+
+    List<string> scopes = new List<string>();
+    scopes.Add(clientId + "/.default");
+
+    IPublicClientApplication client;
+    string authority = $"https://login.microsoftonline.com/{config.tenantId}/v2.0";
+
+    client = PublicClientApplicationBuilder.Create(config.clientId)
+                .WithAuthority(new Uri(authority))
+                .Build();
+
+    return MsalAuthenticationProvider.GetInstance(client, scopes.ToArray());
+}
+```
+
+However, your application is evolving into a service application (daemon) that needs to access Microsoft Graph API on behalf of itself, not on behalf of a user. Additionally, due to varying security requirements across different environments, your application needs to support both client secret and client certificate for authentication. The `authType` parameter in the `CreateAuthorizationProvider` function is intended to determine the authentication method, but it is currently unused.
+
+How should you modify the `appsettings.json` and the code to meet these new requirements?
+
+Answer: You should modify `appsettings.json` to include the client secret, path, and password of your client certificate:
+
+```json
+{
+  "clientId": "your-client-id",
+  "tenantId": "your-tenant-id",
+  "clientSecret": "your-client-secret",
+  "certificatePath": "path-to-your-certificate.pfx",
+  "certificatePassword": "your-certificate-password"
+}
+```
+
+The code should be modified as follows:
+
+```cs
+private static IAuthenticationProvider CreateAuthorizationProvider(string authType)
+{
+    var config = new ConfigurationBuilder()
+        .SetBasePath(System.IO.Directory.GetCurrentDirectory())
+        .AddJsonFile("appsettings.json", false, true).Build();
+
+    List<string> scopes = new List<string>();
+    scopes.Add(clientId + "/.default");
+
+    IConfidentialClientApplication client;
+    string authority = $"https://login.microsoftonline.com/{config.tenantId}/v2.0";
+
+    ConfidentialClientApplicationBuilder builder = ConfidentialClientApplicationBuilder.Create(config.clientId)
+                .WithAuthority(new Uri(authority));
+
+    if (authType == "secret")
+        client = builder.WithClientSecret(config.clientSecret).Build();
+    else if (authType == "certificate")
+    {
+        X509Certificate2 certificate = new X509Certificate2(config.certificatePath, config.certificatePassword);
+        client = builder.WithCertificate(certificate).Build();
+    }
+    else
+        throw new ArgumentException("Invalid authentication type");
+
+    return MsalAuthenticationProvider.GetInstance(client, scopes.ToArray());
+}
+```
+
+Remember to upload the certificate to the Azure AD App registration in the Azure portal. This approach is more secure than using a client secret, as the certificate is harder to compromise. However, it requires more setup, as you need to create, manage, and renew the certificate.
+
+---
+
+Question: You have a Microsoft Azure subscription in which you want to deploy a .NET Core v3.1 model-view controller (MVC) application. You add the following authorization policies in your Startup.ConfigureServices method:
+
+```csharp
+services.AddAuthorization(options =>
+{
+    options.AddPolicy("EmployeePolicy", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireRole("Employee");
+    });
+    options.AddPolicy("ReatailPolicy", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireRole("Manager");
+        policy.RequireClaim("Department", "Sales");
+    });
+    options.AddPolicy("AreaPolicy", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireClaim("Department");
+    });
+});
+```
+
+How should you assign the authorization directives in the code, based on requirements stated in comments? Fill in the blanks:
+
+```cs
+// All users with both the `Employee` and `Manager` roles should always be allowed
+[Authorize(/* ... */)]
+public class EmployeeController : Controller
+{
+    public IActionResult Index() => Content("Employee Controller");
+}
+
+public class SalesController : Controller
+{
+    // Users with the `Manager` role and with a `Department` claim of `Sales`
+    [Authorize(/* ... */)]
+    public IActionResult ManageSales() => Content("Sales Management");
+}
+
+public class DepartmentController : Controller
+{
+    // Users with `Department` claim
+    [Authorize(/* ... */)]
+    public IActionResult ManageDepartment() => Content("Department Management");
+}
+```
+
+Answer:
+
+```cs
+[Authorize(Roles = "Employee")]
+[Authorize(Roles = "Manager")]
+public class EmployeeController : Controller
+{
+    public IActionResult Index() => Content("Employee Controller");
+}
+
+public class SalesController : Controller
+{
+    [Authorize(Policy = "ReatailPolicy")]
+    public IActionResult ManageSales() => Content("Sales Management");
+}
+
+public class DepartmentController : Controller
+{
+    [Authorize(Policy = "AreaPolicy")]
+    public IActionResult ManageDepartment() => Content("Department Management");
+}
+```

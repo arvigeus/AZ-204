@@ -150,3 +150,79 @@ Confidential client application only:
 | ------------------------------------------------ | ---------------------------------------------------------------------------------------------- |
 | `.WithCertificate(X509Certificate2 certificate)` | Sets the certificate identifying the application with Azure Active Directory.                  |
 | `.WithClientSecret(string clientSecret)`         | Sets the client secret (app password) identifying the application with Azure Active Directory. |
+
+## ASP.NET Core Authorization: Working with Roles, Claims, and Policies
+
+- [**Roles**](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/roles?view=aspnetcore-3.1): A role represents a group of users that have certain privileges as defined by the role.
+- [**Claims**](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/claims?view=aspnetcore-3.1): A claim is a name-value pair that represents what the subject is, not what the subject can do.
+- [**Policies**](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/policies?view=aspnetcore-3.1): A policy is a function that can look at a user's identity and decide whether they are authorized to perform a given action.
+
+```cs
+// Startup.cs
+public void ConfigureServices(IServiceCollection services)
+{
+    // Define policies
+    services.AddAuthorization(options =>
+    {
+        options.AddPolicy("ClientsOnly", policy =>
+        {
+            policy.RequireAuthenticatedUser(); // Requires the user to be authenticated
+            policy.RequireRoles("PrivateClient", "CorporateClient"); // Requires ANY of these listed roles
+            policy.RequireClaim("SubscriptionTier", "free", "basic", "premium"); // Requires ANY of the values for SubscriptionTier
+        });
+        options.AddPolicy("FreeloadersOnly", policy =>
+        {
+            policy.RequireAuthenticatedUser();
+            policy.RequireRole("PrivateClient");
+            policy.RequireClaim("SubscriptionTier", "free");
+        });
+        options.AddPolicy("EmployeeOnly", policy => policy.RequireClaim("EmployeeNumber")); // Requires EmployeeNumber claim
+        options.AddPolicy("AdminOnly", policy => policy.RequireRole("Administrator")); // Requires Administrator role
+    });
+}
+
+// LoginController.cs
+[HttpPost]
+public async Task<IActionResult> Login(LoginViewModel model)
+{
+  // Checks omitted for brevity
+  var user = await _userManager.FindByNameAsync(model.Username);
+  var claim = new Claim("EmployeeNumber", "123");
+  await _userManager.AddClaimAsync(user, claim);
+}
+
+// ClientController.cs
+[Authorize(Policy = "ClientsOnly")] // Allow premium clients only
+public class AdminController : Controller
+{
+    public IActionResult Index() => Content("Client Panel");
+}
+
+// CorporateController.cs
+[Authorize(Role = "CorporateClient")] // Allow corporate clients only
+public class AdminController : Controller
+{
+    public IActionResult Index() => Content("Corporate Panel");
+}
+
+// WorkController.cs
+[Authorize(Policy = "EmployeeOnly")] // Apply EmployeeOnly policy
+public class WorkController : Controller
+{
+    public IActionResult Index() => Content("Work Details");
+}
+
+// AdminController.cs
+[Authorize(Policy = "AdminOnly")] // Apply AdminOnly policy
+public class AdminController : Controller
+{
+    public IActionResult Index() => Content("Admin Panel");
+}
+
+[Authorize(Policy = "ClientsOnly")] // Clients only that also have "Administrator" role (AND)
+[Authorize(Roles = "Administrator")]
+public class ClientAdminController : Controller
+{
+    public IActionResult Index() => Content("ClientAdmin Panel");
+}
+```
