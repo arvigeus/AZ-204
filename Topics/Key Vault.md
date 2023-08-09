@@ -60,6 +60,27 @@ For secure access to Azure Key Vault secrets, restricted to a single Azure resou
 
 Azure Key Vault uses Transport Layer Security (TLS) for data transit protection. Perfect Forward Secrecy (PFS - protects connections between customer and cloud services by unique keys) and RSA-based 2,048-bit encryption key lengths secure connections.
 
+## [Certificates](https://learn.microsoft.com/en-us/azure/key-vault/certificates/quick-create-net)
+
+Create an access policy for your key vault that grants certificate permissions to your user account:
+
+```ps
+az keyvault set-policy --name <your-key-vault-name> --upn user@domain.com --certificate-permissions delete get list create purge
+```
+
+Store and retieve certificates:
+
+```cs
+var client = new CertificateClient(new Uri($"https://{keyVaultName}.vault.azure.net"), new DefaultAzureCredential());
+
+// Create certificate
+var operation = await client.StartCreateCertificateAsync(certificateName, CertificatePolicy.Default);
+await operation.WaitForCompletionAsync();
+
+// Retrieve
+var certificate = await client.GetCertificateAsync(certificateName);
+```
+
 ## Best Practices
 
 - Use a separate vault for each application and environment.

@@ -43,3 +43,25 @@ Question: Which of the following features is NOT provided by Azure App Configura
 Answer: Azure App Configuration does not offer granular access policies, unlike Key Vault.
 
 ---
+
+Question: In Azure App Configuration, when loading configuration and using multiple `.Select()` calls, how does the order of these calls affect the values that are used if a key with the same name exists in both labels? Consider the following code snippet used to load configuration from Azure App Configuration:
+
+```csharp
+builder.Configuration.AddAzureAppConfiguration(options =>
+{
+    options.Connect(connectionString)
+           // Select a subset of the configuration keys
+           .Select("TestApp:*", LabelFilter.Null)
+           .Select("TestApp:*", "dev");
+});
+```
+
+- [ ] Only the last `.Select()` is considered. Values with keys starting with "TestApp:" and the label "dev" will be used; all values with no label will be discarded.
+- [ ] Only the first `.Select()` is considered. Values with keys starting with "TestApp:" and the label "dev" will not be loaded.
+- [ ] Both labeled and unlabeled values will be merged; if the same key exists in both, only the value from the first `.Select()` (no label) will be considered, and "dev" will not override them.
+- [x] Both labeled and unlabeled values will be merged; if the same key exists in both, values from the last `Select()` ("dev" label) will override the existing (no label).
+- An exception will be thrown
+
+Answer: Merge and override previous values
+
+---

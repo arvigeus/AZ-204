@@ -148,3 +148,19 @@ az keyvault update --name "<keyvault-id>" --resource-group "MyResourceGroup" --e
 az keyvault key create --name "myKEK" --vault-name "<keyvault-id>" --kty RSA --size 4096
 az vm encryption enable -g "MyResourceGroup" --name "myLinuxVM" --disk-encryption-keyvault "<keyvault-id>" --key-encryption-key "myKEK"
 ```
+
+---
+
+Question: How to create an access policy for your key vault that grants certificate permissions to your user account?
+
+```ps
+az keyvault
+```
+
+Answer:
+
+```ps
+az keyvault set-policy --name <your-key-vault-name> --upn user@domain.com --certificate-permissions delete get list create purge
+```
+
+---

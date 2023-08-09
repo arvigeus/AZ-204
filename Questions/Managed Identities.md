@@ -112,3 +112,50 @@ Incorrect options:
 - **Implement Azure Traffic Manager**: Manages distribution of user traffic, not related to OAuth 2.0 setup.
 
 ---
+
+Question: You are managing various applications across different platforms, and you have implemented both user-assigned and system-assigned managed identities in Azure. You need to determine which of the following statements accurately describes the capabilities of these managed identities:
+
+- [ ] User-assigned managed identities can be assigned to resources hosted in any cloud platform, while system-assigned managed identities can only be assigned to Azure resources.
+- [ ] Both user-assigned and system-assigned managed identities can be assigned to resources hosted in any cloud platforms.
+- [x] Both user-assigned and system-assigned managed identities can only be assigned to resources hosted in the Azure cloud.
+
+Answer: Managed identities can only be assigned to resources hosted in the Azure cloud. You cannot assign a managed identity to instances of any AWS services.
+
+---
+
+Question: Which of the following workflows are suitable for using system-assigned identities in Azure?
+
+- [x] A single-instance web application hosted on an Azure Virtual Machine, requiring access to an Azure SQL Database for storing user data. The identity is used to authenticate and authorize the VM to access the database without storing credentials in the code.
+- [x] Three separate Azure Functions, each with a unique task such as processing orders, sending notifications, and generating reports. Each function requires access to different Azure resources, and the identity is used to manage permissions independently for each function.
+- [x] An analytics application running exclusively on a single Azure VM, tasked with retrieving and processing data from Azure Blob Storage. The identity is used to authenticate the VM to the Blob Storage, allowing secure access without manual credential management.
+- [ ] A distributed e-commerce application running on multiple Azure VMs, all needing to access the same Azure Key Vault to retrieve encryption keys for securing customer data. The identity is shared across all VMs.
+- [ ] An Azure Logic App designed to automate the provisioning of new VMs for a development environment, requiring pre-authorization to a specific Azure Storage Account where deployment scripts are stored. The identity is used to grant immediate access to the storage account upon VM creation.
+- [ ] A containerized microservices application running on Azure Kubernetes Service, where containers are frequently scaled up and down. The identity ensures that permissions to access a shared Azure Queue remain consistent across all containers.
+- [ ] A cluster of VMs running a big data processing application, all needing to read and write data to the same Azure Data Lake for a weather analysis project. The identity is shared across all VMs, allowing them to collectively access the Data Lake with the same permissions.
+
+Answer: Common use cases for system-assigned identities:
+
+- Workloads contained within a single Azure resource.
+- Workloads needing independent identities.
+- For example, an application that runs on a single virtual machine.
+
+---
+
+Question: Which of the following workflows are suitable for using user-assigned identities in Azure?
+
+- [ ] A single-instance web application hosted on an Azure Virtual Machine, requiring access to an Azure SQL Database for storing user data. The identity is used to authenticate and authorize the VM to access the database without storing credentials in the code.
+- [ ] Three separate Azure Functions, each with a unique task such as processing orders, sending notifications, and generating reports. Each function requires access to different Azure resources, and the identity is used to manage permissions independently for each function.
+- [ ] An analytics application running exclusively on a single Azure VM, tasked with retrieving and processing data from Azure Blob Storage. The identity is used to authenticate the VM to the Blob Storage, allowing secure access without manual credential management.
+- [x] A distributed e-commerce application running on multiple Azure VMs, all needing to access the same Azure Key Vault to retrieve encryption keys for securing customer data. The identity is shared across all VMs.
+- [x] An Azure Logic App designed to automate the provisioning of new VMs for a development environment, requiring pre-authorization to a specific Azure Storage Account where deployment scripts are stored. The identity is used to grant immediate access to the storage account upon VM creation.
+- [x] A containerized microservices application running on Azure Kubernetes Service, where containers are frequently scaled up and down. The identity ensures that permissions to access a shared Azure Queue remain consistent across all containers.
+- [x] A cluster of VMs running a big data processing application, all needing to read and write data to the same Azure Data Lake for a weather analysis project. The identity is shared across all VMs, allowing them to collectively access the Data Lake with the same permissions.
+
+Answer: Common use cases for user-assigned identities:
+
+- Workloads that run on multiple resources and can share a single identity.
+- Workloads needing pre-authorization to a secure resource, as part of a provisioning flow.
+- Workloads where resources are recycled frequently, but permissions should stay consistent.
+- For example, a workload where multiple virtual machines need to access the same resource.
+
+---

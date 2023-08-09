@@ -186,7 +186,7 @@ private static IAuthenticationProvider CreateAuthorizationProvider(string authTy
 }
 ```
 
-However, your application is evolving into a service application (daemon) that needs to access Microsoft Graph API on behalf of itself, not on behalf of a user. Additionally, due to varying security requirements across different environments, your application needs to support both client secret and client certificate for authentication. The `authType` parameter in the `CreateAuthorizationProvider` function is intended to determine the authentication method, but it is currently unused.
+However, your application is evolving into a service application (daemon) that needs to access Microsoft Graph API on behalf of itself, not on behalf of a user. Additionally, due to varying security requirements across different environments, your application needs to support both client secret and client certificate for authentication. The `authType` parameter in the `CreateAuthorizationProvider` function is intended to determine the authentication method, but it is currently unused. Certificate must by obtained by name (`MyCertificate.pfx` - stored in configuration) from KeyVault account `cert-holder`.
 
 How should you modify the `appsettings.json` and the code to meet these new requirements?
 
@@ -197,8 +197,7 @@ Answer: You should modify `appsettings.json` to include the client secret, path,
   "clientId": "your-client-id",
   "tenantId": "your-tenant-id",
   "clientSecret": "your-client-secret",
-  "certificatePath": "path-to-your-certificate.pfx",
-  "certificatePassword": "your-certificate-password"
+  "certificateName": "MyCertificate.pfx"
 }
 ```
 
@@ -224,7 +223,9 @@ private static IAuthenticationProvider CreateAuthorizationProvider(string authTy
         client = builder.WithClientSecret(config.clientSecret).Build();
     else if (authType == "certificate")
     {
-        X509Certificate2 certificate = new X509Certificate2(config.certificatePath, config.certificatePassword);
+        var client = new CertificateClient(new Uri("https://cert-holder.vault.azure.net"), new DefaultAzureCredential());
+        var certificate = await client.GetCertificateAsync(config.certificateName);
+        // Alt: X509Certificate2 certificate = new X509Certificate2(config.certificatePath, config.certificatePassword);
         client = builder.WithCertificate(certificate).Build();
     }
     else
@@ -233,8 +234,6 @@ private static IAuthenticationProvider CreateAuthorizationProvider(string authTy
     return MsalAuthenticationProvider.GetInstance(client, scopes.ToArray());
 }
 ```
-
-Remember to upload the certificate to the Azure AD App registration in the Azure portal. This approach is more secure than using a client secret, as the certificate is harder to compromise. However, it requires more setup, as you need to create, manage, and renew the certificate.
 
 ---
 
