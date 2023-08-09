@@ -141,3 +141,42 @@ Content-Type is a response header but it's not always mandatory. It is used to s
 If-Match is not a mandatory response header. It's a request header used with requests that are conditionally based on the ETag header, for instance, when implementing optimistic concurrency control. It is used to ensure that the client is modifying a resource that hasn't been changed by someone else since it was last fetched.
 
 ---
+
+Question: You are developing a web application that will utilize Microsoft Graph to interact with Microsoft 365 services. The application must be restricted to performing read operations solely on the resources belonging to the authenticated user. You have already granted the `User.Read` permission. How should you set up the permission constraint in Microsoft Graph to meet this requirement?
+
+- [ ] Apply the `User` constraint.
+- [ ] Specify the `Read.All` constraint.
+- [ ] Implement the `Files` constraint.
+- [x] Leave the constraint part blank.
+- [ ] Use the User.ReadBasic.All permission.
+
+Answer: By leaving the constraint part blank, the `User.Read` permission will only allow the app to perform read operations on the signed-in user's profile, without any additional constraints.  
+`Files` and `User` are not applicable to `User.Read`.  
+`All` gives access to everything.  
+`User.ReadBasic.All` grants access to all users' basic information.
+
+---
+
+Question: The app is granted the `Calendars.Read` permission to access Microsoft 365 calendar services from your new web app through Microsoft Graph. You need to ensure that the app can not only access the calendars owned by the signed-in user but also the calendars that other users have shared with the signed-in user. How should you configure the permission?
+
+- [ ] Apply rhe `ReadWrite` constraint.
+- [x] Apply the `Shared`` constraint.
+- [ ] Leave the constraint blank.
+- [ ] Use the User.Read permission.
+
+Answer: The correct way to ensure that the app can read both the calendars owned by the signed-in user and the calendars that other users have shared with the signed-in user is to use the `Calendars.Read.Shared` permission.
+
+---
+
+Question: Which of the following permissions require admin consent?
+
+- [x] AppCatalog.Submit
+- [x] BusinessScenarioConfig.Read.OwnedBy
+- [x] Calendars.ReadBasic
+- [ ] Calendars.Read.Shared
+- [ ] Users.Read
+- [x] Users.Read.All
+
+Answer: Rule of thumb - everything ending with ".All".
+
+---

@@ -162,3 +162,32 @@ var newCalendar = await graphClient.Me.Calendars
     .Request()
     .AddAsync(new Calendar() { /* ... */});
 ```
+
+## Token acquisition flow
+
+- **Acquire an Authorization Code**: `GET https://login.microsoftonline.com/{tenant}/oauth2/authorize`
+- **Acquire an Access Token**: `POST https://login.microsoftonline.com/customer.com/oauth2/token`
+- **Call Microsoft Graph**:
+
+  ```http
+  GET https://graph.microsoft.com/beta/users
+  Authorization: Bearer <token>
+  ```
+
+## [Permissions](https://learn.microsoft.com/en-us/graph/permissions-reference)
+
+`<Resource>.<Permission>` or `<Resource>.<Permission>.<Optional-Constrain>`
+
+Example for `Users`:
+
+- Current user: `User.Read`, `User.ReadWrite`
+- All users (require admin consent): `User.Read.All`, `User.ReadWrite.All`, `User.ReadBasic.All` (no admin consent)
+
+The optional `All` sonstrain grants access to all users.
+
+Example for `Calendars`:
+
+- Current user's calendars: `Calendars.Read`, `Calendars.ReadWrite`
+- Calendars shared with current user: `Calendars.Read.Shared`, `Calendars.ReadWrite.Shared`
+
+The optional `Shared` constrain grants access to calendars user has access to, there is no `All` contrain.

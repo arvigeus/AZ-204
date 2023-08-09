@@ -16,6 +16,7 @@ Key Vault is managed through Azure Resource Manager. Azure role-based access con
 var client = new KeyClient(vaultUri: new Uri(vaultUrl), credential: new DefaultAzureCredential());
 KeyVaultSecret secret = await client.GetSecretAsync("<YourSecretName>");
 string secretValue = secret.Value;
+KeyVaultKey key = (await client.GetKeyAsync("<YourSecretName>")).Value; // returns key with additional metadata
 
 // The CryptographyClient allows for cryptographic operations (encrypting and decrypting data, signing and verifying signatures, wrapping and unwrapping keys, etc.), using a key stored in Azure Key Vault.
 CryptographyClient  cryptoClient = client.GetCryptographyClient(key.Name, key.Properties.Version);
@@ -31,7 +32,7 @@ DecryptResult decryptResult = cryptoClient.Decrypt(EncryptionAlgorithm.RsaOaep, 
 
 ### Access Model
 
-Access to a key vault is controlled through two interfaces: the management plane (for managing Key Vault itself) and the data plane (for working with the data stored in a key vault). Both planes use Azure Active Directory (Azure AD) for authentication. For authorization, the management plane uses Azure role-based access control (Azure RBAC) and the data plane uses a Key Vault access policy and Azure RBAC for Key Vault data plane operations.
+Access to a key vault is controlled through two interfaces: the management plane (for managing Key Vault itself) and the data plane (for working with the data stored in a key vault). Both planes use Azure Active Directory (Azure AD) for authentication. For authorization, the management plane uses Azure role-based access control (Azure RBAC) and the data plane uses a [Key Vault access policy](https://learn.microsoft.com/en-us/azure/key-vault/general/assign-access-policy?tabs=azure-portal) and [Azure RBAC](https://learn.microsoft.com/en-us/azure/key-vault/general/rbac-guide?tabs=azure-cli) for Key Vault data plane operations.
 
 ### Authentication
 
@@ -82,7 +83,7 @@ az group create --name "myResourceGroup" --location eastus
 
 # Create a key vault in the same region and tenant as the VMs to be encrypted.
 # The key vault will be used to control and manage disk encryption keys and secrets.
-az keyvault create --name "<keyvault-id>" --resource-group "myResourceGroup" --location "eastus" --enabled-for-disk-encryption
+az keyvault create --name "<keyvault-id>" --resource-group "myResourceGroup" --location "eastus"
 
 # Update the key vault's advanced access policies
 az keyvault update --name "<keyvault-id>" --resource-group "MyResourceGroup" --enabled-for-disk-encryption "true"
@@ -183,3 +184,9 @@ public static async Task<IActionResult> Run(
     return new OkResult();
 }
 ```
+
+## CLI
+
+- [az keyvault set-policy](https://learn.microsoft.com/en-us/cli/azure/keyvault?view=azure-cli-latest#az-keyvault-set-policy)
+- [az keyvault secret](https://learn.microsoft.com/en-us/cli/azure/keyvault/secret?view=azure-cli-latest)
+- [az keyvault key](https://learn.microsoft.com/en-us/cli/azure/keyvault/key?view=azure-cli-latest)

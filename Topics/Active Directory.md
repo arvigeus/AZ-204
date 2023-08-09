@@ -15,6 +15,10 @@
 
 [Azure AD Application Proxy](https://learn.microsoft.com/en-us/azure/active-directory/app-proxy/what-is-application-proxy) provides secure remote access to on-premises applications.
 
+[Azure AD Connect](https://en.wikipedia.org/wiki/Azure_AD_Connect) allows you to synchronize an AD tenant with an on-premises AD domain.
+
+[Azure AD Enterprise Application](https://learn.microsoft.com/en-us/azure/active-directory/manage-apps/add-application-portal) allow you to integrate other applications with Azure AD, including your own apps.
+
 ## [Multi-Factor Authentication](https://learn.microsoft.com/en-us/azure/active-directory/authentication/concept-mfa-licensing)
 
 All Microsoft 365 plans can enable Azure AD Multi-Factor Authentication for all users.

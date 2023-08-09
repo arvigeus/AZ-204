@@ -1,6 +1,8 @@
 # [Azure App Configuration](https://learn.microsoft.com/en-us/azure/azure-app-configuration/)
 
-Azure App Configuration, complementing Azure Key Vault's application secrets storage, provides a centralized service for managing application settings and feature flags. It simplifies the implementation of hierarchical configuration data management and distribution across various environments and geographies, enables dynamic application settings adjustments without redeployment or restart, and allows real-time control of feature availability. All data is encrypted at rest and in transit.
+Azure App Configuration, complementing Azure Key Vault's application secrets storage, provides a centralized service for managing application settings and feature flags. It simplifies the implementation of hierarchical configuration data management and distribution across various environments and geographies, enables dynamic application settings adjustments without redeployment or restart, and allows real-time control of feature availability. _All data is encrypted_ at rest and in transit. Unlike KeyVault, it does not offer hardware level encryption (available in Premium tier), granular access policies, and management environments.
+
+You can both import and export configuration information between Azure App Configuration and separate files. Additionally, you can set up different configuration stores for various environments like development, test, and production, allowing you to manage applications throughout their lifecycle.
 
 ## Azure App Configuration: Key-Value Pairs
 
@@ -202,7 +204,11 @@ Prerequisites:
 - Azure Key Vault with soft-delete and purge-protection
 - An unexpired, enabled RSA or RSA-HSM key in the Key Vault with wrap and unwrap capabilities
 
-After setup, assign a managed identity to the App Configuration and grant it `GET`, `WRAP`, and `UNWRAP` permissions in the Key Vault's access policy.
+After setup, assign a managed identity to the App Configuration and grant it `GET`, `WRAP`, and `UNWRAP` (permits decrypting previously wrapped keys) permissions in the Key Vault's access policy:
+
+```ps
+az keyvault set-policy --name 'MyVault' --object-id 'userObjectId' --key-permissions get list --secret-permissions get list
+```
 
 ## Managed Identities for Easy Access
 
@@ -232,4 +238,16 @@ builder.Configuration.AddAzureAppConfiguration(options =>
 });
 ```
 
-fter the initialization, you can access the values of Key Vault references in the same way you access the values of regular App Configuration keys.
+After the initialization, you can access the values of Key Vault references in the same way you access the values of regular App Configuration keys.
+
+## Import / Export configureation
+
+Import all keys and feature flags from a file and apply test label: `az appconfig kv import -n MyAppConfiguration --label test -s file --path D:/abc.json --format json`
+
+Export all keys and feature flags with label test to a json file: `az appconfig kv export -n MyAppConfiguration --label test -d file --path D:/abc.json --format json`
+
+## CLI
+
+- [az appconfig kv import](https://learn.microsoft.com/en-us/cli/azure/appconfig/kv?view=azure-cli-latest#az-appconfig-kv-import)
+- [az appconfig kv export](https://learn.microsoft.com/en-us/cli/azure/appconfig/kv?view=azure-cli-latest#az-appconfig-kv-export)
+- [az appconfig identity](https://learn.microsoft.com/en-us/cli/azure/appconfig/identity?view=azure-cli-latest)

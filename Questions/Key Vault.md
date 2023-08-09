@@ -69,3 +69,82 @@ Answer: You need to enablesoft delete (`--enable-soft-delete true`) and purge pr
 `az keyvault create --name <YourKeyVaultName> --retention-days 90` is not a valid command  
 `az keyvault set-policy --name <YourKeyVaultName> --object-id <ObjectId> --key-permissions purge` grants a user the permission to purge objects from the Key Vault. However, it doesn't prevent purging during the retention period.  
 `az keyvault delete --name <YourKeyVaultName> --force-immediate` is not a valid command
+
+---
+
+Question: Your organization is developing a secure application that involves handling confidential data. You have been tasked with the following requirements:
+
+1. Establish a connection to a remote vault service to manage sensitive keys and secrets.
+1. Retrieve a designated secret from the vault.
+1. Obtain a specific cryptographic key from the vault.
+1. Use the obtained key to perform the following cryptographic operations:
+   - Add the secret value to a given plaintext message, then encrypt it using an asymmetric encryption algorithm.
+   - Decrypt the resulting ciphertext using the same algorithm.
+
+Provide the code to fulfill these requirements, adhering to industry standards for secure communication and cryptographic practices.
+
+```cs
+var vaultUrl = "https://<your-key-vault-name>.vault.azure.net/";
+var credential = new DefaultAzureCredential();
+var secretKeyName = "<YourSecretName>";
+var plaintext = "<To be encrypted>";
+var encryptionAlgorithm = EncryptionAlgorithm.RsaOaep;
+
+// Code here
+```
+
+Answer:
+
+```cs
+var vaultUrl = "https://<your-key-vault-name>.vault.azure.net/";
+var credential = new DefaultAzureCredential();
+var secretKeyName = "<YourSecretName>";
+var plaintext = "<To be encrypted>";
+var encryptionAlgorithm = EncryptionAlgorithm.RsaOaep;
+
+var client = new KeyClient(vaultUri: new Uri(vaultUrl), credential: credential);
+KeyVaultSecret secret = await client.GetSecretAsync(secretKeyName;
+string secretValue = secret.Value;
+
+var keyResponse = await client.GetKeyAsync(secretKeyName);
+KeyVaultKey key = keyResponse.Value;
+CryptographyClient cryptoClient = client.GetCryptographyClient(key.Name, key.Properties.Version);
+EncryptResult encryptResult = cryptoClient.Encrypt(encryptionAlgorithm, Encoding.UTF8.GetBytes(plaintext + secretValue));
+DecryptResult decryptResult = cryptoClient.Decrypt(encryptionAlgorithm, encryptResult.Ciphertext);
+```
+
+---
+
+Question: You are an Azure administrator responsible for managing a Key Vault named 'SecureVault'. A new application needs to securely store, retrieve, and manage cryptographic keys within 'SecureVault'. The application must be able to encrypt keys before storing them, decrypt keys when retrieving them, and also have the ability to retrieve key information. You need to configure the appropriate permissions for the application's managed identity using the az keyvault set-policy command. Which permissions should you grant to the application's managed identity in the Key Vault's access policy?
+
+- [x] WRAP
+- [x] UNWRAP
+- [x] GET
+- [ ] LIST
+- [ ] UPDATE
+- [ ] RECOVER
+- [ ] RESTORE
+- [ ] SIGN
+- [ ] VERIFY
+
+Answer: `az keyvault set-policy --name 'SecureVault' --object-id 'applicationObjectId' --key-permissions wrapKey unwrapKey get`
+
+---
+
+Question: Your company is preparing to deploy an application on an Azure Linux virtual machine (VM) named myLinuxVM, and there is a requirement to configure Azure Disk Encryption. You have created a resource group named myResourceGroup in the East US region.
+
+To achieve the desired configuration, you need to use a key encryption key (KEK) to protect the encryption secret and enable the Key Vault for both disk encryption and template deployments.
+
+```ps
+# Code here
+```
+
+Answer:
+
+```ps
+az keyvault create --name "<keyvault-id>" --resource-group "myResourceGroup" --location "eastus"
+az keyvault update --name "<keyvault-id>" --resource-group "MyResourceGroup" --enabled-for-disk-encryption "true"
+az keyvault update --name "<keyvault-id>" --resource-group "MyResourceGroup" --enabled-for-template-deployment "true"
+az keyvault key create --name "myKEK" --vault-name "<keyvault-id>" --kty RSA --size 4096
+az vm encryption enable -g "MyResourceGroup" --name "myLinuxVM" --disk-encryption-keyvault "<keyvault-id>" --key-encryption-key "myKEK"
+```
