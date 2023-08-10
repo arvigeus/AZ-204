@@ -8,6 +8,8 @@ Question: What is the lowest service tier of Azure Cache for Redis recommended f
 
 Answer: The standard tier is the lowest tier that offers replication，which is always recommended for production scenarios.
 
+---
+
 Question: Which of the following represents the expire time resolution when applying a time to live (TTL) to a key in Redis?
 
 - [x] 1-millisecond
@@ -16,3 +18,168 @@ Question: Which of the following represents the expire time resolution when appl
 
 Answer: The expire time resolution is always 1 millisecond.  
 Expirations can be set using seconds or milliseconds precision, but the expire time resolution is always 1 millisecond.
+
+---
+
+Question: Your company is developing an ASP.NET web application that requires a simple and fast method to store session state information. The application is not expected to scale, and there's no need for distributed storage. You need to identify the best method to store session state. What should you use?
+
+- [x] In Memory Cache
+- [ ] Sql Server
+- [ ] CosmoDB
+- [ ] Cache for Redis at Standard Tier
+- [ ] Cache for Redis at Premium Tier
+
+Answer: Simple and fast, suitable for non-scalable applications.
+
+---
+
+Question: Your company is developing an ASP.NET web application that requires storing session state information in persistent storage. The application must be scalable, and performance is a concern. Additionally, the solution must support concurrent access to the same session state data and be optimized for use with relational databases. You need to identify the best method to store session state. What should you use?
+
+- [ ] In Memory Cache
+- [x] Sql Server
+- [ ] CosmoDB
+- [ ] Cache for Redis at Standard Tier
+- [ ] Cache for Redis at Premium Tier
+
+Answer: allows for scalability, persistent storage, and can be configured for concurrent access, making it suitable for performance-sensitive applications that use relational databases.  
+NOTE: CosmoDB is theoretically _possible_, but it's more complex to set up, more expensive to run.
+
+---
+
+Question: Your company is developing an ASP.NET web application that requires a scalable and fast method to store session state information. The application must handle transient network failures and support concurrent access to the same session state data. Additionally, the solution must be optimized for cost. You need to identify the best method to store session state. What should you use?
+
+- [ ] In Memory Cache
+- [ ] Sql Server
+- [ ] CosmoDB
+- [x] Cache for Redis at Standard Tier
+- [ ] Cache for Redis at Premium Tier
+
+Answer: Combines simplicity, speed, scalability, supports concurrent access, and is optimized for cost, making it suitable for handling transient network failures.
+
+---
+
+Question: Your company is developing an ASP.NET web application that requires a highly scalable, fast, and premium method to store session state information. The application must handle transient network failures, provide advanced features, and support concurrent access to the same session state data. Additionally, the solution must offer higher performance capabilities. You need to identify the best method to store session state. What should you use?
+
+- [ ] In Memory Cache
+- [ ] Sql Server
+- [ ] CosmoDB
+- [ ] Cache for Redis at Standard Tier
+- [x] Cache for Redis at Premium Tier
+
+Answer: Offers premium features, scalability, speed, supports concurrent access, and provides higher performance capabilities, making it suitable for handling transient network failures.
+
+---
+
+Question: After acquiring Twitter, Elon Musk, in a moment of alcohol-induced "inspiration", decides to rename it to **X** and then change it's session storage to be something more "Musk-esque". He wants a solution that not only flaunts his financial prowess but also gives the engineers hell, all while ensuring that his tweets would eventually reach his followers on Mars (when the infrastructure is there). He demands global distribution, concurrent access, and the possible ability to scale beyond Earth's boundaries (internal note from the engineering team: "Nope!"). What decision should he force upon the poor Twitter... errr... _X_ engineers to use for session storage, considering that they could only use currently existing solutions, because making them building something from the ground up would likely cause mass resignations?
+
+- [ ] In Memory Session State Provider:
+- [ ] SQL Server Session State Provider
+- [ ] Cache for Redis at Premium Tier
+- [ ] A Giant Neural Network Powered by Starlink Satellites
+- [ ] A Custom-Built Database Using Tesla Batteries
+- [x] Azure Cosmos DB
+- [ ] A Room Full of Floppy Disks Managed by a Team of Robots
+
+Answer: While the other extravagant options might appeal to Musk's sense of innovation and flair, Cosmos DB is the only realistic solution that currently exists and meets the requirements of global distribution, scalability, and concurrent access, while being totally unsuited for that in terms of cost and complexity (e.g. "Musk-esque").
+
+---
+
+Question: Write a code to verify the connection to Azure Cache for Redis:
+
+```cs
+var connectionString = "[cache-name].redis.cache.windows.net:6380,password=[password-here],ssl=True,abortConnect=False";
+// Code here
+```
+
+Answer:
+
+```cs
+var connectionString = "[cache-name].redis.cache.windows.net:6380,password=[password-here],ssl=True,abortConnect=False";
+using (var redisConnection = ConnectionMultiplexer.Connect(connectionString))
+{
+    var db = redisConnection.GetDatabase();
+    db.Execute("PING");
+}
+```
+
+---
+
+Question: You are developing a .NET application that uses Redis for caching. You need to set a variable named "userData" to the value "JohnDoe123" and ensure that this value expires after one hour. Write down the Redis commands you would use to achieve this.
+
+```ps
+# Redis here
+```
+
+Answer:
+
+```ps
+SET userData JohnDoe123
+EXPIRE userData 3600
+```
+
+---
+
+Question: You are developing a .NET application in C# that uses Redis for caching. You need to set a variable named "userData" to the value "JohnDoe123" and ensure that this value expires after one hour. Write down the C# code using the Redis SDK that you would use to achieve this.
+
+```cs
+//Code here
+```
+
+Answer:
+
+```cs
+var connectionString = "[cache-name].redis.cache.windows.net:6380,password=[password-here],ssl=True,abortConnect=False";
+using (var redisConnection = ConnectionMultiplexer.Connect(connectionString))
+{
+    var db = redisConnection.GetDatabase();
+    db.StringSet("userData", "JohnDoe123", TimeSpan.FromHours(1));
+}
+```
+
+---
+
+Question: Given the following code:
+
+```redis
+SET userData JohnDoe123
+EXPIRE userData 60
+```
+
+When will `userData` expire?
+
+- [ ] 60ms
+- [x] 60s
+- [ ] 60h
+- [ ] 60 days
+
+Answer: `EXPIRE key seconds [NX | XX | GT | LT]`
+
+---
+
+Question: You are a developer for a company that uses Redis for caching user information. Due to security compliance requirements, user data should not be persisted in the cache for more than one minute. If the key already exists, the expiration time should not be updated. Which of the following Redis commands would you use to set the expiration time for a key named userData to one minute and only apply the command if the key does not exist?
+
+- [ ] EXPIRE userData 60 EX
+- [x] EXPIRE userData 60 NX
+- [ ] EXPIRE userData 60 XX
+- [ ] EXPIRE userData 1 EX
+- [ ] EXPIRE userData 1 NX
+- [ ] EXPIRE userData 1 XX
+
+Answer: `NX` when key does not exist, 60 seconds
+
+---
+
+Question: For your new web application, you're setting up the `maxmemory` policy directive in Azure Cache for Redis. How can you configure the eviction policy to target the least recently used keys first when the memory limit is met, specifically among the keys with an expiration set? What should be the selected policy for the maxmemory-policy directive?
+
+- [ ] noeviction
+- [ ] allkeys-lru
+- [ ] allkeys-lfu
+- [x] volatile-lru
+- [ ] volatile-lfu
+- [ ] allkeys-random
+- [ ] volatile-random
+- [ ] volatile-ttl
+
+Answer: volatile: if expiration is set; lru - least recently used.
+
+---

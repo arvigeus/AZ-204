@@ -44,6 +44,23 @@ public async Task<MyEntity> GetMyEntityAsync(int id)
 - **Enterprise**: These high-performance caches are powered by Redis Labs' Redis Enterprise software. They support Redis modules like RediSearch, RedisBloom, and RedisTimeSeries, and offer even greater availability than the Premium tier.
 - **Enterprise Flash**: This tier provides cost-effective large caches powered by Redis Labs' Redis Enterprise software. It extends Redis data storage to nonvolatile memory on a VM, which is cheaper than DRAM, reducing the overall per-GB memory cost.
 
+## [Session State Providers](https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-aspnet-session-state-provider)
+
+- In Memory: Simple and fast. Not scalable, as it's not distributed.
+- SQL Server: Allows for scalability and persistent storage. Can affect performance, though In-Memory OLTP can improve it.
+- Distributed In Memory (e.g., Azure Cache for Redis): Combines simplicity, speed, and scalability. Must consider characteristics like transient network failures.
+
+```xml
+<sessionState mode="Custom" customProvider="MySessionStateStore">
+  <providers>
+    <add name="MySessionStateStore" type="Microsoft.Web.Redis.RedisSessionStateProvider"
+         host=""
+         accessKey=""
+         ssl="true" />
+  </providers>
+</sessionState>
+```
+
 ## Working with Redis
 
 Create cache:
@@ -99,6 +116,31 @@ OK
 (nil)
 ```
 
+`EXPIRE key seconds [NX | XX | GT | LT]`:
+
+- NX: Set expiry only when the key has no expiry
+- XX: Set expiry only when the key has an existing expiry
+- GT: Set expiry only when the new expiry is greater than current one
+- LT: Set expiry only when the new expiry is less than current one
+
+## [Key eviction](https://redis.io/docs/reference/eviction/)
+
+Redis's `maxmemory` directive controls memory usage, and its eviction policies (such as LRU and LFU) automatically remove old data as new data is added.
+
+Example: `maxmemory 100mb`
+
+Certainly! Here's a more generalized version of the provided text:
+
+- **noeviction**: Retains data up to memory limit; applies to primary databases with replication.
+- **allkeys-lru**: Maintains recent keys; discards least recent.
+- **allkeys-lfu**: Retains frequent keys; discards least frequent.
+- **volatile-{lru/lfu}**: Removes least recent/frequent keys if _expiration is set_.
+- **allkeys-random**: Deletes keys randomly for new data.
+- **volatile-random**: Randomly removes keys if _expiration is set_.
+- **volatile-ttl**: Removes keys with the shortest TTL (_expiration is set_).
+
+Note: volatile is for when _expiration is set_.
+
 ## Access a Redis cache from a client
 
 Retrieve the required information from the Azure portal under **Settings > Access Keys**:
@@ -114,6 +156,7 @@ IDatabase db = redisConnection.GetDatabase(); // lightweight object
 
 var success = db.StringSet("favorite:flavor", "i-love-rocky-road");
 var value = db.StringGet("favorite:flavor");
+db.StringSet("userData", "JohnDoe123", TimeSpan.FromHours(1)); // Set TTL
 
 redisConnection.Dispose();
 ```
@@ -166,3 +209,7 @@ bool added = db.StringSet("key", serializedValue);
 var result = db.StringGet("key");
 var stat = Newtonsoft.Json.JsonConvert.DeserializeObject<MyCustomClass>(result.ToString());
 ```
+
+## Other operations
+
+- `Set-AzRedisCache -ResourceGroupName ResourceGroupName -Name CacheName -Size 2.5GB` - change size
