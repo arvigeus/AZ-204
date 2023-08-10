@@ -10,9 +10,11 @@ There are [limits](https://docs.microsoft.com/en-us/azure/azure-resource-manager
 
 Azure CDN offers features like _dynamic site acceleration_, _caching rules_, _HTTPS custom domain support_, _diagnostics logs_, _file compression_, and _geo-filtering_.
 
-## [Content Caching and Optimization](https://learn.microsoft.com/en-us/azure/frontdoor/front-door-caching)
+## [Caching](https://learn.microsoft.com/en-us/azure/cdn/cdn-how-caching-works)
 
-### Content Caching
+Caching occurs both at the browser level and on edge servers situated near the user. While browser caches store data for individual users, a CDN utilizes a shared cache that allows a file requested by one user to be cached for others. Dynamic resources that change frequently are optimized through dynamic site acceleration (DSA). Caching can occur at various levels, including web servers, CDNs, and Internet service providers, each managing its resource freshness. Specific cache-directive headers and validators like ETag and Last-Modified can be used to control caching behavior.
+
+### Time to live
 
 Content is cached based on the `Time to Live` (TTL), which is determined by the `Cache-Control` header from the origin server. If the content's age is less than the TTL, it's considered fresh and delivered to the client directly from the cache. If it's older, it's deemed stale, and a fresh copy is fetched from the server. If no TTL is set, Azure CDN assigns a default TTL value, which can be further modified by caching rules. Default TTL varies according to the type of optimization:
 
@@ -32,21 +34,7 @@ az cdn endpoint purge \
     --resource-group ExampleGroup
 ```
 
-Additionally, you can preload assets into an endpoint to enhance user experience, as shown below:
-
-```ps
-az cdn endpoint load \
-    --content-paths '/img/*' '/js/module.js' \
-    --name ContosoEndpoint \
-    --profile-name DemoProfile \
-    --resource-group ExampleGroup
-```
-
-### Geo-filtering
-
-Geo-filtering allows for the control of content access by country/region codes. The **Standard** tier allows only site-wide allowance or blocking, while the **Verizon** and **Akamai** tiers offer additional directory path restrictions.
-
-### Caching Rules
+### [Caching Rules](https://learn.microsoft.com/en-us/azure/cdn/cdn-caching-rules)
 
 Caching rules provide configuration options for your content at the endpoint level. The options vary depending on the selected tier.
 
@@ -63,6 +51,32 @@ The caching behavior for query strings can be adjusted in the `Caching rules > E
 - **Cache every unique URL**: When a client generates a unique URL, that URL is passed back to the origin server, and the response is cached with its own TTL. This method is inefficient for unique URL requests as the cache-hit ratio becomes low.
 
 Other tiers of Azure CDN provide additional configuration options.
+
+### [Cache purging](https://learn.microsoft.com/en-us/azure/cdn/cdn-purge-endpoint)
+
+To ensure users always get the latest version of your content, you can either version your assets by giving them new URLs with each update or purge the old content from the servers. Versioning lets the CDN fetch new assets right away, while purging forces all servers to get updated content. This might be needed for web app updates or quick corrections. Purging only removes content from the main servers, not from places like local browser caches. To make sure users get the latest file, you can give it a unique name each time you update it or use special caching techniques.
+
+Deleting and recreating a CDN endpoint is another way to purge the content, effectively clearing the cached content from edge servers. Note that this method may disrupt content delivery and requires reconfiguration of the endpoint, so it's typically used as a last resort or in specific scenarios.
+
+### Preload assets
+
+```ps
+az cdn endpoint load \
+    --content-paths '/img/*' '/js/module.js' \
+    --name ContosoEndpoint \
+    --profile-name DemoProfile \
+    --resource-group ExampleGroup
+```
+
+### Geo-filtering
+
+Geo-filtering allows for the control of content access by country/region codes. The **Standard** tier allows only site-wide allowance or blocking, while the **Verizon** and **Akamai** tiers offer additional directory path restrictions.
+
+## [Features](https://learn.microsoft.com/en-us/azure/cdn/cdn-features)
+
+**Premium Verison only**: Advanced HTTP reports, Real-time stats, Edge node performance, Real-time alerts
+**Standard Versizon and Premium only**: Bring your own certificate, Asset pre-loading
+**Standard Microsoft only**: Brotli compression
 
 ## Working with SDK
 

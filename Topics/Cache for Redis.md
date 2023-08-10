@@ -10,6 +10,28 @@ Offers both the open-source OSS Redis and a commercial Redis Enterprise as a man
 - **Job and message queuing**: Queue tasks that take time to execute, deferring longer operations to be processed in sequence, often by another server. This is known as task queuing.
 - **Distributed transactions**: Execute a series of commands against a backend data-store as a single atomic operation using Azure Cache for Redis' support for transactions.
 
+## [Caching](https://learn.microsoft.com/en-us/azure/architecture/best-practices/caching)
+
+| Feature           | Private Caching                                | Shared Caching                                           |
+| ----------------- | ---------------------------------------------- | -------------------------------------------------------- |
+| **Definition**    | Stores data locally on a specific computer.    | Common source accessible by multiple processes/machines. |
+| **Accessibility** | Specific to one instance or user.              | Accessible to multiple instances or applications.        |
+| **Speed**         | Generally faster (local access).               | May be slower (not held locally).                        |
+| **Scalability**   | Limited; each instance has its own cache.      | Highly scalable; can be distributed across servers.      |
+| **Consistency**   | Can lead to inconsistencies between instances. | Ensures consistent view of cached data.                  |
+| **Complexity**    | Simpler to implement and manage.               | May add complexity (separate cache service).             |
+| **Use Cases**     | Static data; single user/session specific.     | Frequently accessed data by multiple users/applications. |
+
+### Cache expiration
+
+Data in a cache is usually a copy of the original data. If the original changes, the cached data can become outdated. Caching systems often allow you to set expiration times to keep data fresh.
+
+Eviction Policies:
+
+- Most-Recently-Used: (LIFO) Assumes data won't be needed again.
+- First-In-First-Out: Oldest data is removed first.
+- Explicit Removal: Based on triggered events like data modification.
+
 ### [**Cache-Aside Pattern**](https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside)
 
 A strategy to load data into a cache from a data store on demand, improving performance and maintaining data consistency. If data is not in the cache, it's retrieved from the data store and added to the cache. If data is updated, it's modified in the data store and the corresponding cache item is invalidated. Use Cache-Aside when a cache doesn't provide native read-through and write-through operations, or when resource demand is unpredictable. If the data is static and fits in the cache, better load it at startup and prevent it from expiring. Avoid this pattern for caching session state in a web farm to prevent client-server affinity dependencies.
