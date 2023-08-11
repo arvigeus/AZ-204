@@ -261,7 +261,7 @@ Example: Create an alert that will notify you via email if the web app becomes u
 
 `Portal > Application Insights resource > Availability > Add Test option > Rules (Alerts) > set action group for availability alert > Configure notifications (email, SMS)`
 
-## Troubleshoot app performance by using Application Map
+## [Troubleshoot app performance by using Application Map](https://learn.microsoft.com/en-us/azure/azure-monitor/app/app-map?tabs=net)
 
 Application Map is a tool for identifying app issues, visualizing app parts, and providing comprehensive health metrics, alerts, and diagnostic insights, with Azure service links if used in your app. It terms each deployable part of your app as a "component," allowing developers and operations teams to review performance data.
 
