@@ -257,7 +257,11 @@ Application Insights can be activated via Auto-Instrumentation (agent) or by inc
 - [Standard test (Preview)](https://learn.microsoft.com/en-us/azure/azure-monitor/app/availability-standard-tests): Similar to URL ping, this single request test covers SSL certificate validity, proactive lifetime check, HTTP request verb (`GET`, `HEAD`, or `POST`), custom headers, and associated data.
 - [Custom TrackAvailability test](https://learn.microsoft.com/en-us/azure/azure-monitor/app/availability-azure-functions): Custom TrackAvailability test: For custom application availability tests, employ the [TrackAvailability()](https://learn.microsoft.com/en-us/dotnet/api/microsoft.applicationinsights.telemetryclient.trackavailability) method to send results to Application Insights. Ideal for `multi-request` or `authentication` test scenarios.
 
-## Troubleshoot app performance by using Application Map
+Example: Create an alert that will notify you via email if the web app becomes unresponsive:
+
+`Portal > Application Insights resource > Availability > Add Test option > Rules (Alerts) > set action group for availability alert > Configure notifications (email, SMS)`
+
+## [Troubleshoot app performance by using Application Map](https://learn.microsoft.com/en-us/azure/azure-monitor/app/app-map?tabs=net)
 
 Application Map is a tool for identifying app issues, visualizing app parts, and providing comprehensive health metrics, alerts, and diagnostic insights, with Azure service links if used in your app. It terms each deployable part of your app as a "component," allowing developers and operations teams to review performance data.
 

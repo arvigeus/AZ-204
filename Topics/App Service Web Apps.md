@@ -592,6 +592,19 @@ Logs written to .txt, .log, or .htm files in `/LogFiles`. Note, some logs may ap
 
 CLI: `az webapp log tail ...`
 
+### [Monitoring apps](https://learn.microsoft.com/en-us/azure/app-service/web-sites-monitor)
+
+Metrics: CPU Percentage, Memory Percentage, Data In, Data Out - used across all instances of the plan (**not a single app!**).
+
+Example: `Metric: CPU Percentage; Resource: <AppServicePlanName>`
+
+```ps
+az monitor metrics list --resource <app_service_plan_resource_id> --metric "Percentage CPU" --time-grain PT1M --output table
+```
+
+CPU Time is valuable for apps on Free or Shared plans, where quotas are set by app's CPU minutes usage.  
+The CPU percentage is valuable for apps on Basic, Standard, and Premium plans, providing insights into usage across scalable instances.
+
 ### [Health Checks](https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check?tabs=dotnet)
 
 Health Check pings the specified path every minute. If an instance fails to respond with a valid status code after 10 requests, it's marked unhealthy and removed from the load balancer. If it recovers, it's returned to the load balancer. If it stays unhealthy for an hour, it's replaced (only for Basic+).
@@ -643,3 +656,4 @@ For private endpoints check if `x-ms-auth-internal-token` request header equals 
 - [az webapp log](https://learn.microsoft.com/en-us/cli/azure/webapp/log?view=azure-cli-latest)
 - [az webapp config storage-account](https://learn.microsoft.com/en-us/cli/azure/webapp/config/storage-account?view=azure-cli-latest)
 - [az webapp list-runtimes](https://learn.microsoft.com/en-us/cli/azure/webapp?view=azure-cli-latest#az-webapp-list-runtimes)
+- [az monitor metrics](https://learn.microsoft.com/en-us/cli/azure/monitor/metrics?view=azure-cli-latest)

@@ -88,3 +88,65 @@ Question: What rule should be used to cache this URL: `https://myapi.azure-api.n
 Answer: This looks like user endpoint, `Authorization` header could be used.
 
 ---
+
+Question: In what unit is renewal period for Rate limiting / Quota policy?
+
+- [ ] Milliseconds
+- [x] Seconds
+- [ ] Minutes
+- [ ] Hours
+- [ ] Days
+
+Answer: Seconds
+
+---
+
+Question: In what unit is the bandwidth limit in Quota policy?
+
+- [x] KB
+- [ ] MB
+- [ ] GB
+
+Answer: KB
+
+---
+
+Question: You are developing an API that needs to restrict a single client IP address to only 10 calls every minute, with a total of 100 calls and 100 MB of bandwidth per hour. Which policies should you implement to achieve this requirement?
+
+- [x] `<rate-limit-by-key calls="10" renewal-period="60" counter-key="@(context.Request.IpAddress)" />`
+- [ ] `<rate-limit-by-key calls="10" renewal-period="1" counter-key="@(context.Request.IpAddress)" />`
+- [ ] `<rate-limit calls="10" renewal-period="60" />`
+- [ ] `<rate-limit calls="10" renewal-period="1" />`
+- [x] `<quota-by-key calls="100" bandwidth="100000" renewal-period="3600" counter-key="@(context.Request.IpAddress)" />`
+- [ ] `<quota-by-key calls="100" bandwidth="100" renewal-period="60" counter-key="@(context.Request.IpAddress)" />`
+- [ ] `<quota-by-key calls="100" bandwidth="100" renewal-period="3600" counter-key="@(context.Request.IpAddress)" />`
+- [ ] `<quota-by-key calls="100" bandwidth="100000" renewal-period="60" counter-key="@(context.Request.IpAddress)" />`
+- [ ] `<quota calls="100" bandwidth="100000" renewal-period="3600" />`
+- [ ] `<quota calls="100" bandwidth="100" renewal-period="60" />`
+- [ ] `<quota calls="100" bandwidth="100" renewal-period="3600" />`
+- [ ] `<quota calls="100" bandwidth="100000" renewal-period="60" />`
+- [ ] `<ip-filter action="forbid"><address>"@(context.Request.IpAddress)"</address></ip-filter>`
+- [ ] `<ip-filter action="allow"><address>"@(context.Request.IpAddress)"</address></ip-filter>`
+
+Answer: `rate-limit-by-key` and `quota-by-key`, units in seconds and KB, `counter-key="@(context.Request.IpAddress)"`.
+
+---
+
+Question: You are working on an API where an end user is authenticated, and you need to generate a throttling key based on information that uniquely identifies that user. The requirement is to limit the calls to 10 every minute, with a total of 100 calls and 100 MB of bandwidth per hour. Which policies should you implement to achieve this requirement?
+
+- [x] `<rate-limit-by-key calls="10" renewal-period="60" counter-key="@(context.Request.Headers.GetValueOrDefault(\"Authorization\",\"").AsJwt()?.Subject)" />`
+- [ ] `<rate-limit-by-key calls="10" renewal-period="1" counter-key="@(context.Request.Headers.GetValueOrDefault(\"Authorization\",\"").AsJwt()?.Subject)" />`
+- [ ] `<rate-limit calls="10" renewal-period="60" />`
+- [ ] `<rate-limit calls="10" renewal-period="1" />`
+- [x] `<quota-by-key calls="100" bandwidth="100000" renewal-period="3600" counter-key="@(context.Request.Headers.GetValueOrDefault(\"Authorization\",\"").AsJwt()?.Subject)" />`
+- [ ] `<quota-by-key calls="100" bandwidth="100" renewal-period="60" counter-key="@(context.Request.Headers.GetValueOrDefault(\"Authorization\",\"").AsJwt()?.Subject)" />`
+- [ ] `<quota-by-key calls="100" bandwidth="100" renewal-period="3600" counter-key="@(context.Request.Headers.GetValueOrDefault(\"Authorization\",\"").AsJwt()?.Subject)" />`
+- [ ] `<quota-by-key calls="100" bandwidth="100000" renewal-period="60" counter-key="@(context.Request.Headers.GetValueOrDefault(\"Authorization\",\"").AsJwt()?.Subject)" />`
+- [ ] `<quota calls="100" bandwidth="100000" renewal-period="3600" />`
+- [ ] `<quota calls="100" bandwidth="100" renewal-period="60" />`
+- [ ] `<quota calls="100" bandwidth="100" renewal-period="3600" />`
+- [ ] `<quota calls="100" bandwidth="100000" renewal-period="60" />`
+
+Answer: `rate-limit-by-key` and `quota-by-key`, units in seconds and KB, `counter-key="@(context.Request.Headers.GetValueOrDefault(\"Authorization\",\"").AsJwt()?.Subject)"`.
+
+---
