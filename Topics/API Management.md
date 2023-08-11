@@ -137,13 +137,97 @@ az apim nv create --resource-group apim-hello-word-resource-group \
 
 To use a named value in a policy, place its display name inside a double pair of braces like `{{ContosoHeader}}`. If the value is an expression, it will be evaluated. If the value is the name of another named value - not.
 
+## [Caching](https://learn.microsoft.com/en-us/azure/api-management/api-management-sample-cache-by-key)
+
+Azure APIM has built-in support for HTTP response caching using the resource URL as the key. You can modify the key using request headers with the vary-by properties.
+
+### Examples
+
+#### Cache by header
+
+```http
+https://myapi.azure-api.net/me
+Authorization: Bearer <access_token>
+```
+
+Endpoint is not unique, but the authorization header is for each user.
+
+```xml
+<cache-lookup>
+    <vary-by-header>Authorization</vary-by-header>
+</cache-lookup>
+```
+
+#### Cache by query parameter
+
+```http
+https://myapi.azure-api.net/samples?topic=apim&section=caching
+```
+
+Endpoint has two query parameters: `topic` and `section`. Use semicolon to separate.
+
+```xml
+<cache-lookup>
+    <vary-by-query-parameter>topic;section</vary-by-query-parameter>
+</cache-lookup>
+```
+
+#### Cache by url
+
+```http
+https://myapi.azure-api.net/items/123456
+```
+
+Endpoint has no parameters, but the url is unique. This time use empty string.
+
+```xml
+<cache-lookup>
+    <vary-by-query-parameter></vary-by-query-parameter>
+</cache-lookup>
+```
+
+#### Fragment caching
+
+When you want to add some information from external system to the current response, without fetching it every time. For example `/me/taks` returns user's todos and profile, but the profile is stored at `/userprofile/{userid}`. To avoid fetching profile every time, the following rules must be implemented:
+
+```xml
+<!-- Extract userId from JWT -->
+<set-variable
+  name="enduserid"
+  value="@(context.Request.Headers.GetValueOrDefault("Authorization","").Split(' ')[1].AsJwt()?.Subject)" />
+
+<!-- Data is supposed to be stored in userprofile (for example) -->
+<!-- If userprofile is not cached yet, send a request and store the response in cache -->
+<choose>
+    <when condition="@(!context.Variables.ContainsKey("userprofile"))">
+        <!-- Make an HTTP request to /userprofile/{userid} in order to retrieve it  -->
+        <send-request params>options</send-request>
+
+        <!-- Store to cache -->
+        <cache-store-value
+          key="@("userprofile-" + context.Variables["enduserid"])"
+          value="@(((IResponse)context.Variables["userprofileresponse"]).Body.As<string>())" duration="100000" />
+    </when>
+</choose>
+
+<!-- Use userprofile from cache -->
+<cache-lookup-value
+  key="@("userprofile-" + context.Variables["enduserid"])"
+  variable-name="userprofile" />
+```
+
 ## API Security
+
+### [Vis Azure AD](https://learn.microsoft.com/en-us/azure/api-management/api-management-howto-protect-backend-with-aad)
+
+1. Register an application in Azure AD to represent the API
+1. Configure a JWT validation policy to pre-authorize requests (`validate-jwt`)
 
 ### Via Subscriptions
 
 API Management lets you secure APIs using subscription keys. Developers have to include these keys in HTTP requests when accessing APIs. If not, API Management gateway rejects the requests. The subscription keys come from subscriptions, which developers can get without needing permission from API publishers. Apart from this, OAuth2.0, Client certificates, and IP allow listing are other security methods.
 
-#### Subscription Keys
+#### [Subscription Keys](https://learn.microsoft.com/en-us/azure/api-management/api-management-subscriptions)
 
 A subscription key is a unique, automatically generated key included in client request headers or as a query string parameter. It's tied to a subscription which can have different scopes providing varied access levels. Subscriptions let you control permissions and policies minutely.
 
@@ -169,9 +253,14 @@ curl https://<apim gateway>.azure-api.net/api/path?subscription-key=<key string>
 
 Failure to pass the key results in a **401 Access Denied** response.
 
-### API Security with Certificates
+### [API Security with Certificates](https://learn.microsoft.com/en-us/azure/api-management/api-management-howto-mutual-certificates-for-clients)
 
-Certificates, with Transport Layer Security (TLS), secure client to API gateway communication. API gateways can be set to accept requests only with certain certificates. _This is managed via inbound policies._
+Certificates, with Transport Layer Security (TLS), secure client to API gateway communication. API gateways can be set to accept requests only with certain certificates. _This is managed via inbound policies_ (`validate-client-certificate`).
+
+Configure access to key vault:
+
+- Access policy: `Access Policies > + Create > Secret permissions > Permissions tab > Get and List ; Principal tab > principal > managed identity > Next > Review + create > Create`
+- RBAC access: `Access control (IAM) > Add role assignment > Role tab > Key Vault Secrets User ; Members tab > Managed identity > + Select members > identity`
 
 #### TLS Client Authentication
 
