@@ -183,3 +183,59 @@ Question: For your new web application, you're setting up the `maxmemory` policy
 Answer: volatile: if expiration is set; lru - least recently used.
 
 ---
+
+Question: Which of the following scenarios are suitable for Private Caching?
+
+- [x] A single-user application that requires rapid access to user-specific data.
+- [ ] A distributed system where multiple instances need to access the same view of cached data.
+- [x] A desktop application that needs to store temporary files locally for quick retrieval.
+- [ ] A large-scale web application that requires a common cache accessible by various servers.
+- [x] A personal finance tool that caches individual user's financial data on their device for quick access.
+- [ ] A global weather application that needs to provide consistent weather data to users across different regions.
+
+Answer: Private Caching is best suited for scenarios where data is specific to individual instances or users, and speed is a priority. It's simpler but may lead to inconsistencies between different instances.
+
+---
+
+Question: Which of the following scenarios are suitable for Shared Caching?
+
+- [ ] A small mobile app that stores user preferences on the device itself.
+- [x] An e-commerce platform where product details are frequently accessed by multiple users and need to be consistent across various servers.
+- [x] A content delivery network (CDN) that requires caching of static content across multiple geographical locations.
+- [ ] A standalone desktop application that caches user-specific settings locally.
+- [x] A multi-player online game where player profiles and scores need to be consistent across different game servers.
+- [x] A corporate intranet that needs to cache common resources like logos and templates for consistent branding across different departments.
+
+Answer: Shared Caching is ideal for situations where consistency and scalability are essential, and the data needs to be accessed by multiple instances or applications. It may be more complex to implement and slightly slower to access.
+
+---
+
+Question: You are designing a cache for a video editing application where the most recently used video clips are unlikely to be needed again in the short term, while older clips are frequently revisited. What eviction policy would be most suitable?
+
+- [x] Most-Recently-Used (MRU)
+- [ ] First-In-First-Out (FIFO)
+- [ ] Explicit Removal
+
+Answer: Since the most recently used clips are less likely to be needed again soon, an MRU policy would be effective in removing them from the cache, allowing older, frequently accessed clips to remain available.
+
+---
+
+Question: You are managing a cache for a data processing system that handles tasks in a sequential order, and older tasks are unlikely to be revisited. What eviction policy would be best?
+
+- [ ] Most-Recently-Used (MRU)
+- [x] First-In-First-Out (FIFO)
+- [ ] Explicit Removal
+
+Answer: In a system where older data is less likely to be accessed and tasks are handled sequentially, a FIFO policy would be beneficial.
+
+---
+
+Question: You are working on a database caching system where certain data must be removed from the cache when specific events occur, such as data modification. What eviction policy would be appropriate?
+
+- [ ] Most-Recently-Used (MRU)
+- [ ] First-In-First-Out (FIFO)
+- [x] Explicit Removal
+
+Answer: For a system where data eviction is triggered by specific events, an explicit removal policy would provide the necessary control and accuracy.
+
+---

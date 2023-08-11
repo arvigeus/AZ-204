@@ -33,6 +33,8 @@ Here are various methods to start monitoring and analyzing your app's performanc
 - **Mobile app analysis**: Use Visual Studio App Center to study mobile app usage.
 - **Availability tests**: Regularly ping your website from our servers to test availability.
 
+NOTE: `az monitor activity-log` _cannot_ display data from Application Insight telemetry!
+
 ## Metrics
 
 **Log-based metrics** are generated from stored events and offer thorough data analysis and diagnostics. Developers can manually send events using the SDK or utilize automatic event collection. While these metrics provide deep insights, managing them can be challenging for high-volume applications, requiring techniques like sampling and filtering to reduce event count. However, these techniques can potentially reduce the accuracy of log-based metrics.
@@ -146,6 +148,14 @@ requests
 | summarize sum(itemCount), avg(todouble(customMeasurements.score)) by tostring(customDimensions.game)
 ```
 
+## [Enable Application Insights for a Function App](https://learn.microsoft.com/en-us/azure/azure-functions/configure-monitoring?tabs=v2#enable-application-insights-integration)
+
+To send data to Application Insights from a function app, you need the key named `APPINSIGHTS_INSTRUMENTATIONKEY`.
+
+Application Insights is usually enabled by default for new functions (created in the same or nearest region to your function app), but it may have to be manually enabled for old functions.
+
+`ILogger` is used to log to Application Insights (not `TelemetryClient`!).
+
 ## [Custom events and metrics](https://learn.microsoft.com/en-us/azure/azure-monitor/app/api-custom-events-metrics#getmetric)
 
 Use [`GetMetric()`](https://learn.microsoft.com/en-us/azure/azure-monitor/app/get-metric) instead of `TrackMetric()` in Application Insights. `GetMetric()` handles pre-aggregation, reducing costs and performance issues associated with raw telemetry. It avoids sampling, ensuring reliable alerts. Tracking metrics at a granular level can lead to increased costs, network traffic, and throttling risks. `GetMetric()` solves these concerns by sending summarized data every minute.
@@ -160,7 +170,8 @@ var telemetry = new TelemetryClient();
 
 // GetMetric: capture locally pre-aggregated metrics for .NET and .NET Core applications
 
-// Custom event
+// Monitors usage patterns and sends data to Custom Events for search.
+// It names events and includes string properties and numeric metrics.
 telemetry.TrackEvent("WinGame");
 
 // TrackMetric: not the preferred method for sending metrics, but can be used if you're implementing your own pre-aggregation logic
@@ -183,6 +194,7 @@ catch (Exception ex)
 }
 
 // Diagnose problems by sending a "breadcrumb trail" to Application Insights
+// Lets you send longer data such as POST information.
 telemetry.TrackTrace("Some message", SeverityLevel.Warning);
 
 // Track the response times and success rates of calls to an external piece of code via TrackDependency
@@ -202,6 +214,38 @@ finally
 // Send data immediately, rather than waiting for the next fixed-interval sending
 telemetry.Flush();
 ```
+
+## Event log
+
+To write to event log use, `ILogger` or a class inheriting `EventSource`.
+
+## [Usage analysis](https://learn.microsoft.com/en-us/azure/azure-monitor/app/usage-overview)
+
+### [User, session, and event analysis](https://learn.microsoft.com/en-us/azure/azure-monitor/app/usage-segmentation)
+
+- **Users tool**: Counts how many people used the app and its features. If a person uses different browsers or machines, they're counted as more than one user.
+- **Sessions tool**: Tracks how many user activity sessions included certain pages and features. A session resets after 30 minutes of inactivity or 24 hours of continuous use.
+- **Events tool**: Measures how often pages and features are used. Page views are counted when loaded, and custom events represent specific occurrences like button clicks or task completions.
+
+### [Funnels](https://learn.microsoft.com/en-us/azure/azure-monitor/app/usage-funnels)
+
+Track how users move through different stages of your web application, for example how many users go from the home page to creating a ticket. Use funnels to identify where users may stop or leave your app, helping you understand its effective areas and where improvements are needed.
+
+### [Cohorts](https://learn.microsoft.com/en-us/azure/azure-monitor/app/usage-cohorts)
+
+Group and analyze sets of users, sessions, events, or operations that have something in common. For example, you might make a cohort of users who all tried a new feature.
+
+### [Impact](https://learn.microsoft.com/en-us/azure/azure-monitor/app/usage-impact)
+
+Helps you understand how different factors like load times and user properties influence conversion rates in various parts of your app.
+
+### [Retention](https://learn.microsoft.com/en-us/azure/azure-monitor/app/usage-retention)
+
+Helps you understand how many users come back to your app and how often they engage with specific tasks or goals. For example, if you have a game site, you can see how many users return after winning or losing a game.
+
+### [User Flows](https://learn.microsoft.com/en-us/azure/azure-monitor/app/usage-flows)
+
+Helps you analyze how users navigate between pages and features of your web app. It can answer questions like where users go after visiting a page, where they leave your site, or if they repeat the same action many times.
 
 ## Instrument an app for monitoring
 
