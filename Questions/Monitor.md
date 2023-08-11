@@ -68,3 +68,52 @@ az monitor metrics alert create -n alert1 -g {ResourceGroup} --scopes {VirtualMa
 `--action {ActionGroupResourceID}`: Specifies the action group to be triggered when the alert fires.
 
 ---
+
+Question: You are managing an Azure App Service Web App named `mywebapp`, which hosts a Node.js application. This Web App is running within an App Service Plan called `myplan` in the standard tier, located in a resource group named `mygroup`. You are tasked with setting up monitoring for the CPU usage of `mywebapp`, and you must configure an alert if the CPU usage percentage exceeds 80%. Which resource and metric should you target for this monitoring?"
+
+- [ ] Subscription
+- [ ] Resource Group (`mygroup`)
+- [x] App Service Plan (`myplan`)
+- [ ] Web App (`mywebapp`)
+
+Answer: The CPU usage percentage is monitored at the App Service Plan level, as it defines the resources available to the Web Apps within that plan. Monitoring the App Service Plan provides an indication of the overall CPU usage across all instances of the plan. In the standard tier, multiple Web Apps could be running within the same plan, but monitoring the App Service Plan would still allow you to observe the CPU usage for the specific Web App in question.
+
+---
+
+Question: You are monitoring an Azure App Service Web App and want to use the CPU Time metric. In which of the following App Service plans is the CPU Time metric particularly useful as one of the quotas is defined in CPU minutes used by the app? (Choose all that apply)
+
+- [x] Free
+- [ ] Basic
+- [ ] Standard
+- [ ] Premium
+- [x] Shared
+
+Answers: CPU Time is specifically useful for apps hosted in Free or Shared plans, as one of their quotas is defined in CPU minutes used by the app. Other plans do not have this specific quota, making the other options incorrect.
+
+---
+
+Question: You are tasked with monitoring the CPU usage of an Azure App Service Web App and want to use the CPU Percentage metric. In which of the following App Service plans is the CPU Percentage metric a good indication of the overall usage across all instances? (Choose all that apply.)
+
+- [ ] Free
+- [x] Basic
+- [x] Standard
+- [x] Premium
+- [ ] Shared
+
+Answers: CPU Percentage is a useful metric for apps hosted in Basic, Standard, and Premium plans, as these plans can be scaled out, and CPU Percentage provides a good indication of the overall usage across all instances. Options A and E are incorrect as CPU Percentage is not specifically mentioned as useful for Free or Shared plans.
+
+---
+
+Question: What should you use if you want to be notified if your website becomes unresponsive in different geographical regions within Azure?
+
+- [ ] Configure a Load Balancer rule to monitor website traffic.
+- [x] Add a rule in the Availability Test in Azure Application Insights.
+- [ ] Set up a Geo-Redundancy alert in Azure Storage.
+- [ ] Enable Traffic Manager monitoring with email notifications.
+
+Answer: The correct option is to add a rule in the Availability Test in Azure Application Insights. This allows you to set up an alert that will notify you via email or SMS if the web app becomes unresponsive in different geographical regions.  
+Load Balancer rule is used to distribute network traffic, not to monitor website responsiveness.  
+Geo-Redundancy alerts in Azure Storage are related to data replication and availability, not website responsiveness.  
+Traffic Manager monitoring is used for routing network traffic and does not directly provide notifications for website responsiveness.
+
+---
