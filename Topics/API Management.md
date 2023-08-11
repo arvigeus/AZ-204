@@ -43,11 +43,19 @@ API gateways, such as Azure's API Management gateway, manage communication betwe
 
 Developers are user accounts in an API Management service. They can be created by admins, invited, or sign up via the Developer portal. They belong to one or more groups and can subscribe to products visible to these groups.
 
-## Policies
+## [Policies](https://learn.microsoft.com/en-us/azure/api-management/api-management-howto-policies)
 
 A set of statements executed sequentially on an API's request or response. They can be applied at different scopes: _global_ (all APIs, appliedd together with other scopes), a _product_, a _specific API_, or an _API operation_. Policies can modify the API's behavior.
 
-### Policy Configuration\*\*
+### Types of policies
+
+- **Inbound**: Applied before routing to the backend. Examples: validation, authentication, rate limiting, request transformation.
+- **Backend**: Applied before the request reaches the backend. Examples: URL rewriting, setting headers.
+- **Outbound**: Applied to the response before sent to the client. Examples: response transformation, caching, adding headers.
+
+Note: If client expects response in certain format (example: XML), check question to see what kind of endpoint is used (example: JSON). If they are different, transform policy should be applied (example: `json-to-xml-policy`)
+
+### Policy Configuration
 
 ```xml
 <policies>
@@ -141,7 +149,7 @@ To use a named value in a policy, place its display name inside a double pair of
 
 ## [Throttling](https://learn.microsoft.com/en-us/azure/api-management/api-management-sample-flexible-throttling)
 
-Use `rate-limit-by-key` (limiting number of requests) or `quota-by-key` (limiting bandwidth). Renewal period is in _seconds_, bandwidth size is in _KB_. Use `counter-key` to specify identity or IP
+Use `rate-limit-by-key` (limit number of requests) or `quota-by-key` (limit bandwidth and/or number of requests). Renewal period is in _seconds_, bandwidth size is in _KB_. Use `counter-key` to specify identity or IP
 
 - Throttle by IP: `counter-key="@(context.Request.IpAddress)"`
 - Throttle by Identity: `counter-key="@(context.Request.Headers.GetValueOrDefault("Authorization","").AsJwt()?.Subject)"`
@@ -232,6 +240,13 @@ When you want to add some information from external system to the current respon
 1. Register an application in Azure AD to represent the API
 1. Configure a JWT validation policy to pre-authorize requests (`validate-jwt`)
 
+For [managed Identities](https://learn.microsoft.com/en-us/azure/api-management/api-management-howto-use-managed-service-identity): `user-assigned managed identity`. Use cases:
+
+- Obtain a custom TLS/SSL certificate for the API Management instance from Azure Key Vault
+- Store and manage named values from Azure Key Vault
+- Authenticate to a backend by using a user-assigned identity
+- Log events to an event hub
+
 ### Via Subscriptions
 
 API Management lets you secure APIs using subscription keys. Developers have to include these keys in HTTP requests when accessing APIs. If not, API Management gateway rejects the requests. The subscription keys come from subscriptions, which developers can get without needing permission from API publishers. Apart from this, OAuth2.0, Client certificates, and IP allow listing are other security methods.
@@ -309,7 +324,15 @@ context.Request.Certificate == null || context.Request.Certificate.Issuer != "tr
 - Use **Revisions** for non-breaking changes, allowing for testing and updates without affecting existing users. Users can access different revisions by using a different query string at the same endpoint.
 - Use **Versions** for breaking changes, requiring publishing and potentially requiring users to update their applications.
 
-Creating separate gateways or web APIs would force users to access a different endpoint.
+[Versioning schemes](https://learn.microsoft.com/en-us/azure/api-management/api-management-versions):
+
+- Path-based versioning: `https://apis.contoso.com/products/v1` and `https://apis.contoso.com/products/v2`
+- Header-based versioning: For example, custom header named `Api-Version,` and clients specify `v1` or `v2`
+- Query string-based versioning: `https://apis.contoso.com/products?api-version=v1` and `https://apis.contoso.com/products?api-version=v2`
+
+_Header-based versioning_ if the _URL has to stay the same_. Revisions and other types of versioning schemas require modified URL.
+
+Creating separate gateways or web APIs would force users to access a different endpoint. A separate gateway provides complete isolation.
 
 ```ps
 az apim api release create --resource-group apim-hello-word-resource-group \

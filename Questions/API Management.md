@@ -150,3 +150,78 @@ Question: You are working on an API where an end user is authenticated, and you 
 Answer: `rate-limit-by-key` and `quota-by-key`, units in seconds and KB, `counter-key="@(context.Request.Headers.GetValueOrDefault(\"Authorization\",\"").AsJwt()?.Subject)"`.
 
 ---
+
+Question: An API is integrated into an Azure API Management (APIM) gateway and is utilized by client applications worldwide. You are tasked with granting access to 10 new operations exclusively to a select group of 200 beta developers around the world. How can you enable these developers to test the new operations using the existing API URL?
+
+- [ ] Implement a revision in Azure API Management.
+- [ ] mplement path-based versioning.
+- [x] Implement header-based versioning.
+- [ ] Implement query string-based versioning.
+- [ ] Create separate gateways.
+
+Answer: Header-based versioning uses custom HTTP headers to determine the version of the API to be accessed. This allows different versions of the API to be accessed through the same URL.
+
+Question: You establish an API Management (APIM) gateway and incorporate an existing App Services API app within it. Your goal is to limit each client application to a maximum of 1000 calls to the API on an hourly basis.". Which policies could achieve this requirement?
+
+- [x] `<rate-limit-by-key calls="1000" renewal-period="3600" counter-key="@(context.Subscription.Id)" />`
+- [ ] `<rate-limit-by-key calls="1000" renewal-period="60" counter-key="@(context.Subscription.Id)" />`
+- [ ] `<rate-limit-by-key calls="1000" renewal-period="3600" />`
+- [ ] `<rate-limit-by-key calls="1000" renewal-period="60" />`
+- [x] `quota-by-key calls="1000" renewal-period="3600" counter-key="@(context.Subscription.Id)" />`
+- [ ] `quota-by-key calls="1000" renewal-period="60" counter-key="@(context.Subscription.Id)" />`
+- [ ] `quota-by-key calls="1000" renewal-period="3600" />`
+- [ ] `quota-by-key calls="1000" renewal-period="60" />`
+
+Answer: `rate-limit-by-key` and `quota-by-key` can limit numbers of requests.
+
+---
+
+Question: You are developing a solution that requires the Azure API Management (APIM) instance to authenticate to a backend service. The authentication process must be secure and aligned with best practices. The backend service supports authentication through specific methods, and you need to ensure that the APIM instance can access it without storing credentials within the APIM configuration. Which of the following policies should you apply to the APIM instance to achieve this requirement?
+
+- [x] user-assigned managed
+- [ ] validate-jwt
+- [ ] check-header
+- [ ] set-body
+
+Answer: By using a user-assigned managed identity, you can authenticate to services that support Azure AD authentication without credentials in your code. In this scenario, it allows the APIM instance to authenticate to the backend service securely.
+
+---
+
+Question: Your organization has implemented Azure API Management (APIM) and requires a custom TLS/SSL certificate for securing communication. The certificate must be obtained from Azure Key Vault, and the process must adhere to security best practices without hardcoding any secrets or credentials in the APIM configuration. Which of the following policies should you apply to the APIM instance to fulfill this requirement?
+
+- [x] user-assigned managed
+- [ ] validate-jwt
+- [ ] check-header
+- [ ] set-body
+
+Answer: By using a user-assigned managed identity, the APIM instance can authenticate to Azure Key Vault and retrieve the custom TLS/SSL certificate securely without needing to store any credentials in the code or configuration.
+
+---
+
+Question: You have JSON endpoint that expects JSON payload. The client sends XML payload. What policy should be applied?
+
+- [x] `xml-to-json-policy` in inbound section
+- [ ] `xml-to-json-policy` in backedn section
+- [ ] `xml-to-json-policy` in outbound section
+- [ ] `json-to-xml-policy` in inbound section
+- [ ] `json-to-xml-policy` in backedn section
+- [ ] `json-to-xml-policy` in outbound section
+- [ ] No policy should be applied
+
+Answer: Request is transformed in inbound section
+
+---
+
+Question: You have JSON endpoint. The client expexts XML response. What policy should be applied?
+
+- [ ] `xml-to-json-policy` in inbound section
+- [ ] `xml-to-json-policy` in backedn section
+- [ ] `xml-to-json-policy` in outbound section
+- [ ] `json-to-xml-policy` in inbound section
+- [ ] `json-to-xml-policy` in backedn section
+- [x] `json-to-xml-policy` in outbound section
+- [ ] No policy should be applied
+
+Answer: Response is transformed in outbound section
+
+---
