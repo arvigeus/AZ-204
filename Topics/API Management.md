@@ -135,7 +135,7 @@ Add a named value: `Dashboard > API Management Services > service > Named values
 
 - Plain: Literal string or policy expression
 - Secret: Literal string or policy expression that is encrypted by API Management
-- Key vault: Identifier of a secret stored in an Azure key vault. fter update in the key vault, a named value in API Management is updated within 4 hours. Requires system-assigned or user-assigned managed identity. Configure either a _key vault access policy_ or _Azure RBAC access_ for an API Management managed identity. Key Vault Firewall requires _system-assigned managed identity_.
+- [Key vault](https://learn.microsoft.com/en-us/azure/api-management/api-management-howto-properties): Identifier of a secret stored in an Azure key vault. After update in the key vault, a named value in API Management is updated within 4 hours. Requires managed identity. Configure either a _key vault access policy_ or _Azure RBAC access_ for an API Management managed identity. Key Vault Firewall requires _system-assigned managed identity_.
 
 Add secret:
 
@@ -149,7 +149,9 @@ To use a named value in a policy, place its display name inside a double pair of
 
 ## [Throttling](https://learn.microsoft.com/en-us/azure/api-management/api-management-sample-flexible-throttling)
 
-Use `rate-limit-by-key` (limit number of requests) or `quota-by-key` (limit bandwidth and/or number of requests). Renewal period is in _seconds_, bandwidth size is in _KB_. Use `counter-key` to specify identity or IP
+Use `rate-limit-by-key` (limit number of requests) or `quota-by-key` (limit bandwidth and/or number of requests). Renewal period is in _seconds_, bandwidth size is in _KB_. Use `counter-key` to specify identity or IP.
+
+When quota is exceeded, a `403 Forbidden` status is returned.
 
 - Throttle by IP: `counter-key="@(context.Request.IpAddress)"`
 - Throttle by Identity: `counter-key="@(context.Request.Headers.GetValueOrDefault("Authorization","").AsJwt()?.Subject)"`
@@ -240,7 +242,13 @@ When you want to add some information from external system to the current respon
 1. Register an application in Azure AD to represent the API
 1. Configure a JWT validation policy to pre-authorize requests (`validate-jwt`)
 
-For [managed Identities](https://learn.microsoft.com/en-us/azure/api-management/api-management-howto-use-managed-service-identity): `user-assigned managed identity`. Use cases:
+### [Managed Identities](https://learn.microsoft.com/en-us/azure/api-management/api-management-howto-use-managed-service-identity)
+
+Use the `authentication-managed-identity` policy to authenticate with a service through managed identity. It gets an access token from Azure Active Directory and sets it in the `Authorization` header using the Bearer scheme. The token is cached until it expires. If no client-id is given, the system-assigned identity is used.
+
+Example: `<authentication-managed-identity resource="resource" client-id="clientid of user-assigned identity" output-token-variable-name="token-variable" ignore-error="true|false"/>`, where resource could be `https://graph.microsoft.com`, `https://management.azure.com/`, etc.
+
+Use cases:
 
 - Obtain a custom TLS/SSL certificate for the API Management instance from Azure Key Vault
 - Store and manage named values from Azure Key Vault
@@ -279,7 +287,8 @@ Failure to pass the key results in a **401 Access Denied** response.
 
 ### [API Security with Certificates](https://learn.microsoft.com/en-us/azure/api-management/api-management-howto-mutual-certificates-for-clients)
 
-Certificates, with Transport Layer Security (TLS), secure client to API gateway communication. API gateways can be set to accept requests only with certain certificates. _This is managed via inbound policies_ (`validate-client-certificate`).
+- `authentication-certificate`: Used by APIM to authenticate itself to the backend service.
+- `validate-client-certificate` (_inbound_): Used by APIM to validate the client's certificate connecting to the APIM.
 
 Configure access to key vault:
 
@@ -342,6 +351,20 @@ az apim api release create --resource-group apim-hello-word-resource-group \
 az group deployment create --resource-group <resourceGroupName> --template-file ./apis.json --parameters apiRevision="20191206" apiVersion="v1" serviceName=<serviceName> apiVersionSetName=<versionSetName> apiName=<apiName> apiDisplayName=<displayName>
 ```
 
+## [Integrating backend API with APIM](https://learn.microsoft.com/en-us/azure/api-management/import-and-publish)
+
+Create OpenAPI documentation for the backend API, then import it into APIM. This enables integration with APIM and allows for automatic discovery of all endpoints. APIM becomes a facade for the backend API, providing customization without altering the backend API itself.
+
 ## [Monitoring](https://learn.microsoft.com/en-us/azure/api-management/api-management-howto-use-azure-monitor)
 
 Azure API Management emits metrics every minute, providing near real-time visibility into the state and health of your APIs. The most frequently used metrics are 'Capacity' and 'Requests'. 'Capacity' helps you make decisions about upgrading/downgrading your API Management services, while 'Requests' helps you analyze API traffic.
+
+## Working with API Management instance
+
+Create new APIM:
+
+```ps
+az apim create --name MyAPIMInstance --resource-group MyResourceGroup --location eastus --publisher-name "My Publisher" --publisher-email publisher@example.com --sku-name Developer
+# or
+New-AzApiManagement -ResourceGroupName RESOURCE_GROUP -Name NAME -Location LOCATION -Organization ORGANIZATION -AdminEmail ADMIN_EMAIL [-Sku SKU_NAME] [-Tags TAGS]
+```

@@ -178,23 +178,23 @@ Answer: `rate-limit-by-key` and `quota-by-key` can limit numbers of requests.
 
 Question: You are developing a solution that requires the Azure API Management (APIM) instance to authenticate to a backend service. The authentication process must be secure and aligned with best practices. The backend service supports authentication through specific methods, and you need to ensure that the APIM instance can access it without storing credentials within the APIM configuration. Which of the following policies should you apply to the APIM instance to achieve this requirement?
 
-- [x] user-assigned managed
+- [x] authentication-managed-identity
 - [ ] validate-jwt
 - [ ] check-header
 - [ ] set-body
 
-Answer: By using a user-assigned managed identity, you can authenticate to services that support Azure AD authentication without credentials in your code. In this scenario, it allows the APIM instance to authenticate to the backend service securely.
+Answer: By using a authentication-managed-identity identity, you can authenticate to services that support Azure AD authentication without credentials in your code. In this scenario, it allows the APIM instance to authenticate to the backend service securely.
 
 ---
 
 Question: Your organization has implemented Azure API Management (APIM) and requires a custom TLS/SSL certificate for securing communication. The certificate must be obtained from Azure Key Vault, and the process must adhere to security best practices without hardcoding any secrets or credentials in the APIM configuration. Which of the following policies should you apply to the APIM instance to fulfill this requirement?
 
-- [x] user-assigned managed
+- [x] authentication-managed-identity
 - [ ] validate-jwt
 - [ ] check-header
 - [ ] set-body
 
-Answer: By using a user-assigned managed identity, the APIM instance can authenticate to Azure Key Vault and retrieve the custom TLS/SSL certificate securely without needing to store any credentials in the code or configuration.
+Answer: By using a authentication-managed-identity identity, the APIM instance can authenticate to Azure Key Vault and retrieve the custom TLS/SSL certificate securely without needing to store any credentials in the code or configuration.
 
 ---
 
@@ -223,5 +223,69 @@ Question: You have JSON endpoint. The client expexts XML response. What policy s
 - [ ] No policy should be applied
 
 Answer: Response is transformed in outbound section
+
+---
+
+Question: You receive `401 Access Denied` trying to get access to your API instance. What is happening?
+
+- [ ] Server crashed
+- [x] You have to pass a valid subscription key.
+- [ ] Quota has been exceeded
+- [ ] IP Filter policy has been activated
+
+Answer: Pass a valid subsription key.  
+Server errors are `5XX`, quota and ip restrictions are `403`.
+
+---
+
+Question: You receive `403 Forbidden` trying to get access to your API instance. What are possible reasons for that?
+
+- [ ] Server crashed
+- [ ] You have to pass a valid subscription key.
+- [x] Quota has been exceeded
+- [x] IP Filter policy has been activated
+
+Answer: Quota and ip restrictions are `403`.  
+Server errors are `5XX`, Subscription errors are `401`
+
+---
+
+Question: Your client, once again, complains they receive a `403 Forbidden` error when trying to access your API. It was working just 5 minutes ago, they claim. You look into this "urgent" problem and see no policy changes have been made, and surprise, surprise, it works on your machine(tm). How would you make client to shut up and be happy?
+
+- [ ] The API endpoint must be faulty, so just remove it for now and debug it later, like everything else
+- [ ] Add an `ip-filter` policy that allows access to your client's IP, because that's never been a problem before
+- [ ] Call them idiots (in your head, of course) and tell them to use a different subscription key, like you've told them a hundred times
+- [x] Modify the quota policy to be more generous, because probably they have been spamming your endpoint
+
+Answer: A `403 Forbidden` error is either an IP filter policy or an exceeded quota. Since policy rules haven't been modified, it must be a quota issue.  
+Note: Cursing your clients (in your mind) is a valid/invalid solution, depending on your morals.
+
+---
+
+Question: You are setting up an API Management instance to manage your organization's various API services. You have a REST API developed in-house that is already exposed to the public internet. What is the first step you should take before incorporating this REST API into the API Management instance?
+
+- [ ] Establish a VPN connection between the in-house network and Azure.
+- [x] Generate OpenAPI specification for the REST API.
+- [ ] Move the API to Azure Functions.
+- [ ] Implement OAuth 2.0 authentication for the API.
+- [ ] Set up a load balancer for the API in Azure.
+- [ ] Set up a self-hosted gateway between the internal network and Azure.
+
+Answer: OpenAPI specification enables Azure API Management to automatically discover the endpoints and methods supported by the API.
+
+---
+
+Question: Your company has a complex environment with APIs hosted both on-premises and in different cloud providers. You are tasked with centralizing the management of these APIs using Azure API Management, while ensuring low-latency access for local users. What actions should you take to accomplish this task?
+
+- [x] Upgrade to the Premium tier of Azure API Management.
+- [x] Implement a self-hosted gateway to manage on-premises APIs and APIs across multiple clouds.
+- [ ] Migrate all APIs to Azure App Service.
+- [ ] Generate OpenAPI specifications for all APIs.
+- [ ] Configure a VPN connection between the internal network and Azure.
+
+Answer: The Premium tier is required to deploy self-hosted gateways, which are essential for managing APIs across different environments. Self-hosted gateways are containerized versions of managed gateways, suitable for hybrid and multicloud environments.  
+Migrating all APIs to Azure App Service is not necessary for managing APIs across different environments.  
+Generating OpenAPI specifications is not directly related to managing APIs across multiple clouds and on-premises.  
+Configuring a VPN connection is not relevant to the scenario described.
 
 ---

@@ -1,5 +1,7 @@
 # [Azure Key Vault](https://docs.microsoft.com/en-us/azure/key-vault/)
 
+Endpoint: `https://vault.azure.net`
+
 - Azure Key Vault is a service for securely storing and accessing secrets, keys, and certificates.
 - It offers two tiers: Standard (software key encryption) and Premium (hardware security module-protected keys - HSM).
 - It centralizes application secrets, reducing the risk of accidental leaks and removing the need to store security information in application code.

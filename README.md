@@ -115,8 +115,9 @@ TLDR;
 1. [Azure API Management](https://docs.microsoft.com/en-us/azure/api-management/)
 1. [Azure Event Grid](https://docs.microsoft.com/en-us/azure/event-grid/)
 1. [Azure Event Hub](https://docs.microsoft.com/en-us/azure/event-hubs/)
-1. [Azure Service Bus](https://docs.microsoft.com/en-us/azure/service-bus-messaging/)
-1. [Azure Queue Storage](https://docs.microsoft.com/en-us/azure/storage/queues/)
+1. [Message Queues](https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-azure-and-service-bus-queues-compared-contrasted)
+   - [Azure Service Bus](https://docs.microsoft.com/en-us/azure/service-bus-messaging/)
+   - [Azure Queue Storage](https://docs.microsoft.com/en-us/azure/storage/queues/)
 
 ## Exam preparation
 
