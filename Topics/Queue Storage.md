@@ -26,7 +26,7 @@ if (queueClient.Exists())
 {
     // Insert a message into a queue
     // A message can be either a string (in UTF-8 format)
-    queueClient.SendMessage(message);
+    queueClient.SendMessage(new Message(Encoding.UTF8.GetBytes(message)));
 
     // Peek at the next message
     // If you don't pass a value for the `maxMessages` parameter, the default is to peek at one message.
@@ -58,7 +58,7 @@ if (queueClient.Exists())
 }
 ```
 
-```ps
+```sh
 az storage account create --name mystorageaccount --resource-group myresourcegroup --location eastus --sku Standard_LRS
 az storage queue create --name myqueue --account-name mystorageaccount
 az storage queue list --account-name mystorageaccount --output table

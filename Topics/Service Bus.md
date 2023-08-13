@@ -78,6 +78,8 @@ using (var client = GetClient())
                 throw new Exception($"Exception {i} has occurred.");
         await sender.SendMessagesAsync(messageBatch);
         Console.WriteLine($"A batch of three messages has been published to the queue.");
+
+        sender.SendMessagesAsync(new ServiceBusMessage($"Messages complete"));
     }
 
     using (rocessor = client.CreateProcessor(queueName, new ServiceBusProcessorOptions()))
@@ -109,7 +111,7 @@ Task ErrorHandler(ProcessErrorEventArgs args)
 }
 ```
 
-```ps
+```sh
 az servicebus namespace create --name mynamespace --resource-group myresourcegroup --location eastus
 az servicebus queue create --name myqueue --namespace-name mynamespace --resource-group myresourcegroup
 az servicebus queue list --namespace-name mynamespace --resource-group myresourcegroup

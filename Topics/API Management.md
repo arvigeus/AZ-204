@@ -139,7 +139,7 @@ Add a named value: `Dashboard > API Management Services > service > Named values
 
 Add secret:
 
-```ps
+```sh
 az apim nv create --resource-group apim-hello-word-resource-group \
     --display-name "named_value_01" --named-value-id named_value_01 \
     --secret true --service-name apim-hello-world --value test
@@ -343,7 +343,7 @@ _Header-based versioning_ if the _URL has to stay the same_. Revisions and other
 
 Creating separate gateways or web APIs would force users to access a different endpoint. A separate gateway provides complete isolation.
 
-```ps
+```sh
 az apim api release create --resource-group apim-hello-word-resource-group \
     --api-id demo-conference-api --api-revision 2 --service-name apim-hello-world \
     --notes 'Testing revisions. Added new "test" operation.'
@@ -363,7 +363,7 @@ Azure API Management emits metrics every minute, providing near real-time visibi
 
 Create new APIM:
 
-```ps
+```sh
 az apim create --name MyAPIMInstance --resource-group MyResourceGroup --location eastus --publisher-name "My Publisher" --publisher-email publisher@example.com --sku-name Developer
 # or
 New-AzApiManagement -ResourceGroupName RESOURCE_GROUP -Name NAME -Location LOCATION -Organization ORGANIZATION -AdminEmail ADMIN_EMAIL [-Sku SKU_NAME] [-Tags TAGS]

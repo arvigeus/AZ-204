@@ -41,7 +41,7 @@ When to isolate an app into a new App Service plan:
 - You want to scale the app independently from the other apps in the existing plan.
 - The app needs resource in a different geographical region.
 
-```ps
+```sh
 # Move web app to another location by cloning it
 
 New-AzResourceGroup -Name DestinationAzureResourceGroup -Location $destinationLocation
@@ -57,7 +57,7 @@ $destapp = New-AzWebApp -ResourceGroupName DestinationAzureResourceGroup -Name M
 - **Autoscale** (Standard+) - for predictable changes of application load, based on schedules (every X days/weeks/months) or resources
 - **Automatic scaling** (PremiumV2+) - like autoscale, but allows avoiding _cold start_ issues with _pre-warmed_ and _always ready_ instances
 
-  ```ps
+  ```sh
   az appservice plan update --name $appServicePlanName --resource-group resourceGroup
       # enables automatic scaling
       --elastic-scale true --max-elastic-worker-count <YOUR_MAX_BURST>
@@ -95,7 +95,7 @@ To enable settings swapping, add `WEBSITE_OVERRIDE_PRESERVE_DEFAULT_STICKY_SLOT_
 
 By default, all client requests go to the production slot. You can route a portion of the traffic to another slot. The default rule for a new deployment slot is 0% (no random transfers to other slots).
 
-```ps
+```sh
 let "randomIdentifier=$RANDOM*$RANDOM"
 location="East US"
 resourceGroup="app-service-rg-$randomIdentifier"
@@ -218,7 +218,7 @@ App Service passes app settings to the container using the `--env` flag to set t
 
 Variables passed as environment variables to the application code, injected into app environment at startup. When you add, remove, or edit app settings, App Service triggers an app restart. The values in App Service override the ones in `Web.config` (`<appSettings>`) or `appsettings.json`.
 
-```ps
+```sh
 az webapp config appsettings set --settings <setting-name>="<value>" ...
 ```
 
@@ -266,7 +266,7 @@ Configuration["MySetting/MySubSetting"];
 
 Like setting them in `<connectionStrings>` in `Web.config`. Available as environment variables at runtime, prefixed with the connection types like SQLServer, MySQL, SQLAzure, Custom, PostgreSQL.
 
-```ps
+```sh
 az webapp config connection-string set --connection-string-type <type> --settings <string-name>='<value> ...'
 ```
 
@@ -304,7 +304,7 @@ Buk editing:
 
 ### General Settings
 
-```ps
+```sh
 az webapp config set --name <app-name> --resource-group <resource-group-name> \
     --use-32bit-worker-process [true|false] \
     --web-sockets-enabled [true|false] \
@@ -400,7 +400,7 @@ Add a system-assigned identity: `az webapp identity assign --name $app --resourc
 
 Add a user-assigned identity:
 
-```ps
+```sh
 az identity create --name $identityName --resource-group $resourceGroup
 az webapp identity assign --identities $identityName --resource-group $resourceGroup --name $app
 ```
@@ -598,7 +598,7 @@ Metrics: CPU Percentage, Memory Percentage, Data In, Data Out - used across all 
 
 Example: `Metric: CPU Percentage; Resource: <AppServicePlanName>`
 
-```ps
+```sh
 az monitor metrics list --resource <app_service_plan_resource_id> --metric "Percentage CPU" --time-grain PT1M --output table
 ```
 

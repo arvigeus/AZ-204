@@ -115,6 +115,12 @@ Example of an Azure Blob Storage event in CloudEvents format:
 }
 ```
 
+## Enable an Event Grid resource provider for subscriptions
+
+Only needed on subscriptions that haven't previously used Event Grid: `az provider register --namespace Microsoft.EventGrid`
+
+Check status: `az provider show --namespace Microsoft.EventGrid --query "registrationState"`
+
 ## Event Delivery Durability
 
 - **Delivery Attempts**: Event Grid attempts to deliver each event at least once for each matching subscription immediately.
@@ -128,7 +134,7 @@ Event subscriptions support custom headers for delivered events. _Up to 10 heade
 - Azure Event Hubs
 - Relay Hybrid Connections.
 
-### [delivery and retry](https://learn.microsoft.com/en-us/azure/event-grid/delivery-and-retry)
+### [Delivery and Retry](https://learn.microsoft.com/en-us/azure/event-grid/delivery-and-retry)
 
 #### Retry schedule
 
@@ -161,7 +167,7 @@ Occurs if the event isn't delivered within the retry policy limits. To enable, s
 
 The time-to-live expiration is checked **only** at the next scheduled delivery attempt.
 
-```ps
+```sh
 az eventgrid event-subscription create \
   --source-resource-id $topicid \
   --name <event_subscription_name> \
@@ -179,7 +185,7 @@ Settings:
 - **Max events per batch**: 1 - 5,000 (default: 1?). If no other events are available at the time of publishing, fewer events may be delivered.
 - **Preferred batch size in kilobytes**: 1 - 1024 (default: 64KB?). Smaller if not enough events are available. If a single event is larger than the preferred size, it will be delivered as its own batch.
 
-```ps
+```sh
 az eventgrid event-subscription create \
   --resource-id $storageid \
   --name <event_subscription_name> \
@@ -272,3 +278,40 @@ Limitations:
 - 25 advanced filters and 25 filter values across all the filters per Event Grid subscription
 - 512 characters per string value
 - No support for escape characters in keys
+
+## [Route custom events to web endpoint](https://learn.microsoft.com/en-us/azure/event-grid/custom-event-quickstart-portal)
+
+```sh
+mySiteURL="https://${mySiteName}.azurewebsites.net"
+
+# Create a resource group
+az group create --name az204-evgrid-rg --location $myLocation
+
+# Enable an Event Grid resource provider (needed only once)
+az provider register --namespace Microsoft.EventGrid
+
+# Create a custom topic
+az eventgrid topic create --name $myTopicName \
+    --location $myLocation \
+    --resource-group az204-evgrid-rg
+
+# Create a message endpoint
+az deployment group create \
+    --resource-group az204-evgrid-rg \
+    --template-uri "https://raw.githubusercontent.com/Azure-Samples/azure-event-grid-viewer/main/azuredeploy.json" \
+    --parameters siteName=$mySiteName hostingPlanName=viewerhost
+
+# Subscribe to a custom topic
+endpoint="${mySiteURL}/api/updates"
+subId=$(az account show --subscription "" | jq -r '.id')
+az eventgrid event-subscription create \
+    --source-resource-id "/subscriptions/$subId/resourceGroups/az204-evgrid-rg/providers/Microsoft.EventGrid/topics/$myTopicName" \
+    --name az204ViewerSub \
+    --endpoint $endpoint
+
+# Send an event to the custom topic
+topicEndpoint=$(az eventgrid topic show --name $myTopicName -g az204-evgrid-rg --query "endpoint" --output tsv)
+key=$(az eventgrid topic key list --name $myTopicName -g az204-evgrid-rg --query "key1" --output tsv)
+event='[ {"id": "'"$RANDOM"'", "eventType": "recordInserted", "subject": "myapp/vehicles/motorcycles", "eventTime": "'`date +%Y-%m-%dT%H:%M:%S%z`'", "data":{ "make": "Contoso", "model": "Monster"},"dataVersion": "1.0"} ]'
+curl -X POST -H "aeg-sas-key: $key" -d "$event" $topicEndpoint
+```

@@ -144,7 +144,7 @@ Portal: `All resources > storage account > Data management > Lifecycle managemen
 
 CLI:
 
-```ps
+```sh
 az storage account management-policy create \
     #--account-name "<storage-account>" \
     #--resource-group "<resource-group>"
@@ -157,7 +157,7 @@ A lifecycle management policy must be read or written in full. Partial updates a
 
 When access time tracking is enabled, a lifecycle management policy can include an action based on the time that the blob was last accessed with a read (tracks only the first in the past 24 hours) or write operation. This adds additional billing.
 
-```ps
+```sh
 az storage account blob-service-properties update \
     #--resource-group <resource-group> \
     #--account-name <storage-account> \
@@ -263,7 +263,7 @@ Encryption scope for storage account:
 - Azure Portal: `storage account > Security + networking > Encryption > Encryption Scopes tab.`
 - CLI:
 
-```ps
+```sh
 az storage account encryption-scope create \
     #--resource-group "<resource-group>" \
     #--account-name "<storage-account>" \
@@ -276,7 +276,7 @@ Encryption scope for storage account:
 - Azure Portal: `storage account > containers > Add > Advanced > Encryption scope`
 - CLI:
 
-```ps
+```sh
 az storage container create \
     #--account-name "<storage-account>" \
     #--resource-group "<resource-group>" \
@@ -291,7 +291,7 @@ Upload a blob with an encryption scope:
 - Azure Portal: `storage account > containers > Upload > Advanced > Encryption scope`
 - CLI:
 
-```ps
+```sh
 az storage blob upload \
     #--account-name "<storage-account>" \
     #--container-name "<container>" \
@@ -305,7 +305,7 @@ Change the encryption key for a scope:
 - Azure Portal: `storage account > Encryption Scopes > More > Edit encryption scope`
 - CLI:
 
-```ps
+```sh
 az storage account encryption-scope update \
     #--account-name "<storage-account>" \
     #--resource-group "<resource-group>"
@@ -326,7 +326,7 @@ Disable an encryption scope:
 - Azure Portal: `storage account > Encryption Scopes > scope > Disable`
 - CLI:
 
-```ps
+```sh
 az storage account encryption-scope update \
     #--account-name <storage-account> \
     #--resource-group <resource-group> \
@@ -351,7 +351,7 @@ var credential = new StorageSharedKeyCredential("<account-name>", "<account-key>
 var service = new BlobServiceClient(new Uri("<account-url>"), credential);
 ```
 
-```ps
+```sh
 az storage blob upload --account-name myaccount --account-key mykey --name myblob --type block --file ./local/path/to/file --container-name mycontainer
 ```
 
@@ -370,7 +370,7 @@ TokenCredential credential = new DefaultAzureCredential();
 var service = new BlobServiceClient(new Uri("<account-url>"), credential);
 ```
 
-```ps
+```sh
 az login
 az storage blob upload --account-name myaccount --name myblob --type block --file ./local/path/to/file --container-name mycontainer
 ```
@@ -384,7 +384,7 @@ TokenCredential credential = new ClientSecretCredential("<tenant-id>", "<client-
 var service = new BlobServiceClient(new Uri("<account-url>"), credential);
 ```
 
-```ps
+```sh
 az login --service-principal --username <client-id> --password <client-secret> --tenant <tenant-id>
 az storage blob upload --account-name myaccount --name myblob --type block --file ./local/path/to/file --container-name mycontainer
 ```

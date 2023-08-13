@@ -37,7 +37,7 @@ Limitations:
 
 The _scale controller_ adjusts resources based on event rates and trigger types. It uses heuristics for each trigger type (for Queue storage trigger, it scales based on the queue length and the age of the oldest queue message). The number of host instances can be scaled to zero when no functions are running (_cold start_).
 
-```ps
+```sh
 az functionapp plan create
     --name
     --resource-group
@@ -531,7 +531,7 @@ public static MyTableEntity RunTableStorageOutputBinding(
 
 ## Working with Azure Functions
 
-```ps
+```sh
 # List the existing application settings
 az functionapp config appsettings list --name <FUNCTION_APP_NAME> --resource-group <RESOURCE_GROUP_NAME>
 
@@ -583,7 +583,7 @@ Delete or revoke keys: `DELETE`, action: `/keys/{keyName}`
 
 ### CORS
 
-```ps
+```sh
 # Add a domain to the allowed origins list
 az functionapp cors add --allowed-origins https://contoso.com --name <FUNCTION_APP_NAME> --resource-group <RESOURCE_GROUP_NAME>
 
@@ -635,14 +635,14 @@ Enable SQL query:
 
 Turn on verbose logging from the scale controller to Application Insights:
 
-```ps
+```sh
 az functionapp config appsettings set --settings SCALE_CONTROLLER_LOGGING_ENABLED=AppInsights:Verbose \
 --name <FUNCTION_APP_NAME> --resource-group <RESOURCE_GROUP_NAME>
 ```
 
 Disable logging:
 
-```ps
+```sh
 az functionapp config appsettings delete --setting-names SCALE_CONTROLLER_LOGGING_ENABLED \
 --name <FUNCTION_APP_NAME> --resource-group <RESOURCE_GROUP_NAME>
 ```

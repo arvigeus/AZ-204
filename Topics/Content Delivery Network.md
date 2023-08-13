@@ -26,7 +26,7 @@ Content is cached based on the `Time to Live` (TTL), which is determined by the 
 
 To ensure users receive the latest version of a file, include a version string in the URL or purge cached content. Purging can be performed on an endpoint basis, by specifying a file, or using wildcards. Below is an example of purging assets:
 
-```ps
+```sh
 az cdn endpoint purge \
     --content-paths '/css/*' '/js/app.js' \
     --name ContosoEndpoint \
@@ -60,7 +60,7 @@ Deleting and recreating a CDN endpoint is another way to purge the content, effe
 
 ### Preload assets
 
-```ps
+```sh
 az cdn endpoint load \
     --content-paths '/img/*' '/js/module.js' \
     --name ContosoEndpoint \

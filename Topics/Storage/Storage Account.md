@@ -206,7 +206,7 @@ az storage account create
 
 [Update](https://learn.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-update):
 
-```ps
+```sh
 az storage account update
     --name
     [--resource-group] `az account list-locations` or `az configure --defaults location=$location` or attempt to resolve the resource group by storage account name (only if globally unique)
@@ -217,7 +217,7 @@ az storage account update
 
 Create an account with Azure DNS zone endpoints:
 
-```ps
+```sh
 az extension add --name storage-preview
 
 az storage account create \
@@ -229,7 +229,7 @@ az storage account create \
 
 [Delete](https://learn.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-delete)
 
-```ps
+```sh
 az storage account delete --name "<storage-account>" --resource-group "<resource-group>"
 ```
 
@@ -298,7 +298,7 @@ Redundancy options can be changed without any data loss or application downtime.
 
 [CLI](https://learn.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-update):
 
-```ps
+```sh
 az storage account update \
     --name "<storage-account>"
     --resource-group "<resource_group>" \

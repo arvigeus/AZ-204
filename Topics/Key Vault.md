@@ -66,7 +66,7 @@ Azure Key Vault uses Transport Layer Security (TLS) for data transit protection.
 
 Create an access policy for your key vault that grants certificate permissions to your user account:
 
-```ps
+```sh
 az keyvault set-policy --name <your-key-vault-name> --upn user@domain.com --certificate-permissions delete get list create purge
 ```
 
@@ -98,7 +98,7 @@ var certificate = await client.GetCertificateAsync(certificateName);
 
 ## Disk Encryption ([Windows](https://learn.microsoft.com/en-us/azure/virtual-machines/windows/disk-encryption-key-vault?tabs=azure-portal), [Linux](https://learn.microsoft.com/en-us/azure/virtual-machines/linux/disk-encryption-key-vault?tabs=azure-portal))
 
-```ps
+```sh
 az login
 
 # A resource group is a logical container into which Azure resources are deployed and managed.

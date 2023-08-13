@@ -37,7 +37,7 @@ Cloud-based container image building and automated OS/framework patching.
 
 CR Tasks primarily builds Linux OS and amd64 architecture images. Use the `--platform` tag to specify other OS or architectures:
 
-```ps
+```sh
 # Linux supports all architectures
 az acr build --registry MyRegistry --image MyImage:tag --platform Linux/arm .
 # Windows supports only AMD64
@@ -48,7 +48,7 @@ az acr build --registry MyRegistry --image MyImage:tag --platform Windows/amd64 
 
 Pushes and run a Docker image
 
-```ps
+```sh
 # Create container registry
 # az group create --name myResourceGroup --location eastus
 az acr create --name mycontainerregistry --sku Basic --resource-group myResourceGroup
@@ -84,7 +84,7 @@ az acr repository show-tags --name <registry-name> --repository hello-world --ou
 
 Build and run a container image:
 
-```ps
+```sh
 # Create a resource group
 az group create --name myResourceGroup --location eastus
 
@@ -104,7 +104,7 @@ az acr run --registry myAcr --cmd '$Registry/myimage:latest' /dev/null
 
 ## [Container Instances](https://learn.microsoft.com/en-us/azure/container-instances/)
 
-```ps
+```sh
 # Container from image
 az container create --name mycontainer --image mycontainerimage --resource-group myResourceGroup
 
@@ -144,7 +144,7 @@ Azure Files shares can only be mounted to _Linux containers_ _running as root_, 
 
 Azure CLI:
 
-```ps
+```sh
 az container create \
     --azure-file-volume-account-name $ACI_PERS_STORAGE_ACCOUNT_NAME \
     --azure-file-volume-account-key $STORAGE_KEY \
@@ -190,7 +190,7 @@ Add a system-assigned identity: `az containerapp identity assign --name myApp --
 
 Add a user-assigned identity:
 
-```ps
+```sh
 # az identity create --resource-group <GROUP_NAME> --name <IDENTITY_NAME> --output json
 az containerapp identity assign --user-assigned <IDENTITY_RESOURCE_ID> --resource-group <GROUP_NAME> --name <APP_NAME>
 ```
@@ -211,7 +211,7 @@ As a container app revision scales out, new instances of the revision are create
 
 Example:
 
-```ps
+```sh
 az containerapp create \
  # ...
  --min-replicas 0 \
@@ -283,14 +283,14 @@ ContainerAppConsoleLogs_CL # or ContainerAppSystemLogs_CL
 
 CLI:
 
-```ps
+```sh
 # ContainerAppConsoleLogs_CL or ContainerAppSystemLogs_CL
 az monitor log-analytics query --workspace $WORKSPACE_CUSTOMER_ID --analytics-query "ContainerAppConsoleLogs_CL | where ContainerAppName_s == 'album-api' | project Time=TimeGenerated, AppName=ContainerAppName_s, Revision=RevisionName_s, Container=ContainerName_s, Message=Log_s, LogLevel_s | take 5" --out table
 ```
 
 ### [Deployment](https://learn.microsoft.com/en-us/azure/container-apps/get-started?tabs=bash)
 
-```ps
+```sh
 # Upgrade Azure CLI version on the workstation
 az upgrade
 

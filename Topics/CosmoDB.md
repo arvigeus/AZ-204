@@ -186,7 +186,7 @@ You set the number of Request Units (RUs) per second your application needs in m
           throughput: 1000);
     ```
 
-```ps
+```sh
 az cosmosdb sql container create --throughput 400
 ```
 
@@ -202,7 +202,7 @@ You don't have to assign any throughput when creating resources in your Azure Co
 
 Autoscale automatically adjusts the provisioned RUs based on the current usage. It scales between 10% and 100% of a set maximum - from 100 to 1000 RU/s. Throughput scales automatically based on usage without affecting performance, suited for workloads with unpredictable traffic requiring high performance and scale SLAs.
 
-```ps
+```sh
 az cosmosdb sql container create --throughput-type autoscale --max-throughput 4000
 ```
 

@@ -52,3 +52,14 @@ Event Grid works on _All-or-None_ policy, no partial delivery allowed when batch
 It's not necessary to specify both the settings (Maximum events per batch and Approximate batch size in kilobytes).
 
 ---
+
+Question: What command you need to run to enable your Azure subscription to send events to Event Grid?
+
+- [x] `az provider register --namespace Microsoft.EventGrid`
+- [ ] `az group create --name Microsoft.EventGrid`
+- [ ] `az eventgrid topic create --name "ServiceBus, BlobStorage"`
+- [ ] `az subscription --enable Microsoft.EventGrid`
+
+Answer: It will take some minutes. You need to run this only once per subscription.
+
+---

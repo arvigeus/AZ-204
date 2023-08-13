@@ -70,7 +70,7 @@ blobContainer.SetAccessPolicy(permissions: new BlobSignedIdentifier[] { identifi
 
 And here's how to do it using Azure CLI:
 
-```ps
+```sh
 az storage container policy create \
     --name <stored access policy identifier> \
     --container-name <container name> \

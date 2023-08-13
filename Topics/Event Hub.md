@@ -16,11 +16,26 @@
 
 ![Image showing the event processing flow.](https://learn.microsoft.com/en-us/training/wwl-azure/azure-event-hubs/media/event-hubs-stream-processing.png)
 
-## Event Hubs Capture
+## Namespace
+
+An Event Hubs namespace is a management container for event hubs. It provides DNS-integrated network endpoints and a range of access control and network integration management features such as IP filtering, virtual network service endpoint, and Private Link.
+
+## Event Retention
+
+Published events are removed from an event hub based on a configurable, time-based retention policy. The default value and shortest possible retention period is 1 hour.
+
+Max retention perios:
+
+- Standard: 7 days
+- Premium and Dedicated: 90 days.
+
+If you need to archive events beyond the allowed retention period, you can have them automatically stored in Azure Storage or Azure Data Lake by turning on the Event Hubs Capture feature.
+
+## [Event Hubs Capture](https://learn.microsoft.com/en-us/azure/event-hubs/event-hubs-capture-overview)
 
 Allows automatic capturing of streaming data into Azure Blob storage or Azure Data Lake Storage. It can process real-time and batch-based pipelines on the same stream. You can specify the time or size interval for capturing, and it scales automatically with throughput units.
 
-It is a durable buffer for telemetry ingress (similar to a distributed log) with a partitioned consumer model. Data ages off based on retention settings. Captured data is written in Apache Avro format.
+It is a durable buffer for telemetry ingress (similar to a distributed log) with a partitioned consumer model. Captured data is written in Apache Avro format.
 
 Storeage accounts can be in the same region as your event hub or in another region.
 
@@ -32,6 +47,10 @@ Example:
 https://mystorageaccount.blob.core.windows.net/mycontainer/mynamespace/myeventhub/0/2017/12/08/03/03/17.avro
 {Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}
 ```
+
+Integration with Event Grid: Create an Event Grid subscription with an Event Hubs namespace as its source.
+
+Azure Storage account as a destination: Needs write permissions on blobs and containers level. The `Storage Blob Data Owner` is a built-in role with above permissions.
 
 ## Scaling to throughput units
 
@@ -53,6 +72,18 @@ Designing large systems:
 - **Thread Safety**: Functions processing events are called sequentially for each partition. Events from different partitions can be processed concurrently, and shared states across partitions must be synchronized.
 
 Minimize processing and be cautious with poisoned messages. Utilize proper retry logic and understand checkpointing to improve efficiency and resilience.
+
+## Log Compaction
+
+Azure Event Hubs supports compacting event log to retain the latest events of a given event key. With compacted event hubs/Kafka topic, you can use key-based retention rather than using the coarser-grained time-based retention learn.microsoft.com.
+
+## Application Groups
+
+An application group is a collection of client applications that connect to an Event Hubs namespace sharing a unique identifying condition such as the security context - shared access policy or Azure Active Directory (Azure AD) application ID. Azure Event Hubs enables you to define resource access policies such as throttling policies for a given application group and controls event streaming (publishing or consuming) between client applications and Event Hubs.
+
+## Partitions
+
+They serve as "commit logs" for organizing sequences of events, with **new events added in the order they were received**. They enhance raw IO throughput by allowing multiple parallel logs and streamline processing by assigning clear ownership, thus efficiently handling large volumes of events. The number of partitions, set within an allowed tier range at creation, influences throughput but not cost, and cannot be changed later. While increasing partitions can boost throughput, it may complicate processing. Balancing scaling units and partitions, with a guideline of 1 MB/s per partition, is recommended for optimal scale. The key directs events to specific partition, allowing related events to be grouped together by attributes like unique identity or geography.
 
 ## Control access to events
 
@@ -126,7 +157,7 @@ var consumerClient = new EventHubConsumerClient(
     });
 ```
 
-## Working with Event Hubs
+## [Working with Event Hubs](https://learn.microsoft.com/en-us/azure/event-hubs/event-hubs-dotnet-standard-getstarted-send)
 
 ```cs
 // Connection strings and Event Hub name
@@ -151,7 +182,7 @@ await using (var producer = new EventHubProducerClient(eventHubsConnectionString
 
     await producer.SendAsync(eventBatch); // Send events
 
-    var eventData = new EventData(Encoding.UTF8.GetBytes("Message body"));
+    var eventData = new EventData(Encoding.UTF8.GetBytes("Message body")); // Works with BinaryData and string too
     await producer.SendAsync(eventData);
 }
 

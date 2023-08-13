@@ -20,7 +20,11 @@
 
 The choice between Storage Queues and Service Bus Queues depends on the specific needs of your application and its architecture. Storage Queues are generally more suitable for basic communication and large storage needs, while Service Bus Queues offer more advanced features and real-time capabilities.
 
-## Comparison Table
+## Comparison
+
+Azure Service Bus supports "Receive and Delete" mode, where messages are immediately consumed and removed from the queue.  
+Messages in Event Hubs are retained for a configured retention period, and consumers are responsible for tracking their position in the stream.  
+In Queue Storage messages are hidden for a specified visibility timeout period, and if not deleted within that time, they become visible again.
 
 ### Foundational Capabilities
 

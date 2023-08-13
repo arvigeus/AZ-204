@@ -206,7 +206,7 @@ Prerequisites:
 
 After setup, assign a managed identity to the App Configuration and grant it `GET`, `WRAP`, and `UNWRAP` (permits decrypting previously wrapped keys) permissions in the Key Vault's access policy:
 
-```ps
+```sh
 az keyvault set-policy --name 'MyVault' --object-id 'userObjectId' --key-permissions get list --secret-permissions get list
 ```
 
