@@ -43,7 +43,48 @@ Routing is managed interally, but applications can also use user properties for 
 | Geo-disaster recovery      | Continues data processing in a different region or datacenter during downtime.                |
 | Security                   | Supports standard AMQP 1.0 and HTTP/REST protocols.                                           |
 
-[Azure Service Bus for .NET](https://learn.microsoft.com/en-us/dotnet/api/overview/azure/service-bus)
+## Security
+
+RBAC:
+
+- Azure Service Bus Data Owner
+- Azure Service Bus Data Sender
+- Azure Service Bus Data Receiver
+
+Also supports SAS and Managed Identities
+
+## [Topic filters and actions](https://learn.microsoft.com/en-us/azure/service-bus-messaging/topic-filters)
+
+### Filters
+
+- **SQL Filters**:
+
+  - **Use**: Complex conditions using SQL-like expressions.
+  - **Example**: Filtering messages having specific property value (or not) and quantities.
+  - **Impact**: Lower throughput compared to Correlation Filters.
+
+- **Boolean Filters**:
+
+  - **Use**: Select all (TrueFilter) or none (FalseFilter) of the messages.
+  - **Example**: `new TrueRuleFilter()` for all messages.
+
+- **Correlation Filters**:
+  - **Use**: Match messages based on specific properties like CorrelationId.
+  - **Example**: Filtering messages with a specific subject and correlation ID.
+  - **Impact**: More efficient in processing, preferred over SQL filters.
+
+### Actions
+
+- **Use**: Modify message properties after matching and before selection.
+- **Example**: Setting a new quantity value if property matches a value (or not).
+
+### Usage Patterns
+
+- **Broadcast Pattern**: Every subscription gets a copy of each message.
+- **Partitioning Pattern**: Distributes messages across subscriptions in a mutually exclusive manner.
+- **Routing Pattern**: Distributes messages predictably but not exclusively.
+
+## [Azure Service Bus for .NET](https://learn.microsoft.com/en-us/dotnet/api/overview/azure/service-bus)
 
 ```cs
 using Azure.Messaging.ServiceBus;

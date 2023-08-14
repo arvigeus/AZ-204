@@ -55,3 +55,48 @@ Question: For which cases `param` could be of type `byte[]`?
 Answer: All work with `byte[]`.
 
 ---
+
+Question: You are developing an application that requires message storage of 50 GB and real-time messaging without polling the queue. Additionally, the solution must support ordered delivery (FIFO). Which Azure messaging service would best fit these requirements?
+
+- [x] Service Bus
+- [ ] Storage Queue
+- [ ] Event Hub
+- [ ] Event Grid
+
+Answer: Storage Queue can handle large message storage (up to 500 TB), but it lacks real-time messaging and FIFO. Service Bus, on the other hand, supports all these requirements, making it the suitable choice.
+
+---
+
+Question: Your application requires an event-based architecture that can handle millions of events per second with low latency. Additionally, the solution must provide support for custom topics and a maximum queue size of 30 GB. Which Azure messaging service would you choose?
+
+- [ ] Service Bus
+- [ ] Storage Queue
+- [ ] Event Hub
+- [x] Event Grid
+
+Answer: Both Event Grid and Event Hub can handle millions of events per second. However, only Event Grid provides support for custom topics (the equivalent would be a namespace - a scoping container in which you can have multiple Event Hubs - but this does not allows advanced filtering and fine-grained control over the events that are published and subscribed to), and the maximum queue size requirement does not apply to Event Grid, making it the ideal choice.
+
+---
+
+Question: Your application needs to process large-scale data streams, retain messages for a 1-day retention period, and support a maximum message size of 1 MB. Which Azure messaging service would you choose?
+
+- [ ] Service Bus
+- [ ] Storage Queue
+- [x] Event Hub
+- [ ] Event Grid
+
+Answer: Both Event Hub and Event Grid are suitable for event-based architectures and support message size of 1 MB. However, only Event Hub provides configurable message retention (up to 7 days).
+
+---
+
+Question: You are developing a real-time analytics system in Azure for a global e-commerce platform. You need to separate the order processing system from the analytics engine to enhance the scalability and robustness of the system. You must select an Azure service that allows one-to-one data communication, monitors the status of data manipulation, and adheres to the HTTPS protocol. The data transfer is anticipated to peak at 100 GB. Which Azure service would be the most suitable for this scenario?
+
+- [ ] Azure Blob Storage
+- [ ] Azure Service Bus
+- [ ] Azure Event Hub
+- [x] Azure Queue Storage
+
+Answer: Azure Queue Storage enables point-to-point data exchange via HTTPS and can handle large volumes (up to 500 TB), and tracking data processing.  
+Azure Service Bus supports HTTPS and point-to-point connections (queues) or one-to-many scenarios (topics), it is limited to 80 GB of message storage.
+
+---
