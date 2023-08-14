@@ -117,3 +117,25 @@ Question: You are developing a logging system that captures all messages in Azur
 Answer: A TrueFilter is a special filter that always returns true, meaning it selects all arriving messages without any conditions. In this scenario, where you need to capture every single message without any filtering, a TrueFilter is the appropriate choice, such as `new TrueRuleFilter()`. It ensures that all messages are selected for the subscription, fulfilling the requirement for complete logging.
 
 ---
+
+Question: You are designing a notification system for a large organization using Azure Service Bus. The system must send updates to multiple subscribers whenever a new policy is published. Which feature of Azure Service Bus should you utilize to ensure that all subscribers receive the new policy notifications?
+
+- [ ] Queues
+- [x] Topics
+- [ ] Relay
+- [ ] Event Hub
+
+Answer: Topics in Azure Service Bus are designed for one-to-many communication scenarios where a single message can be sent to multiple subscribers. Queues are used for point-to-point connections, Relay is for hybrid connections, and Event Hub is for event streaming. Therefore, Topics are the correct choice for this scenario.
+
+---
+
+Question: You are building a customer support system where each support ticket must be processed by exactly one support agent. You want to use Azure Service Bus to handle the distribution of support tickets. Which feature of Azure Service Bus would be most appropriate for ensuring that each ticket is processed by only one agent?
+
+- [ ] Topics
+- [x] Queues
+- [ ] Event Hub
+- [ ] Relay
+
+Answer: Queues in Azure Service Bus are used for point-to-point connections, ensuring that each message (in this case, a support ticket) is processed by only one receiver (support agent). Topics are for one-to-many scenarios, Event Hub is for event streaming, and Blob Storage is for unstructured data storage. Therefore, Queues are the correct choice for this scenario.
+
+---

@@ -6,7 +6,7 @@ Supports AMQP 1.0, enabling applications to work with Service Bus, and on-premis
 
 Up to 80 GB only.
 
-- **Queue**: Only one consumer receives and processes each message at a time, and since messages are stored durably in the queue, producers and consumers don't need to handle messages concurrently.
+- **Queue**: Only one consumer receives and processes each message at a time (_point-to-point_ connection), and since messages are stored durably in the queue, producers and consumers don't need to handle messages concurrently.
 - **Load-leveling**: Effectively buffering against fluctuating system loads, ensuring the system is optimized to manage the average load, instead of peaks.
 - **Decoupling**: Seamless and independent upgrades of consumers, without any disruption to the producers.
 - **Receive modes**:
