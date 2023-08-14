@@ -2,6 +2,7 @@
 
 TLDR;
 
+- Read the [disclaimer](https://github.com/arvigeus/AZ-204#disclaimer)
 - Go through [Topics](/Topics/)
 - Practice with [quiz app](https://az-204.vercel.app/)
 
