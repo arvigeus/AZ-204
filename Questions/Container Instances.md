@@ -43,3 +43,5 @@ Azure Kubernetes Service (AKS) allows running multiple containers on the same ho
 Azure App Services provides a platform for hosting web applications and RESTful APIs, including those in containers. The downside is that it does not natively support the sidecar pattern and can lead to higher costs as the scale of operations increases.  
 Azure Container Registry serves as a storage and management solution for container images. It is primarily a storage service and does not provide the functionalities to deploy containers or implement the sidecar pattern.  
 Azure Service Fabric is a platform that provides orchestration of microservices and containers, and could technically support the sidecar pattern. However, it requires a deeper understanding of the microservices architecture and might not be the most cost-effective or simple solution for running a single application with a monitoring sidecar.
+
+---

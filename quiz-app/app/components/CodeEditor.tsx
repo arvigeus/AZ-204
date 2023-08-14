@@ -5,6 +5,7 @@ import { langs } from "@uiw/codemirror-extensions-langs";
 
 import { InputStyle } from "~/components/Input";
 import { useMemo } from "react";
+import clsx from "clsx";
 
 export type SupportedEditLanguage = "cs" | "ps" | "docker";
 
@@ -53,7 +54,7 @@ export const CodeEditor = ({ lang, ...props }: CodeEditorProps) => {
       theme={githubLight}
       extensions={[languate]}
       {...props}
-      className={InputStyle}
+      className={clsx(InputStyle, "rounded-lg")}
       basicSetup={{
         lineNumbers: false,
         foldGutter: false,

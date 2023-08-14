@@ -48,3 +48,5 @@ az acr import \
 --source mcr.microsoft.com/windows/servercore:latest \ # the fully qualified source image reference
 --image servercore:ltsc2019 # the new tag you want the image to have in your registry
 ```
+
+---

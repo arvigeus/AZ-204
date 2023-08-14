@@ -18,14 +18,21 @@ const parseItem = (name: string, text: string, idCounter: number): QAPair[] => {
   let currentAnswerIndex = [];
   let currentHasCode = false;
 
-  const optionRegex = /^\s*- \[(?:x|\s)\]|^[a-zA-Z0-9]+[),]\s/;
+  const optionRegex = /^\s*- \[(?:x|\s)\]\s/;
 
   let itemType: "question" | "option" | "answer" | null = null;
 
   for (const line of lines) {
+    const isDebug =
+      currentQuestion.length > 0 &&
+      currentQuestion[0].includes(
+        "You have an application registered in Azure AD and you have configured `appsettings.json`"
+      );
+
     if (line.startsWith("Question:")) {
       if (currentQuestion.length > 0) {
         const question = currentQuestion.join("\n").trimEnd();
+        // if (isDebug) console.log("Question: " + question);
         qaPairs.push({
           id: createHash("sha256").update(question).digest("hex"),
           question,
@@ -52,6 +59,7 @@ const parseItem = (name: string, text: string, idCounter: number): QAPair[] => {
       if (itemType === "question") currentQuestion.push(line);
     } else {
       if (optionRegex.test(line)) {
+        if (isDebug) console.log("Option: " + line);
         currentOptions.push(line.replace(optionRegex, ""));
         itemType = "option";
         if (/^(\s*- \[x\])/.test(line))
@@ -60,12 +68,15 @@ const parseItem = (name: string, text: string, idCounter: number): QAPair[] => {
         switch (itemType) {
           case "question":
             currentQuestion.push(line);
+            // if (isDebug) console.log("Question: " + line);
             if (/^```(cs|ps)$/.test(line.trim())) currentHasCode = true;
             break;
           case "answer":
+            // if (isDebug) console.log("Answer: " + line);
             currentAnswer.push(line);
             break;
           case "option":
+            // if (isDebug) console.log("Option: " + line);
             if (line.trim() !== "") currentOptions.push(line);
             break;
           default:
@@ -170,7 +181,7 @@ const saveData = async (topics: string[], data: any[]) => {
 };
 
 const init = async (directory: string): Promise<void> => {
-  const files = await (process.env.NODE_ENV === "development"
+  const files = await (process.env.NODE_ENV !== "production"
     ? loadContents(directory)
     : loadContentFromGItHub(directory));
 

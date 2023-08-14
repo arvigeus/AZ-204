@@ -254,7 +254,7 @@ Answer: You cannot have custom TLS bindings on the `Free` and `Shared` tiers.
 
 ---
 
-Question: Which App Service plans support ALways On:
+Question: Which App Service plans support Always On:
 
 - [ ] Free
 - [ ] Shared
