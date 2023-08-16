@@ -68,9 +68,9 @@ New-AzContainerGroup -ResourceGroupName "myResourceGroup" -Name "myContainerGrou
 
 Question: You are planning to deploy a legacy application built using .NET Framework as a containerized solution on Azure. Which operating system type should be specified when creating the Azure Container Group for this application?
 
-- [ ] Linux
-- [x] Windows
-- [ ] Both
+- [ ] Linux only
+- [x] Windows only
+- [ ] Linux or Windows
 
 Answer: The .NET Framework is Windows-specific, so when creating a container for a .NET Framework application, -OsType "Windows" must be used.
 
@@ -78,9 +78,9 @@ Answer: The .NET Framework is Windows-specific, so when creating a container for
 
 Question: You are planning to containerize a .NET Core application for deployment on Azure. When creating the Azure Container Group to host this application, which operating system types are viable options?
 
-- [ ] Linux
-- [ ] Windows
-- [x] Both
+- [ ] Linux only
+- [ ] Windows only
+- [x] Linux or Windows
 
 Answer: As .NET Core is a cross-platform framework, it is capable of running on multiple operating systems, including both Linux and Windows. Therefore, both of these options could be potentially specified when creating the Azure Container Group.
 
@@ -175,7 +175,7 @@ Answer: `az container create` - Azure Container Instances (ACI) is a service tha
 
 ---
 
-Question 3: Your team has developed a new microservices-based application, and you need to deploy these services on Azure. Which command allows you to deploy these applications with scaling and orchestration features?
+Question: Your team has developed a new microservices-based application, and you need to deploy these services on Azure. Which command allows you to deploy these applications with scaling and orchestration features?
 
 - [ ] `az container create`
 - [ ] `az acr create`
@@ -217,5 +217,88 @@ Question: What is the primary function of the "Observability" feature in Dapr?
 - [ ] It provides a dashboard for visualizing the performance of your application.
 
 Answer: It sends tracing information to an Application Insights backend.
+
+---
+
+Question: What is the recommended solution if you need a stable public IP address for your container group, especially considering potential container group restarts?
+
+- [ ] Use a hardcoded IP address in your container group configuration.
+- [ ] Configure a different subnet for your container group.
+- [ ] Utilize Azure Load Balancer to manage IP address changes.
+- [x] Use Application Gateway to ensure a static public IP address.
+
+Answer: To address the potential IP changes when a container group restarts, it's advisable to use Application Gateway. Application Gateway provides a stable public IP address that remains consistent even if the container group's IP changes due to restarts or other factors.
+
+---
+
+Question: If a container group restarts, what will happen to its IP address?
+
+- [ ] The IP address will always remain the same.
+- [ ] The IP address will change to a different subnet.
+- [x] The IP address might change.
+- [ ] The IP address will change only if a new image is deployed.
+
+Answer: When a container group restarts, there's a possibility that its IP address might change. This uncertainty is due to the dynamic nature of container group deployments. It's important not to rely on hardcoded IP addresses in such scenarios.
+
+---
+
+Question: What happens when you update an application secret in Azure Container App?
+
+- [ ] A new revision is created
+- [ ] The application restarts to reflect the updated value
+- [x] Nothing happens
+
+Answer: Adding, removing, or changing secrets doesn't generate new revisions. Apps need to be restarted to reflect updates.
+
+---
+
+Question: You have deployed a container using the following YAML configuration:
+
+```yaml
+apiVersion: 2018-10-01
+location: eastus
+name: securetest
+properties:
+  containers:
+    - name: mycontainer
+      properties:
+        environmentVariables:
+          - name: "EXPOSED"
+            value: "my-exposed-value"
+          - name: "SECRET"
+            secureValue: "my-secret-value"
+  osType: Linux
+  restartPolicy: Always
+tags: null
+type: Microsoft.ContainerInstance/containerGroups
+```
+
+You want to retrieve the value of the environment variable "SECRET" using the Azure CLI and execute the following command:
+
+```sh
+az container show --resource-group myResourceGroup --name securetest --query "properties.containers[0].properties.environmentVariables[?name=='SECRET']"
+```
+
+What should you expect from this command?
+
+- [ ] The value "my-secret-value" will be displayed.
+- [ ] An error will be thrown since the secret value cannot be accessed.
+- [x] Only the variable's name "SECRET" will be displayed, not its value.
+- [ ] The entire container's properties will be displayed.
+
+Answer: The given YAML configuration demonstrates how to set a secure environment variable named "SECRET" with the `secureValue` property. When viewing container properties through the Azure portal or Azure CLI, only the secure variable's name is displayed, not its value. Therefore, executing the given command will show the name of the secure variable "SECRET", but not its actual value.
+
+---
+
+Question: You have declared a connection string to a queue storage account in the `--secrets` parameter of a container app. Now you need to reference this secret in an environment variable when creating a new revision in your container app.
+
+Which of the following commands correctly references the secret `queue-connection-string` in an environment variable in the Azure CLI?
+
+- [x] `--env-vars "ConnectionString=secretref:queue-connection-string"`
+- [ ] `--env-vars "ConnectionString=queue-connection-string"`
+- [ ] `--env-vars "ConnectionString=$CONNECTION_STRING"`
+- [ ] `--env-vars "ConnectionString=$queue-connection-string"`
+
+Answer: The correct way to reference a secret in an environment variable in the Azure CLI is to set its value to `secretref:`, followed by the name of the secret.
 
 ---

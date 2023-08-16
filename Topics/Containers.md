@@ -2,24 +2,30 @@
 
 ## [Container Registry](https://learn.microsoft.com/en-us/azure/container-registry/)
 
-Example: `docker pull <registry>/<repository>/<image-or-artifact>:<tag>`
+Formay: `<registry>/<repository>/<image-or-artifact>:<tag>`
 
 - `<registry>`: name of the Docker registry (for Azure, it would be something like myregistry.azurecr.io).
 - `<repository>`: name of the repository where your image is stored.
 - `<image-or-artifact>`: name of the image or artifact you want to pull.
 - `<tag>`: version tag of the image or artifact.
 
+Example: `myregistry.azurecr.io/myrepository/myapp:latest`
+
 ### [Tiers](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-skus)
 
 All tiers support the same basic features, the main difference is image storage / throughput.
 
-- **Basic**
-- **Standard** - For most production scenarios
-- **Premium** - highest amount of included storage and concurrent operations, enabling high-volume scenarios (higher image throughput). Additional features: geo-replication, content trust for image tag signing, private link.
+- **Basic** - Lowest throughput. 10GB storage
+- **Standard** - For most production scenarios, 100GB storage
+- **Premium** - Highest amount of included storage (500GB) and concurrent operations, enabling high-volume scenarios (higher image throughput). Additional features: geo-replication (zone redundancy), content trust for image tag signing, private link.
 
 **Throttling**: May happen if you exceed the registry's limits, causing temporary `HTTP 429` errors and requiring retry logic or reducing the request rate.
 
 Change tier: `az acr update --name myContainerRegistry --sku Premium`
+
+**Zone Redundancy**: Minimum of three separate zones in each enabled region
+
+**Storage**: High numbers of repositories and tags can impact the performance. Periodically delete unused.
 
 ### [Tasks](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-tasks-overview)
 
@@ -35,7 +41,7 @@ Cloud-based container image building and automated OS/framework patching.
 
 - **Scheduled Tasks**: Run container workloads or maintenance operations on a defined schedule.
 
-CR Tasks primarily builds Linux OS and amd64 architecture images. Use the `--platform` tag to specify other OS or architectures:
+Tasks primarily builds Linux OS and amd64 architecture images. Use the `--platform` tag to specify other OS or architectures:
 
 ```sh
 # Linux supports all architectures
@@ -104,6 +110,10 @@ az acr run --registry myAcr --cmd '$Registry/myimage:latest' /dev/null
 
 ## [Container Instances](https://learn.microsoft.com/en-us/azure/container-instances/)
 
+Container Images can't be larger than 15 GB.
+
+If a container group restarts, its IP might change. Avoid using hardcoded IP addresses. For a stable public IP, consider [using Application Gateway](https://learn.microsoft.com/en-us/azure/container-instances/container-instances-application-gateway).
+
 ```sh
 # Container from image
 az container create --name mycontainer --image mycontainerimage --resource-group myResourceGroup
@@ -119,24 +129,31 @@ az container create --dns-name-label mydnslabel --ip-address public --name mycon
 az container show --resource-group az204-aci-rgb--name mycontainerbb --query "{FQDN:ipAddress.fqdn,ProvisioningState:provisioningState}" --out table
 ```
 
-**Container Groups** - the top-level resource. It consists of multiple containers scheduled on a single host machine, sharing lifecycle, resources, network, and storage volumes (similar to Kubernetes pod). Multi-container groups support Linux containers. For Windows containers, Azure Container Instances allow only single-instance deployment.
+**Container Groups** - the top-level resource. It consists of multiple containers scheduled on a single host machine, sharing lifecycle, resources, network, and storage volumes (similar to Kubernetes pod). _Multi-container groups only support Linux containers_. _For Windows containers, Azure Container Instances allow only single-instance deployment_. If you create a container group with two instances, each requesting one CPU, then the container group is allocated two CPUs. Example: An application container and a logging or monitoring container.
 
 **Restart policies**: `Always`, `Never`, `OnFailure`. When ACI stops a container with a restart policy of `Never` or `OnFailure`, its status is set to **Terminated**.  
 Example: `az container create --restart-policy OnFailure ...`.
 
 **Environment variables**: `az container create --environment-variables 'NumWords'='5' 'MinLength'='8' ...`
 
-```yaml
-# Define environment variables for the container
-environmentVariables:
-  # Public environment variable
-  - name: "NOTSECRET"
-    value: "my-exposed-value"
+- Via file (`az container create --file secure-env.yaml ...`):
 
-  # Secure environment variable, externally (Azure portal or Azure CLI) visible only by name
-  - name: "SECRET"
-    secureValue: "my-secret-value"
-```
+  ```yaml
+  # Define environment variables for the container
+  environmentVariables:
+    # Public environment variable
+    - name: "NOTSECRET"
+      value: "my-exposed-value"
+
+    # Secure environment variable, externally (Azure portal or Azure CLI) visible only by name
+    - name: "SECRET"
+      secureValue: "my-secret-value"
+  ```
+
+### Deployment
+
+- Resource Manager template: when you need to deploy additional Azure service resources (for example, an Azure Files share)
+- YAML file: when your deployment includes only container instances.
 
 ### Mount an Azure file share in Azure Container Instances
 
@@ -180,9 +197,9 @@ Fully managed (no need to manage other Azure infrastructure) environment. Common
 - Handling event-driven processing
 - Running microservices
 
-Cannot run privileged containers requiring _root_ access and strictly requires _Linux-based (linux/amd64)_ container images.
+Cannot run privileged containers requiring _root_ access and strictly requires _Linux-based (linux/amd64)_ container images. Restart policy: always.
 
-### [Auth](https://learn.microsoft.com/en-us/azure/container-apps/managed-identity?tabs=cli%2Cdotnet)
+### [Auth](https://learn.microsoft.com/en-us/azure/container-apps/managed-identity)
 
 The platform's authentication and authorization middleware component runs as a _sidecar_ container on each application replica, screening all incoming HTTPS (_disable_ `allowInsecure` in ingress config) requests before they reach your application. [See more](./App%20Service%20Web%20Apps.md)
 
@@ -252,12 +269,12 @@ Revision Labels: direct traffic to specific revisions. A label provides a unique
 
 Scopes:
 
-- Revision-scope changes trigger a new revision when you deploy your app (trigger: changing [properties.template](https://learn.microsoft.com/en-us/azure/container-apps/azure-resource-manager-api-spec?tabs=arm-template#propertiestemplate))
+- Revision-scope changes via `az containerapp update` trigger a new revision when you deploy your app (trigger: changing [properties.template](https://learn.microsoft.com/en-us/azure/container-apps/azure-resource-manager-api-spec?tabs=arm-template#propertiestemplate))
 - Application-scope changes are globally applied to all revisions. A new revision isn't created (trigger: changing [properties.configuration](https://learn.microsoft.com/en-us/azure/container-apps/azure-resource-manager-api-spec?tabs=arm-template#propertiesconfiguration))
 
 ### [Secrets](https://learn.microsoft.com/en-us/azure/container-apps/manage-secrets?tabs=azure-cli)
 
-Secrets are scoped to an application, outside of any specific revision of an application. Once secrets are defined at the application level, secured values are available to container apps. Adding, removing, or changing secrets doesn't generate new revisions.
+Secrets are scoped to an application (`az containerapp create`), outside of any specific revision of an application. Once secrets are defined at the application level, secured values are available to container apps. Adding, removing, or changing secrets doesn't generate new revisions. Apps need to be restarted to reflect updates.
 
 Defining secrets: `--secrets "queue-connection-string=<CONNECTION_STRING>"`
 
@@ -265,7 +282,7 @@ Referencing Secrets in Environment Variables (`secretref:`): `--env-vars "QueueN
 
 Mounting Secrets in a Volume (secret name is filename, secret value is content): `--secret-volume-mount "/mnt/secrets"`
 
-### [Logging](https://learn.microsoft.com/en-us/azure/container-apps/log-monitoring?tabs=bash)
+### [Logging](https://learn.microsoft.com/en-us/azure/container-apps/log-monitoring)
 
 - System Logs (at the container app level)
 - Console Logs (from the `stderr` and `stdout` messages inside container app)
@@ -288,7 +305,7 @@ CLI:
 az monitor log-analytics query --workspace $WORKSPACE_CUSTOMER_ID --analytics-query "ContainerAppConsoleLogs_CL | where ContainerAppName_s == 'album-api' | project Time=TimeGenerated, AppName=ContainerAppName_s, Revision=RevisionName_s, Container=ContainerName_s, Message=Log_s, LogLevel_s | take 5" --out table
 ```
 
-### [Deployment](https://learn.microsoft.com/en-us/azure/container-apps/get-started?tabs=bash)
+### [Deployment](https://learn.microsoft.com/en-us/azure/container-apps/get-started)
 
 ```sh
 # Upgrade Azure CLI version on the workstation
@@ -308,7 +325,7 @@ az provider register --namespace Microsoft.OperationalInsights
 az containerapp env create --resource-group MyResourceGroup --name prod
 
 # Deploy the API service to the 'prod' environment, using the source code from a repository
-# https://learn.microsoft.com/en-us/azure/container-apps/quickstart-code-to-cloud?tabs=bash
+# https://learn.microsoft.com/en-us/azure/container-apps/quickstart-code-to-cloud
 function deploy_repo() {
   az containerapp up \
     --name MyAPI \
@@ -323,7 +340,7 @@ function deploy_repo() {
 }
 
 # Deploy a containerized application in Azure Container Apps, using an existing public Docker image
-# https://learn.microsoft.com/en-us/azure/container-apps/get-started?tabs=bash
+# https://learn.microsoft.com/en-us/azure/container-apps/get-started
 function deploy_image() {
   # Alt: az containerapp create
   az containerapp up \
@@ -373,7 +390,24 @@ Main APIs provided by Dapr:
 - `dotnet/core/sdk` - build an ASP.NET app
 - `dotnet/core/aspnet` - run an ASP.NET app
 
-[Multi-stage](https://docs.docker.com/build/building/multi-stage/) (build and run in different containers):
+```Dockerfile
+ # Sets the working directory to `/app`, which is where app files will be copied.
+WORKDIR /app
+# Copies the contents of the published app to the container's working directory (`/app` in this case).
+COPY bin/Release/net6.0/publish/ .
+```
+
+### [Multi-stage](https://docs.docker.com/build/building/multi-stage/)
+
+- Compile Stage:
+  - Choose a base image suitable for compiling the code.
+  - Set the working directory.
+  - Copy the source code.
+  - Compile the code.
+- Runtime Stage:
+  - Choose a base image suitable for running the application.
+  - Copy compiled binaries or artifacts from the compile stage.
+  - Set the command to run the application.
 
 ```Dockerfile
 FROM mcr.microsoft.com/dotnet/core/sdk:3.0 AS build
@@ -422,25 +456,29 @@ ENTRYPOINT ["dotnet", "WebApplication1.dll"]
 
 ## CLI
 
-- [az acr login](https://learn.microsoft.com/en-us/cli/azure/acr?view=azure-cli-latest#az-acr-login)
-- [az acr create](https://learn.microsoft.com/en-us/cli/azure/acr?view=azure-cli-latest#az-acr-create)
-- [az acr update](https://learn.microsoft.com/en-us/cli/azure/acr?view=azure-cli-latest#az-acr-update)
-- [az acr build](https://learn.microsoft.com/en-us/cli/azure/acr?view=azure-cli-latest#az-acr-build)
-- [az acr task create](https://learn.microsoft.com/en-us/cli/azure/acr/task?view=azure-cli-latest#az-acr-task-create)
-- [az acr repository](https://learn.microsoft.com/en-us/cli/azure/acr/repository?view=azure-cli-latest)
-- [az acr run](https://learn.microsoft.com/en-us/cli/azure/acr?view=azure-cli-latest#az-acr-run)
-- [az acr show](https://learn.microsoft.com/en-us/cli/azure/acr?view=azure-cli-latest#az-acr-show)
-- [az container create](https://learn.microsoft.com/en-us/cli/azure/container?view=azure-cli-latest#az-container-create)
-- [az container show](https://learn.microsoft.com/en-us/cli/azure/container?view=azure-cli-latest#az-container-show)
-- [az containerapp create](https://learn.microsoft.com/en-us/cli/azure/containerapp?view=azure-cli-latest#az-containerapp-create)
-- [az containerapp up](https://learn.microsoft.com/en-us/cli/azure/containerapp?view=azure-cli-latest#az-containerapp-up)
-- [az containerapp env create](https://learn.microsoft.com/en-us/cli/azure/containerapp/env?view=azure-cli-latest#az-containerapp-env-create)
-- [az containerapp show](https://learn.microsoft.com/en-us/cli/azure/containerapp?view=azure-cli-latest#az-containerapp-show)
-- [az containerapp identity assign](https://learn.microsoft.com/en-us/cli/azure/containerapp/identity?view=azure-cli-latest#az-containerapp-identity-assign)
-- [az upgrade](https://learn.microsoft.com/en-us/cli/azure/reference-index?view=azure-cli-latest#az-upgrade)
-- [az provider register](https://learn.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az-provider-register)
-- [az extension add](https://learn.microsoft.com/en-us/cli/azure/extension?view=azure-cli-latest#az-extension-add)
-- [az identity create](https://learn.microsoft.com/en-us/cli/azure/identity?view=azure-cli-latest#az-identity-create)
-- [az role assignment create](https://learn.microsoft.com/en-us/cli/azure/role/assignment?view=azure-cli-latest#az-role-assignment-create)
-- [az ad sp](https://learn.microsoft.com/en-us/cli/azure/ad/sp?view=azure-cli-latest)
-- [az monitor log-analytics query](https://learn.microsoft.com/en-us/cli/azure/monitor/log-analytics?view=azure-cli-latest#az-monitor-log-analytics-query)
+| Command                                                                                                                                                    | Brief Explanation                                                     | Example                                                                                                |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| [az acr login](https://learn.microsoft.com/en-us/cli/azure/acr?view=azure-cli-latest#az-acr-login)                                                         | Authenticate with an Azure Container Registry.                        | `az acr login --name MyRegistry`                                                                       |
+| [az acr create](https://learn.microsoft.com/en-us/cli/azure/acr?view=azure-cli-latest#az-acr-create)                                                       | Create a new Azure Container Registry.                                | `az acr create --resource-group MyResourceGroup --name MyRegistry --sku Basic`                         |
+| [az acr update](https://learn.microsoft.com/en-us/cli/azure/acr?view=azure-cli-latest#az-acr-update)                                                       | Update properties of an Azure Container Registry.                     | `az acr update --name MyRegistry --tags key=value`                                                     |
+| [az acr build](https://learn.microsoft.com/en-us/cli/azure/acr?view=azure-cli-latest#az-acr-build)                                                         | Build a container image in Azure Container Registry.                  | `az acr build --image MyImage:tag --registry MyRegistry .`                                             |
+| [az acr task create](https://learn.microsoft.com/en-us/cli/azure/acr/task?view=azure-cli-latest#az-acr-task-create)                                        | Create a task for an Azure Container Registry.                        | `az acr task create --registry MyRegistry --name MyTask --image MyImage:tag --context /path/to/source` |
+| [az acr repository](https://learn.microsoft.com/en-us/cli/azure/acr/repository?view=azure-cli-latest)                                                      | Manage repositories (image storage) in Azure Container Registry.      | `az acr repository show-tags --name MyRegistry --repository MyImage`                                   |
+| [az acr run](https://learn.microsoft.com/en-us/cli/azure/acr?view=azure-cli-latest#az-acr-run)                                                             | Queue a run to stream logs for an Azure Container Registry.           | `az acr run --registry MyRegistry --cmd '$Registry/myimage' /dev/null`                                 |
+| [az acr show](https://learn.microsoft.com/en-us/cli/azure/acr?view=azure-cli-latest#az-acr-show)                                                           | Get the details of an Azure Container Registry.                       | `az acr show --name MyRegistry --query "loginServer"`                                                  |
+| [az container create](https://learn.microsoft.com/en-us/cli/azure/container?view=azure-cli-latest#az-container-create)                                     | Create a container group in Azure Container Instances.                | `az container create --name MyContainer --image myimage:latest`                                        |
+| [az container show](https://learn.microsoft.com/en-us/cli/azure/container?view=azure-cli-latest#az-container-show)                                         | Get the details of a container group.                                 | `az container show --name MyContainer --resource-group MyResourceGroup`                                |
+| [az containerapp create](https://learn.microsoft.com/en-us/cli/azure/containerapp?view=azure-cli-latest#az-containerapp-create)                            | Create a Container App.                                               | `az containerapp create --name MyContainerApp --resource-group MyResourceGroup --image myimage:latest` |
+| [az containerapp up](https://learn.microsoft.com/en-us/cli/azure/containerapp?view=azure-cli-latest#az-containerapp-up)                                    | Create or update a Container App and associated resources.            | `az containerapp up --name MyContainerApp`                                                             |
+| [az containerapp env create](https://learn.microsoft.com/en-us/cli/azure/containerapp/env?view=azure-cli-latest#az-containerapp-env-create)                | Create an environment for a Container App.                            | `az containerapp env create --name MyEnvironment --resource-group MyResourceGroup`                     |
+| [az containerapp show](https://learn.microsoft.com/en-us/cli/azure/containerapp?view=azure-cli-latest#az-containerapp-show)                                | Show details of a Container App.                                      | `az containerapp show --name MyContainerApp --resource-group MyResourceGroup`                          |
+| [az containerapp identity assign](https://learn.microsoft.com/en-us/cli/azure/containerapp/identity?view=azure-cli-latest#az-containerapp-identity-assign) | Assign managed identities to a Container App.                         | `az containerapp identity assign --name MyContainerApp --identities [system]`                          |
+| [az upgrade](https://learn.microsoft.com/en-us/cli/azure/reference-index?view=azure-cli-latest#az-upgrade)                                                 | Upgrade Azure CLI and extensions.                                     | `az upgrade`                                                                                           |
+| [az provider register](https://learn.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az-provider-register)                                    | Register a resource provider.                                         | `az provider register --namespace Microsoft.ContainerInstance`                                         |
+| [az extension add](https://learn.microsoft.com/en-us/cli/azure/extension?view=azure-cli-latest#az-extension-add)                                           | Add an extension.                                                     | `az extension add --name extension-name`                                                               |
+| [az identity create](https://learn.microsoft.com/en-us/cli/azure/identity?view=azure-cli-latest#az-identity-create)                                        | Create a managed identity.                                            | `az identity create --name MyManagedIdentity --resource-group MyResourceGroup`                         |
+| [az role assignment create](https://learn.microsoft.com/en-us/cli/azure/role/assignment?view=azure-cli-latest#az-role-assignment-create)                   | Create a new role assignment for a user, group, or service principal. | `az role assignment create --assignee john.doe@domain.com --role Reader`                               |
+| [az ad sp](https://learn.microsoft.com/en-us/cli/azure/ad/sp?view=azure-cli-latest)                                                                        | Manage Azure Active Directory service principals.                     | `az ad sp create-for-rbac --name MyServicePrincipal`                                                   |
+| [az monitor log-analytics query](https://learn.microsoft.com/en-us/cli/azure/monitor/log-analytics?view=azure-cli-latest#az-monitor-log-analytics-query)   | Query a Log Analytics workspace.                                      | `az monitor log-analytics query --workspace MyWorkspace --query 'MyQuery'`                             |
+| [az acr import](https://learn.microsoft.com/en-us/cli/azure/acr?view=azure-cli-latest#az-acr-import)                                                       | Import an image to an Azure Container Registry from another registry. | `az acr import --name MyRegistry --source myregistry.azurecr.io/myimage:tag`                           |
+| [az containerapp revision list](https://learn.microsoft.com/en-us/cli/azure/containerapp?view=azure-cli-latest#az-containerapp-revision-list)              | List the revisions of a Container App.                                | `az containerapp revision list --name MyContainerApp --resource-group MyResourceGroup`                 |
