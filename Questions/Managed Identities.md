@@ -9,6 +9,19 @@ Question: Which of the following managed identity characteristics is indicative 
 Answer: User-assigned identities exist independently from the resources they're associated with and must be explicitly deleted.  
 The same user-assigned managed identity can be associated with more than one Azure resource.
 
+---
+
+Question: Which of the following managed entity types does not require explicit enabling to work?
+
+- [ ] System-assigned identity
+- [ ] User-assigned identity
+- [ ] Both of these
+- [x] None of these
+
+Answer: Both System-assigned and User-assigned managed identities require explicit enabling.
+
+---
+
 Question: A client app requests managed identities for an access token for a given resource. Which of the below is the basis for the token?
 
 - [ ] Oauth 2.0
