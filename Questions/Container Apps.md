@@ -141,7 +141,7 @@ Answer: A system-assigned identity is tied to your container app and is deleted 
 
 ---
 
-Question: You have an existing container map with a system assigned identity. What happens when you finish using that app and delete it?
+Question: You have an existing container app with a system assigned identity. What happens when you finish using that app and delete it?
 
 - [ ] You can reuse this identity for another container app
 - [x] The system assigned identity gets deleted, thus cannot be reused
@@ -191,17 +191,6 @@ Question: You want to use managed identities in the scaling rules for your conta
 - [x] None
 
 Answer: Using managed identities in scale rules isn't supported.
-
----
-
-Question: Which of the following managed entity types does not require explicit enabling to work?
-
-- [ ] System-assigned identity
-- [ ] User-assigned identity
-- [ ] Both of these
-- [x] None of these
-
-Answer: Both System-assigned and User-assigned managed identities require explicit enabling.
 
 ---
 
