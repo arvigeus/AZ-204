@@ -26,7 +26,7 @@ Question: Which of the following options is true about the built-in authenticati
 
 - [ ] It can only be configured to restrict access to authenticated users.
 - [x] It allows for out-of-the-box authentication with federated identity providers.
-- [ ] It requires the use of a specific language or SDK.
+- [ ] It requires the use of a specific SDK.
 
 Answer: Azure Container Apps provides built-in authentication and authorization features to secure your external ingress-enabled container app with minimal or no code.  
 The built-in authentication feature can be configured to handle authenticated and non-authenticated users.
@@ -312,5 +312,410 @@ Question: You are using the Standard plan of Azure Container Registry, and you'v
 - [ ] Call Azure support.
 
 Answer: Periodically delete unused repositories and tags to improve performance.
+
+---
+
+Question: Which container registry tier has the highest throughput?
+
+- [ ] Basic
+- [ ] Standard
+- [x] Premium
+
+Answer: Premium has the highest throughput.
+
+---
+
+Question: Given a Dockerfile in your current directory with the following content:
+
+```Dockerfile
+FROM mcr.microsoft.com/hello-world
+```
+
+You are asked to run an image in Azure from a Container Registry named `myContainerRegistry008`. The image should be tagged as `sample/hello-world:v1`.
+
+Assume that the Azure subscription and Azure CLI have already been configured on your local system. However, the necessary resources for running the image, such as the resource group and container registry, have not yet been created.
+
+Considering all these requirements, write down the sequence of Azure CLI commands necessary to successfully run the image from the specified container registry.
+
+Answer:
+
+```Dockerfile
+# Create a resource group named 'myResourceGroup' in 'eastus' location
+az group create --name myResourceGroup --location eastus
+
+# Create an Azure container registry named 'myContainerRegistry008' within the 'myResourceGroup'
+az acr create --resource-group myResourceGroup --name myContainerRegistry008 --sku Basic
+
+# Authenticate Docker client to the registry
+az acr login --name myContainerRegistry008
+
+# Build the Docker image from the Dockerfile in the current directory, tag it as 'sample/hello-world:v1',
+# and push it to the 'myContainerRegistry008' registry
+az acr build --registry myContainerRegistry008 --image sample/hello-world:v1 .
+
+# Execute the image from the registry
+az acr run --registry myContainerRegistry008 --cmd '$Registry/sample/hello-world:v1' /dev/null
+```
+
+---
+
+Question: You are managing an Azure Container Registry named `myregistry`. You have a task to publish the most recent `windows/servercore` container image from the Microsoft Container Registry into your registry. After importing, you want the image to be tagged as `servercore:ltsc2019` in your registry. Write the Azure CLI command that would be needed to accomplish this.
+
+```ps
+# Code here
+```
+
+Answer:
+
+```ps
+az acr import \
+--name myregistry \ # specifies the name of your Azure Container Registry
+--source mcr.microsoft.com/windows/servercore:latest \ # the fully qualified source image reference
+--image servercore:ltsc2019 # the new tag you want the image to have in your registry
+```
+
+---
+
+Question: Which of the following Azure Container Registry options support geo-replication to manage a single registry across multiple regions?
+
+- [ ] Basic
+- [ ] Standard
+- [x] Premium
+
+Answer: The premium tier adds geo-replication as a feature.
+
+---
+
+Question: Which Azure container registry tiers benefit from encryption-at-rest?
+
+- [x] Basic
+- [x] Standard
+- [x] Premium
+
+Answer: Encryption-at-rest is supported in all three tiers.
+
+---
+
+Question: You exceed your Azure Container Registry plan limit, what happens?
+
+- [x] HTTP 429 error (Too many requests)
+- [ ] Have to upgrade tier to continue
+- [ ] Services will run slower
+
+Answer: You might experience [throttling](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-skus#throttling)
+
+---
+
+Question: If you're developing a Linux-based ASP.NET Core application that is planned to be deployed via Azure Container Instances, and you need to launch it in a geographic region where your company doesn't have an existing resource group, what sequence of Azure CLI commands would you utilize to correctly deploy your application in that target region?
+
+```ps
+location="West Europe"
+resourceGroup="WEurope"
+containerGroup="WEuropeGroup"
+containerName="AspContainer"
+containerImage="mcr.microsoft.com/azuredocs/aci-helloworld"
+
+# Code here
+```
+
+Answer:
+
+```ps
+location="West Europe"
+resourceGroup="WEurope"
+containerGroup="WEuropeGroup"
+containerName="AspContainer"
+containerImage="mcr.microsoft.com/azuredocs/aci-helloworld"
+
+# Create a new resource group in the West Europe region
+az group create --name $resourceGroup --location "$location"
+
+# Create a container group (ACI) in the new resource group
+az container create --name $containerName --resource-group $resourceGroup --image $containerImage --dns-name-label $containerGroup --location $location
+```
+
+---
+
+Question: Suppose you have an ASP.NET Core application running within an Azure Container Instance (ACI) and your monitoring team has a unique container image loaded with their monitoring tools. To ensure compliance, you have been tasked with attaching a "sidecar" container (an auxiliary container that works alongside the main application container) from the same host. However, you must take into account that the solution should be cost-effective and require minimal changes to the current application, keeping the setup simple. What Azure service would you employ to realize this objective?
+
+- [x] ACI Container Groups
+- [ ] Azure Kubernetes Service (AKS)
+- [ ] Azure App Services
+- [ ] Azure Container Registry
+- [ ] Azure Service Fabric
+
+Answer: The most suitable service to accomplish this is Azure Container Instances (ACI) Container Groups. This service allows you to run multiple containers, maintained by different teams, deployed together as a group on the same host. Each deployed container instance will share the resources of the host and are able to communicate which each other (in this case: your application and the monitoring sidecar). This offers an economical solution without the need for significant changes to your existing application, and it aligns with the sidecar container model.  
+Azure Kubernetes Service (AKS) allows running multiple containers on the same host, which supports the sidecar pattern. However, it introduces additional complexity and potential cost increases due to the need for managing clusters and implementing scaling features.  
+Azure App Services provides a platform for hosting web applications and RESTful APIs, including those in containers. The downside is that it does not natively support the sidecar pattern and can lead to higher costs as the scale of operations increases.  
+Azure Container Registry serves as a storage and management solution for container images. It is primarily a storage service and does not provide the functionalities to deploy containers or implement the sidecar pattern.  
+Azure Service Fabric is a platform that provides orchestration of microservices and containers, and could technically support the sidecar pattern. However, it requires a deeper understanding of the microservices architecture and might not be the most cost-effective or simple solution for running a single application with a monitoring sidecar.
+
+---
+
+Question: As a developer in a startup, you're helping your team transition to Microsoft Azure. Your task is to deploy a containerized API service, `MyAPI`, on Azure from an older Linux workstation. The source code for `MyAPI` is stored locally in the `./src` directory and is also tracked on the GitHub repository `myuser/myrepo`.
+
+Before deploying, you'll need to create a production environment named `prod`. The Azure CLI on your workstation should be up-to-date, but given its age and the type of service you're deploying, you're unsure if all necessary tools and extensions are available.
+
+`MyAPI` utilizes services that allow for hosting of RESTful APIs and collection and analysis of telemetry data. So, ensure to configure your Azure account accordingly before deployment. Once your local setup is prepared, deploy `MyAPI` to a resource group named `MyResourceGroup` in the `eastus` region using the `prod` environment.
+
+Can you draft an Azure CLI script to achieve these tasks?
+
+```ps
+# Code here
+```
+
+Answer:
+
+```ps
+# Check the current Azure CLI version on the old Linux workstation, and upgrade if needed
+az upgrade
+
+# The nature of the application (a containerized service) hints at the need for the containerapp extension. So, add and upgrade it.
+az extension add --name containerapp --upgrade
+
+# It's time to connect to Azure once all the local tasks are completed.
+# However, you could technically log in at any time before this.
+az login
+
+# Register the necessary providers as the application uses services for hosting APIs and telemetry analysis
+az provider register --namespace Microsoft.App
+az provider register --namespace Microsoft.OperationalInsights
+
+# Create the 'prod' environment
+az containerapp env create --resource-group MyResourceGroup --name prod
+
+# Deploy the API service
+az containerapp up \
+  --name MyAPI \
+  --resource-group MyResourceGroup \
+  --location eastus \
+  --environment prod \
+  --context-path ./src \
+  --repo myuser/myrepo
+```
+
+In the context of deploying containerized applications on Azure, the command `az extension add --name containerapp --upgrade` is essential to interact with Azure Container Apps service. The `--upgrade` flag is used to ensure that you have the latest version of the extension. This is especially critical when your workstation is older, and there's uncertainty regarding the presence and version of the necessary tools and extensions.
+
+The `az login` command logs you into your Azure account. Although we performed all the local tasks like upgrading the Azure CLI and adding the necessary extension before logging into Azure, technically you could log into Azure at any time. The reason why we log in after performing local tasks is just to make sure that we've done everything we can do locally before initiating a connection to Azure. This could help avoid unnecessary delays or connection timeouts, especially if you're on a slow or unreliable network.
+
+- `Microsoft.App`: This namespace is typically used when your application leverages Azure App Services. Azure App Services provide a platform to host web apps, mobile app back ends, RESTful APIs, or automated business processes. If your application doesn't use any of the services provided by Azure App Service, you may not need to register this provider.
+
+- `Microsoft.OperationalInsights`: This namespace is associated with Azure Log Analytics. If your application uses Azure Monitor Log Analytics to collect and analyze telemetry and other data, you need to register this provider. Log Analytics can provide insights about your applications, infrastructure, and network. If you don't use these services, you might not need this provider.
+
+  Note: Explicit provider registration is not typically necessary for Azure services. It's often handled automatically when you create a resource that belongs to a provider, although there can be exceptions.
+
+The command `az containerapp env create` is used to create an environment in Azure Container Apps. This command creates an environment under a specific resource group with a given name. An environment is a space where you can deploy container apps. You can have different environments for different stages of your app like development, staging, and production. Each environment can have its own configuration like compute resources, networking settings, etc. For your use case, we've assumed that the prod environment has been already configured as per your production specifications.
+
+---
+
+Question: As a DevOps engineer at ABC Industries, you are in charge of deploying a Node.js web service that communicates with a MongoDB database to Microsoft Azure. This service relies on environment variables `DB_URL` and `SECRET_TOKEN` for database connection and secure interactions, respectively. The service's Docker image is hosted on Docker Hub under `abcindustries/ai-service-app`.
+
+For deployment, an Azure Container App should be created under the name `ai-service-app`, located in the `westus2` region within the `abc-industries` resource group. The app will run on port 8000 and needs DB_URL and SECRET_TOKEN set to `mongodb://username:password@dbhost:27017/dbname` and `sometoken` respectively. The container instance should have suitable CPU and memory specifications.
+
+Considering these requirements, how would you employ Azure CLI to set up this Azure Container App?
+
+```ps
+# Code here
+```
+
+Answer:
+
+```ps
+# Log into the Azure account
+az login
+
+# Upgrade the Azure CLI to the latest version
+az upgrade
+
+# Add and upgrade the containerapp extension
+az extension add --name containerapp --upgrade
+
+# Register the necessary providers as the microservice uses services for hosting APIs
+az provider register --namespace Microsoft.App
+
+# Create the 'dev' environment
+az containerapp env create --resource-group MyResourceGroup --name dev
+
+# Create the container application
+az containerapp create \
+  --name ai-service-app \
+  --resource-group abc-industries \
+  --environment-variables DB_URL=mongodb://username:password@dbhost:27017/dbname SECRET_TOKEN=sometoken \
+  --docker-image abcindustries/ai-service-app \
+  --region westus2 \
+  --target-port 8000 \
+  --cpu <CPU_CORES> \
+  --memory <MEMORY_GB>
+```
+
+`az containerapp create` gives you more control over the configuration and is suitable for setting up a new application or when making changes to an existing application in a production environment.
+
+---
+
+Question: What is the recommended strategy in the event of a full region outage?
+
+- [x] Wait for the region to recover and then manually redeploy all environments and apps.
+- [x] Manually deploy to a new region
+- [x] Deploy container apps in advance to multiple regions and use Azure Front Door or Azure Traffic Manager to handle incoming requests.
+- [ ] Do nothing and hope for the best.
+
+Answer: All actions are recommended strategies.
+
+---
+
+Question: What is the requirement for enabling zone redundancy in your Container Apps environment?
+
+- [x] The environment must include a virtual network (VNET) with an available subnet.
+- [ ] The environment must have at least 10 replicas.
+- [ ] The environment must be located in a specific region.
+- [ ] The environment must have a specific number of applications running.
+
+Answer: The environment must include a virtual network (VNET) with an available subnet.
+
+---
+
+Question: How can you maintain the availability of a crucial website hosted on Azure Container Apps, even if a single Azure datacenter goes down, while keeping the solution simple and using the least number of Azure services?
+
+- [x] Activate zone redundancy in the Container Apps setting.
+- [ ] Set up automatic Azure DevOps deployment pipelines to shift to a new region if the primary datacenter fails.
+- [ ] Use multiple regions and route requests via Azure Front Door.
+
+Answer: The optimal solution is to activate zone redundancy in the Container Apps setting. This distributes Azure Container Apps replicas across multiple availability zones, ensuring the website stays operational even if a datacenter fails. Using multiple regions and Azure Front Door or setting up automatic Azure DevOps deployment pipelines would either involve additional services or cause temporary downtime, making them less ideal.
+
+---
+
+Question: You want to use managed identities in the scaling rules for your container app. Which ones can you use?
+
+- [ ] System-assigned identities only
+- [ ] User-assigned identities only
+- [ ] Both
+- [x] None
+
+Answer: Using managed identities in scale rules isn't supported.
+
+---
+
+Question: What is ACR Tasks?
+
+- [ ] A tool for managing virtual machines in Azure
+- [x] A suite of features within Azure Container Registry for container image building and patching
+- [ ] A service for managing Kubernetes clusters
+- [ ] A tool for network monitoring in Azure
+
+Answer: ACR Tasks is a suite of features within Azure Container Registry that provides cloud-based container image building and can automate OS and framework patching for Docker containers.
+
+---
+
+Question: What is the default platform for building images with ACR Tasks?
+
+- [ ] Windows/amd64
+- [x] Linux/arm64
+- [ ] Linux/amd64
+- [ ] Linux/arm
+
+Answer: By default, ACR Tasks builds images for the Linux OS and the amd64 architecture.
+
+---
+
+Question: The az acr build command in Azure Container Registry is used to build and push a container image to ACR. To which of the following Docker commands is this Azure command equivalent? (Choose two)
+
+- [ ] docker run
+- [x] docker build
+- [x] docker push
+- [ ] docker pull
+- [ ] docker compose
+
+Answer: The az acr build command is equivalent to the combination of docker build, which builds the Docker image, and docker push, which pushes the image to a registry.
+
+---
+
+Question: What is the default restart policy in Azure Containers?
+
+- [x] Always
+- [ ] On failure
+- [ ] Never
+
+Answer: Always restart
+
+---
+
+Question: Which command will set environment variable `MinLength` to `8`?
+
+- [x] `az container create --environment-variables 'MinLength'='8'`
+- [ ] `az container create --environment-variables 'MinLength=8'`
+- [ ] `az container create --environment-variables {'MinLength':8}`
+- [ ] `az container create --environment-variable-name 'MinLength' --environment-variable-value 8`
+
+Answer: `az container create --environment-variables 'NumWords'='5' 'MinLength'='8' ...`
+
+---
+
+Question: You are working on a project that requires deploying a containerized application in Azure. The application has two key requirements: It needs to run a process that requires root access, and it must be hosted on a Windows-based operating system. You are considering Azure Container Apps as a hosting option. Which of the following statements is correct regarding the feasibility of using Azure Container Apps for this project?
+
+- [ ] Azure Container Apps can fulfill both requirements.
+- [ ] Azure Container Apps can only fulfill the requirement of running a process that requires root access but not the Windows-based operating system requirement.
+- [ ] Azure Container Apps can only fulfill the Windows-based operating system requirement but not the requirement of running a process that requires root access.
+- [x] Azure Container Apps cannot fulfill either of the requirements for this project.
+
+Answer: Azure Container Apps can't run privileged containers, and if a process requires root access, it will cause a runtime error. This rules out fulfilling the first requirement. It also only support Linux-based (linux/amd64) container images, which rules out hosting on a Windows-based operating system.
+
+---
+
+Question: What will happen if you change `template.scale.maxReplicas` from 3 to 5?
+
+```json
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "resources": [
+    {
+      "properties": {
+        "template": {
+          "scale": {
+            "minReplicas": 1,
+            "maxReplicas": 3
+          }
+        }
+      }
+    }
+  ]
+}
+```
+
+- [ ] All existing revisions will have max 5 replicas now.
+- [x] A new revision is created. All revisions now have 5 max replicas now.
+- [ ] A new revision is created with 5 max replicas. All existing revisions remain unchanged.
+
+Answer: Changes made to the `template` section are revision-scope changes, which triggers a new revision. The changes are limited to the revision in which they're deployed, and don't affect other revisions.
+
+---
+
+Question: What will happen if you change `configuration.ingress.allowInsecure` from `false` to `true`?
+
+```json
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "resources": [
+    {
+      "properties": {
+        "configuration": {
+          "ingress": {
+            "external": true,
+            "targetPort": 80,
+            "allowInsecure": false
+          }
+        }
+      }
+    }
+  ]
+}
+```
+
+- [x] All existing revisions will now allow insecure traffic.
+- [ ] A new revision is created. All revisions will now allow insecure traffic.
+- [ ] A new revision is created that allows insecure traffic. All existing revisions remain unchanged.
+
+Answer: Changes made to the `configuration` section are application-scope changes, which does not triggers a new revision, but affects all existing revisions.
 
 ---

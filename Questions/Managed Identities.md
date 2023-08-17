@@ -172,3 +172,76 @@ Answer: Common use cases for user-assigned identities:
 - For example, a workload where multiple virtual machines need to access the same resource.
 
 ---
+
+Question: Which managed entity requirest minimum effort to use?
+
+- [x] System-assigned identity
+- [ ] User-assigned identity
+
+Answer: A system-assigned identity is tied to your container app and is deleted when your container app is deleted.
+
+---
+
+Question: You have an existing container app with a system assigned identity. What happens when you finish using that app and delete it?
+
+- [ ] You can reuse this identity for another container app
+- [x] The system assigned identity gets deleted, thus cannot be reused
+- [ ] You cannot delete a container app before deleting it system assigned identity
+
+Answer: A system-assigned identity is tied to your container app and is deleted when your container app is deleted.
+
+---
+
+Question: You have an existing container map with a user assigned identity. What happens when you finish using that app and delete it?
+
+- [x] You can reuse this identity for another container app
+- [ ] The user assigned identity gets deleted, thus cannot be reused
+- [ ] You cannot delete a container app before deleting it user assigned identity
+
+Answer: A user-assigned identity is a standalone Azure resource that can be assigned to your container app and other resources.
+
+---
+
+Question: You want to use managed identity across multiple container apps. Which one would you choose?
+
+- [ ] System-assigned identity
+- [x] User-assigned identity
+- [ ] Any
+- [ ] None
+
+Answer: A user-assigned identity is a standalone Azure resource that can be assigned to your container app and other resources.
+
+---
+
+Question: You want to use multiple managed identities for your container app. Which ones can you use?
+
+- [ ] System-assigned identities only
+- [x] User-assigned identities only
+- [ ] Both
+- [ ] None
+
+Answer: A container app can have multiple user-assigned identities.
+
+---
+
+Question: An e-commerce company is planning to migrate their monolithic application to a microservices architecture. They want to leverage Azure Container Apps for this purpose. The application needs to interact with Azure Key Vault to retrieve secrets and Azure SQL Database for storing and retrieving data. The company wants to avoid storing and managing credentials in their application code. Which type of managed identity would fit this scenario?
+
+- [x] System-assigned identity
+- [ ] User-assigned identity
+- [ ] Any of these
+- [ ] None of these
+
+Answer: This scenario is best suited for a System-assigned managed identity. System-assigned managed identities are tied to the lifecycle of the Azure resource (in this case, the Azure Container App) and are automatically cleaned up by Azure when the resource is deleted. The application can use the System-assigned managed identity to authenticate to any service that supports Azure AD authentication without having any credentials in the code. The Azure Container App can be granted access to the Azure Key Vault and Azure SQL Database using Azure role-based access control (RBAC).
+
+---
+
+Question: A software company is developing a multi-tenant SaaS application that will be hosted on Azure Container Apps. Each tenant will have their own Azure Storage account for storing data. The application needs to access these storage accounts on behalf of the tenants. The company wants to manage the identities separately from the Azure Container Apps and wants to have one or more pre-configured entities for each tenant. Which type of managed identity would fit this scenario?
+
+- [ ] System-assigned identity
+- [x] User-assigned identity
+- [ ] Any of these
+- [ ] None of these
+
+Answer: This scenario is best suited for User-assigned managed identities. User-assigned managed identities are standalone Azure resources that can be assigned to one or more instances of an Azure service. In this case, each tenant can have a User-assigned managed identity that is granted access to their Azure Storage account. The Azure Container App can then use these identities to authenticate to the storage accounts on behalf of the tenants. When a tenant leaves, the User-assigned managed identity can be removed from the Azure Container App and deleted.
+
+---

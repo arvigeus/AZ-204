@@ -2,7 +2,7 @@
 
 ## [Container Registry](https://learn.microsoft.com/en-us/azure/container-registry/)
 
-Formay: `<registry>/<repository>/<image-or-artifact>:<tag>`
+Format: `<registry>/<repository>/<image-or-artifact>:<tag>`
 
 - `<registry>`: name of the Docker registry (for Azure, it would be something like myregistry.azurecr.io).
 - `<repository>`: name of the repository where your image is stored.
@@ -23,23 +23,19 @@ All tiers support the same basic features, the main difference is image storage 
 
 Change tier: `az acr update --name myContainerRegistry --sku Premium`
 
-**Zone Redundancy**: Minimum of three separate zones in each enabled region
+[**Zone Redundancy**](https://learn.microsoft.com/en-us/azure/container-registry/zone-redundancy) (requires Premium): Minimum of three separate zones in each enabled region. Enable with `--zone-redundancy enabled`. The environment must include a virtual network (VNET) with an available subnet.
 
-**Storage**: High numbers of repositories and tags can impact the performance. Periodically delete unused.
+**Performance**: High numbers of repositories and tags can impact the performance. Periodically delete unused.
 
 ### [Tasks](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-tasks-overview)
 
 Cloud-based container image building and automated OS/framework patching.
 
 - **Quick Task**: On-demand build and push of a single container image. Use the `az acr build` command to build and push a container image to ACR. (Think `docker build`, `docker push` in the cloud)
-
 - **Automatically Triggered Tasks**: Auto-builds triggered by source code updates, base image updates, or timers. Use the `az acr task create` command to configure a build task that triggers a container image build when code is committed or a pull request is made or updated in a Git repository.
-
 - **Multi-step Task**: Granular control over image building, testing, and patching workflows. These tasks are defined in a YAML file and can automate a sequence of operations.
-
 - **Automate OS/Framework Patching**: Auto-detection and build of application images based on updated base image.
-
-- **Scheduled Tasks**: Run container workloads or maintenance operations on a defined schedule.
+- [**Scheduled Tasks**](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-tasks-scheduled): Run container workloads or maintenance operations on a defined schedule. Example: `az acr task create --schedule "0 21 * * *"`
 
 Tasks primarily builds Linux OS and amd64 architecture images. Use the `--platform` tag to specify other OS or architectures:
 
@@ -129,12 +125,12 @@ az container create --dns-name-label mydnslabel --ip-address public --name mycon
 az container show --resource-group az204-aci-rgb--name mycontainerbb --query "{FQDN:ipAddress.fqdn,ProvisioningState:provisioningState}" --out table
 ```
 
-**Container Groups** - the top-level resource. It consists of multiple containers scheduled on a single host machine, sharing lifecycle, resources, network, and storage volumes (similar to Kubernetes pod). _Multi-container groups only support Linux containers_. _For Windows containers, Azure Container Instances allow only single-instance deployment_. If you create a container group with two instances, each requesting one CPU, then the container group is allocated two CPUs. Example: An application container and a logging or monitoring container.
+[**Container Groups**](https://learn.microsoft.com/en-us/azure/container-instances/container-instances-container-groups) - the top-level resource. It consists of multiple containers scheduled on a single host machine, sharing lifecycle, resources, network (share an external IP, ports. DNS), and storage volumes (similar to Kubernetes pod). _Multi-container groups only support Linux containers_. _For Windows containers, Azure Container Instances allow only single-instance deployment_. If you create a container group with two instances, each requesting one CPU, then the container group is allocated two CPUs. Example: An application container and a logging or monitoring container. Multi-container groups are useful when you need to split one task into a few container images. For instance, having a container for a web app and another for fetching content, or a front-end and a back-end container.
 
-**Restart policies**: `Always`, `Never`, `OnFailure`. When ACI stops a container with a restart policy of `Never` or `OnFailure`, its status is set to **Terminated**.  
+**Restart policies**: `Always` (default), `Never`, `OnFailure`. When ACI stops a container with a restart policy of `Never` or `OnFailure`, its status is set to **Terminated**.  
 Example: `az container create --restart-policy OnFailure ...`.
 
-**Environment variables**: `az container create --environment-variables 'NumWords'='5' 'MinLength'='8' ...`
+[**Environment variables**](https://learn.microsoft.com/en-us/azure/container-instances/container-instances-environment-variables): `az container create --environment-variables 'NumWords'='5' 'MinLength'='8' ...`
 
 - Via file (`az container create --file secure-env.yaml ...`):
 
@@ -197,11 +193,11 @@ Fully managed (no need to manage other Azure infrastructure) environment. Common
 - Handling event-driven processing
 - Running microservices
 
-Cannot run privileged containers requiring _root_ access and strictly requires _Linux-based (linux/amd64)_ container images. Restart policy: always.
+Cannot run privileged containers requiring _root_ access and strictly requires _Linux-based (linux/amd64)_ container images.
 
 ### [Auth](https://learn.microsoft.com/en-us/azure/container-apps/managed-identity)
 
-The platform's authentication and authorization middleware component runs as a _sidecar_ container on each application replica, screening all incoming HTTPS (_disable_ `allowInsecure` in ingress config) requests before they reach your application. [See more](./App%20Service%20Web%20Apps.md)
+The platform's authentication and authorization middleware component runs as a _sidecar_ container on each application replica, screening all incoming HTTPS (_disable_ `allowInsecure` in ingress config) requests before they reach your application. [See more](./App%20Service%20Web%20Apps.md). It requires any identity provider and specified provider within app settings.
 
 Add a system-assigned identity: `az containerapp identity assign --name myApp --resource-group myResourceGroup --system-assigned`
 
@@ -212,7 +208,7 @@ Add a user-assigned identity:
 az containerapp identity assign --user-assigned <IDENTITY_RESOURCE_ID> --resource-group <GROUP_NAME> --name <APP_NAME>
 ```
 
-### [Scaling](https://learn.microsoft.com/en-us/azure/container-apps/scale-app?pivots=azure-cli)
+### [Scaling](https://learn.microsoft.com/en-us/azure/container-apps/scale-app)
 
 Scaling is driven by three different categories of triggers:
 
@@ -224,7 +220,7 @@ Scaling is driven by three different categories of triggers:
   - Apache Kafka
   - Redis
 
-As a container app revision scales out, new instances of the revision are created on-demand. These instances are known as replicas (default: 0-10). Adding or editing scaling rules creates a new revision of the container app.
+As a container app revision scales out, new instances of the revision are created on-demand. These instances are known as replicas (default: 0-10). Adding or editing scaling rules creates a new revision of the container app. In "multiple revisions" mode, adding a new scale trigger creates a new revision of your application but your old revision remains available with the old scale rules.
 
 Example:
 
@@ -254,22 +250,22 @@ az containerapp create \
  --scale-rule-auth "connection=connection-string-secret"
 ```
 
-Without a scale rule, the default (HTTP, 0-10) applies to your app. Create a rule or set minReplicas to 1+ if ingress is disabled. Without minReplicas or a custom rule, your app can scale to zero and won't restart.
+Without a scale rule, the default (HTTP, 0-10) applies to your app. Create a rule or set minReplicas to 1+ if ingress is disabled. Without minReplicas or a custom rule, your app can scale to zero and won't start.
 
 ### [Revisions](https://learn.microsoft.com/en-us/azure/container-apps/revisions)
 
-Immutable snapshots of a container app version. The first revision is auto-created upon deployment. Any revision-scope change triggers a new revision. Up to 100 revisions can be stored for history. Multiple revisions can run at once, with HTTP traffic split among them.
+Immutable snapshots of a container app version. The first revision is auto-created upon deployment. Up to 100 revisions can be stored for history. Multiple revisions can run at once, with HTTP traffic split among them.
 
 State doesn't persist inside a container due to regular restarts. Use external caches for in-memory cache requirements.
 
 In single revision mode, Container Apps prevents downtime during updates, keeping the old revision active until the new one is ready.  
-In multiple revision mode, you control revision activation and traffic distribution, with traffic only switching to the latest revision when it's ready.
+In multiple revision mode, you control revision activation and traffic distribution (via ingress), with traffic only switching to the latest revision when it's ready.
 
 Revision Labels: direct traffic to specific revisions. A label provides a unique URL that you can use to route traffic to the revision that the label is assigned.
 
 Scopes:
 
-- Revision-scope changes via `az containerapp update` trigger a new revision when you deploy your app (trigger: changing [properties.template](https://learn.microsoft.com/en-us/azure/container-apps/azure-resource-manager-api-spec?tabs=arm-template#propertiestemplate))
+- Revision-scope changes via `az containerapp update` trigger a new revision when you deploy your app (trigger: changing [properties.template](https://learn.microsoft.com/en-us/azure/container-apps/azure-resource-manager-api-spec?tabs=arm-template#propertiestemplate)). The changes don't affect other revisions.
 - Application-scope changes are globally applied to all revisions. A new revision isn't created (trigger: changing [properties.configuration](https://learn.microsoft.com/en-us/azure/container-apps/azure-resource-manager-api-spec?tabs=arm-template#propertiesconfiguration))
 
 ### [Secrets](https://learn.microsoft.com/en-us/azure/container-apps/manage-secrets?tabs=azure-cli)
@@ -371,7 +367,7 @@ In the event of a full region outage, you have two strategies:
 
 ### [Dapr integration with Azure Container Apps](https://learn.microsoft.com/en-us/azure/container-apps/dapr-overview)
 
-Azure Container Apps offers a managed Dapr integration, simplifying version upgrades and developer interaction. Dapr is activated per container app using specific arguments. Its APIs are accessible via a Dapr sidecar using HTTP or gRPC. Dapr's modular design allows shared or app-specific components, which can connect to external services and securely access configuration metadata. To load components only for the right apps, application scopes are used.
+Dapr is activated per container app. Its APIs are accessible via a Dapr sidecar using HTTP or gRPC. Dapr's modular design allows shared or app-specific components, which can connect to external services and securely access configuration metadata. By default Dapr-enabled container apps load the full set of deployed components. To load components only for the right apps, application scopes are used.
 
 Enable Dapr: `az containerapp create --dapr-enabled ...`
 

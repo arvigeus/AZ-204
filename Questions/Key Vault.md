@@ -24,7 +24,7 @@ Presentation Layer is part of the Open Systems Interconnection model and is not 
 
 ---
 
-Question You're designing a cloud-based microservice architecture using Azure Functions. One of the functions requires access to sensitive configuration data stored in Azure Key Vault. To maintain a high level of security, you want to ensure that only the Azure Function has the ability to retrieve secrets from the Key Vault. How should you configure access to the sensitive information in the Key Vault?
+Question: You're designing a cloud-based microservice architecture using Azure Functions. One of the functions requires access to sensitive configuration data stored in Azure Key Vault. To maintain a high level of security, you want to ensure that only the Azure Function has the ability to retrieve secrets from the Key Vault. How should you configure access to the sensitive information in the Key Vault?
 
 - [ ] Create an Azure Active Directory (Azure AD) application, assign it 'get' and 'list' permissions for the Key Vault, and embed the application's client ID and client secret in function's environment variables.
 - [ ] Generate a User-assigned Managed Identity, assign it 'get' and 'list' permissions for the Key Vault, and embed the identity's client ID and client secret in function's environment variables.

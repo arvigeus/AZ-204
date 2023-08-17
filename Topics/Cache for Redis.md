@@ -151,8 +151,6 @@ Redis's `maxmemory` directive controls memory usage, and its eviction policies (
 
 Example: `maxmemory 100mb`
 
-Certainly! Here's a more generalized version of the provided text:
-
 - **noeviction**: Retains data up to memory limit; applies to primary databases with replication.
 - **allkeys-lru**: Maintains recent keys; discards least recent.
 - **allkeys-lfu**: Retains frequent keys; discards least frequent.
