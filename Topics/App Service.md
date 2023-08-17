@@ -1,4 +1,4 @@
-# [Azure App Service Web Apps](https://docs.microsoft.com/en-us/azure/app-service/)
+# [Azure App Service](https://docs.microsoft.com/en-us/azure/app-service/)
 
 ## [Azure App Service plans](https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans)
 
@@ -23,11 +23,11 @@
 
 ### Tiers
 
-- **Shared compute**: **Free** and **Shared** tiers run apps on the same Azure VM with other customer apps, sharing resources and limited CPU quotas. They are suitable for _development_ and _testing_ only. Each app is charged for _CPU quota_.
+- **Shared compute**: **Free** (F1) and **Shared** (D1) tiers run apps on the same Azure VM with other customer apps, sharing resources and limited CPU quotas. They are suitable for _development_ and _testing_ only. Each app is charged for _CPU quota_.
 
-- **Dedicated compute**: **Basic** (_default_), **Standard**, **Premium**, **PremiumV2**, and **PremiumV3** tiers utilize dedicated Azure VMs. Apps within the same App Service plan share compute resources. Higher tiers provide more VM instances for scale-out capabilities. Scaling out (_autoscale_) simply adds another VM with the same applications and services. _Each VM instance_ is charged.
+- **Dedicated compute**: **Basic** (_default_) (B1), **Standard** (S1), **Premium** (P1V1), **PremiumV2** (P1V2), and **PremiumV3** (P1V3) tiers utilize dedicated Azure VMs. Apps within the same App Service plan share compute resources. Higher tiers provide more VM instances for scale-out capabilities. Scaling out (_autoscale_) simply adds another VM with the same applications and services. _Each VM instance_ is charged.
 
-- **Isolated**: The **Isolated** and **IsolatedV2** tiers run dedicated Azure VMs on _dedicated Azure Virtual Networks_. It provides network isolation on top of compute isolation to your apps. It provides the _maximum scale-out capabilities_. Charging is based on the _number of isolated workers that run your apps_.
+- **Isolated** (I1): The **Isolated** and **IsolatedV2** tiers run dedicated Azure VMs on _dedicated Azure Virtual Networks_. It provides network isolation on top of compute isolation to your apps. It provides the _maximum scale-out capabilities_. Charging is based on the _number of isolated workers that run your apps_.
 
 You can move an app to another App Service plan, as long as the source plan and the target plan are in the same resource group, geographical region, and of the same OS type, and supports the currently used features.
 
@@ -53,6 +53,8 @@ $destapp = New-AzWebApp -ResourceGroupName DestinationAzureResourceGroup -Name M
 
 ### [Scaling](https://learn.microsoft.com/en-us/azure/app-service/manage-automatic-scaling?tabs=azure-portal)
 
+The scale settings affect all apps in your App Service plan
+
 - **Manual scaling** (Basic+) - one time events (example: doing X on this date)
 - **Autoscale** (Standard+) - for predictable changes of application load, based on schedules (every X days/weeks/months) or resources
 - **Automatic scaling** (PremiumV2+) - like autoscale, but allows avoiding _cold start_ issues with _pre-warmed_ and _always ready_ instances
@@ -67,12 +69,16 @@ $destapp = New-AzWebApp -ResourceGroupName DestinationAzureResourceGroup -Name M
 
 Horizontal scaling: Adding/removing virtual machines.
 
-**Scale out**: If _any_ of the rules are met  
-**Scale in**: If _all_ rules are met
+**Scale out** (increase VM instances): If _any_ of the rules are met  
+**Scale in** (decrease VM instances): If _all_ rules are met
 
-## [Deployment](https://learn.microsoft.com/en-us/azure/app-service/deploy-best-practices)
+[**Flapping**](https://learn.microsoft.com/en-us/azure/azure-monitor/autoscale/autoscale-flapping): a loop condition where a scale event triggers its opposite in a series of alternating events.
 
-Deploy to staging, then swap slots to warm up instances and eliminate downtime. Requires Standard+.
+## [Deployment slots](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots)
+
+Require Standard+.
+
+[Best practices](https://learn.microsoft.com/en-us/azure/app-service/deploy-best-practices): Deploy to staging, then swap slots to warm up instances and eliminate downtime.
 
 | Settings that are swapped                      | Settings that aren't swapped                            |
 | ---------------------------------------------- | ------------------------------------------------------- |
@@ -91,7 +97,11 @@ Deploy to staging, then swap slots to warm up instances and eliminate downtime. 
 
 To enable settings swapping, add `WEBSITE_OVERRIDE_PRESERVE_DEFAULT_STICKY_SLOT_SETTINGS` as an app setting in every slot and set it to 0 or false. All settings are either swappable or not. Managed identities are never swapped.
 
+### Route production traffic manually
+
 `x-ms-routing-name=`: `self` for production slot, `staging` for staging slot.
+
+Example: `<a href="<webappname>.azurewebsites.net/?x-ms-routing-name=self">Go back to production app</a> | <a href="<webappname>.azurewebsites.net/?x-ms-routing-name=staging">Go back to staging app</a>`
 
 By default, all client requests go to the production slot. You can route a portion of the traffic to another slot. The default rule for a new deployment slot is 0% (no random transfers to other slots).
 
@@ -204,8 +214,6 @@ compose_deployment() {
       --name wordpressApp
 
 }
-
-az group delete --name $resourceGroup
 ```
 
 ## [Configuration](https://learn.microsoft.com/en-us/azure/app-service/configure-common?tabs=cli)
@@ -273,12 +281,13 @@ az webapp config connection-string set --connection-string-type <type> --setting
 Example:
 
 ```cs
-//az webapp config connection-string set --connection-string-type SQLServer --settings MyDb="Server=myserver;Database=mydb;User Id=myuser;Password=mypassword; --name <app-name> --resource-group <group-name>"
+//az webapp config connection-string set --connection-string-type SQLServer --settings MyDb="Server=myserver;Database=mydb;User Id=myuser;Password=mypassword;" --name <app-name> --resource-group <group-name>
 string myConnectionString = Configuration.GetConnectionString("MyDb");
-string myConnectionStringEnv = Environment.GetEnvironmentVariable("SQLServer_MyDb");
+string myConnectionStringVerbose = Configuration.GetConnectionString("SQLCONNSTR_MyDb"); // Same as above
+string myConnectionStringEnv = Environment.GetEnvironmentVariable("SQLCONNSTR_MyDb"); // Same as above
 ```
 
-Buk editing:
+Bulk editing:
 
 ```jsonc
 // Save: az webapp config connection-string list --name <app-name> --resource-group <group-name> > settings.json
@@ -372,6 +381,8 @@ Disable default persistent storage on Linux containers: `az webapp config appset
 
 Mount: `az webapp config storage-account add --custom-id <custom-id> --storage-type AzureFiles --share-name <share-name> --account-name <storage-account-name> --access-key "<access-key>" --mount-path <mount-path-directory> ...`  
 Check: `az webapp config storage-account list ...`
+
+Linux containers: Azure Files are read/write, Azure blobs are read only. Up to 5 mount points per app.
 
 - Don't map to `/`, `/home`, or `/tmp` to avoid issues.
 - App backups don't include storage mounts.
@@ -533,6 +544,8 @@ services.AddCertificateForwarding(options => { options.CertificateHeader = "X-AR
 services.AddAuthentication(CertificateAuthenticationDefaults.AuthenticationScheme).AddCertificate();
 ```
 
+For NodeJs, client certificate is accessed through request header: `req.get('X-ARR-ClientCert');`
+
 ### CORS
 
 For apps: `az webapp cors add --allowed-origins $website ...`
@@ -585,6 +598,8 @@ Accessing log files:
 - Windows apps: `https://<app-name>.scm.azurewebsites.net/api/dump`
 
 `AppServiceFileAuditLogs` and `AppServiceAntivirusScanAuditLogs` log types are available only for Premium+.
+
+`AllMetrics` settings are collected by agents on to the App Service and report the usage of host resources. These are items like CPU usage, memory usage, and disk I/O used.
 
 ### Stream logs
 
@@ -639,21 +654,22 @@ For private endpoints check if `x-ms-auth-internal-token` request header equals 
 
 ## CLI
 
-- [az appservice plan](https://learn.microsoft.com/en-us/cli/azure/appservice/plan?view=azure-cli-latest)
-- [az appservice plan update](https://learn.microsoft.com/en-us/cli/azure/appservice/plan?view=azure-cli-latest#az-appservice-plan-update)
-- [az webapp](https://learn.microsoft.com/en-us/cli/azure/webapp?view=azure-cli-latest)
-- [az webapp create](https://learn.microsoft.com/en-us/cli/azure/webapp?view=azure-cli-latest#az-webapp-create)
-- [az webapp deployment](https://learn.microsoft.com/en-us/cli/azure/webapp/deployment?view=azure-cli-latest)
-- [az webapp config](https://learn.microsoft.com/en-us/cli/azure/webapp/config?view=azure-cli-latest)
-- [az webapp config appsettings](https://learn.microsoft.com/en-us/cli/azure/webapp/config/appsettings?view=azure-cli-latest)
-- [az webapp config connection-string](https://learn.microsoft.com/en-us/cli/azure/webapp/config/connection-string?view=azure-cli-latest)
-- [az webapp cors](https://learn.microsoft.com/en-us/cli/azure/webapp/cors?view=azure-cli-latest)
-- [az webapp show](https://learn.microsoft.com/en-us/cli/azure/webapp?view=azure-cli-latest#az-webapp-show)
-- [az webapp identity](https://learn.microsoft.com/en-us/cli/azure/webapp/identity?view=azure-cli-latest)
-- [az identity](https://learn.microsoft.com/en-us/cli/azure/identity?view=azure-cli-latest)
-- [az webapp log](https://learn.microsoft.com/en-us/cli/azure/webapp/log?view=azure-cli-latest)
-- [az resource update](https://learn.microsoft.com/en-us/cli/azure/resource?view=azure-cli-latest#az-resource-update)
-- [az webapp log](https://learn.microsoft.com/en-us/cli/azure/webapp/log?view=azure-cli-latest)
-- [az webapp config storage-account](https://learn.microsoft.com/en-us/cli/azure/webapp/config/storage-account?view=azure-cli-latest)
-- [az webapp list-runtimes](https://learn.microsoft.com/en-us/cli/azure/webapp?view=azure-cli-latest#az-webapp-list-runtimes)
-- [az monitor metrics](https://learn.microsoft.com/en-us/cli/azure/monitor/metrics?view=azure-cli-latest)
+| Command                                                                                                                                  | Brief Explanation                                         | Example                                                                                                                              |
+| ---------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| [az appservice plan](https://learn.microsoft.com/en-us/cli/azure/appservice/plan?view=azure-cli-latest)                                  | Manage App Service Plans.                                 | `az appservice plan create --name MyPlan --resource-group MyResourceGroup --sku FREE`                                                |
+| [az appservice plan update](https://learn.microsoft.com/en-us/cli/azure/appservice/plan?view=azure-cli-latest#az-appservice-plan-update) | Update an App Service Plan.                               | `az appservice plan update --name MyPlan --sku STANDARD`                                                                             |
+| [az webapp](https://learn.microsoft.com/en-us/cli/azure/webapp?view=azure-cli-latest)                                                    | Manage web apps.                                          | `az webapp list`                                                                                                                     |
+| [az webapp create](https://learn.microsoft.com/en-us/cli/azure/webapp?view=azure-cli-latest#az-webapp-create)                            | Create a web app.                                         | `az webapp create --name MyApp --plan MyPlan --resource-group MyResourceGroup`                                                       |
+| [az webapp deployment](https://learn.microsoft.com/en-us/cli/azure/webapp/deployment?view=azure-cli-latest)                              | Manage web app deployments.                               | `az webapp deployment list-publishing-profiles --name MyApp`                                                                         |
+| [az webapp config](https://learn.microsoft.com/en-us/cli/azure/webapp/config?view=azure-cli-latest)                                      | Manage web app configurations.                            | `az webapp config set --name MyApp --ftps-state AllAllowed`                                                                          |
+| [az webapp config appsettings](https://learn.microsoft.com/en-us/cli/azure/webapp/config/appsettings?view=azure-cli-latest)              | Manage web app appsettings.                               | `az webapp config appsettings set --name MyApp --settings KEY=VALUE`                                                                 |
+| [az webapp config connection-string](https://learn.microsoft.com/en-us/cli/azure/webapp/config/connection-string?view=azure-cli-latest)  | Manage web app connection strings.                        | `az webapp config connection-string set --name MyApp --connection-string-type SQLAzure --settings NAME=CONNECTION_STRING`            |
+| [az webapp cors](https://learn.microsoft.com/en-us/cli/azure/webapp/cors?view=azure-cli-latest)                                          | Manage Cross-Origin Resource Sharing (CORS) for web apps. | `az webapp cors add --name MyApp --allowed-origins 'https://example.com'`                                                            |
+| [az webapp show](https://learn.microsoft.com/en-us/cli/azure/webapp?view=azure-cli-latest#az-webapp-show)                                | Get details of a web app.                                 | `az webapp show --name MyApp --resource-group MyResourceGroup`                                                                       |
+| [az webapp identity](https://learn.microsoft.com/en-us/cli/azure/webapp/identity?view=azure-cli-latest)                                  | Manage web app's managed service identity.                | `az webapp identity assign --name MyApp --resource-group MyResourceGroup`                                                            |
+| [az identity](https://learn.microsoft.com/en-us/cli/azure/identity?view=azure-cli-latest)                                                | Manage Managed Service Identities (MSI).                  | `az identity create --resource-group MyResourceGroup --name MyIdentity`                                                              |
+| [az webapp log](https://learn.microsoft.com/en-us/cli/azure/webapp/log?view=azure-cli-latest)                                            | Manage web app logs.                                      | `az webapp log tail --name MyApp --resource-group MyResourceGroup`                                                                   |
+| [az resource update](https://learn.microsoft.com/en-us/cli/azure/resource?view=azure-cli-latest#az-resource-update)                      | Update a resource.                                        | `az resource update --ids RESOURCE_ID --set properties.key=value`                                                                    |
+| [az webapp config storage-account](https://learn.microsoft.com/en-us/cli/azure/webapp/config/storage-account?view=azure-cli-latest)      | Manage web app's Azure Storage account configurations.    | `az webapp config storage-account update --name MyApp --custom-id CustomId --storage-type AzureBlob --account-name MyStorageAccount` |
+| [az webapp list-runtimes](https://learn.microsoft.com/en-us/cli/azure/webapp?view=azure-cli-latest#az-webapp-list-runtimes)              | List available runtime stacks.                            | `az webapp list-runtimes --linux`                                                                                                    |
+| [az monitor metrics](https://learn.microsoft.com/en-us/cli/azure/monitor/metrics?view=azure-cli-latest)                                  | Manage metrics.                                           | `az monitor metrics list --resource RESOURCE_ID --metric-names "Percentage CPU"`                                                     |
