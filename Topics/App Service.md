@@ -33,7 +33,7 @@ You can move an app to another App Service plan, as long as the source plan and 
 
 App Service plans that have no apps associated with them still incur charges because they continue to reserve the configured VM instances.
 
-Deployment slots, diagnostic logs, perforing backups, and WebJobs _run on the same VM instances_.
+Deployment slots, diagnostic logs, perforing backups, apps in the same App Service  plan, and WebJobs _run on the same VM instances_.
 
 When to isolate an app into a new App Service plan:
 
@@ -382,7 +382,7 @@ Disable default persistent storage on Linux containers: `az webapp config appset
 Mount: `az webapp config storage-account add --custom-id <custom-id> --storage-type AzureFiles --share-name <share-name> --account-name <storage-account-name> --access-key "<access-key>" --mount-path <mount-path-directory> ...`  
 Check: `az webapp config storage-account list ...`
 
-Linux containers: Azure Files are read/write, Azure blobs are read only. Up to 5 mount points per app.
+Linux containers: Azure Files are read/write, Azure blobs are read only. Up to 5 mount points per app. Code deployed to built-in images uses Azure Storage with higher disk latency.
 
 - Don't map to `/`, `/home`, or `/tmp` to avoid issues.
 - App backups don't include storage mounts.
@@ -395,6 +395,8 @@ Linux containers: Azure Files are read/write, Azure blobs are read only. Up to 5
 ## Security
 
 ### Authentication
+
+In Linux and containers the auth module runs in a separate container, isolated from application code.
 
 #### [Service Identity](https://learn.microsoft.com/en-us/azure/app-service/overview-managed-identity)
 
@@ -450,9 +452,7 @@ X-IDENTITY-HEADER: {IDENTITY_HEADER}
 
 #### [On-Behalf-Of (OBO)](https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization)
 
-an OAuth feature allowing an application to access resources using a user's permissions, without needing their credentials. Azure App Service's built-in authentication module manages this process, handling sessions and OAuth tokens. It can authenticate all or specific requests, redirecting unauthenticated users appropriately (login page for web and 401 for mobile). When enabled, user tokens are managed in a token store.
-
-In Linux and containers the auth module runs in a separate container, isolated from application code.
+An OAuth feature allowing an application to access resources using a user's permissions, without needing their credentials. Azure App Service's built-in authentication module manages this process, handling sessions and OAuth tokens. It can authenticate all or specific requests, redirecting unauthenticated users appropriately (login page for web and 401 for mobile). When enabled, user tokens are managed in a token store.
 
 ##### Authentication flows
 
@@ -524,7 +524,7 @@ public static ClaimsPrincipal Parse(HttpRequest req)
 
 A certificate is accessible to all apps in the same resource group and region combination.
 
-- **Free Managed Certificate**: Auto renewed every 6 months, no wildcard certificates or private DNS, can't be exported.
+- **Free Managed Certificate**: Auto renewed every 6 months, no wildcard certificates or private DNS, can't be exported, not supported in ASE.
 - **App Service Certificate**: A private certificate that is managed by Azure. Automated certificate management, renewal and export options.
 - **Using Key Vault**: Store private certificates (same requerenments) in Key Vault. Automatic renewal, except for non-integrated certificates (`az keyvault certificate create ...`)
 - **Uploading a Private Certificate**: Requires a password-protected PFX file encrypted with triple DES, with 2048-bit private key and all intermediate/root certificates in the chain.
@@ -554,6 +554,8 @@ For storage: `az storage cors add --services blob --methods GET POST --origins $
 
 To enable the sending of credentials like cookies or authentication tokens in your app, the browser may require the `ACCESS-CONTROL-ALLOW-CREDENTIALS` header in the response: `az resource update --set properties.cors.supportCredentials=true --namespace Microsoft.Web --resource-type config --parent sites/<app-name> ...`
 
+The roles that handle incoming HTTP or HTTPS requests are called _front ends_. The roles that host the customer workload are called _workers_.
+
 ## Networking
 
 - **Deployment Types**
@@ -572,7 +574,7 @@ To enable the sending of credentials like cookies or authentication tokens in yo
   | Gateway-required virtual network integration | Outbound | Access Azure or on-premises resources via ExpressRoute or VPN                       |
   | Virtual network integration                  | Outbound | Access Azure network resources                                                      |
 
-- **Default Networking Behavior**: Free and Shared plans use multi-tenant workers, meaning your application shares resources with others. Plans from Basic and above use dedicated workers, meaning your application gets its own resources.
+- **Default Networking Behavior**: Free and Shared plans use multi-tenant workers, meaning your application shares resources with others. Plans from Basic and above use dedicated workers, meaning your application gets its own resources. If you have a Standard App Service plan, all the apps in that plan run on the same worker.
 
 - **Outbound Addresses**: When your application needs to make a call to an external service, it uses an outbound IP address. This address is shared among all applications running on the same type of worker VM.
 
