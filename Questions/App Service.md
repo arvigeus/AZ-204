@@ -1165,3 +1165,121 @@ Question: You want to mount an Azure Storage as a local share in App Service in 
 Answer: Azure Files are read/write, Azure blobs are read only. Up to 5 mount points per app. Restart on chaning storage mount.
 
 ---
+
+Question: Finnish this command to enable automatic scaling with max burst of 5:
+
+```ps
+  az appservice plan update --name $appServicePlanName --resource-group $resourceGroup # Code here
+```
+
+Answer:
+
+```ps
+  az appservice plan update --name $appServicePlanName --resource-group $resourceGroup --elastic-scale true --max-elastic-worker-count 5
+```
+
+---
+
+Question: When does scale out occur?
+
+- [ ] When all of the conditions are met
+- [x] When at least one of the conditions is met
+- [ ] Only scale in can occur
+
+Answer: When any of the conditions is met
+
+---
+
+Question: Which of the following certificates can be exported?
+
+- [ ] Free Managed Certificate
+- [x] App Service Certificate
+- [x] Certificates stored in Key Vault
+
+Answer Free Managed certificated: No wildcard certificates or private DNS, can't be exported
+
+---
+
+Question: You have multiple web apps in Standard plan. Which of the following statements is true?
+
+- [ ] All apps in theat plan use shared workers
+- [ ] Each app has its own worker
+- [x] All apps in that plan run on the same worker
+
+Answer: If you have a Standard App Service plan, all the apps in that plan run on the same worker.
+
+---
+
+Question: What are outbound addresses in the context of Azure App Service Web Apps?
+
+- [ ] IP addresses used to identify inbound traffic to the application.
+- [x] IP addresses used by the application to make calls to external services.
+- [ ] A set of firewall rules to control inbound and outbound traffic.
+- [ ] A set of IP addresses that application can make calls to
+- [ ] A feature to map custom domain names to IP addresses.
+
+Answer: Outbound addresses in Azure App Service Web Apps are the IP addresses used by the application to make calls to external services. They are shared among all applications running on the same type of worker VM.
+
+---
+
+Question: For logs stored in the App Service file system of Windows apps, the easiest way is to download the ZIP file in the browser at:
+
+- [ ] `https://<app-name>.scm.azurewebsites.net/api/logs/docker/zip`
+- [x] `https://<app-name>.scm.azurewebsites.net/api/dump`
+- [ ] `https://<app-name>.scm.azurewebsites.net/api/logs`
+- [ ] `https://<app-name>.scm.azurewebsites.net/logs`
+- [ ] `https://<app-name>.scm.azurewebsites.net/api/home/LogFiles`
+- [ ] `https://<app-name>.scm.azurewebsites.net/home/LogFiles`
+
+Answer: For Windows is in `/api/dump`, for Linux is `/api/logs/docker/zip`
+
+---
+
+Question: In Azure App Service, the metrics such as CPU Percentage, Memory Percentage, Data In, and Data Out are used to monitor:
+
+- [ ] A single app within the plan.
+- [x] All instances of the plan, not a single app.
+- [ ] Individual virtual machines within the app service plan.
+- [ ] The performance of the underlying infrastructure supporting the app service plan.
+
+Answer: These metrics are used across all instances of the plan, not for monitoring a single app within the plan.
+
+---
+
+Question: In Azure App Service running on Basic plan, the Health Check feature pings a specified path every minute. What actions are taken if an instance fails to respond with a valid status code?
+
+- [ ] It's marked unhealthy and immediately replaced.
+- [ ] It's marked unhealthy and removed from the load balancer, and if it stays unhealthy for an hour, it's replaced.
+- [ ] It's marked unhealthy, and has to be manually fixed.
+- [ ] It's marked unhealthy, and the x-ms-auth-internal-token request header is checked against the WEBSITE_AUTH_ENCRYPTION_KEY environment variable to confirm status.
+
+Answer: This option accurately describes the process of Health Checks in Azure App Service. An instance is marked unhealthy and removed from the load balancer if it fails to respond with a valid status code after 10 requests. If it stays unhealthy for an hour, it's replaced (only for Basic+).
+
+---
+
+Question: In Azure App Service Health Checks, when using your own authentication system, how can you authenticate the health check request and ensure that it is originating from the App?
+
+- [ ] By allowing anonymous access to the Health check path and validating that the `x-ms-auth-internal-token` request header matches the SHA256 hash of the `WEBSITE_AUTH_ENCRYPTION_KEY` environment variable.
+- [ ] By allowing anonymous access to the Health check path and validating that the `x-ms-auth-internal-token` request header matches the `WEBSITE_AUTH_ENCRYPTION_KEY` environment variable.
+- [x] By restricting application access through IP restrictions and validating that the `x-ms-auth-internal-token` request header matches the SHA256 hash of the `WEBSITE_AUTH_ENCRYPTION_KEY` environment variable.
+- [ ] By restricting application access through IP restrictions and validating that the `x-ms-auth-internal-token` request header matches the `WEBSITE_AUTH_ENCRYPTION_KEY` environment variable.
+- [ ] By encrypting the `WEBSITE_AUTH_ENCRYPTION_KEY` environment variable with a client certificate.
+- [ ] By restricting application access through IP restrictions.
+- [ ] By allowing anonymous access to the Health check path
+- [ ] By using a Virtual Network to restrict application access and validating that the `x-ms-auth-internal-token` request header is present.
+
+Answer: For private endpoints check if `x-ms-auth-internal-token` request header equals the hashed value of `WEBSITE_AUTH_ENCRYPTION_KEY` environment variable. You should first use features such as IP restrictions, client certificates, or a Virtual Network to restrict application access.
+
+---
+
+Question: When mounting Azure Storage as a local share in Azure App Service, what is something you should NOT do?
+
+- [ ] Place app and storage in the same Azure region.
+- [x] Use Azure Storage for local databases or apps relying on file handles and locks.
+- [ ] Use Azure Files for read/write operations in Linux containers.
+- [ ] Use Azure Files for read/write operations in Windows apps.
+- [x] Use Azure Storage for read/write operations in Linux containers.
+- [ ] Use Azure Storage for read/write operations in Windows apps.
+- [x] Regenerate your access key often
+
+Answer:

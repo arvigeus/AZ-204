@@ -33,7 +33,7 @@ You can move an app to another App Service plan, as long as the source plan and 
 
 App Service plans that have no apps associated with them still incur charges because they continue to reserve the configured VM instances.
 
-Deployment slots, diagnostic logs, perforing backups, apps in the same App Service  plan, and WebJobs _run on the same VM instances_.
+Deployment slots, diagnostic logs, perforing backups, apps in the same App Service plan, and WebJobs _run on the same VM instances_.
 
 When to isolate an app into a new App Service plan:
 
@@ -60,9 +60,9 @@ The scale settings affect all apps in your App Service plan
 - **Automatic scaling** (PremiumV2+) - like autoscale, but allows avoiding _cold start_ issues with _pre-warmed_ and _always ready_ instances
 
   ```sh
-  az appservice plan update --name $appServicePlanName --resource-group resourceGroup
+  az appservice plan update --name $appServicePlanName --resource-group $resourceGroup \
       # enables automatic scaling
-      --elastic-scale true --max-elastic-worker-count <YOUR_MAX_BURST>
+      --elastic-scale true --max-elastic-worker-count <YOUR_MAX_BURST> \
       # disable automatic scaling
       --elastic-scale false
   ```
@@ -596,7 +596,7 @@ _The Blob_ option is for long-term logging, includes additional information. Onl
 
 Accessing log files:
 
-- Linux/custom containers: `https://<app-name>.scm.azurewebsites.net/api/logs/docker/zip`
+- Linux/custom containers: `https://<app-name>.scm.azurewebsites.net/api/logs/docker/zip`. The ZIP file contains console output logs for both the docker host and the docker container.
 - Windows apps: `https://<app-name>.scm.azurewebsites.net/api/dump`
 
 `AppServiceFileAuditLogs` and `AppServiceAntivirusScanAuditLogs` log types are available only for Premium+.
@@ -605,7 +605,7 @@ Accessing log files:
 
 ### Stream logs
 
-Logs written to .txt, .log, or .htm files in `/LogFiles`. Note, some logs may appear out of order due to buffering.
+Logs written to .txt, .log, or .htm files in `/home/LogFiles` (or `D:\home\LogFiles` for Windows apps) . Note, some logs may appear out of order due to buffering.
 
 CLI: `az webapp log tail ...`
 
@@ -626,7 +626,7 @@ The CPU percentage is valuable for apps on Basic, Standard, and Premium plans, p
 
 Health Check pings the specified path every minute. If an instance fails to respond with a valid status code after 10 requests, it's marked unhealthy and removed from the load balancer. If it recovers, it's returned to the load balancer. If it stays unhealthy for an hour, it's replaced (only for Basic+).
 
-For private endpoints check if `x-ms-auth-internal-token` request header equals the hashed value of `WEBSITE_AUTH_ENCRYPTION_KEY` environment variable.
+For private endpoints check if `x-ms-auth-internal-token` request header equals the hashed value of `WEBSITE_AUTH_ENCRYPTION_KEY` environment variable. You should first use features such as IP restrictions, client certificates, or a Virtual Network to restrict application access.
 
 ## [Mount Azure Storage as a local share in App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-connect-to-azure-storage)
 

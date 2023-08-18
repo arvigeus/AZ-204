@@ -8,6 +8,8 @@ TLDR;
 
 ## [Study guide for Exam AZ-204: Developing Solutions for Microsoft Azure](https://learn.microsoft.com/en-us/certifications/resources/study-guides/az-204#skills-measured-as-of-april-28-2023)
 
+[AZ-204 Exam Updates for April 2023](https://www.youtube.com/watch?v=hzVy9RTl_iA)
+
 ### Develop Azure compute solutions (25–30%)
 
 #### Implement containerized solutions
@@ -131,7 +133,14 @@ TLDR;
 ## Study resources
 
 - [Microsoft Learnigh Path](https://learn.microsoft.com/en-us/certifications/exams/az-204/) (or [/Learning Path](/Learning%20Path/))
+- Exam Readiness Zone:
+  - [Develop Azure compute solutions](https://learn.microsoft.com/en-us/shows/exam-readiness-zone/preparing-for-az-204-develop-azure-compute-solutions-1-of-5)
+  - [Develop for Azure storage](https://learn.microsoft.com/en-us/shows/exam-readiness-zone/preparing-for-az-204-develop-for-azure-storage-segment-2-of-5)
+  - [Implement Azure security](https://learn.microsoft.com/en-us/shows/exam-readiness-zone/preparing-for-az-204-implement-azure-security-segment-3-of-5)
+  - [Monitor, troubleshoot, and optimize Azure solutions](https://learn.microsoft.com/en-us/shows/exam-readiness-zone/preparing-for-az-204-monitor-troubleshoot-and-optimize-azure-solutions-segment-4-of-5)
+  - [Connect to and consume Azure services and third-party services](https://learn.microsoft.com/en-us/shows/exam-readiness-zone/preparing-for-az-204-connect-to-and-consume-azure-services-and-third-party-services-segment-5-of-5)
 - [/Topics](/Topics/)
+- [\[OFFICIAL\] Microsoft Azure Developer Associate (AZ-204) Professional Certificate (Coursera)](https://www.coursera.org/professional-certificates/azure-developer-associate)
 - [AZ-204: Developing Solutions for Microsoft Azure (Alan Rodrigues)](https://www.youtube.com/watch?v=wWBW6ojr-Nw&list=PLLc2nQDXYMHpekgrToMrDpVtFtvmRSqVt)
 - [Azure Developer Associate (AZ-204) — Full Course Pass the Exam! (freeCodeCamp.org)](https://www.youtube.com/watch?v=jZx8PMQjobk&t=832s&pp=ygUGYXotMjA0)
 - [Exam AZ-204: Developing Solutions for Microsoft Azure Course (A Guide To Cloud)](https://www.youtube.com/watch?v=tB_tBPfQJMI&list=PLhLKc18P9YODdrbyuA52Zn9-kwboIOz2W)
