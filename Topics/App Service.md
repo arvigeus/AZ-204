@@ -436,12 +436,17 @@ new DefaultAzureCredential(new DefaultAzureCredentialOptions { ManagedIdentityCl
 
 ##### REST endpoint reference
 
-`IDENTITY_ENDPOINT` environment variable contains an endpoint from which apps can request tokens.
+An app with a managed identity makes this endpoint available by defining two environment variables:
 
-- Required parameters: `resource`, `api-version`, `X-IDENTITY-HEADE` (header)
-- Optional parameters: `client_id`, `principal_id`, `mi_res_id`
+- `IDENTITY_ENDPOINT` endpoint from which apps can request tokens.
+- `IDENTITY_HEADER` - used to help mitigate server-side request forgery (SSRF) attacks.
 
-For user-assigned identities, include an optional property; without it, a system-assigned identity token is requested.
+Endpoint parameters:
+
+- Required: `resource`, `api-version`, `X-IDENTITY-HEADER` (header)
+- Optional: `client_id`, `principal_id`, `mi_res_id`
+
+For user-assigned identities, include one of the optional properties; without it, a system-assigned identity token is requested.
 
 Example:
 
