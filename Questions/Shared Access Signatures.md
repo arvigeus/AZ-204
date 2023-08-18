@@ -119,3 +119,27 @@ Question: You are working with Azure Blob Storage and have a task to provide a c
 Answer: `https://medicalrecords.blob.core.windows.net/patient-images/patient-116139-nq8z7f.jpg?sp=r&st=2020-01-20T11:42:32Z&se=2020-01-20T19:42:32Z&spr=https&sig=SrW1HZ5Nb6MbRzTbXCaPm%2BJiSEn15tC91Y4umMPwVZs%3D`
 
 ---
+
+Question: Which of the following types of shared access signatures (SAS) applies to Blob storage only?
+
+- [ ] Account SAS
+- [ ] Service SAS
+- [x] User delegation SAS
+
+Answer: A user delegation SAS is secured with Azure Active Directory credentials and also by the permissions specified for the SAS. A user delegation SAS applies to Blob storage only.  
+An account SAS delegates access to resources in one or more of the storage services. All of the operations available via a service or user delegation SAS are also available via an account SAS.  
+A service SAS delegates access to a resource in the following Azure Storage services: Blob storage, Queue storage, Table storage, or Azure Files.
+
+---
+
+Question: Which of the following best practices provides the most flexible and secure way to use a service or account shared access signature (SAS)?
+
+- [x] Associate SAS tokens with a stored access policy.
+- [ ] Always use HTTPS
+- [ ] Implement a user delegation SAS
+
+Answer: The most flexible and secure way to use a service or account SAS is to associate the SAS tokens with a stored access policy.  
+A user delegation SAS is the most secure SAS, but isn't highly flexible because you must use Azure Active Directory to manage credentials.  
+Using HTTPS prevents man-in-the-middle attacks but isn't the most flexible and secure practice.
+
+---

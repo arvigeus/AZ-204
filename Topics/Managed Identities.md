@@ -15,19 +15,15 @@ Managed identities are specific to the Azure cloud and _cannot be directly assig
 
 User-assigned identities need to be created first before they can be assigned to a VM. System-assigned identities are automatically created when the VM is set up.
 
-1. Azure activates a managed identity for a virtual machine. This could be either system-assigned (automatically created with the VM) or user-assigned (created separately).
+- ARM receives a request to enable the system-assigned managed identity or to create a user-assigned managed identity on a virtual machine.
+- A service principal is created in the Azure Active Directory tenant that's trusted by the subscription.
+- System-assigned configures the identity directly on the virtual machine, while user-assigned requires a request to configure the identity, both updating the Azure Instance Metadata Service with the respective service principal details.
+- The managed identity uses the service principal information to grant access to Azure resources. RBAC in Azure AD is used to assign the appropriate role to the service principal. For Key Vault access, the code is granted access to the specific secret or key.
+- Request a Token from the Azure Instance Metadata Service Endpoint, accessible only from within the virtual machine: `http://169.254.169.254/metadata/identity/oauth2/token`.
+- Request an Access Token from Azure Active Directory using the client ID and certificate configured earlier. Azure Active Directory returns a JSON Web Token (JWT) access token.
+- Send the Access Token to a Service Supporting Azure Active Directory Authentication
 
-1. This identity is given its own "service principal" in Azure Active Directory, which is like its unique ID.
-
-1. Azure updates the VM with the identity's details. If the identity is user-assigned, we can also do this after step 4.
-
-1. The identity is given the needed permissions to access various Azure resources.
-
-1. Code running on the VM can then ask for a "token" from a specific endpoint, proving the identity.
-
-1. Azure Active Directory verifies the request and sends back a token.
-
-1. This token can be used by the code to access other Azure services.
+A _security principal_ in Azure RBAC is an object that represents a user, group, service principal, or managed identity that is requesting access to Azure resources.
 
 ## Managing Azure Managed Identities
 

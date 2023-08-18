@@ -245,3 +245,14 @@ Question: A software company is developing a multi-tenant SaaS application that 
 Answer: This scenario is best suited for User-assigned managed identities. User-assigned managed identities are standalone Azure resources that can be assigned to one or more instances of an Azure service. In this case, each tenant can have a User-assigned managed identity that is granted access to their Azure Storage account. The Azure Container App can then use these identities to authenticate to the storage accounts on behalf of the tenants. When a tenant leaves, the User-assigned managed identity can be removed from the Azure Container App and deleted.
 
 ---
+
+Question: What is the primary purpose of `ChainedTokenCredential` in Azure?
+
+- [x] Combines multiple credentials, attempting each in sequence until successful authentication.
+- [ ] Binds multiple Azure AD groups into a single token.
+- [ ] Creates a chain of Azure AD users for fallback authentication.
+- [ ] Encrypts a token using a chain of cryptographic keys.
+
+Answer: It combines multiple credentials for flexible authentication.
+
+---
