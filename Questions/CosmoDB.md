@@ -151,7 +151,7 @@ Question: What is the purpose of denormalization in the context of Azure Cosmos 
 - [ ] To add more users to the platform
 
 Answer: [Denormalization in Azure Cosmos DB data modeling](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/model-partition-example#v2-introducing-denormalization-to-optimize-read-queries) is used to optimize read queries. By storing related data together (denormalizing), you can retrieve all the data you need in a single query, reducing the need for multiple queries and improving performance.  
-Denormalization doesn't aim to reduce the number of containers (Option A), increase the number of request units consumed (Option C), or add more users to the platform (Option D); it's a strategy to optimize read operations by organizing data efficiently within containers.
+Denormalization doesn't aim to reduce the number of containers, increase the number of request units consumed, or add more users to the platform; it's a strategy to optimize read operations by organizing data efficiently within containers.
 
 --
 
@@ -441,7 +441,7 @@ Answer: Cosmos DB internally stores data in a JSON-like format, regardless of th
 
 ---
 
-When executing a query in Azure Cosmos DB utilizing the Table API as follows:
+Question: When executing a query in Azure Cosmos DB utilizing the Table API as follows:
 
 ```cosmodb
 SELECT
@@ -684,3 +684,41 @@ await container.CreateItemAsync(testItem, new PartitionKey(testItem.mypartitionk
 ```
 
 ---
+
+Question: You are developing a system that needs to interact with Azure Cosmos DB. Your task is to write a piece of code that connects to a specific Cosmos DB instance and retrieves sales orders for a given account number, with a maximum item count of 1.
+
+```cs
+var connectionString = "<connection-string>";
+var dbName = "<database>";
+var containerName = "<container>";
+var partitionKey = "Accounts";
+var throughputValue = 400;
+var accountNumber = "190823";
+
+// Code here
+```
+
+Answer:
+
+```cs
+var connectionString = "<connection-string>";
+var dbName = "<database>";
+var containerName = "<container>";
+var partitionKey = "Accounts";
+var throughputValue = 400;
+var accountNumber = "190823";
+
+var cosmosClient = new CosmosClient(connectionString);
+Database database = await cosmosClient.CreateDatabaseIfNotExistsAsync(dbName);
+Container container = await database.CreateContainerIfNotExistsAsync(id: , partitionKeyPath: $"/{partitionKey}", throughput: throughputValue);
+QueryDefinition query = new QueryDefinition(
+    "select * from sales s where s.AccountNumber = @AccountInput ")
+    .WithParameter("@AccountInput", accountNumber);
+FeedIterator<SalesOrder> resultSet = container.GetItemQueryIterator<SalesOrder>(
+    query,
+    requestOptions: new QueryRequestOptions()
+    {
+        PartitionKey = new PartitionKey(partitionKey),
+        MaxItemCount = 1
+    });
+```

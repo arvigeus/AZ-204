@@ -231,7 +231,7 @@ await this.cosmosDatabase.CreateContainerAsync(new ContainerProperties(id, parti
 
 ## [API Models](https://learn.microsoft.com/en-us/azure/cosmos-db/choose-api)
 
-All API models return JSON formatted objects.
+All API models return JSON formatted objects, regardless of the API used.
 
 - **API for NoSQL** - A JSON-based, document-centric API that provides SQL querying capabilities. Ideal for web, mobile, and gaming applications, and anything that requires handling complex _hierarchical_ data with a _schemaless_ design.
 
@@ -614,3 +614,7 @@ Cosmos DB's support for multiple consistency models allows developers to balance
 ### Personalization
 
 With Cosmos DB, you can store and query user activity data to drive real-time, personalized experiences.
+
+## [Identifying access patterns](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/model-partition-example#identify-the-main-access-patterns)
+
+Helps design the data model to optimize application interactions, such as minimizing cross-partition queries or reducing request numbers through denormalization (optimize read queries by organizing data efficiently within containers).
