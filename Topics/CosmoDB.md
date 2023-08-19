@@ -1,12 +1,14 @@
 # Azure Cosmos DB
 
+`https://<account-name>.documents.azure.com:443/` (SQL)
+
 ## [Overview](https://docs.microsoft.com/en-us/azure/cosmos-db/introduction)
 
 Azure Cosmos DB is a fully managed NoSQL database service provided by Microsoft Azure. It provides global distribution, can scale horizontally, and offers multiple models of consistency. Cosmos DB supports multiple data models, including document, column family, graph, and key-value pairs.
 
 ### Key Benefits of Azure Cosmos DB
 
-- **Global Distribution:** Cosmos DB allows you to distribute your data globally, enabling low latency access to data for end users from any geographic location.
+- **Global Distribution:** Cosmos DB allows you to distribute your data globally, enabling low latency (99% of reads and writes completed in under 10 milliseconds) access to data for end users from any geographic location (99.999% read and write availability for multi-region databases).
 
 - **Multi-Model Database:** Cosmos DB is multi-modal, meaning it supports multiple types of data models like Key-Value, Document, Column-family and Graph.
 
@@ -63,13 +65,16 @@ az cosmosdb sql container create --account-name $account --database-name $databa
 [Azure Cosmos DB .NET SDK](https://learn.microsoft.com/en-us/dotnet/api/microsoft.azure.cosmos?view=azure-dotnet):
 
 ```cs
-var cosmosClient = new CosmosClient("<connection-string>");
+var cosmosClient = new CosmosClient("<connection-string>"); // credentials or/and options
 
 // Create a database
 Database database = await cosmosClient.CreateDatabaseIfNotExistsAsync("<database>");
+// NOTE: You can use DatabaseResponse instead of Database if you need information like status codes or headers.
+
+// database = await database.ReadAsync(); // Re-fetch data
 
 // Create a container
-Container container = await database.CreateContainerIfNotExistsAsync("<container>", "/mypartitionkey");
+Container container = await database.CreateContainerIfNotExistsAsync(id: "<container>", partitionKeyPath: "/mypartitionkey", throughput: number);
 
 // Create an item
 dynamic testItem = new
@@ -79,6 +84,19 @@ dynamic testItem = new
     description = "mydescription"
 };
 await container.CreateItemAsync(testItem, new PartitionKey(testItem.mypartitionkey));
+
+// NOTE: This example is for another container
+QueryDefinition query = new QueryDefinition(
+    "select * from sales s where s.AccountNumber = @AccountInput ")
+    .WithParameter("@AccountInput", "Account1");
+
+FeedIterator<SalesOrder> resultSet = container.GetItemQueryIterator<SalesOrder>(
+    query,
+    requestOptions: new QueryRequestOptions()
+    {
+        PartitionKey = new PartitionKey("Account1"),
+        MaxItemCount = 1
+    });
 ```
 
 ## [Consistency Levels](https://docs.microsoft.com/en-us/azure/cosmos-db/consistency-levels)
@@ -233,7 +251,7 @@ Using these APIs, you can emulate various database technologies, modeling real-w
 
 Azure Cosmos DB allows transactional execution of JavaScript in the form of stored procedures, triggers, and user-defined functions (UDFs). Each needs to be registered prior to calling.
 
-- **Stored procedures**: JavaScript functions registered per collection, capable of performing CRUD and query operations on any document in that collection. Procedures run within a bounded execution time and can handle transactions (pause and resume lengthy operations using a "continuation token" to manage the process until completion). All collection functions (ex: `collection.createDocument()`) return a Boolean value that represents whether that operation completes or not.
+- **Stored procedures**: JavaScript functions registered per collection, capable of performing CRUD and query operations on any document in that collection. Procedures run within a bounded execution time and can handle transactions (pause and resume lengthy operations using a "continuation token" to manage the process until completion). All collection functions (ex: `collection.createDocument()`) return a `Boolean` value that represents whether that operation completes or not.
 
   ```js
   var helloWorldStoredProc = {
@@ -291,9 +309,11 @@ Azure Cosmos DB allows transactional execution of JavaScript in the form of stor
 
 - **Triggers**: Pretriggers and post-triggers operate before and after a database item modification, respectively. They aren't automatically executed, and must be registered and specified for each operation where execution is required. For instance, a pretrigger could validate properties of a new Cosmos item or add a timestamp, while a post-trigger might update metadata regarding a newly created item.
 
+  - **Pre-triggers**: Can't have any input parameters. Validates properties of an item that is being created, modifies properties.
+  - **Post-triggers**: Runs as part of the same transaction for the underlying item itself. Modifies properties.
+
   ```js
   // Pretrigger
-  // Pretriggers can't have any input parameters!
   function validateToDoItemTimestamp() {
     var context = getContext();
     var request = context.getRequest();
@@ -369,7 +389,9 @@ Do note, Cosmos DB operations must complete within a limited time frame!
 
 Enabled by default. Records changes in a container in chronological order. Order is guaranteed within each logical partition key value, but not across them. It listens for changes and then returns an ordered list of modified documents, which can be processed asynchronously and incrementally. Currently, the change feed shows all inserts and updates but not deletes. You can add a "deleted" attribute to items you plan to delete, setting its value to "true" and adding a time-to-live (TTL) value for automatic deletion.
 
-There are two ways to interact with the change feed: push and pull models. In the push model, the change feed processor automatically sends work to a client. The pull model requires the client to request work from the server, providing low-level control of processing. The push model is generally recommended. The pull model offers extra control for specific use-cases like reading changes from a specific partition key, controlling change processing speed, or performing a one-time read for tasks like data migration.
+There are two ways to interact with the change feed: push and pull models. In the push model, the change feed processor automatically sends work to a client. The pull model requires the client to request work from the server, providing low-level control of processing. The push model is generally recommended in order to avoid polling the change feed for future changes. The pull model offers extra control for specific use-cases like reading changes from a specific partition key, controlling change processing speed, or performing a one-time read for tasks like data migration.
+
+Azure Functions uses the change feed processor behind the scenes.
 
 NOTE: Change feed does not work with Table and PostgreSQL!
 
