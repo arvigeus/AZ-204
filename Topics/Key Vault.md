@@ -14,6 +14,10 @@ Key Vault is managed through Azure Resource Manager. Azure role-based access con
 
 `az keyvault create --name <YourKeyVaultName> --resource-group <YourResourceGroupName> --location <YourLocation>`
 
+Set secret: `az keyvault secret set --vault-name $myKeyVault --name "ExamplePassword" --value "hVFkk965BuUv"`
+
+Retrieve secret (in _JSON_ format): `az keyvault secret show --name "ExamplePassword" --vault-name $myKeyVault` (`value` property contains the secret value)
+
 ```cs
 var client = new KeyClient(vaultUri: new Uri(vaultUrl), credential: new DefaultAzureCredential());
 KeyVaultSecret secret = await client.GetSecretAsync("<YourSecretName>");
@@ -49,10 +53,24 @@ For applications, there are two ways to obtain a service principal:
 
 #### Authentication to Key Vault with REST
 
+Send access tokens to the service using the HTTP Authorization header:
+
 ```http
 PUT https://<your-key-vault-name>.vault.azure.net/keys/<your-key-name>?api-version=7.2 HTTP/1.1
 Authorization: Bearer <access_token> # token obtained from Azure Active Directory
 ```
+
+If a token is missing or rejected, an `HTTP 401` error is returned, including the `WWW-Authenticate` header:
+
+```http
+401 Not Authorized
+WWW-Authenticate: Bearer authorization="…", resource="…"
+```
+
+The `WWW-Authenticate` header parameters are:
+
+- `authorization`: OAuth2 authorization service address.
+- `resource`: Resource name (`https://vault.azure.net`) for the authorization request.
 
 ### Restricting access
 
@@ -95,6 +113,10 @@ var certificate = await client.GetCertificateAsync(certificateName);
   az keyvault update --name <YourKeyVaultName> --enable-soft-delete true
   az keyvault update --name <YourKeyVaultName> --enable-purge-protection true
   ```
+
+## [Disaster and recovery](https://learn.microsoft.com/en-us/azure/key-vault/general/disaster-recovery-guidance)
+
+Azure Key Vault ensures the availability of keys and secrets through multiple redundancy layers. Content is replicated within the region and to a secondary region, with some exceptions like Brazil South and Qatar Central, where data remains within the same region using zone redundant storage (ZRS). For AKV Premium, only two of the three regions are used to replicate data from the HSMs. In rare cases of an entire Azure region's unavailability, requests are automatically routed to a secondary region, and this process is transparent to the user. Some regions do not support failover, and during failover, the key vault is in read-only mode. Users in specific regions must plan for recovery in case of region failure.
 
 ## Disk Encryption ([Windows](https://learn.microsoft.com/en-us/azure/virtual-machines/windows/disk-encryption-key-vault?tabs=azure-portal), [Linux](https://learn.microsoft.com/en-us/azure/virtual-machines/linux/disk-encryption-key-vault?tabs=azure-portal))
 
