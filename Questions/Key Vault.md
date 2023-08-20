@@ -164,3 +164,14 @@ az keyvault set-policy --name <your-key-vault-name> --upn user@domain.com --cert
 ```
 
 ---
+
+Question: What format the response of this command is: `az keyvault secret show --name "ExamplePassword" --vault-name $myKeyVault`?
+
+- [x] JSON
+- [ ] XML
+- [ ] YAML
+- [ ] Plain text
+
+Answer: JSON.
+
+---
