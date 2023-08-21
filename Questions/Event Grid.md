@@ -71,7 +71,7 @@ Question: Which event format can be used to represent events in a standardized w
 - [ ] AzureBlobEvent
 - [ ] CustomEvent
 
-Answer: B) CloudEvent is a standardized specification designed to provide interoperability across services, platforms, and systems. It can be used across different cloud providers and platforms, unlike EventGridEvent, which is specific to Azure.
+Answer: CloudEvent is a standardized specification designed to provide interoperability across services, platforms, and systems. It can be used across different cloud providers and platforms, unlike EventGridEvent, which is specific to Azure.
 
 ---
 
@@ -82,6 +82,6 @@ Question: If you are working specifically within the Azure ecosystem and want to
 - [x] EventGridEvent
 - [ ] AzureQueueEvent
 
-Answer: C) EventGridEvent is specific to Azure Event Grid and is designed to work seamlessly with Azure services. It includes additional features specific to Azure, like support for Event Domains, making it the suitable choice for Azure-specific implementations. CloudEvent, on the other hand, is a more generalized standard and doesn't include Azure-specific features.
+Answer: EventGridEvent is specific to Azure Event Grid and is designed to work seamlessly with Azure services. It includes additional features specific to Azure, like support for Event Domains, making it the suitable choice for Azure-specific implementations. CloudEvent, on the other hand, is a more generalized standard and doesn't include Azure-specific features.
 
 ---
