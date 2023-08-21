@@ -323,25 +323,38 @@ curl -X POST -H "aeg-sas-key: $key" -d "$event" $topicEndpoint
 Create an Event Grid subscription: `Azure portal > Resource groups > PubSubEvents > eventviewer[yourname] web app > + Event Subscription`
 
 ```cs
-    Uri endpoint = new Uri(topicEndpoint);
+Uri endpoint = new Uri(topicEndpoint);
 
-    // Key credential used to authenticate to an Azure Service.
-    // It provides the ability to update the key without creating a new client.
-    var credential = new AzureKeyCredential(topicKey);
+// Key credential used to authenticate to an Azure Service.
+// It provides the ability to update the key without creating a new client.
+var credential = new AzureKeyCredential(topicKey);
 
-    var client = new EventGridPublisherClient(endpoint, credential);
+var client = new EventGridPublisherClient(endpoint, credential);
 
-    var newEmployeeEvent = new EventGridEvent(
-        subject: $"New Employee: Alba Sutton",
-        eventType: "Employees.Registration.New",
-        dataVersion: "1.0",
-        data: new
-        {
-            FullName = "Alba Sutton",
-            Address = "4567 Pine Avenue, Edison, WA 97202"
-        }
-    );
+var newEmployeeEvent = new EventGridEvent(
+  subject: $"New Employee: Alba Sutton",
+  eventType: "Employees.Registration.New",
+  dataVersion: "1.0",
+  data: new
+  {
+    FullName = "Alba Sutton",
+    Address = "4567 Pine Avenue, Edison, WA 97202"
+  }
+);
 
-    await client.SendEventAsync(newEmployeeEvent);
-}
+// Alt: CloudEvent is a standardized specification designed to provide interoperability across services, platforms, and systems.
+// It can be used across different cloud providers and platforms, unlike EventGridEvent, which is specific to Azure.
+// var newEmployeeEvent = new CloudEvent("Employees.Registration.New", new Uri("/mycontext"))
+// {
+//     Subject = $"New Employee: Alba Sutton",
+//     DataContentType = new ContentType("application/json"),
+//     Data = JsonConvert.SerializeObject(new
+//     {
+//         FullName = "Alba Sutton",
+//         Address = "4567 Pine Avenue, Edison, WA 97202"
+//     })
+// };
+
+
+await client.SendEventAsync(newEmployeeEvent);
 ```
