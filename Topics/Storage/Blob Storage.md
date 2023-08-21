@@ -545,6 +545,9 @@ azcopy copy "C:\local\path" "https://<storage-account>.blob.core.windows.net/<co
 ```cs
 var blobServiceClient = new BlobServiceClient(new Uri("https://<storage-account-name>.blob.core.windows.net"), new DefaultAzureCredential());
 
+// Enumerate containers
+await foreach (BlobContainerItem container in blobServiceClient.GetBlobContainersAsync()) {}
+
 // Create the container and return a container client object
 var containerClient = await blobServiceClient.CreateBlobContainerAsync("quickstartblobs" + Guid.NewGuid().ToString());
 // var containerClient = blobServiceClient.GetBlobContainerClient(containerName);
@@ -559,4 +562,12 @@ await foreach (var blobItem in containerClient.GetBlobsAsync()) {}
 
 // Download the blob's contents and save it to a file
 await blobClient.DownloadToAsync(downloadFilePath);
+// Alternatively
+// Download the blob's contents and save it to a file
+BlobDownloadInfo download = await blobClient.DownloadAsync();
+
+using (FileStream downloadFileStream = File.OpenWrite(downloadFilePath))
+{
+   await download.Content.CopyToAsync(downloadFileStream);
+}
 ```

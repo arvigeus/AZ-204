@@ -113,3 +113,9 @@ public static void ManageCdnEndpoint(string subscriptionId, TokenCredentials aut
     cdn.Endpoints.PurgeContent(resourceGroupName, profileName, endpointName, new List<string>() { "/*" });
 }
 ```
+
+## Working with CLI
+
+Register the Microsoft.CDN provider: `az provider register --namespace Microsoft.CDN`
+
+Check status: `az provider show --namespace Microsoft.CDN --query "registrationState"`

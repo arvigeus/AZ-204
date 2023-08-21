@@ -162,6 +162,16 @@ The Integrated Windows authentication flow allows applications on domain or Azur
 
 When building web apps or public client apps that require a broker, ensure to set the `redirectUri`. This URL is used by the identity provider to return security tokens to your application.
 
+Integrating Azure AD authentication into an ASP.NET Core application:
+
+```cs
+builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+  .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
+
+builder.Services.AddRazorPages()
+  .AddMicrosoftIdentityUI();
+```
+
 ```cs
 // Sign in users in the Microsoft Azure public cloud using their work and school accounts or personal Microsoft accounts.
 IPublicClientApplication app = PublicClientApplicationBuilder.Create(clientId).Build();
@@ -176,16 +186,16 @@ IConfidentialClientApplication app = ConfidentialClientApplicationBuilder.Create
 
 Common modifiers:
 
-| Modifier                                              | Description                                                                                                                                                                                                                    |
-| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `.WithAuthority()`                                    | Sets the application default authority to an Azure Active Directory authority, with the possibility of choosing the Azure Cloud, the audience, the tenant (tenant ID or domain name), or providing directly the authority URI. |
-| `.WithTenantId(string tenantId)`                      | Overrides the tenant ID, or the tenant description.                                                                                                                                                                            |
-| `.WithClientId(string)`                               | Overrides the client ID.                                                                                                                                                                                                       |
-| `.WithRedirectUri(string redirectUri)`                | Overrides the default redirect URI (ex: for scenarios requiring a broker)                                                                                                                                                      |
-| `.WithComponent(string)`                              | Sets the name of the library using MSAL.NET (for telemetry reasons).                                                                                                                                                           |
-| `.WithDebugLoggingCallback()`                         | If called, the application calls Debug.Write simply enabling debugging traces.                                                                                                                                                 |
-| `.WithLogging()`                                      | If called, the application calls a callback with debugging traces.                                                                                                                                                             |
-| `.WithTelemetry(TelemetryCallback telemetryCallback)` | Sets the delegate used to send telemetry.                                                                                                                                                                                      |
+| Modifier                                              | Description                                                                                                                                                                                                                                                                                         |
+| ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.WithAuthority()`                                    | Sets the application default authority to an Azure Active Directory authority, with the possibility of choosing the Azure Cloud, the audience, the tenant (tenant ID or domain name), or providing directly the authority URI. Example: `.WithAuthority(AzureCloudInstance.AzurePublic, _tenantId)` |
+| `.WithTenantId(string tenantId)`                      | Overrides the tenant ID, or the tenant description.                                                                                                                                                                                                                                                 |
+| `.WithClientId(string)`                               | Overrides the client ID.                                                                                                                                                                                                                                                                            |
+| `.WithRedirectUri(string redirectUri)`                | Overrides the default redirect URI (ex: for scenarios requiring a broker)                                                                                                                                                                                                                           |
+| `.WithComponent(string)`                              | Sets the name of the library using MSAL.NET (for telemetry reasons).                                                                                                                                                                                                                                |
+| `.WithDebugLoggingCallback()`                         | If called, the application calls Debug.Write simply enabling debugging traces.                                                                                                                                                                                                                      |
+| `.WithLogging()`                                      | If called, the application calls a callback with debugging traces.                                                                                                                                                                                                                                  |
+| `.WithTelemetry(TelemetryCallback telemetryCallback)` | Sets the delegate used to send telemetry.                                                                                                                                                                                                                                                           |
 
 Confidential client application only:
 
@@ -193,6 +203,14 @@ Confidential client application only:
 | ------------------------------------------------ | ---------------------------------------------------------------------------------------------- |
 | `.WithCertificate(X509Certificate2 certificate)` | Sets the certificate identifying the application with Azure Active Directory.                  |
 | `.WithClientSecret(string clientSecret)`         | Sets the client secret (app password) identifying the application with Azure Active Directory. |
+
+Acquiring Token:
+
+```cs
+string[] scopes = { "user.read" };
+AuthenticationResult result = await app.AcquireTokenInteractive(scopes).ExecuteAsync();
+Console.WriteLine($"Token: {result.AccessToken}");
+```
 
 ## ASP.NET Core Authorization: Working with Roles, Claims, and Policies
 

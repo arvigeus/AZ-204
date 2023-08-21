@@ -270,3 +270,21 @@ Components, distinct from inaccessible external dependencies like SQL or Event H
 The app map presents your app's complete structure, including component interactions. It identifies and updates the number of components upon launching. If components are roles within a single Application Insights resource, they're displayed immediately.
 
 Application Map is designed to represent complex structures with multiple components. Clicking a component provides detailed performance and failure data. Lastly, components are identified by their "cloud role name" in Application Map, which can be manually adjusted to change their display.
+
+## Monitor a local web API by using Application Insights
+
+```cs
+// This forces HTTPS
+builder.Services.AddApplicationInsightsTelemetry();
+builder.Services.AddServiceProfiler();
+```
+
+appsettings.json:
+
+```jsonc
+"ApplicationInsights": {
+  "InstrumentationKey": "instrumentation-key"
+}
+```
+
+Trust local certificates: `dotnet dev-certs https --trust`

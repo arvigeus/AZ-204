@@ -90,13 +90,25 @@ QueryDefinition query = new QueryDefinition(
     "select * from sales s where s.AccountNumber = @AccountInput ")
     .WithParameter("@AccountInput", "Account1");
 
-FeedIterator<SalesOrder> resultSet = container.GetItemQueryIterator<SalesOrder>(
+string query = $@"
+  SELECT VALUE products
+  FROM models
+  JOIN products in models.Products
+  WHERE products.id = '{id}'
+";
+FeedIterator<SalesOrder> rs = container.GetItemQueryIterator<SalesOrder>(
     query,
-    requestOptions: new QueryRequestOptions()
-    {
-        PartitionKey = new PartitionKey("Account1"),
-        MaxItemCount = 1
-    });
+    // Optional:
+    // requestOptions: new QueryRequestOptions()
+    // {
+    //     PartitionKey = new PartitionKey("Account1"),
+    //     MaxItemCount = 1
+    // });
+while (rs.HasMoreResults)
+{
+    Model next = await iterator.ReadNextAsync();
+    matches.AddRange(next);
+}
 ```
 
 ## [Consistency Levels](https://docs.microsoft.com/en-us/azure/cosmos-db/consistency-levels)
@@ -503,6 +515,12 @@ This is similar to aliasing `SELECT p.name AS name`
 ```sql
 SELECT c.id, udf.GetMaxNutritionValue(c.nutrients) AS MaxNutritionValue
 FROM c
+```
+
+### Get count
+
+```sql
+SELECT VALUE COUNT(1) FROM models
 ```
 
 ## [Connectivity modes](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/sdk-connection-modes)

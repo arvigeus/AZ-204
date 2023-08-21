@@ -315,3 +315,33 @@ key=$(az eventgrid topic key list --name $myTopicName -g az204-evgrid-rg --query
 event='[ {"id": "'"$RANDOM"'", "eventType": "recordInserted", "subject": "myapp/vehicles/motorcycles", "eventTime": "'`date +%Y-%m-%dT%H:%M:%S%z`'", "data":{ "make": "Contoso", "model": "Monster"},"dataVersion": "1.0"} ]'
 curl -X POST -H "aeg-sas-key: $key" -d "$event" $topicEndpoint
 ```
+
+## Working with EventGrid
+
+### Publish new events
+
+Create an Event Grid subscription: `Azure portal > Resource groups > PubSubEvents > eventviewer[yourname] web app > + Event Subscription`
+
+```cs
+    Uri endpoint = new Uri(topicEndpoint);
+
+    // Key credential used to authenticate to an Azure Service.
+    // It provides the ability to update the key without creating a new client.
+    var credential = new AzureKeyCredential(topicKey);
+
+    var client = new EventGridPublisherClient(endpoint, credential);
+
+    var newEmployeeEvent = new EventGridEvent(
+        subject: $"New Employee: Alba Sutton",
+        eventType: "Employees.Registration.New",
+        dataVersion: "1.0",
+        data: new
+        {
+            FullName = "Alba Sutton",
+            Address = "4567 Pine Avenue, Edison, WA 97202"
+        }
+    );
+
+    await client.SendEventAsync(newEmployeeEvent);
+}
+```

@@ -123,7 +123,7 @@ using (var client = GetClient())
         sender.SendMessagesAsync(new ServiceBusMessage($"Messages complete"));
     }
 
-    using (rocessor = client.CreateProcessor(queueName, new ServiceBusProcessorOptions()))
+    using (processor = client.CreateProcessor(queueName, new ServiceBusProcessorOptions()))
     {
         processor.ProcessMessageAsync += MessageHandler;
         processor.ProcessErrorAsync += ErrorHandler;
