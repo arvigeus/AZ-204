@@ -50,7 +50,7 @@ Answer: To support IP-based SSL for your app, To support a dedicated inbound add
 
 ---
 
-When would you use Access restrictions feature?
+Question: When would you use Access restrictions feature?
 
 - [x] To restrict access to your app from a set of well-defined IP addresses.
 - [ ] To access an on-premises system securely.
@@ -62,7 +62,7 @@ Answer: To restrict access to your app from a set of well-defined IP addresses.
 
 ---
 
-When would you use Service endpoints/Private endpoints feature?
+Question: When would you use Service endpoints/Private endpoints feature?
 
 - [x] To restrict access to your Azure Service Resources to only your virtual network.
 - [ ] To support IP-based SSL for your app.
@@ -74,7 +74,7 @@ Answer: To restrict access to your Azure Service Resources to only your virtual 
 
 ---
 
-When would you use Private endpoints features?
+Question: When would you use Private endpoints features?
 
 - [x] To restrict access to your Azure Service Resources to only your virtual network.
 - [x] To expose your app on a private IP in your virtual network
@@ -87,7 +87,7 @@ Answer: To restrict access to your Azure Service Resources to only your virtual 
 
 ---
 
-When would you use Hybrid Connections feature?
+Question: When would you use Hybrid Connections feature?
 
 - [x] To access an on-premises system or service securely.
 - [ ] To restrict access to your app from a set of well-defined IP addresses.
@@ -99,7 +99,7 @@ Answer: To access an on-premises system or service securely.
 
 ---
 
-When would you use Gateway-required virtual network integration feature?
+Question: When would you use Gateway-required virtual network integration feature?
 
 - [x] To access resources in your Azure virtual network or on-premises network over ExpressRoute or site-to-site VPN.
 - [ ] To restrict access to your Azure Service Resources to only your virtual network.
@@ -111,7 +111,7 @@ Answer: To access resources in your Azure virtual network or on-premises network
 
 ---
 
-When would you use Virtual network integration feature?
+Question: When would you use Virtual network integration feature?
 
 - [x] To access resources in your Azure virtual network.
 - [ ] To restrict access to your app from a set of well-defined IP addresses.
@@ -1249,11 +1249,11 @@ Answer: These metrics are used across all instances of the plan, not for monitor
 Question: In Azure App Service running on Basic plan, the Health Check feature pings a specified path every minute. What actions are taken if an instance fails to respond with a valid status code?
 
 - [ ] It's marked unhealthy and immediately replaced.
-- [ ] It's marked unhealthy and removed from the load balancer, and if it stays unhealthy for an hour, it's replaced.
+- [x] It's marked unhealthy and removed from the load balancer, and if it stays unhealthy for an hour, it's replaced.
 - [ ] It's marked unhealthy, and has to be manually fixed.
 - [ ] It's marked unhealthy, and the x-ms-auth-internal-token request header is checked against the WEBSITE_AUTH_ENCRYPTION_KEY environment variable to confirm status.
 
-Answer: This option accurately describes the process of Health Checks in Azure App Service. An instance is marked unhealthy and removed from the load balancer if it fails to respond with a valid status code after 10 requests. If it stays unhealthy for an hour, it's replaced (only for Basic+).
+Answer: An instance is marked unhealthy and removed from the load balancer if it fails to respond with a valid status code after 10 requests. If it stays unhealthy for an hour, it's replaced (only for Basic+).
 
 ---
 

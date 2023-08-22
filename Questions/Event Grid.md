@@ -24,7 +24,7 @@ The Event Grid Data Sender role has permissions to send events to topics.
 
 ---
 
-You are trying to send a 130KB event from Event Hub to Event Grid. Which of the following statements are true:
+Question: You are trying to send a 130KB event from Event Hub to Event Grid. Which of the following statements are true:
 
 - [ ] Event is covered by the Service Level Agreement (SLA)
 - [ ] Event contains `lastTimeModified` property

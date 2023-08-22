@@ -6,11 +6,11 @@ Question: Which of the following Event Hubs concepts represents an ordered seque
 - [x] Partition
 - [ ] Event Hubs producer
 
----
-
 Answer: A partition is an ordered sequence of events that is held in an Event Hub.  
 A consumer group is a view of an entire Event hub.  
 An Event Hub producer is a type of client.
+
+---
 
 Question: Which of the following options represents when an event processor marks or commits the position of the last successfully processed event within a partition?
 
@@ -47,7 +47,7 @@ Answer: Prefer using `byte[]` with `EventData`.
 
 ---
 
-Which class allows you to send messages in Event Hub?
+Question: Which class allows you to send messages in Event Hub?
 
 - [x] `EventHubClient`
 - [ ] `EventHubConsumerClient`

@@ -6,11 +6,11 @@ Question: Which of the following types of blobs are used to store virtual hard d
 - [ ] Append blobs
 - [x] Page blobs
 
----
-
 Answer: Page blobs store random access files up to 8 TB in size, and are used to store virtual hard drive (VHD) files and serve as disks for Azure virtual machines.  
 Append blobs are optimized for data append operations.  
 Block blobs are made up of blocks of data that can be managed individually.
+
+---
 
 Question: Which of the following types of storage accounts is recommended for most scenarios using Azure Storage?
 

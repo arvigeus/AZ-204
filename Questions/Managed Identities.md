@@ -33,7 +33,7 @@ Oauth 2.0 is a protocol that can be used to acquire a token, but isn't the basis
 
 ---
 
-You are the administrator of an Azure SQL database that is set up to allow Azure AD-based access. You want your developers to connect to this database using Microsoft SQL Server Management Studio (SSMS) using their on-premises Active Directory credentials without frequent (minimizing) login prompts. Which approach should you adopt?
+Question: You are the administrator of an Azure SQL database that is set up to allow Azure AD-based access. You want your developers to connect to this database using Microsoft SQL Server Management Studio (SSMS) using their on-premises Active Directory credentials without frequent (minimizing) login prompts. Which approach should you adopt?
 
 - [ ] Azure AD B2C.
 - [ ] Azure Conditional Access.

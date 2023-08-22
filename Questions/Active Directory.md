@@ -147,7 +147,7 @@ Answer: It indicates the type of resource being requested.
 
 ---
 
-What happens if a user attempts to access Microsoft Key Vault with `scope=User.Read` in the Microsoft Identity platform?
+Question: What happens if a user attempts to access Microsoft Key Vault with `scope=User.Read` in the Microsoft Identity platform?
 
 - [ ] The request is successful and the user can access Key Vault data.
 - [x] The request fails because User.Read will assume wrong resource type.

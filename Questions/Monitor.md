@@ -88,7 +88,7 @@ Question: You are monitoring an Azure App Service Web App and want to use the CP
 - [ ] Premium
 - [x] Shared
 
-Answers: CPU Time is specifically useful for apps hosted in Free or Shared plans, as one of their quotas is defined in CPU minutes used by the app. Other plans do not have this specific quota, making the other options incorrect.
+Answer: CPU Time is specifically useful for apps hosted in Free or Shared plans, as one of their quotas is defined in CPU minutes used by the app. Other plans do not have this specific quota, making the other options incorrect.
 
 ---
 
@@ -100,7 +100,7 @@ Question: You are tasked with monitoring the CPU usage of an Azure App Service W
 - [x] Premium
 - [ ] Shared
 
-Answers: CPU Percentage is a useful metric for apps hosted in Basic, Standard, and Premium plans, as these plans can be scaled out, and CPU Percentage provides a good indication of the overall usage across all instances. Options A and E are incorrect as CPU Percentage is not specifically mentioned as useful for Free or Shared plans.
+Answer: CPU Percentage is a useful metric for apps hosted in Basic, Standard, and Premium plans, as these plans can be scaled out, and CPU Percentage provides a good indication of the overall usage across all instances. Options A and E are incorrect as CPU Percentage is not specifically mentioned as useful for Free or Shared plans.
 
 ---
 

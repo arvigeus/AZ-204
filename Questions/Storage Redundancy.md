@@ -98,7 +98,7 @@ Answer:
 
 ---
 
-What options are available for replicating your data only in the primary region?
+Question: What options are available for replicating your data only in the primary region?
 
 - [x] Locally redundant storage (LRS)
 - [x] Zone-redundant storage (ZRS)
