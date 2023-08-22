@@ -198,18 +198,18 @@ byte[] value = db.StringGet(key);
 db.StringSet(key, value);
 ```
 
-### Common operations
+### [Common operations](<(https://github.com/StackExchange/StackExchange.Redis/blob/master/src/StackExchange.Redis/Interfaces/IDatabase.cs)>)
 
-| Method              | Description                                                                                                                  |
-| ------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `CreateBatch`       | Creates a group of operations that will be sent to the server as a single unit, but not necessarily processed as a unit.     |
-| `CreateTransaction` | Creates a group of operations that will be sent to the server as a single unit and processed on the server as a single unit. |
-| `KeyDelete`         | Delete the key/value.                                                                                                        |
-| `KeyExists`         | Returns whether the given key exists in cache.                                                                               |
-| `KeyExpire`         | Sets a time-to-live (TTL) expiration on a key.                                                                               |
-| `KeyRename`         | Renames a key.                                                                                                               |
-| `KeyTimeToLive`     | Returns the TTL for a key.                                                                                                   |
-| `KeyType`           | Returns the string representation of the type of the value stored at key: string, list, set, zset, and hash.                 |
+| Method              | Description                                                                                                                  | Return Type    |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------- | -------------- |
+| `CreateBatch`       | Creates a group of operations that will be sent to the server as a single unit, but not necessarily processed as a unit.     | `IBatch`       |
+| `CreateTransaction` | Creates a group of operations that will be sent to the server as a single unit and processed on the server as a single unit. | `ITransaction` |
+| `KeyDelete`         | Delete the key/value.                                                                                                        | `bool`         |
+| `KeyExists`         | Returns whether the given key exists in cache.                                                                               | `bool`         |
+| `KeyExpire`         | Sets a time-to-live (TTL) expiration on a key.                                                                               | `bool`         |
+| `KeyRename`         | Renames a key.                                                                                                               | `bool`         |
+| `KeyTimeToLive`     | Returns the TTL for a key.                                                                                                   | `TimeSpan?`    |
+| `KeyType`           | Returns the string representation of the type of the value stored at key: string, list, set, zset, and hash.                 | `RedisType`    |
 
 ### Executing commands
 
