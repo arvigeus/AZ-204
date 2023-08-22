@@ -1,5 +1,7 @@
 # [Azure Cache for Redis](https://docs.microsoft.com/en-us/azure/azure-cache-for-redis/)
 
+Endpoint: `<account>.redis.cache.windows.net`.
+
 Offers both the open-source OSS Redis and a commercial Redis Enterprise as a managed service.
 
 ## Common patterns
@@ -9,28 +11,6 @@ Offers both the open-source OSS Redis and a commercial Redis Enterprise as a man
 - **Session store**: Store user history data (e.g., shopping carts) associated with user cookies using an in-memory cache like Azure Cache for Redis for faster retrieval than a full relational database.
 - **Job and message queuing**: Queue tasks that take time to execute, deferring longer operations to be processed in sequence, often by another server. This is known as task queuing.
 - **Distributed transactions**: Execute a series of commands against a backend data-store as a single atomic operation using Azure Cache for Redis' support for transactions.
-
-## [Caching](https://learn.microsoft.com/en-us/azure/architecture/best-practices/caching)
-
-| Feature           | Private Caching                                | Shared Caching                                           |
-| ----------------- | ---------------------------------------------- | -------------------------------------------------------- |
-| **Definition**    | Stores data locally on a specific computer.    | Common source accessible by multiple processes/machines. |
-| **Accessibility** | Specific to one instance or user.              | Accessible to multiple instances or applications.        |
-| **Speed**         | Generally faster (local access).               | May be slower (not held locally).                        |
-| **Scalability**   | Limited; each instance has its own cache.      | Highly scalable; can be distributed across servers.      |
-| **Consistency**   | Can lead to inconsistencies between instances. | Ensures consistent view of cached data.                  |
-| **Complexity**    | Simpler to implement and manage.               | May add complexity (separate cache service).             |
-| **Use Cases**     | Static data; single user/session specific.     | Frequently accessed data by multiple users/applications. |
-
-### Cache expiration
-
-Data in a cache is usually a copy of the original data. If the original changes, the cached data can become outdated. Caching systems often allow you to set expiration times to keep data fresh.
-
-Eviction Policies:
-
-- Most-Recently-Used: (LIFO) Assumes data won't be needed again.
-- First-In-First-Out: Oldest data is removed first.
-- Explicit Removal: Based on triggered events like data modification.
 
 ### [**Cache-Aside Pattern**](https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside)
 
@@ -58,6 +38,28 @@ public async Task<MyEntity> GetMyEntityAsync(int id)
 }
 ```
 
+## [Caching](https://learn.microsoft.com/en-us/azure/architecture/best-practices/caching)
+
+| Feature           | Private Caching                                | Shared Caching                                           |
+| ----------------- | ---------------------------------------------- | -------------------------------------------------------- |
+| **Definition**    | Stores data locally on a specific computer.    | Common source accessible by multiple processes/machines. |
+| **Accessibility** | Specific to one instance or user.              | Accessible to multiple instances or applications.        |
+| **Speed**         | Generally faster (local access).               | May be slower (not held locally).                        |
+| **Scalability**   | Limited; each instance has its own cache.      | Highly scalable; can be distributed across servers.      |
+| **Consistency**   | Can lead to inconsistencies between instances. | Ensures consistent view of cached data.                  |
+| **Complexity**    | Simpler to implement and manage.               | May add complexity (separate cache service).             |
+| **Use Cases**     | Static data; single user/session specific.     | Frequently accessed data by multiple users/applications. |
+
+### Cache expiration
+
+Data in a cache is usually a copy of the original data. If the original changes, the cached data can become outdated. Caching systems often allow you to set expiration times to keep data fresh.
+
+Eviction Policies:
+
+- Most-Recently-Used: (LIFO) Assumes data won't be needed again.
+- First-In-First-Out: Oldest data is removed first.
+- Explicit Removal: Based on triggered events like data modification.
+
 ## Tiers
 
 - **Basic**: A single VM running an OSS Redis cache. It is suitable for development/test and noncritical workloads, but it lacks a service-level agreement (SLA).
@@ -66,11 +68,13 @@ public async Task<MyEntity> GetMyEntityAsync(int id)
 - **Enterprise**: These high-performance caches are powered by Redis Labs' Redis Enterprise software. They support Redis modules like RediSearch, RedisBloom, and RedisTimeSeries, and offer even greater availability than the Premium tier.
 - **Enterprise Flash**: This tier provides cost-effective large caches powered by Redis Labs' Redis Enterprise software. It extends Redis data storage to nonvolatile memory on a VM, which is cheaper than DRAM, reducing the overall per-GB memory cost.
 
+Clustering support (Premium+): Automatically split dataset among multiple nodes (shards), 10 shards max.
+
 ## [Session State Providers](https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-aspnet-session-state-provider)
 
-- In Memory: Simple and fast. Not scalable, as it's not distributed.
-- SQL Server: Allows for scalability and persistent storage. Can affect performance, though In-Memory OLTP can improve it.
-- Distributed In Memory (e.g., Azure Cache for Redis): Combines simplicity, speed, and scalability. Must consider characteristics like transient network failures.
+- **In Memory**: Simple and fast. Not scalable, as it's not distributed.
+- **SQL Server**: Allows for scalability and persistent storage. Can affect performance, though In-Memory OLTP can improve it.
+- **Distributed In Memory** (e.g., Azure Cache for Redis): Combines simplicity, speed, and scalability. Must consider characteristics like transient network failures.
 
 ```xml
 <sessionState mode="Custom" customProvider="MySessionStateStore">
@@ -172,7 +176,7 @@ Retrieve the required information from the Azure portal under **Settings > Acces
 ```cs
 var connectionString = "[cache-name].redis.cache.windows.net:6380,password=[password-here],ssl=True,abortConnect=False";
 var redisConnection = ConnectionMultiplexer.Connect(connectionString); // needs to be kept alive
-IDatabase db = redisConnection.GetDatabase(); // lightweight object
+IDatabase db = redisConnection.GetDatabase(); // lightweight object, no need to keep
 
 var success = db.StringSet("favorite:flavor", "i-love-rocky-road");
 var value = db.StringGet("favorite:flavor");
@@ -210,11 +214,11 @@ db.StringSet(key, value);
 ### Executing commands
 
 ```cs
-var result = db.Execute("ping"); // PONG
+RedisResult result = db.Execute("ping"); // PONG
 ```
 
 ```cs
-var result = await db.ExecuteAsync("client", "list"); // This would output all the connected clients
+RedisResult result = await db.ExecuteAsync("client", "list"); // This would output all the connected clients
 // Type = BulkString
 // Result = id=9469 addr=16.183.122.154:54961 fd=18 name=DESKTOP-AAAAAA age=0 idle=0 flags=N db=0 sub=1 psub=0 multi=-1 qbuf=0 qbuf-free=0 obl=0 oll=0 omem=0 ow=0 owmem=0 events=r cmd=subscribe numops=5
 // id=9470 addr=16.183.122.155:54967 fd=13 name=DESKTOP-BBBBBB age=0 idle=0 flags=N db=0 sub=0 psub=0 multi=-1 qbuf=0 qbuf-free=32768 obl=0 oll=0 omem=0 ow=0 owmem=0 events=r cmd=client numops=17

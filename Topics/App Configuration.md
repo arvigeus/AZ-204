@@ -1,6 +1,6 @@
 # [Azure App Configuration](https://learn.microsoft.com/en-us/azure/azure-app-configuration/)
 
-Azure App Configuration, complementing Azure Key Vault's application secrets storage, provides a centralized service for managing application settings and feature flags. It simplifies the implementation of hierarchical configuration data management and distribution across various environments and geographies, enables dynamic application settings adjustments without redeployment or restart, and allows real-time control of feature availability. _All data is encrypted_ at rest and in transit. Unlike KeyVault, it does not offer hardware level encryption (available in Premium tier), granular access policies, and management environments.
+Azure App Configuration, complementing Azure Key Vault's application secrets storage, provides a centralized service for managing application settings and feature flags. It simplifies the implementation of hierarchical configuration data management and distribution across various environments and geographies, enables dynamic application settings adjustments without redeployment or restart, and allows real-time control of feature availability. _All data is encrypted_ at rest (using a 256-bit AES encryption key) and in transit. Unlike KeyVault, it does not offer hardware level encryption (available in Premium tier), granular access policies, and management environments.
 
 You can both import and export configuration information between Azure App Configuration and separate files. Additionally, you can set up different configuration stores for various environments like development, test, and production, allowing you to manage applications throughout their lifecycle.
 
@@ -14,7 +14,7 @@ Keys are unique identifiers for values. They can be organized hierarchically usi
 
 Keys are _case-sensitive_ and can include any unicode character, except for `*`, `,`, and `\`. These reserved characters can be included by escaping them with `\{Reserved Character}`.
 
-#### Key Namespaces
+Example key namespaces:
 
 - Component-based keys: `AppName:Service1:ApiEndpoint`, `AppName:Service2:ApiEndpoint`
 - Region-based keys: `AppName:Region1:DbEndpoint`, `AppName:Region2:DbEndpoint`
@@ -196,11 +196,11 @@ Azure App Configuration serves as a centralized repository for feature flags, en
 
 ### Using Customer-Managed Keys for Encryption
 
-A managed identity authenticates with Azure Active Directory and wraps the encryption key using Azure Key Vault. The wrapped key is stored and the unwrapped key is cached for an hour, refreshing hourly.
+A managed identity authenticates with Azure Active Directory and wraps the encryption key using Azure Key Vault. The wrapped key is stored and the unwrapped key is cached for an hour, then refreshed.
 
 Prerequisites:
 
-- A Standard tier Azure App Configuration
+- _A Standard tier_ Azure App Configuration
 - Azure Key Vault with soft-delete and purge-protection
 - An unexpired, enabled RSA or RSA-HSM key in the Key Vault with wrap and unwrap capabilities
 

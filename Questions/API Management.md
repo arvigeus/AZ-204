@@ -97,7 +97,7 @@ Question: In what unit is renewal period for Rate limiting / Quota policy?
 - [ ] Hours
 - [ ] Days
 
-Answer: Seconds
+Answer: All times are in seconds
 
 ---
 
@@ -107,7 +107,7 @@ Question: In what unit is the bandwidth limit in Quota policy?
 - [ ] MB
 - [ ] GB
 
-Answer: KB
+Answer: All sizes are in KB
 
 ---
 

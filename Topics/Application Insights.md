@@ -183,33 +183,35 @@ telemetry.TrackMetric(sample);
 // Track page views at more or different times
 telemetry.TrackPageView("GameReviewPage");
 
+// Track the response times and success rates of calls to an external piece of code
+var success = false;
+var startTime = DateTime.UtcNow;
+var timer = System.Diagnostics.Stopwatch.StartNew();
+
 try
 {
     // Some code that might throw an exception
+
+    success = true;
 }
 catch (Exception ex)
 {
     // Send exceptions to Application Insights
     telemetry.TrackException(ex);
+
+    // Log exceptions to a diagnostic trace listener (Trace.aspx).
+    Trace.Error(ex.Message);
+}
+finally
+{
+    timer.Stop();
+    // Send data to Dependency Tracking in Application Insights
+    telemetry.TrackDependency("DependencyType", "myDependency", "myCall", startTime, timer.Elapsed, success);
 }
 
 // Diagnose problems by sending a "breadcrumb trail" to Application Insights
 // Lets you send longer data such as POST information.
 telemetry.TrackTrace("Some message", SeverityLevel.Warning);
-
-// Track the response times and success rates of calls to an external piece of code via TrackDependency
-var success = false;
-var startTime = DateTime.UtcNow;
-var timer = System.Diagnostics.Stopwatch.StartNew();
-try
-{
-    // Call to external code that might set success to true
-}
-finally
-{
-    timer.Stop();
-    telemetry.TrackDependency("DependencyType", "myDependency", "myCall", startTime, timer.Elapsed, success);
-}
 
 // Send data immediately, rather than waiting for the next fixed-interval sending
 telemetry.Flush();
@@ -251,11 +253,13 @@ Helps you analyze how users navigate between pages and features of your web app.
 
 Application Insights can be activated via Auto-Instrumentation (agent) or by incorporating its SDK into your application code. The preferred method is Auto-Instrumentation as it requires no developer involvement, reduces future overhead from SDK updates, and allows for application instrumentation without source code access. Additionally, Application Insights supports `OpenCensus` for distributed tracing, aiding metrics collection for services and enabling tracing with technologies like Redis, Memcached, and MongoDB.
 
-## Availability test
+## [Availability test](https://learn.microsoft.com/en-us/azure/azure-monitor/app/troubleshoot-availability)
+
+Up to 100 per Application Insights resource.
 
 - [URL ping test (classic)](https://learn.microsoft.com/en-us/azure/azure-monitor/app/monitor-web-app-availability): Check endpoint response and measure performance. Customize success criteria with advanced features like parsing dependent requests and retries. It relies on public internet DNS; ensure public domain name servers resolve all test domain names. Use custom **TrackAvailability** tests otherwise.
 - [Standard test (Preview)](https://learn.microsoft.com/en-us/azure/azure-monitor/app/availability-standard-tests): Similar to URL ping, this single request test covers SSL certificate validity, proactive lifetime check, HTTP request verb (`GET`, `HEAD`, or `POST`), custom headers, and associated data.
-- [Custom TrackAvailability test](https://learn.microsoft.com/en-us/azure/azure-monitor/app/availability-azure-functions): Custom TrackAvailability test: For custom application availability tests, employ the [TrackAvailability()](https://learn.microsoft.com/en-us/dotnet/api/microsoft.applicationinsights.telemetryclient.trackavailability) method to send results to Application Insights. Ideal for `multi-request` or `authentication` test scenarios.
+- [Custom TrackAvailability test](https://learn.microsoft.com/en-us/azure/azure-monitor/app/availability-azure-functions): Custom TrackAvailability test: For custom application availability tests, employ the [TrackAvailability()](https://learn.microsoft.com/en-us/dotnet/api/microsoft.applicationinsights.telemetryclient.trackavailability) method to send results to Application Insights. Ideal for `multi-request` or `authentication` test scenarios. (Note: Multi-step test are the legacy version, depricated in 2019)
 
 Example: Create an alert that will notify you via email if the web app becomes unresponsive:
 

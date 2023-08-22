@@ -24,6 +24,18 @@ Log-based metrics are aggregated at query time and require more processing to pr
 
 ---
 
+Question: Which of the following metrics are pre-aggregated?
+
+- [ ] Log based metrics
+- [x] Standard metrics
+- [ ] All metrics
+- [ ] Metrics cannot be pre-aggregated
+- [ ] Only metrics enabled by thr developer
+
+Answer: Standard metrics are pre-aggregated.
+
+---
+
 Question: Where is the exception logged?
 
 ```csharp
