@@ -44,6 +44,8 @@ Question: What is the proper way to select `displayName` field of current user?
 - [ ] `https://graph.microsoft.com/v1.0/me?$fields=displayName`
 - [ ] `https://graph.microsoft.com/v1.0/me|displayName`
 
+Answer: `/me?$select=displayName`
+
 ---
 
 Question: Which HTTP method below is used to update a resource with new values?

@@ -1196,7 +1196,7 @@ Question: Which of the following certificates can be exported?
 - [x] App Service Certificate
 - [x] Certificates stored in Key Vault
 
-Answer Free Managed certificated: No wildcard certificates or private DNS, can't be exported
+Answer: Free Managed certificated - No wildcard certificates or private DNS, can't be exported.
 
 ---
 
@@ -1280,6 +1280,8 @@ Question: When mounting Azure Storage as a local share in Azure App Service, wha
 - [ ] Use Azure Files for read/write operations in Windows apps.
 - [x] Use Azure Storage for read/write operations in Linux containers.
 - [ ] Use Azure Storage for read/write operations in Windows apps.
-- [x] Regenerate your access key often
+- [x] Regenerate your access key often.
 
-Answer:
+Answer: Avoid using Azure Storage for local databases or apps dependent on file handles and locks, refrain from using it for read/write actions in Linux containers, and minimize frequent regeneration of your access key.
+
+---

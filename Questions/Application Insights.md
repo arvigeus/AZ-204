@@ -71,7 +71,7 @@ catch(Exception ex)
 - [ ] Application Insights
 - [ ] Event Log
 
-**Answer:** The exception gets logged to a diagnostic trace listener. The Trace.Error method allows you to log exceptions to a diagnostic trace listener. Alternatively, you would need to configure tracing for the application.
+Answer: The exception gets logged to a diagnostic trace listener. The Trace.Error method allows you to log exceptions to a diagnostic trace listener. Alternatively, you would need to configure tracing for the application.
 
 ---
 
