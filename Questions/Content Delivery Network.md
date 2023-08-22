@@ -117,7 +117,7 @@ Reducing TTL affects edge server caching but may not force downstream clients to
 Question: How can deleting and recreating a CDN endpoint be considered in the context of content management?
 
 - [ ] It's a method to version the assets.
-- [ ] It's another way to purge the content, effectively clearing the cached content from edge servers.
+- [x] It's another way to purge the content, effectively clearing the cached content from edge servers.
 - [ ] It forces all local browser caches to update.
 - [ ] It increases the file's time-to-live (TTL).
 

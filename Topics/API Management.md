@@ -5,11 +5,8 @@
 - **Consumption Tier**: No Azure AD integration, private endpoint support for inbound connections, developer portal, built-in cache, built-in analytics, backup and restore, management over Git, direct management API, Azure Monitor and Log Analytics request logs, Static IP.
 
 - **Developer Tier**: Like Premium, without multi-region deployment and availability zones.
-
 - **Basic Tier**: No Azure AD integration, and workspaces.
-
 - **Standard Tier**: Has Azure AD Integration and worspaces.
-
 - **Premium Tier**: Has VNET, multiple custom domain names, self-hosted gateway
 
 ## Components

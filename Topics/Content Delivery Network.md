@@ -4,9 +4,9 @@ Deliver high-bandwidth content quickly by storing it at various global locations
 
 How it works: When a user requests a file using a special URL (ex: `<endpoint name>.azureedge.net`), the request is directed to the nearest server location (_Point of Presence - POP_). If the file isn't in the server's cache, it's fetched from the origin server, which could be an Azure service or any public web server. The file is then sent to the user from the POP server and stored there for future requests. This cached file can be quickly sent to any other users requesting the same file, providing a faster user experience. The file stays in the cache until its time-to-live (TTL) expires, defaulting to _7 days_ if not specified.
 
-To use Azure CDN, you need to set up a CDN profile containing CDN endpoints, each with its own content delivery and access settings. You can have multiple profiles for different domains or applications. Pricing is based on the profile level.
+Requirenments: To use Azure CDN, you need to set up a CDN profile containing CDN endpoints, each with its own content delivery and access settings. You can have multiple profiles for different domains or applications. Pricing is based on the profile level.
 
-There are [limits](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#azure-cdn-limits) on the number of profiles (up to 25), endpoints per profile (up to 10), and custom domains per endpoint (up to 25) in each Azure subscription.
+[Limitsations](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#azure-cdn-limits): the number of profiles (up to 25), endpoints per profile (up to 10), and custom domains per endpoint (up to 25) in each Azure subscription.
 
 Azure CDN offers features like _dynamic site acceleration_, _caching rules_, _HTTPS custom domain support_, _diagnostics logs_, _file compression_, and _geo-filtering_.
 
@@ -57,6 +57,14 @@ Other tiers of Azure CDN provide additional configuration options.
 To ensure users always get the latest version of your content, you can either version your assets by giving them new URLs with each update or purge the old content from the servers. Versioning lets the CDN fetch new assets right away, while purging forces all servers to get updated content. This might be needed for web app updates or quick corrections. Purging only removes content from the main servers, not from places like local browser caches. To make sure users get the latest file, you can give it a unique name each time you update it or use special caching techniques.
 
 Deleting and recreating a CDN endpoint is another way to purge the content, effectively clearing the cached content from edge servers. Note that this method may disrupt content delivery and requires reconfiguration of the endpoint, so it's typically used as a last resort or in specific scenarios.
+
+```sh
+az cdn endpoint purge \
+    --content-paths '/css/*' '/js/app.js' \
+    --name ContosoEndpoint \
+    --profile-name DemoProfile \
+    --resource-group ExampleGroup
+```
 
 ### Preload assets
 
