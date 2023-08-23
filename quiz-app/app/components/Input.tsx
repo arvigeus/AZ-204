@@ -3,7 +3,8 @@ import type { ChangeEvent } from "react";
 
 import clsx from "clsx";
 
-export const InputStyle = "block mt-4 border border-gray-300 py-2 px-6 text-lg";
+export const InputStyle =
+  "block mt-4 border border-gray-3000 rounded-lg py-2 px-6 text-lg";
 
 export const TextInput = () => {
   const [text, setText] = useState<string>("");
@@ -27,10 +28,7 @@ export const TextInput = () => {
       placeholder="Your answer here..."
       ref={textareaRef}
       value={text}
-      className={clsx(
-        InputStyle,
-        "rounded-lg w-full focus:outline-none resize-none"
-      )}
+      className={clsx(InputStyle, "w-full focus:outline-none resize-none")}
       onChange={onChangeHandler}
     />
   );

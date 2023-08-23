@@ -1142,11 +1142,11 @@ Answer: The `/home/LogFiles` directory always persists upon app restarts if appl
 
 Question: What action is required if you initiate a storage failover when the storage account is mounted to the app?
 
-- [x] The app must be restarted or the storage mount must be removed and readded.
+- [x] The app must be restarted or the storage must be remounted.
 - [ ] `WEBSITES_ENABLE_APP_SERVICE_STORAGE` must be set to `false`.
 - [ ] No action is required. The app will automatically reconnect to the storage mount.
 
-Answer: The app must be restarted or the storage mount must be removed and readded.
+Answer: Storage failover requires app restart or remounting of Azure Storage.
 
 ---
 

@@ -139,6 +139,11 @@ export default function Index() {
                   disabled={showAnswer}
                 />
               )}
+              {data.answerIndexes && data.answerIndexes.length > 1 && (
+                <div className="italic text-gray-400 text-xs">
+                  Note: This question has more than one correct answer
+                </div>
+              )}
               {(!data.options || !data.options.length) && !data.hasCode && (
                 <TextInput />
               )}

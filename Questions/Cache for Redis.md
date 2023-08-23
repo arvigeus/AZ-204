@@ -72,7 +72,7 @@ Answer: Offers premium features, scalability, speed, supports concurrent access,
 
 Question: After acquiring Twitter, Elon Musk, in a moment of alcohol-induced "inspiration", decides to rename it to **X** and then change it's session storage to be something more "Musk-esque". He wants a solution that not only flaunts his financial prowess but also gives the engineers hell, all while ensuring that his tweets would eventually reach his followers on Mars (when the infrastructure is there). He demands global distribution, concurrent access, and the possible ability to scale beyond Earth's boundaries (internal note from the engineering team: "Nope!"). What decision should he force upon the poor Twitter... errr... _X_ engineers to use for session storage, considering that they could only use currently existing solutions, because making them building something from the ground up would likely cause mass resignations?
 
-- [ ] In Memory Session State Provider:
+- [ ] In Memory Session State Provider
 - [ ] SQL Server Session State Provider
 - [ ] Cache for Redis at Premium Tier
 - [ ] A Giant Neural Network Powered by Starlink Satellites

@@ -1,6 +1,8 @@
-# Shared Access Signatures (SAS)
+# [Shared Access Signatures (SAS)](https://learn.microsoft.com/en-us/azure/storage/common/storage-sas-overview)
 
 A Shared Access Signature (SAS) is a URI that grants restricted access rights to Azure Storage resources. It's a signed URI that points to one or more storage resources and includes a token that contains a special set of query parameters.
+
+Note: You should prefer Azure AD
 
 ## Types of SAS
 
@@ -9,6 +11,9 @@ A Shared Access Signature (SAS) is a URI that grants restricted access rights to
 1. [**Service SAS**](https://learn.microsoft.com/en-us/azure/storage/blobs/sas-service-create-dotnet): This method uses your storage account key to create a SAS. It's a straightforward way to grant limited access to your Azure Storage resources. However, it's less secure than the User Delegation SAS because it involves sharing your account key. It's typically used when you want to provide access to clients who are not authenticated with Azure AD.
 
 1. [**Account (SAS)**](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-sas-create-dotnet): This method uses your storage account key to create a SAS. It's created at the storage account level, allowing access to multiple services within the account. It's typically used when you need to provide access to several services in your storage account. However, it involves sharing your account key, similar to the Service SAS.
+
+   - Ad hoc SAS: Defines start, expiry, and permissions in the SAS URI. Any SAS can be an ad hoc SAS.
+   - Service SAS: Uses a stored policy on resources to inherit start, expiry, and permissions.
 
 ## How SAS Works
 

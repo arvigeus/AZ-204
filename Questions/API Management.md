@@ -201,10 +201,10 @@ Answer: By using a authentication-managed-identity identity, the APIM instance c
 Question: You have JSON endpoint that expects JSON payload. The client sends XML payload. What policy should be applied?
 
 - [x] `xml-to-json-policy` in inbound section
-- [ ] `xml-to-json-policy` in backedn section
+- [ ] `xml-to-json-policy` in backend section
 - [ ] `xml-to-json-policy` in outbound section
 - [ ] `json-to-xml-policy` in inbound section
-- [ ] `json-to-xml-policy` in backedn section
+- [ ] `json-to-xml-policy` in backend section
 - [ ] `json-to-xml-policy` in outbound section
 - [ ] No policy should be applied
 
@@ -215,10 +215,10 @@ Answer: Request is transformed in inbound section
 Question: You have JSON endpoint. The client expexts XML response. What policy should be applied?
 
 - [ ] `xml-to-json-policy` in inbound section
-- [ ] `xml-to-json-policy` in backedn section
+- [ ] `xml-to-json-policy` in backend section
 - [ ] `xml-to-json-policy` in outbound section
 - [ ] `json-to-xml-policy` in inbound section
-- [ ] `json-to-xml-policy` in backedn section
+- [ ] `json-to-xml-policy` in backend section
 - [x] `json-to-xml-policy` in outbound section
 - [ ] No policy should be applied
 

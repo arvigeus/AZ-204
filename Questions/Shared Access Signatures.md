@@ -56,10 +56,17 @@ string sasToken = sasBuilder.ToSasQueryParameters(delegationKey, accountName).To
 
 Question: You are developing a .NET application that interacts with Azure Blob Storage. You need to generate a token that will allow a client to have read access to a specific container in your storage account for a period of 48 hours. This token should be generated in a straightforward manner, even if it involves sharing your storage account key. The client is not authenticated with Azure Active Directory. Write the C# code to accomplish this task.
 
+```cs
+string accountName = "<storage-account-name>";
+string accountKey = "<storage-account-key>";
+string containerName = "<container-name>";
+
+// Code here
+```
+
 Answer:
 
 ```csharp
-// Define your storage account name, account key, container name, and blob name
 string accountName = "<storage-account-name>";
 string accountKey = "<storage-account-key>";
 string containerName = "<container-name>";

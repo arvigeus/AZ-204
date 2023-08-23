@@ -51,7 +51,6 @@ export const AnswerOptions: FC<AnswerOptionsProps> = ({
           <label
             className={clsx(
               InputStyle,
-              answerIndexes.length > 1 ? "rounded-3xl" : "rounded-lg",
               (showAnswer || checkedValues.includes(index)) &&
                 answerIndexes.includes(index)
                 ? "bg-green-200"
