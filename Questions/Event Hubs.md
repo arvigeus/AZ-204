@@ -112,3 +112,28 @@ Question: A global manufacturing company is deploying thousands of sensors acros
 Answer: Event Hubs Capture allows automatic capturing of streaming data, can process real-time and batch-based pipelines on the same stream, and scales automatically with throughput units. It also supports storing the captured data in Azure Data Lake Storage.
 
 ---
+
+Question: Which should you choose if you publish events frequently and you want higher throuput and lower latency?
+
+- [ ] Use HTTPS protocol
+- [ ] Use HTTP protocol
+- [x] Use AMQP protocol
+- [ ] You need Premium plan to achieve better performance
+- [ ] Event Hub is optimized for high throuput, lower latency scenarios by default
+
+Answer: AMQP offers higher performance for frequent publishers.  
+Tier does not affect performance.
+
+---
+
+Question: Which protocol should you choose if you want tp publish a single event, with minimal network cost?
+
+- [x] Use HTTPS protocol
+- [ ] Use HTTP protocol
+- [ ] Use AMQP protocol
+- [ ] You need Dedicated plan to mimimize costs
+- [ ] Network cost is the same regardless of the protocol or tier
+
+Answer: AMQP requires a persistent bidirectional socket plus TLS or SSL/TLS, resulting in higher initial network costs.
+
+---

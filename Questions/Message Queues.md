@@ -100,3 +100,12 @@ Answer: Azure Queue Storage enables point-to-point data exchange via HTTPS and c
 Azure Service Bus supports HTTPS and point-to-point connections (queues) or one-to-many scenarios (topics), it is limited to 80 GB of message storage.
 
 ---
+
+Question: Which of the following queues supports automatic dead-lettering?
+
+- [x] Service Bus Queues
+- [ ] Storage Queues
+- [ ] Both has automatic dead-lettering enabled by default
+- [ ] None has automatic dead-lettering enabled by default
+
+---

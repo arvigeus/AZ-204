@@ -8,19 +8,38 @@ Up to 80 GB only.
 
 - **Queue**: Only one consumer receives and processes each message at a time (_point-to-point_ connection), and since messages are stored durably in the queue, producers and consumers don't need to handle messages concurrently.
 - **Load-leveling**: Effectively buffering against fluctuating system loads, ensuring the system is optimized to manage the average load, instead of peaks.
-- **Decoupling**: Seamless and independent upgrades of consumers, without any disruption to the producers.
-- **Receive modes**:
+- **Decoupling**: Client and service don't have to be online at the same time.
+- [**Receive modes**](https://learn.microsoft.com/en-us/azure/service-bus-messaging/message-transfers-locks-settlement):
   - **Receive and delete**: Messages are immediately consumed and removed.
-  - **Peek lock**: Messages are locked for processing, and the application must explicitly complete the processing to mark the message as consumed. If the application fails, the message can be abandoned or automatically unlocked after a timeout (?).
+  - **Peek lock**: Messages are locked for processing, and the application must explicitly complete the processing to mark the message as consumed. If the application fails, the message can be abandoned or automatically unlocked after a timeout (1min default).
 - **Topics:** Publishers send messages to a topic (1:n), and each message is distributed to all subscriptions registered with the topic.
 - **Subscriptions:** Subscribers receive message copies from the topic, based on filter rules set on their subscriptions. Subscriptions act like virtual queues and can apply filters to receive specific messages.
 - **Rules and actions**: You can configure subscriptions to process messages with specific characteristics differently. This is done using **filter actions**. When a subscription is created, you can define a filter expression that operates on message properties - system (ex. `"Label"`) or custom (ex: `"StoreName"`). This expression allows you to copy only the desired subset of messages to the virtual subscription queue. If no SQL filter expression is provided, the filter action applies to all messages in that subscription.
+
+| Premium                               | Standard                       |
+| ------------------------------------- | ------------------------------ |
+| High throughput                       | Variable throughput            |
+| Predictable performance               | Variable latency               |
+| Fixed pricing                         | Pay as you go variable pricing |
+| Ability to scale workload up and down | N/A                            |
+| Message size up to 100 MB             | Message size up to 256 KB      |
 
 ## Payload and serialization
 
 In the form of key-value pairs. The payload is always an opaque _binary block_ when stored or in transit. Its format can be described using the `ContentType` property. Applications are advised to manage object serialization themselves.
 
+The AMQP protocol serializes objects into an AMQP object, retrievable by the receiver using `GetBody<T>()`. Objects are serialized into an AMQP graph of `ArrayList` and `IDictionary<string,object>`.
+
 Each message has two sets of properties: _system-defined broker properties_, and _user-defined properties_. Broker properties, like `To`, `ReplyTo`, `ReplyToSessionId`, `MessageId`, `CorrelationId`, and `SessionId`, aid in message routing, including simple request/reply, multicast request/reply, multiplexing, and multiplexed request/reply.
+
+### Message Routing and Correlation
+
+Broker properties like `To`, `ReplyTo`, `ReplyToSessionId`, `MessageId`, `CorrelationId`, and `SessionId` assist in message routing. The routing patterns are:
+
+- **Simple request/reply**: Publishers send messages and await replies in a queue. Replies are addressed using `ReplyTo` and correlated with `MessageId`. Multiple replies are possible.
+- **Multicast request/reply**: Similar to the simple pattern, but messages are sent to a topic, and multiple subscribers can respond. Responses can be distributed if `ReplyTo` points to a topic.
+- **Multiplexing**: Streams of related messages are directed through one queue or subscription using matching `SessionId` values.
+- **Multiplexed request/reply**: Multiple publishers share a reply queue, and replies are guided by `ReplyToSessionId` and `SessionId`.
 
 Routing is managed interally, but applications can also use user properties for routing, as long as they don't use the reserved `To` property.
 
@@ -57,18 +76,18 @@ Also supports SAS and Managed Identities
 
 ### Filters
 
-- **SQL Filters**:
+- **SQL Filters** (`SqlRuleFilter`):
 
   - **Use**: Complex conditions using SQL-like expressions.
   - **Example**: Filtering messages having specific property value (or not) and quantities.
   - **Impact**: Lower throughput compared to Correlation Filters.
 
-- **Boolean Filters**:
+- **Boolean Filters** (`TrueRuleFilter` and `FalseRuleFilter`):
 
   - **Use**: Select all (TrueFilter) or none (FalseFilter) of the messages.
   - **Example**: `new TrueRuleFilter()` for all messages.
 
-- **Correlation Filters**:
+- **Correlation Filters** (`CorrelationRuleFilter`):
   - **Use**: Match messages based on specific properties like CorrelationId.
   - **Example**: Filtering messages with a specific subject and correlation ID.
   - **Impact**: More efficient in processing, preferred over SQL filters.
@@ -155,9 +174,13 @@ Task ErrorHandler(ProcessErrorEventArgs args)
 ```sh
 az servicebus namespace create --name mynamespace --resource-group myresourcegroup --location eastus
 az servicebus queue create --name myqueue --namespace-name mynamespace --resource-group myresourcegroup
+
 az servicebus queue list --namespace-name mynamespace --resource-group myresourcegroup
+
 az servicebus namespace authorization-rule keys list --name RootManageSharedAccessKey --namespace-name mynamespace --resource-group myresourcegroup --query primaryConnectionString
+
 # Send, Peek, Delete - You would use an SDK or other tooling
+
 az servicebus queue delete --name myqueue --namespace-name mynamespace --resource-group myresourcegroup
 az servicebus namespace delete --name mynamespace --resource-group myresourcegroup
 ```

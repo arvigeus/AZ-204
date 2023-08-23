@@ -16,9 +16,11 @@
 - **Duplicate Detection**: When you want automatic duplicate detection.
 - **Transactional Behavior**: If your solution requires transactional behavior and atomicity when sending or receiving multiple messages.
 - **Role-Based Access**: If you need a role-based access model to the queues with different rights/permissions for senders and receivers.
+- **Processing Messages as Parallel Long-Running Streams**: When your application processes messages as parallel streams using the **session ID**, allowing consuming nodes to compete for streams and examine the application stream state with transactions.
+- **Larger message size**: 64-256KB.
 - **Advanced Features**: If you're building a hybrid application or require advanced features like sessions, transactions, duplicate detection, automatic dead-lettering, and durable publish and subscribe capabilities.
 
-The choice between Storage Queues and Service Bus Queues depends on the specific needs of your application and its architecture. Storage Queues are generally more suitable for basic communication and large storage needs, while Service Bus Queues offer more advanced features and real-time capabilities.
+Storage Queues are generally more suitable for basic communication and large storage needs, while Service Bus Queues offer more advanced features and real-time capabilities.
 
 ## Comparison
 

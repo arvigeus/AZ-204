@@ -60,7 +60,7 @@ When creating subjects for publishing events to custom topics, it helps subscrib
 
 ### Cloud Event Schema
 
-Event Grid manages input and output in the CloudEvents schema. CloudEvents handles system (like those from Blob Storage and IoT Hub) and custom events. It can also transform these events as needed.
+CloudEvents offers a unified event schema for publishing and consuming cloud-based events (input and output in Event Grid). You can use CloudEvents for system events, like Blob Storage events and IoT Hub events, and custom events. It also supports bidirectional event transformation during transmission.
 
 ```ts
 interface CloudEvent {
@@ -115,12 +115,6 @@ Example of an Azure Blob Storage event in CloudEvents format:
 }
 ```
 
-## Enable an Event Grid resource provider for subscriptions
-
-Only needed on subscriptions that haven't previously used Event Grid: `az provider register --namespace Microsoft.EventGrid`
-
-Check status: `az provider show --namespace Microsoft.EventGrid --query "registrationState"`
-
 ## Event Delivery Durability
 
 - **Delivery Attempts**: Event Grid attempts to deliver each event at least once for each matching subscription immediately.
@@ -138,7 +132,7 @@ Event subscriptions support custom headers for delivered events. _Up to 10 heade
 
 #### Retry schedule
 
-Event Grid handles errors during event delivery by deciding based on the error type whether to retry, dead-letter (only if enabled), or drop the event. Timeout is 30 sec, then event is rescheduled for retry (exponentially). Retries may be skipped or delayed (up to several hours) for consistently unhealthy endpoints (**delayed delivery**). If the endpoint responds within 3 minutes, Event Grid tries to remove the event from the retry queue. Duplicates may occur due to how things work.
+Event Grid handles errors during event delivery by deciding based on the error type whether to retry, dead-letter (only if enabled), or drop the event. Timeout is 30 sec, then event is rescheduled for retry (exponentially). Retries may be skipped or delayed (up to several hours) for consistently unhealthy endpoints (**delayed delivery**). If the endpoint responds within 3 minutes, Event Grid tries to remove the event from the retry queue. Because of this, duplicates may occur.
 
 | Endpoint Type   | Error Codes with no retries (immediate dead-lettering)                                        |
 | --------------- | --------------------------------------------------------------------------------------------- |
@@ -317,6 +311,12 @@ curl -X POST -H "aeg-sas-key: $key" -d "$event" $topicEndpoint
 ```
 
 ## Working with EventGrid
+
+### Enable an Event Grid resource provider for subscriptions
+
+Only needed on subscriptions that haven't previously used Event Grid: `az provider register --namespace Microsoft.EventGrid`
+
+Check status: `az provider show --namespace Microsoft.EventGrid --query "registrationState"`
 
 ### Publish new events
 

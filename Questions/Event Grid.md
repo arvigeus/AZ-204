@@ -85,3 +85,14 @@ Question: If you are working specifically within the Azure ecosystem and want to
 Answer: EventGridEvent is specific to Azure Event Grid and is designed to work seamlessly with Azure services. It includes additional features specific to Azure, like support for Event Domains, making it the suitable choice for Azure-specific implementations. CloudEvent, on the other hand, is a more generalized standard and doesn't include Azure-specific features.
 
 ---
+
+Question: What is the minimum number of subscribers a publisher in Event Grid must have?
+
+- [x] 0
+- [ ] 1
+- [ ] 3
+- [ ] 5
+
+Answer: Publishers emit events, but have no expectation about how the events are handled.
+
+---

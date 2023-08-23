@@ -16,6 +16,8 @@ Resource specify the entity or complex type you're interacting with, like `me`, 
 
 Include standard and custom HTTP types. Certain APIs might need extra headers in requests. Mandatory headers like the `request-id` are always returned by Microsoft Graph, and certain headers, like `Retry-After` during throttling or `Location` for long-running operations, are specific to certain APIs or features.
 
+**Evolvable enumerations**: By default, a GET operation returns only known (existing) members for properties. Adding members to existing enumerations can break applications already using these enums. You can opt in to receive all members by using an HTTP `Prefer` request header.
+
 ## Query Microsoft Graph by using REST
 
 [Graph Explorer](https://developer.microsoft.com/en-us/graph/graph-explorer)

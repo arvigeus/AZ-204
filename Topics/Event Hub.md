@@ -12,15 +12,24 @@
 - **Partition**: Ordered sequence of events in an Event Hub, used for parallelism in data processing.
 - **Consumer Group**: Allows multiple applications to read the event stream independently.
 - **Event Receivers**: Entities that read event data from Event Hubs, using AMQP 1.0 or Kafka protocol 1.0 and later.
-- **Throughput Units**: Pre-purchased units controlling the throughput capacity of Event Hubs.
+- **Throughput Units** (**processing units**): Pre-purchased units controlling the throughput capacity of Event Hubs.
 
 ![Image showing the event processing flow.](https://learn.microsoft.com/en-us/training/wwl-azure/azure-event-hubs/media/event-hubs-stream-processing.png)
 
-## Namespace
+## Publishing event
+
+AMQP vs. HTTPS:
+
+- **Initialization**: AMQP requires a persistent bidirectional socket plus TLS or SSL/TLS, resulting in _higher initial network costs_. HTTPS has extra TLS overhead for each request.
+- **Performance**: AMQP offers _higher throughput and lower latency_ for frequent publishers. HTTPS can be slower due to the extra overhead.
+
+## [Features](https://learn.microsoft.com/en-us/azure/event-hubs/event-hubs-features)
+
+### Namespace
 
 An Event Hubs namespace is a management container for event hubs. It provides DNS-integrated network endpoints and a range of access control and network integration management features such as IP filtering, virtual network service endpoint, and Private Link.
 
-## Event Retention
+### Event Retention
 
 Published events are removed from an event hub based on a configurable, time-based retention policy. The default value and shortest possible retention period is 1 hour.
 
@@ -31,7 +40,7 @@ Max retention perios:
 
 If you need to archive events beyond the allowed retention period, you can have them automatically stored in Azure Storage or Azure Data Lake by turning on the Event Hubs Capture feature.
 
-## [Event Hubs Capture](https://learn.microsoft.com/en-us/azure/event-hubs/event-hubs-capture-overview)
+### [Event Hubs Capture](https://learn.microsoft.com/en-us/azure/event-hubs/event-hubs-capture-overview)
 
 Allows automatic capturing of streaming data into Azure Blob storage or Azure Data Lake Storage. It can process real-time and batch-based pipelines on the same stream. You can specify the time or size interval for capturing, and it scales automatically with throughput units.
 
@@ -39,7 +48,7 @@ It is a durable buffer for telemetry ingress (similar to a distributed log) with
 
 Storeage accounts can be in the same region as your event hub or in another region.
 
-Capture allows you to set up a minimum size and time window for capturing data. The "first wins policy" means the first trigger encountered initiates the capture operation. Each partition captures data independently and creates a block blob when the capture interval is reached, named after that time.
+Capture allows you to set up a minimum size and time window for capturing data (_capture windowing_). The "first wins policy" means the first trigger encountered initiates the capture operation. Each partition captures data independently and creates a block blob when the capture interval is reached, named after that time.
 
 Example:
 
@@ -51,6 +60,10 @@ https://mystorageaccount.blob.core.windows.net/mycontainer/mynamespace/myeventhu
 Integration with Event Grid: Create an Event Grid subscription with an Event Hubs namespace as its source.
 
 Azure Storage account as a destination: Needs write permissions on blobs and containers level. The `Storage Blob Data Owner` is a built-in role with above permissions.
+
+### Log Compaction
+
+Azure Event Hubs supports compacting event log to retain the latest events of a given event key. With compacted event hubs/Kafka topic, you can use key-based retention rather than using the coarser-grained time-based retention.
 
 ## Scaling to throughput units
 
@@ -72,10 +85,6 @@ Designing large systems:
 - **Thread Safety**: Functions processing events are called sequentially for each partition. Events from different partitions can be processed concurrently, and shared states across partitions must be synchronized.
 
 Minimize processing and be cautious with poisoned messages. Utilize proper retry logic and understand checkpointing to improve efficiency and resilience.
-
-## Log Compaction
-
-Azure Event Hubs supports compacting event log to retain the latest events of a given event key. With compacted event hubs/Kafka topic, you can use key-based retention rather than using the coarser-grained time-based retention learn.microsoft.com.
 
 ## Application Groups
 

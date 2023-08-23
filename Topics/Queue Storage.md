@@ -4,6 +4,7 @@ Endpoint: `https://queue.core.windows.net`
 
 - May contain millions of messages, up to the total capacity limit of a storage account.
 - Commonly used to create a backlog of work to process asynchronously.
+- Max size: 64KB
 - TTL: 7 days (default), -1 to never expire.
 
 - [Azure.Core library for .NET](https://www.nuget.org/packages/azure.core/): Shared primitives, abstractions
@@ -25,7 +26,6 @@ queueClient.CreateIfNotExists();
 if (queueClient.Exists())
 {
     // Insert a message into a queue
-    // A message can be either a string (in UTF-8 format)
     queueClient.SendMessage(new Message(Encoding.UTF8.GetBytes(message)));
 
     // Peek at the next message
