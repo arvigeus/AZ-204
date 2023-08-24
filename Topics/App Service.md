@@ -212,7 +212,16 @@ compose_deployment() {
     az webapp config appsettings set \
       --resource-group $resourceGroup \
       --name wordpressApp
+}
 
+# https://learn.microsoft.com/en-us/azure/app-service/deploy-zip?tabs=cli
+zip_archive() {
+  az webapp deploy --resource-group <group-name> --name <app-name> --src-path <zip-package-path>
+  # Zip from url
+  # az webapp deploy --resource-group <group-name> --name <app-name> --src-url "https://storagesample.blob.core.windows.net/sample-container/myapp.zip?sv=2021-10-01&sb&sig=slk22f3UrS823n4kSh8Skjpa7Naj4CG3
+
+  # (Optional) Enable build automation
+  # az webapp config appsettings set --resource-group <group-name> --name <app-name> --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true
 }
 ```
 
@@ -609,6 +618,8 @@ Accessing log files:
 `AllMetrics` settings are collected by agents on to the App Service and report the usage of host resources. These are items like CPU usage, memory usage, and disk I/O used.
 
 ### Stream logs
+
+To stream logs in the Azure portal, navigate to your app and select **Log stream**.
 
 Logs written to .txt, .log, or .htm files in `/home/LogFiles` (or `D:\home\LogFiles` for Windows apps) . Note, some logs may appear out of order due to buffering.
 

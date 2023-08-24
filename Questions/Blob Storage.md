@@ -72,7 +72,7 @@ The BlobClient class is limited to manipulating blobs.
 
 Question: You arrive at work donned in your favorite furry costume and discover a task from your supervisor demanding you take the company's website offline in order to perform some maintenance on it. The website consists of a single `_index.html` file stored in Azure Storage's `$web` container. You promptly set the access level of that specific file to private and consider the job done as you dive into some leisurely Reddit browsing. Just half an hour later, your supervisor storms over to your desk and fires you on the spot. What could be the reason behind this unexpected termination?
 
-- [ ] Your choice of unconventional office attire: a furry costume.
+- [ ] Your choice of unconventional office attire: a furry costume (you did nothing wrong).
 - [ ] You erred in your task; you were supposed to set the access level of the entire `$web` container to private.
 - [ ] To make the site inaccessible to users, you should have set the entire storage account to private.
 - [x] You have a fundamental misunderstanding of how things function within Azure Static Site hosting.

@@ -26,6 +26,8 @@ Endpoint: `https://<storage-account>.blob.core.windows.net/<container>/<blob>`
 
 Azure Storage Account is a unique namespace in Azure for your data objects, including blobs, files, queues, and tables. It's accessible from anywhere in the world over HTTP or HTTPS.
 
+Recommended: `General-purpose v2`.
+
 ### Types of Storage Accounts
 
 1. **Standard general-purpose v2**: Recommended for most scenarios using Azure Storage, except for network file system (NFS) in Azure Files. It supports all redundancy options.
@@ -308,7 +310,7 @@ To prepare for an account failover with unmanaged disks, shut down the VM, delet
 
 Note: Copying data is an alternative to failover: `azcopy copy "C:\local\path" "https://account.blob.core.windows.net/mycontainer1/..." --recursive=true`
 
-It's crucial to remember that certain features and services, such as _Azure File Sync_, Storage accounts with _hierarchical namespace enabled_, Storage account containing _premium block blobs_, and Storage account containing any _WORM immutability policy_, do not support failover.
+_Azure File Sync_, Storage accounts with _hierarchical namespace enabled_, Storage account containing _premium block blobs_, and Storage account containing any _WORM immutability policy_, do not support failover.
 
 ##### [Initiate the failover](https://learn.microsoft.com/en-us/azure/storage/common/storage-initiate-account-failover)
 
@@ -369,6 +371,8 @@ There is a penalty for removing data, or moving it to different tier, earlier (c
 Changing a blob's tier leaves its last modified time untouched. If a lifecycle policy is active, using **Set Blob Tier** to rehydrate may cause the blob to return to the archive tier if the last modified time exceeds the policy's threshold.
 
 #### [Blob storage lifecycle policies](https://learn.microsoft.com/en-us/azure/storage/blobs/lifecycle-management-overview)
+
+Supported in `General Purpose v2`.
 
 Azure Storage lifecycle management offers a rule-based policy that lets you:
 
@@ -531,7 +535,42 @@ private static async Task DemoContainerPropertiesAndMetadataAsync(BlobContainerC
 }
 ```
 
-Read more:
+### Access conditions
+
+```cs
+BlobServiceClient blobServiceClient = new BlobServiceClient(connectionString);
+BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient("mycontainer");
+BlobClient blobClient = containerClient.GetBlobClient("myblob");
+
+BlobProperties properties = await blobClient.GetPropertiesAsync();
+
+BlobRequestConditions conditions = new BlobRequestConditions
+{
+    // Limit requests to resources that have not be modified since they were last fetched.
+    IfMatch = properties.Value.ETag,
+    // Limit requests to resources modified since this time.
+    IfModifiedSince = DateTimeOffset.UtcNow.AddHours(-1),
+    // Limit requests to resources that do not match the ETag.
+    IfNoneMatch = new Azure.ETag("some-etag-value"),
+    // Limit requests to resources that have remained unmodified.
+    IfUnmodifiedSince = DateTimeOffset.UtcNow.AddHours(-2),
+    // Limit requests to resources with an active lease matching this Id.
+    LeaseId = "some-lease-id",
+    // Optional SQL statement to apply to the Tags of the Blob.
+    TagConditions = "tagKey = 'tagValue'"
+};
+
+BlobUploadOptions options = new BlobUploadOptions
+{
+    Metadata = new Dictionary<string, string> { { "key", "value" } },
+    Conditions = conditions // Apply BlobRequestConditions
+};
+
+// Upload blob only if mathcing conditions
+await blobClient.UploadAsync(BinaryData.FromString("data"), options);
+```
+
+### Read more
 
 - [BlobContainerClient.GetPropertiesAsync](https://learn.microsoft.com/en-us/dotnet/api/azure.storage.blobs.blobcontainerclient.getpropertiesasync)
 - [BlobContainerClient.SetMetadataAsync](https://learn.microsoft.com/en-us/dotnet/api/azure.storage.blobs.blobcontainerclient.setmetadataasync)
@@ -606,11 +645,7 @@ Encryption scope for storage account:
 - CLI:
 
 ```sh
-az storage account encryption-scope create \
-    #--resource-group "<resource-group>" \
-    #--account-name "<storage-account>" \
-    #--name "<scope>" \
-    --key-source Microsoft.Storage
+az storage account encryption-scope create --key-source Microsoft.Storage ...
 ```
 
 Encryption scope for storage account:
@@ -620,11 +655,9 @@ Encryption scope for storage account:
 
 ```sh
 az storage container create \
-    #--account-name "<storage-account>" \
-    #--resource-group "<resource-group>" \
-    #--name "<container>" \
     --default-encryption-scope "<scope>" \
     --prevent-encryption-scope-override true \ # force all blobs in a container to use the container's default scope
+    ...
     #--auth-mode login
 ```
 
@@ -648,19 +681,9 @@ Change the encryption key for a scope:
 - CLI:
 
 ```sh
-az storage account encryption-scope update \
-    #--account-name "<storage-account>" \
-    #--resource-group "<resource-group>"
-    #--name "<scope>" \
-    --key-source Microsoft.Storage
+az storage account encryption-scope update --key-source Microsoft.Storage ...
 
-az storage account encryption-scope update \
-    #--resource-group "<resource-group>" \
-    #--account-name "<storage-account>" \
-    #--name "<scope>" \
-    --key-source Microsoft.KeyVault \
-    --key-uri "<key-uri>"
-
+az storage account encryption-scope update --key-source Microsoft.KeyVault --key-uri "<key-uri>" ...
 ```
 
 Disable an encryption scope:
@@ -751,11 +774,11 @@ var lease = leaseClient.Acquire(TimeSpan.FromSeconds(15));
 ```
 
 ```ps
-leaseId=$(az storage blob lease acquire --connection-string "your_connection_string" --container-name "sample-container" --name "sample-blob" --lease-duration 60 --output tsv)
-# az storage blob lease renew --connection-string "your_connection_string" --container-name "sample-container" --name "sample-blob" --lease-id $leaseId
-# az storage blob lease change --connection-string "your_connection_string" --container-name "sample-container" --name "sample-blob" --lease-id $leaseId --proposed-lease-id $newLeaseId
-# az storage blob lease release --connection-string "your_connection_string" --container-name "sample-container" --name "sample-blob" --lease-id $leaseId
-# az storage blob lease break --connection-string "your_connection_string" --container-name "sample-container" --name "sample-blob"
+leaseId=$(az storage blob lease acquire --lease-duration 60 --output tsv ...)
+# az storage blob lease renew --lease-id $leaseId ...
+# az storage blob lease change --lease-id $leaseId --proposed-lease-id $newLeaseId ...
+# az storage blob lease release --lease-id $leaseId ...
+# az storage blob lease break ...
 ```
 
 ```http
@@ -840,42 +863,22 @@ az storage blob copy start \
 
 ```ps
 # Change blob access tier
-az storage blob set-tier \
-    #--account-name "<storage-account>" \
-    #--container-name "<container>" \
-    #--name "<archived-blob>" \
-    --tier Hot \
-    --rehydrate-priority Standard \
-    #--auth-mode login
+az storage blob set-tier  --tier Hot --rehydrate-priority Standard ... #--auth-mode login
 ```
 
 ```ps
 # Update the rehydration priority for a blob.
-az storage blob set-tier \
-    #--account-name "<storage-account>" \
-    #--container-name "<container>" \
-    #--name "<blob>" \
-    --rehydrate-priority High \
-    #--auth-mode login
+az storage blob set-tier --rehydrate-priority High ... #--auth-mode login
 ```
 
 ```ps
 # Set the default access tier for a storage account
-az storage account update \
-    #--resource-group "<resource-group>" \
-    #--name "<storage-account>" \
-    --access-tier Cool
+az storage account update --access-tier Cool ...
 ```
 
 ```ps
 # Set a blob's tier on upload
-az storage blob upload \
-    #--account-name "<storage-account>" \
-    #--container-name "<container>" \
-    #--name "<blob>" \
-    --file "<file>" \
-    --tier "<tier>" \
-    #--auth-mode login
+az storage blob upload --file "<file>" --tier "<tier>" ... #--auth-mode login
 ```
 
 [AzCopy](https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azcopy-v10):
@@ -897,6 +900,7 @@ await foreach (BlobContainerItem container in blobServiceClient.GetBlobContainer
 var containerClient = await blobServiceClient.CreateBlobContainerAsync("quickstartblobs" + Guid.NewGuid().ToString());
 // var containerClient = blobServiceClient.GetBlobContainerClient(containerName);
 // var containerClient = new BlobContainerClient(new Uri($"https://{accountName}.blob.core.windows.net/{containerName}"), new DefaultAzureCredential(), clientOptions);
+// Note: BlobContainerClient allows you to manipulate both Azure Storage containers and their blobs
 
 var blobClient = containerClient.GetBlobClient(fileName);
 
