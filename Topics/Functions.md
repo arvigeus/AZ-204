@@ -161,6 +161,8 @@ type LocalSettings = {
 
 Triggers cause a function to run. A trigger defines how a function is invoked and a function must have exactly one trigger. Binding to a function is a way of declaratively connecting another resource to the function; bindings may be connected as _input bindings_ (read), _output bindings_ (write), or both.
 
+Triggers and bindings must be defined in C# (also supported: Python, Java, TypeScript, PS)
+
 Cannot be trigger: _Table Storage_  
 Cannot be input binding: _Event Grid_, _Event Hubs_, _HTTP & webhooks_, _IoT Hub_, _Queue storage_, _SendGrid_, _Service Bus_, _Timer_  
 Cannot be output binding: _IoT Hub_, _Timer_  
