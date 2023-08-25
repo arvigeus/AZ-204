@@ -722,3 +722,28 @@ FeedIterator<SalesOrder> resultSet = container.GetItemQueryIterator<SalesOrder>(
         MaxItemCount = 1
     });
 ```
+
+---
+
+Question: Which of the following tools can you use to create and execute triggers, stored procedures, and UDFs in Azure Cosmos DB?
+
+- [ ] Visual Studio Code
+- [x] Azure Portal
+- [ ] SQL Server Management Studio
+- [ ] Azure DevOps
+
+Answer: The Azure Portal is one of the tools that allow you to create and execute triggers, stored procedures, and UDFs in Azure Cosmos DB. The other options listed are not directly used for this specific purpose within Azure Cosmos DB.
+
+---
+
+Question: Your organization is planning to migrate a NoSQL database to Azure Cosmos DB and requires an API that can handle flexible document structures and operate using the BSON format. Which API within Azure Cosmos DB would best meet these requirements?
+
+- [ ] SQL API
+- [ ] Table API
+- [ ] Gremlin API
+- [ ] Cassandra API
+- [x] MongoDB API
+
+Answer: In the context of Azure Cosmos DB, the BSON (Binary JSON) format is specifically associated with the MongoDB API.
+
+---

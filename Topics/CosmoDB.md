@@ -246,15 +246,10 @@ await this.cosmosDatabase.CreateContainerAsync(new ContainerProperties(id, parti
 All API models return JSON formatted objects, regardless of the API used.
 
 - **API for NoSQL** - A JSON-based, document-centric API that provides SQL querying capabilities. Ideal for web, mobile, and gaming applications, and anything that requires handling complex _hierarchical_ data with a _schemaless_ design.
-
 - **API for MongoDB** - stores data in a document structure, via BSON format.
-
 - **API for PostgreSQL** - Stores data either on a single node, or distributed in a multi-node configuration.
-
 - **API for Apache Cassandra** - Supports a column-oriented schema, aligns with Apache Cassandra's distributed, scalable NoSQL philosophy, and is wire protocol compatible with it.
-
 - **API for Table** - A _key-value_ based API that offers compatibility with Azure Table Storage, overcoming its limitations. Ideal for applications that need a simple schemaless _key-value_ store. Only supports OLTP scenarios.
-
 - **API for Apache Gremlin** - _Graph-based_ API for highly _interconnected_ datasets. It's ideal for handling dynamic, complexly related data that exceeds the capabilities of relational databases.
 
 Using these APIs, you can emulate various database technologies, modeling real-world data via documents, key-value, graph, and column-family models, minus the management and scaling overheads.

@@ -124,3 +124,38 @@ Question: How can deleting and recreating a CDN endpoint be considered in the co
 Answer: Deleting and recreating a CDN endpoint is another way to purge the content, effectively clearing the cached content from edge servers. Note that this method may disrupt content delivery and requires reconfiguration of the endpoint, so it's typically used as a last resort or in specific scenarios.
 
 ---
+
+Question: In Azure CDN, to reset the cache duration of a file cached before a rule change, what action must you take?
+
+- [ ] Modify the file
+- [ ] Delete the file
+- [x] Purge the file
+- [ ] Archive the file
+- [ ] None of the listed
+
+Answer: In Azure CDN, purging a file removes it from the cache, allowing updated caching rules to be applied.  
+Deleting refers to removing the file from the origin server, not the cache, and won't reset the cache duration.
+
+---
+
+Question: What are the Azure CDN configuration propagation times for Standard (Verizon):
+
+- [ ] Instant
+- [ ] Around 1 minute.
+- [x] Around 10 minutes.
+- [ ] Around 1 hour.
+
+Answer: 1 minute is for Standard (Akamai).
+
+---
+
+Question: What are the Azure CDN configuration propagation times for Standard (Akamai):
+
+- [ ] Instant
+- [x] Around 1 minute.
+- [ ] Around 10 minutes.
+- [ ] Around 1 hour.
+
+Answer: 10 minutes is for Standard (Verizon).
+
+---

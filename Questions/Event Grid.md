@@ -96,3 +96,12 @@ Question: What is the minimum number of subscribers a publisher in Event Grid mu
 Answer: Publishers emit events, but have no expectation about how the events are handled.
 
 ---
+
+Question: Does Event Grid allow Azure Functions to respond to Azure Blob storage events, such as generating thumbnails for newly uploaded images?
+
+- [x] Yes
+- [ ] No
+
+Answer: It's a valid use case.
+
+---

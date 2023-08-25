@@ -165,6 +165,17 @@ Example: `maxmemory 100mb`
 
 Note: volatile is for when _expiration is set_.
 
+## [Data persistence](https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-how-to-premium-persistence)
+
+- **RDB Persistence**: Takes snapshots of your cache in binary format, saved in Azure Storage. Snapshots are saved based on a configurable frequency. If both primary and replica caches fail, the cache is rebuilt using the latest snapshot.
+- **AOF Persistence**: Logs every write operation, saving at least once per second in Azure Storage. If both primary and replica caches fail, the cache is rebuilt using these logged operations.
+
+These persistence features restore data to the same cache after data loss; they can't import data to a new cache.
+
+## [Geo-replication](https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-configure#geo-replication)
+
+Geo-replication links two Premium Azure Cache for Redis instances: a primary linked cache (read/write) and a secondary linked cache (read-only). Data written to the primary is replicated to the secondary, enabling cache replication across Azure regions.
+
 ## Access a Redis cache from a client
 
 Retrieve the required information from the Azure portal under **Settings > Access Keys**:

@@ -256,3 +256,75 @@ Question: What is the primary purpose of `ChainedTokenCredential` in Azure?
 Answer: It combines multiple credentials for flexible authentication.
 
 ---
+
+Question: You are tasked with assigning Azure roles and want to ensure that you have the necessary permissions. Which of the following roles would grant you the ability to assign Azure roles?
+
+- [ ] `Reader`
+- [ ] `Contributor`
+- [x] `User Access Administrator`
+- [x] `Owner`
+
+Answer: Both the `User Access Administrator` and `Owner` roles include the `Microsoft.Authorization/roleAssignments/write` permission, which is required to assign Azure roles.  
+The other roles listed do not inherently include the necessary permission for role assignment.
+
+---
+
+Question: You are an administrator for a company with various Azure resources. Different teams require different levels of access to these resources. Which of the following options should be used to manage access according to the specific needs of each team?
+
+- [ ] Azure Active Directory (Azure AD)
+- [ ] Azure Resource Manager Templates (ARM Templates)
+- [x] Azure Role-Based Access Control (Azure RBAC)
+- [ ] Azure Virtual Network (VNet)
+
+Answer: Azure Role-Based Access Control (Azure RBAC) is the authorization system used to manage access to Azure resources. It allows administrators to assign permissions to users, groups, and applications at different scopes, providing the flexibility to grant access according to specific needs.  
+The other options listed, such as Azure AD, ARM Templates, and VNet, are important Azure services but do not provide the specific functionality needed to manage access to Azure resources based on roles.
+
+---
+
+Question: In ASP.NET Core 3, in which file do you configure Authentication and Authorization?
+
+- [ ] `Program.cs`
+- [x] `Startup.cs`
+- [ ] `App.config`
+- [ ] `Web.config`
+
+Answer: In ASP.NET Core 3, the `Startup.cs` file is where you configure various services, including authentication and authorization. The `ConfigureServices` method is used to register services, and the `Configure` method is used to add middleware to the request pipeline, including authentication middleware.  
+`Program.cs` - This file is used for configuring services in ASP.NET Core 6.0 and later, not in version 3.
+
+---
+
+Question: What is the minimum required role to assign an access policy in Azure Key Vault, adhering to the principle of least privilege?
+
+- [x] Key Vault Owner
+- [ ] Global Administrator
+- [ ] Key Vault Administrator
+- [ ] Azure Subscription Owner
+
+Answer: `The Key Vault Owner` has the necessary permissions to assign access policies within the Key Vault.  
+Other roles listed grant more permissions than required for this specific task, violating the principle of least privilege.
+
+---
+
+Question: Within the context of assigning access policies in Azure Key Vault, what is the minimum required permission, ensuring that only the necessary rights are granted?
+
+- [x] User with Access Policy Permissions
+- [ ] Key Vault Owner
+- [ ] Global Administrator
+- [ ] Azure Subscription Owner
+
+Answer: A user with specific permissions like "Set" and "Delete" on the access policies of the Key Vault has the minimum required permissions to assign access policies.  
+Other roles listed grant broader permissions, which is not necessary for this specific task.
+
+---
+
+Question: If you want to manage access policies in Azure Key Vault without granting unnecessary additional permissions, what is the minimum required built-in role?
+
+- [x] Key Vault Contributor Role
+- [ ] Global Administrator
+- [ ] Key Vault Owner
+- [ ] Azure Subscription Owner
+
+Answer: The Key Vault Contributor Role is a built-in role that allows you to manage access policies in the Key Vault without granting additional unnecessary permissions.  
+Other roles listed grant more permissions than required for this specific task, which is not aligned with the principle of least privilege.
+
+---

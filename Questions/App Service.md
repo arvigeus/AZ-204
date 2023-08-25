@@ -796,7 +796,6 @@ Question: Which of the following App Service plans supports pre-warmed instances
 - [ ] Shared
 - [ ] Basic
 - [ ] Standard
-- [ ] Premium
 - [x] Premium
 - [ ] Isolated
 
@@ -1283,5 +1282,91 @@ Question: When mounting Azure Storage as a local share in Azure App Service, wha
 - [x] Regenerate your access key often.
 
 Answer: Avoid using Azure Storage for local databases or apps dependent on file handles and locks, refrain from using it for read/write actions in Linux containers, and minimize frequent regeneration of your access key.
+
+---
+
+Question: Which of the following scenarios is best suited for using a Free Managed Certificate in Azure App Service?
+
+- [ ] Securing a custom domain with wildcard certificates
+- [ ] Storing in Azure App Service Environment (ASE)
+- [x] Securing a public website with auto-renewal every 6 months
+- [ ] Exporting the certificate for use in another environment
+
+Answer: Free Managed Certificates are auto-renewed but don't support wildcard certificates, can't be exported, and are not supported in ASE.
+
+---
+
+Question: Which of the following is NOT a feature of the App Service Certificate in Azure?
+
+- [ ] Automated certificate management
+- [ ] Renewal and export options
+- [x] Requires a password-protected PFX file
+- [ ] Managed by Azure as a private certificate
+
+Answer: This requirement is related to uploading a private certificate, not the App Service Certificate.
+
+---
+
+Question: When uploading a private certificate to Azure App Service, what is a mandatory requirement?
+
+- [ ] Can be used for accessing remote resources
+- [ ] Supports private DNS in Free Managed Certificate
+- [x] Requires a password-protected PFX file encrypted with triple DES
+- [ ] Auto-renewed every 6 months
+
+Answer: This is a specific requirement for uploading a private certificate.
+
+---
+
+Question: You want to secure a public domain in Azure App Service without needing wildcard certificates or private DNS, and you want the certificate to be auto-renewed. Which option should you choose?
+
+- [x] Free Managed Certificate
+- [ ] App Service Certificate
+- [ ] Upload a Private Certificate
+- [ ] Upload a Public Certificate
+
+---
+
+Question: You need to manage a private certificate in Azure with automated renewal that can also be exported. Which option should you choose?
+
+- [ ] Free Managed Certificate
+- [x] App Service Certificate
+- [ ] Upload a Private Certificate
+- [ ] Upload a Public Certificate
+
+Answer: App Service Certificate provides automated certificate management, renewal, and export options for private certificates.
+
+---
+
+Question: You need to access remote resources in Azure App Service. Which certificate option should you choose?
+
+- [ ] Use Free Managed Certificate
+- [ ] App Service Certificate
+- [ ] Private Certificate
+- [x] Public Certificate
+
+Answer: Public Certificate is used for accessing remote resources.
+
+---
+
+Question: Which of the following steps is necessary to secure a custom domain using a certificate?
+
+- [x] Upload a private certificate to the App Service, ensuring that it meets all the requirements for private certificates.
+- [ ] Upload a private certificate to the App Service, ensuring that it meets all the requirements for public certificates.
+- [ ] Upload a public certificate to the App Service, ensuring that it meets all the requirements for private certificates.
+- [ ] Upload a public certificate to the App Service, ensuring that it meets all the requirements for public certificates.
+
+Answer: You must upload a private certificate that satisfies all the requirements for a private certificate.
+
+---
+
+Question: What is Transient Fault Handling in the context of cloud applications?
+
+- [ ] A permanent error handling mechanism that requires manual intervention to resolve issues.
+- [x] A technique to handle temporary service interruptions by implementing smart retry/back-off logic, possibly using circuit breakers.
+- [ ] A security protocol to handle unauthorized access to cloud services.
+- [ ] A method for handling user interface glitches in cloud-based applications.
+
+Answer: A technique to handle temporary service interruptions by implementing smart retry/back-off logic, possibly using circuit breakers.
 
 ---

@@ -38,7 +38,7 @@ DecryptResult decryptResult = cryptoClient.Decrypt(EncryptionAlgorithm.RsaOaep, 
 
 ### Access Model
 
-Access to a key vault is controlled through two interfaces: the management plane (for managing Key Vault itself) and the data plane (for working with the data stored in a key vault). Both planes use Azure Active Directory (Azure AD) for authentication. For authorization, the management plane uses Azure role-based access control (Azure RBAC) and the data plane uses a [Key Vault access policy](https://learn.microsoft.com/en-us/azure/key-vault/general/assign-access-policy?tabs=azure-portal) and [Azure RBAC](https://learn.microsoft.com/en-us/azure/key-vault/general/rbac-guide?tabs=azure-cli) for Key Vault data plane operations.
+Access to a key vault is controlled through two interfaces: the management plane (for managing Key Vault itself) and the data plane (for working with the data stored in a key vault). Both planes use Azure Active Directory (Azure AD) for authentication. For authorization, the management plane uses Azure role-based access control (Azure RBAC) and the data plane uses a [Key Vault access policy](https://learn.microsoft.com/en-us/azure/key-vault/general/assign-access-policy?tabs=azure-portal) and [Azure RBAC](https://learn.microsoft.com/en-us/azure/key-vault/general/rbac-guide?tabs=azure-cli) for Key Vault data plane operations. Minimum standard role for managing access policies: `Contributor`.
 
 ### Authentication
 

@@ -239,3 +239,16 @@ Question: You are working on a database caching system where certain data must b
 Answer: For a system where data eviction is triggered by specific events, an explicit removal policy would provide the necessary control and accuracy.
 
 ---
+
+Question: What feature in Azure Cache for Redis links two Premium instances?
+
+- [ ] Load Balancing
+- [x] Geo-replication
+- [ ] Sharding
+- [ ] Data Partitioning
+- [ ] Virtual Network
+- [ ] None of the listed
+
+Answer: Geo-replication is the feature that provides a mechanism for linking two Premium tier Azure Cache for Redis instances, allowing data written to the primary cache to be replicated to the secondary linked cache. This functionality can be used to replicate a cache across Azure regions.
+
+---

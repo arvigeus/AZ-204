@@ -52,9 +52,16 @@ The caching behavior for query strings can be adjusted in the `Caching rules > E
 
 Other tiers of Azure CDN provide additional configuration options.
 
+Azure CDN configuration propagation times:
+
+- Azure CDN Standard (Akamai): ~1min.
+- Azure CDN Standard (Verizon): ~10mins.
+
 ### [Cache purging](https://learn.microsoft.com/en-us/azure/cdn/cdn-purge-endpoint)
 
 To ensure users always get the latest version of your content, you can either version your assets by giving them new URLs with each update or purge the old content from the servers. Versioning lets the CDN fetch new assets right away, while purging forces all servers to get updated content. This might be needed for web app updates or quick corrections. Purging only removes content from the main servers, not from places like local browser caches. To make sure users get the latest file, you can give it a unique name each time you update it or use special caching techniques.
+
+Files that are cached before a rule change maintain their origin cache duration setting. To reset their cache durations, you must purge the file.
 
 Deleting and recreating a CDN endpoint is another way to purge the content, effectively clearing the cached content from edge servers. Note that this method may disrupt content delivery and requires reconfiguration of the endpoint, so it's typically used as a last resort or in specific scenarios.
 
