@@ -292,3 +292,19 @@ appsettings.json:
 ```
 
 Trust local certificates: `dotnet dev-certs https --trust`
+
+## [Azure Monitor Activity Log](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/activity-log)
+
+Records subscription-level events, such as modifications to resources or starting a virtual machine.
+
+**Diagnostic Settings**: Allows sending the activity log to different locations:
+
+- **Log Analytics workspace**: Utilize log queries for deep insights (Kusto queries) and complex alerting. By default events are retained for 90 days, but you can create a diagnostic setting for longer retention.
+- **Azure Storage account**: For audit, static analysis, or backup. Less expensive, and logs can be kept there indefinitely.
+- **Azure Event Hubs**: Stream data to external systems such as third-party SIEMs and other Log Analytics solutions.
+
+## Configuring
+
+### Connection string
+
+From env var `APPLICATIONINSIGHTS_CONNECTION_STRING`. Controls where telemetry is sent.

@@ -14,6 +14,8 @@ Azure CDN offers features like _dynamic site acceleration_, _caching rules_, _HT
 
 Caching occurs both at the browser level and on edge servers situated near the user. While browser caches store data for individual users, a CDN utilizes a shared cache that allows a file requested by one user to be cached for others. Dynamic resources that change frequently are optimized through dynamic site acceleration (DSA). Caching can occur at various levels, including web servers, CDNs, and Internet service providers, each managing its resource freshness. Specific cache-directive headers and validators like ETag and Last-Modified can be used to control caching behavior.
 
+Azure Front Door delivers large files without a cap on file size.
+
 ### Time to live
 
 Content is cached based on the `Time to Live` (TTL), which is determined by the `Cache-Control` header from the origin server. If the content's age is less than the TTL, it's considered fresh and delivered to the client directly from the cache. If it's older, it's deemed stale, and a fresh copy is fetched from the server. If no TTL is set, Azure CDN assigns a default TTL value, which can be further modified by caching rules. Default TTL varies according to the type of optimization:
@@ -96,6 +98,7 @@ Geo-filtering allows for the control of content access by country/region codes. 
 ## Working with SDK
 
 ```cs
+// You need to configure Azure Active Directory to provide authentication for the application
 public static void ManageCdnEndpoint(string subscriptionId, TokenCredentials authResult, string resourceGroupName, string profileName, string endpointName, string resourceLocation)
 {
     // Create CDN client

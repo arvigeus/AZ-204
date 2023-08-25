@@ -4,7 +4,7 @@ Question: Which of the following methods is recommended when deploying a multi-c
 
 - [ ] Azure Resource Management template
 - [x] YAML file
-- [ ] `az container creates` command
+- [ ] `az container create` command
 
 Answer: Due to the YAML format's more concise nature, a YAML file is recommended when your deployment includes only container instances.  
 `az container creates` isn't specific to this scenario.
@@ -15,10 +15,10 @@ Question: Which of the following methods is recommended when deploying a multi-c
 
 - [x] Azure Resource Management template
 - [ ] YAML file
-- [ ] `az container creates` command
+- [ ] `az container create` command
 
 Answer: Due to the YAML format's more concise nature, a YAML file is recommended when your deployment includes only container instances.  
-`az container creates` isn't specific to this scenario.
+`az container create` isn't specific to this scenario.
 
 ---
 
@@ -646,7 +646,7 @@ Question: Which command will set environment variable `MinLength` to `8`?
 - [ ] `az container create --environment-variables {'MinLength':8}`
 - [ ] `az container create --environment-variable-name 'MinLength' --environment-variable-value 8`
 
-Answer: `az container create --environment-variables 'NumWords'='5' 'MinLength'='8' ...`
+Answer: `az container create --environment-variables 'MinLength'='8' 'NumWords'='5' ...`
 
 ---
 
@@ -717,5 +717,34 @@ Question: What will happen if you change `configuration.ingress.allowInsecure` f
 - [ ] A new revision is created that allows insecure traffic. All existing revisions remain unchanged.
 
 Answer: Changes made to the `configuration` section are application-scope changes, which does not triggers a new revision, but affects all existing revisions.
+
+---
+
+Question: What command should you execute to verify if your image has been successfully pushed to Azure Container Registry?
+
+- [x] `az acr repository list`
+- [ ] `docker images`
+- [ ] `az acr show`
+- [ ] `az acr login`
+- [ ] `az acr task list`
+
+Answer: `az acr repository list` lists the repositories in the specified Azure Container Registry, allowing you to verify if your image is present.  
+`docker images` lists the images available on your local machine, not in the Azure Container Registry.  
+`az acr show` retrieves detailed information about the specified container registry, but does not list the images or repositories.  
+`az acr task list` lists all the tasks for a specified container registry, which are used for automated container image building.
+
+---
+
+Question: Which command is used to deploy an image in Azure Container Instances (ACI)?
+
+- [ ] `az container push`
+- [x] `az container create`
+- [ ] `az container export`
+- [ ] `docker build`
+
+Answer: `az container create` is the correct command to deploy a container in Azure Container Instances (ACI)  
+`az container push` is not a valid Azure CLI command.  
+`az container export` exports a container group in yaml format.  
+`docker build` builds a Docker image from a Dockerfile, not related to deploying a container.
 
 ---

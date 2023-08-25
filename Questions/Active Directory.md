@@ -391,3 +391,25 @@ Answer: Conditional access policies require Azure AD Premium P1 licenses.
 Security defaults enable MFA for **ALL** users, which does not meat requirenments for specific staff members.
 
 ---
+
+Question: Which component is responsible for directing the user to the location defined by the redirect URI or reply URL, following successful authorization of the app and the granting of an authorization code or access token?
+
+- [ ] Client Application
+- [x] Authorization Server
+- [ ] Resource Server
+- [ ] User's Browser
+
+Answer: The authorization Server is the specific component in the OAuth process that directs the user to the designated location (either a redirect URI or reply URL) after the app has been successfully authorized and an authorization code or access token has been granted.
+
+---
+
+Question: In Azure Active Directory (Azure AD), what is the requirement for applications to delegate identity and access management?
+
+- [ ] Applications can optionally register with Azure AD.
+- [ ] Applications must register with a third-party identity provider.
+- [x] Applications must register with Azure AD.
+- [ ] Registration with Azure AD is discouraged for client applications.
+
+Answer: In Azure AD, all applications must register to delegate identity and access management. This registration process allows the application to be integrated with Azure AD, enabling features like authentication, authorization, and more.
+
+---

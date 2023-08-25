@@ -215,6 +215,7 @@ compose_deployment() {
 }
 
 # https://learn.microsoft.com/en-us/azure/app-service/deploy-zip?tabs=cli
+# uses the same Kudu service that powers continuous integration-based deployments
 zip_archive() {
   az webapp deploy --resource-group <group-name> --name <app-name> --src-path <zip-package-path>
   # Zip from url
@@ -371,6 +372,8 @@ Add custom script processors to handle requests for specific file extensions.
 This works for both Windows and Linux apps.
 
 ### ARM Templates
+
+In JSON format.
 
 `az group export --name $resourceGroup` - create ARM template
 
@@ -643,6 +646,8 @@ The CPU percentage is valuable for apps on Basic, Standard, and Premium plans, p
 Health Check pings the specified path every minute. If an instance fails to respond with a valid status code after 10 requests, it's marked unhealthy and removed from the load balancer. If it recovers, it's returned to the load balancer. If it stays unhealthy for an hour, it's replaced (only for Basic+).
 
 For private endpoints check if `x-ms-auth-internal-token` request header equals the hashed value of `WEBSITE_AUTH_ENCRYPTION_KEY` environment variable. You should first use features such as IP restrictions, client certificates, or a Virtual Network to restrict application access.
+
+Configure path: `az webapp config set --health-check-path <Path> --resource-group <ResourceGroup> --name <AppName>`
 
 ## [Mount Azure Storage as a local share in App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-connect-to-azure-storage)
 

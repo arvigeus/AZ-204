@@ -21,7 +21,7 @@ You can use the **Enterprise applications** page in the Azure portal to list and
 
 ### Application Registration
 
-Applications must register with Azure AD to delegate identity and access management. This creates an application object and a globally unique ID (app/client ID).
+All applications _must register with Azure AD_ to delegate identity and access management. This creates an application object and a globally unique ID (app/client ID).
 
 - **Application Object**: Resides in the Azure AD tenant where the application was registered. It's a template for creating service principal objects and defines how the service can issue tokens, the resources the application might need, and the actions it can take.
 

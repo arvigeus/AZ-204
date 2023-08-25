@@ -153,7 +153,18 @@ Question: What is the purpose of denormalization in the context of Azure Cosmos 
 Answer: [Denormalization in Azure Cosmos DB data modeling](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/model-partition-example#v2-introducing-denormalization-to-optimize-read-queries) is used to optimize read queries. By storing related data together (denormalizing), you can retrieve all the data you need in a single query, reducing the need for multiple queries and improving performance.  
 Denormalization doesn't aim to reduce the number of containers, increase the number of request units consumed, or add more users to the platform; it's a strategy to optimize read operations by organizing data efficiently within containers.
 
---
+---
+
+Question: In Azure Cosmos DB, when dealing with a schema design that requires optimizing read operations and reducing the number of joins, what approach is commonly used?
+
+- [ ] Normalizing
+- [ ] Sharding
+- [x] Denormalizing
+- [ ] Partitioning
+
+Answer: Denormalizing is the process of restructuring a database to reduce redundancy and improve read performance. In Azure Cosmos DB, denormalizing can help in optimizing read operations by reducing the need for complex joins and aggregations. This approach can lead to faster query execution, especially in a distributed database system like Cosmos DB.
+
+---
 
 Question: When would you use the manual failover feature in Azure Cosmos DB?
 
@@ -745,5 +756,51 @@ Question: Your organization is planning to migrate a NoSQL database to Azure Cos
 - [x] MongoDB API
 
 Answer: In the context of Azure Cosmos DB, the BSON (Binary JSON) format is specifically associated with the MongoDB API.
+
+---
+
+Question: In Azure Cosmos DB, when working with stored procedures, triggers, or user-defined functions, what specific method can be utilized to log the execution steps or trace information?
+
+- [ ] Console.WriteLine()
+- [ ] Trace.Debug()
+- [ ] System.out.println()
+- [x] console.log()
+
+Answer: stored procedures, triggers, and user-defined functions are written on JavaScript.
+
+---
+
+Question: What language should you use if you want to create a new user-defined function, stored procedure, or trigger?
+
+- [ ] JSON
+- [x] JavaScript
+- [ ] C#
+- [ ] XML
+- [ ] YAML
+
+Answer: stored procedures, triggers, and user-defined functions are written on JavaScript.
+
+---
+
+Question: How many free tier Azure Cosmos DB accounts can you have per Azure subscription?
+
+- [ ] Two
+- [ ] Unlimited
+- [ ] One
+- [ ] None
+
+Answer: You can have up to one free tier Azure Cosmos DB account per Azure subscription.
+
+---
+
+Question: What operations can a stored procedure perform of document in CosmoDB?
+
+- [x] Create
+- [x] Read
+- [x] Update
+- [x] Delete
+- [ ] No operations allowed
+
+Answer: Stored procedures are capable of performing CRUD and query operations on any document in a collection.
 
 ---

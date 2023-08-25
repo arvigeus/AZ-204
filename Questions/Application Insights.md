@@ -310,3 +310,15 @@ Question: You're a UX designer working on improving the navigation of a content-
 Answer: You would use the "User Flows" feature in Azure Insights to analyze these navigation patterns.
 
 ---
+
+Question: What is the primary purpose of the connection string in Application Insights?
+
+- [ ] Authenticates the Application Insights SDK
+- [ ] Controls the visual appearance of telemetry data
+- [x] Controls where telemetry is sent
+- [ ] Encrypts telemetry data for secure transmission
+
+Answer: The connection string in Application Insights is used to define where the telemetry data is sent.  
+It doesn't handle authentication, appearance, or encryption of the data.
+
+---

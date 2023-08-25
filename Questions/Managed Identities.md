@@ -328,3 +328,15 @@ Answer: The Key Vault Contributor Role is a built-in role that allows you to man
 Other roles listed grant more permissions than required for this specific task, which is not aligned with the principle of least privilege.
 
 ---
+
+Question: In the Azure Portal, where do you navigate to assign roles and grant access to specific Azure resources?
+
+- [ ] Azure Active Directory
+- [ ] Access Policies
+- [x] Access control (IAM)
+- [ ] Resource Configuration
+- [ ] Microsoft Identity Platform
+
+Answer: Access control (IAM) is the specific section within the Azure Portal where you can manage access to Azure resources by assigning roles.
+
+---

@@ -13,6 +13,8 @@ Managed identities are specific to the Azure cloud and _cannot be directly assig
 
 ## [Role-based access control (Azure RBAC)](https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal#assign-a-user-as-an-administrator-of-a-subscription)
 
+`Azure Portal > Access control (IAM)`
+
 Azure RBAC is the authorization system you use to manage access to Azure resources. To assign Azure roles, you must have `Microsoft.Authorization/roleAssignments/write` permissions, such as `User Access Administrator` or `Owner`.
 
 ## Using Managed Identity with an Azure Virtual Machine

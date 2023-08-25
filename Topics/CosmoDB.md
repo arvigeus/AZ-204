@@ -9,20 +9,18 @@ Azure Cosmos DB is a fully managed NoSQL database service provided by Microsoft 
 ### Key Benefits of Azure Cosmos DB
 
 - **Global Distribution:** Cosmos DB allows you to distribute your data globally, enabling low latency (99% of reads and writes completed in under 10 milliseconds) access to data for end users from any geographic location (99.999% read and write availability for multi-region databases).
-
 - **Multi-Model Database:** Cosmos DB is multi-modal, meaning it supports multiple types of data models like Key-Value, Document, Column-family and Graph.
-
 - **Elastically Scalable Throughput and Storage:** Azure Cosmos DB enables you to elastically scale throughput and storage based on demand.
-
 - **Multiple Consistency Models:** It offers five consistency models - Eventual, Consistent Prefix, Session, Bounded Staleness, and Strong. This gives developers flexibility to choose consistency according to their application needs.
-
 - **Comprehensive SLAs:** Microsoft provides comprehensive SLAs (Service Level Agreements) that cover latency, throughput, consistency, and availability.
 
 ## [Core Components](https://docs.microsoft.com/en-us/azure/cosmos-db/databases-containers-items)
 
 ### [Cosmos DB Account](https://docs.microsoft.com/en-us/azure/cosmos-db/manage-account)
 
-The root resource for Azure Cosmos DB. It contains a unique DNS name and can be managed using various tools. It can virtually manage an unlimited amount of data and provisioned throughput. You can create one or more databases within your account, and then one or more containers to store your data. 50 max (soft limit)
+The root resource for Azure Cosmos DB. It contains a unique DNS name and can be managed using various tools. It can virtually manage an unlimited amount of data and provisioned throughput. You can create one or more databases within your account, and then one or more containers to store your data. 50 max (soft limit).
+
+You can have up to 1 free tier account per sunscription.
 
 ### Databases
 
@@ -230,7 +228,7 @@ You don't have to assign any throughput when creating resources in your Azure Co
 
 ### [Autoscale Throughput](https://learn.microsoft.com/en-us/azure/cosmos-db/provision-throughput-autoscale)
 
-Autoscale automatically adjusts the provisioned RUs based on the current usage. It scales between 10% and 100% of a set maximum - from 100 to 1000 RU/s. Throughput scales automatically based on usage without affecting performance, suited for workloads with unpredictable traffic requiring high performance and scale SLAs.
+Autoscale automatically adjusts the provisioned RUs based on the current usage. You can enable autoscale on a single container, or provision autoscale throughput on a database and share it among all the containers in the database. It scales between 10% and 100% of a set maximum - from 100 to 1000 RU/s. Throughput scales automatically based on usage without affecting performance, suited for workloads with unpredictable traffic requiring high performance and scale SLAs.
 
 ```sh
 az cosmosdb sql container create --throughput-type autoscale --max-throughput 4000

@@ -6,6 +6,7 @@ Endpoint: `https://queue.core.windows.net`
 - Commonly used to create a backlog of work to process asynchronously.
 - Max size: 64KB
 - TTL: 7 days (default), -1 to never expire.
+- Applications can scale indefinitely to meet demand.
 
 - [Azure.Core library for .NET](https://www.nuget.org/packages/azure.core/): Shared primitives, abstractions
 - [Azure.Storage.Common client library for .NET](https://www.nuget.org/packages/azure.storage.common/): Infrastructure shared by the other Azure Storage client libraries.

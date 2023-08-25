@@ -1,8 +1,6 @@
 # [Azure Event Grid](https://docs.microsoft.com/en-us/azure/event-grid/)
 
-Azure Event Grid is a serverless broker for integrating applications through events. It sends events from sources like applications and Azure services to subscribers. Subscribers choose events to handle; publishers emit without expectations.
-
-Event Grid supports events from Azure and custom topics, allowing easy creation of event-based applications. You can filter and route events to multiple endpoints, ensuring reliable delivery.
+Azure Event Grid is a serverless broker that facilitates application integration through events. It simplifies event consumption and lowers costs by eliminating the need for constant polling. It routes events from sources such as applications and Azure services to subscribers, who select the events they want to handle. Publishers send events without needing to know or expect specific subscribers. Event Grid supports both Azure and custom topics, simplifying the development of event-driven applications. It ensures reliable delivery by offering the ability to filter and route events to multiple endpoints. Subscriptions to events can include those from Azure services and third-party resources.
 
 ## Concepts
 

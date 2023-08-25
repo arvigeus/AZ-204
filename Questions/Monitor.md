@@ -117,3 +117,60 @@ Geo-Redundancy alerts in Azure Storage are related to data replication and avail
 Traffic Manager monitoring is used for routing network traffic and does not directly provide notifications for website responsiveness.
 
 ---
+
+Question: What do you need to do in order to send the activity log to a Log Analytics workspace?
+
+- [ ] Configure `appsettings.json`
+- [ ] Configure `Startup.cs`
+- [x] Create Diagnostic setting
+- [ ] Upgrade to Premium
+
+Answer: Create a diagnostic setting to send the activity log to a Log Analytics workspace.
+
+---
+
+Question: Which diagnostic setting destination in Azure allows you to perform complex analysis with Kusto queries?
+
+- [x] Azure Event Hubs
+- [ ] Azure Storage Account
+- [ ] Log Analytics Workspace
+- [ ] Azure Virtual Machine
+
+Answer: Log Analytics Workspace enables the correlation of activity log data with other monitoring data, complex analysis, and deep insights on activity log entries.
+
+---
+
+Question: When you need to retain your Azure activity log data longer than 90 days for audit, static analysis, or backup, which diagnostic setting destination should you use?
+
+- [ ] Azure Event Hubs
+- [x] Azure Storage Account
+- [ ] Log Analytics Workspace
+- [ ] Azure SQL Database
+
+Answer: Azure Storage Account allows you to retain activity log data longer than the default 90 days, suitable for audit, static analysis, or backup purposes.
+
+---
+
+Question: If you want to send Azure activity log entries outside of Azure, which diagnostic setting destination would you choose?
+
+- [x] Azure Event Hubs
+- [ ] Azure Virtual Network
+- [ ] Azure Storage Account
+- [ ] Log Analytics Workspace
+
+Answer: Azure Event Hubs enables the forwarding of activity log entries outside of Azure, making it suitable for integration with third-party SIEM or other log analytics solutions.
+
+---
+
+Question: You are experiencing data loss in Azure Monitor. What could be the possible reasons for this issue?
+
+- [x] Required fields are missing.
+- [x] One or more fields exceed size limits.
+- [ ] The data is being encrypted with an unsupported algorithm.
+- [ ] The Azure Monitor logs are being archived to an unsupported storage account.
+- [ ] The monitoring agent is running an outdated version.
+- [ ] The network connection to the Azure data center is too slow.
+
+Answer: Missing required fields or exceeding size limits can lead to data being rejected by the back end.
+
+---
