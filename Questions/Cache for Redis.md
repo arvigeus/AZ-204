@@ -268,3 +268,14 @@ cache.KeyDelete("teamsList");
 ```
 
 ---
+
+Question: To enhance performance and ensure data consistency between your data store and cache, under what circumstances would the Cache-Aside pattern be appropriate? Select two correct answers from the options below.
+
+- [ ] When the data to be cached can be completely loaded when the application starts
+- [x] When the cache lacks built-in support for read-through and write-through operations
+- [x] When the demand for resources is highly variable
+- [ ] When you need to cache web session state information across multiple servers
+
+Answer Explanation: Cache-Aside pattern is ideal for scenarios where native read-through and write-through operations are not supported by the cache. It also allows for on-demand data loading, making it suitable for situations with fluctuating resource demand.
+
+---

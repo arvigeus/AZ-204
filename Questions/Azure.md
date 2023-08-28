@@ -36,3 +36,20 @@ Service Bus is a message broker service, not designed for subscribing to third-p
 Notification Hubs are used for sending mobile push notifications, not for subscribing to third-party events.
 
 ---
+
+Question: You are tasked with developing an ASP.Net web application for deployment on Azure Web App service. The application has two critical requirements:
+
+1. Manage and save session state data that should be accessible across all ASP.Net web applications.
+1. Store full HTTP responses for specific operations.
+
+Additionally, the application should support controlled and concurrent access to the session state data for multiple readers and a single writer. Which Azure service is best suited to meet these session state management and HTTP response storage requirements?
+
+- [ ] Application Request Routing
+- [x] Azure Cache for Redis
+- [ ] Azure Blob Storage
+- [ ] Azure SQL Database
+- [ ] Azure Table Storage
+
+Answer: Azure Cache for Redis: This is the ideal solution for both storing session state data and supporting controlled and concurrent access to the same session state data for multiple readers and a single writer. It provides high throughput and low-latency access to data, making it suitable for session state management and storing full HTTP responses.
+
+---

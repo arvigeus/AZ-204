@@ -137,3 +137,28 @@ Question: Which protocol should you choose if you want tp publish a single event
 Answer: AMQP requires a persistent bidirectional socket plus TLS or SSL/TLS, resulting in higher initial network costs.
 
 ---
+
+Question: A healthcare organization is developing a real-time patient monitoring system. The system will monitor vital signs from patients in 5 different wards. The data from the sensors in each ward is sent to Azure Event Hubs for real-time analytics. Three different teams within the organization—Emergency Response, Data Analytics, and Hospital Administration—consume this data through Azure Web Apps for various purposes. You are tasked with setting up the Azure Event Hub for this system. Your goal is to optimize for high data throughput and low latency. How many partitions should you configure in the Azure Event Hub?
+
+- [ ] 3 Partitions
+- [x] 5 Partitions
+- [ ] 8 Partitions
+- [ ] 12 Partitions
+
+Bonus question: What would you use as the partition key?
+
+Answer: To achieve the highest data throughput, it's advisable to allocate an individual partition for each ward. Given that the partitioning should be aligned with the source of incoming data, alternative approaches would be incorrect.  
+Bonus answer: Ward. Because we use it for partitioning.
+
+---
+
+Question: Your team is tasked with creating an application to collect data from various IoT devices. You've decided to use Azure Event Hubs for event ingestion. To meet the project requirements, you need to store these events in Azure Blob Storage. Which Azure Event Hubs feature should you utilize to save the data in Azure Blob Storage?
+
+- [ ] Throughput Units
+- [ ] Partition Keys
+- [x] Event Hubs Capture
+- [ ] Event Streams
+
+Answer: To store data in Azure Blob Storage, you would use the Azure Event Hubs Capture feature. Azure Event Hubs Capture allows for the automatic saving of event data to Azure Blob Storage.
+
+---

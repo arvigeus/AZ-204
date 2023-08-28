@@ -59,6 +59,17 @@ Azure CDN configuration propagation times:
 - Azure CDN Standard (Akamai): ~1min.
 - Azure CDN Standard (Verizon): ~10mins.
 
+### [Caching behavior settings](https://learn.microsoft.com/en-us/azure/cdn/cdn-caching-rules#caching-behavior-settings)
+
+- **Bypass cache**: Don't cache and ignore origin-provided cache-directive headers.
+- **Override**: Ignore origin-provided cache duration; use the provided cache duration instead. This setting doesn't override cache-control: no-cache.
+- **Set if missing**: Honor origin-provided cache-directive headers, if they exist; otherwise, use the provided cache duration.
+
+Expiry rules:
+
+- Override/Set if Missing: 0 secs to 366 days. 0 secs requires origin revalidation.
+- Bypass: Auto-set to 0 secs, unmodifiable.
+
 ### [Cache purging](https://learn.microsoft.com/en-us/azure/cdn/cdn-purge-endpoint)
 
 To ensure users always get the latest version of your content, you can either version your assets by giving them new URLs with each update or purge the old content from the servers. Versioning lets the CDN fetch new assets right away, while purging forces all servers to get updated content. This might be needed for web app updates or quick corrections. Purging only removes content from the main servers, not from places like local browser caches. To make sure users get the latest file, you can give it a unique name each time you update it or use special caching techniques.
