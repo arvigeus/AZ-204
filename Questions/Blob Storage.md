@@ -187,3 +187,98 @@ Conditions = new BlobRequestConditions { IfMatch = properties.Value.ETag }
 The `IfMatch` property of the `BlobRequestConditions` object can be set to the ETag of the blob. The `ETag` is a version identifier for the blob, and it changes whenever the blob is modified. By setting `IfMatch` to the `ETag` you got when you fetched the blob's properties, you're specifying that the update should only occur if the blob has not been modified since then. If the blob has been modified, its `ETag` will have changed, the IfMatch condition will not be met, and the update operation will fail with a `412 Precondition Failed` error. This approach is used to implement optimistic concurrency control, preventing unexpected overwrites due to concurrent modifications.
 
 ---
+
+Question: GreenTech Energy Solutions specializes in providing real-time energy consumption data to its clients. They store sensor data in Azure Blob Storage and have decided to maintain two copies of each data file in the 'North Europe' and 'South Africa North' Azure regions. New sensor data files are initially uploaded to the 'North Europe' blob storage. What Azure tool and command would you use to ensure both blob containers have completely identical data?
+
+- [ ] `Copy-AzStorageBlob`
+- [ ] `az storage blob copy start-batch`
+- [ ] `azcopy sync --recursive`
+- [ ] `azcopy copy --recursive`
+
+Answer: `azcopy sync --recursive` is the correct choice because it not only copies the blobs but also ensures that both blob containers are in sync. The `--recursive` flag ensures that all subdirectories and their files are also synced.  
+`azcopy copy --recursive` will copy the entire content of source container to destination container, which is not an optimal approach.
+
+---
+
+Question: Which of the following methods is the most optimal way to copy a blob from one container to another in Azure Blob Storage?
+
+- [x] `await targetBlob.StartCopyFromUriAsync(sourceBlob.Uri);`
+- [ ] `await sourceBlob.StartCopyFromUriAsync(targetBlob.Uri);`
+- [ ] `await sourceBlob.DownloadToAsync(localStream); await targetBlob.UploadAsync(localStream);`
+- [ ] `await targetBlob.DownloadToAsync(localStream); await sourceBlob.UploadAsync(localStream);`
+
+Answer: `await targetBlob.StartCopyFromUriAsync(sourceBlob.Uri);`  
+`await sourceBlob.DownloadToAsync(localStream); await targetBlob.UploadAsync(localStream);` is inefficient because it requires downloading the blob to local storage and then uploading it, consuming more time and resources.
+
+---
+
+Question: A healthcare organization is considering Azure Blob Storage for storing patient records that are rarely accessed but need to be retained for compliance reasons. They are particularly interested in minimizing storage costs. If they need to access a file stored in Azure Blob Archive storage, which of the following are a valid first step they can take?
+
+- [ ] Reconfigure the storage account
+- [x] Change the tier of the blob
+- [ ] Rotate the storage account keys
+- [x] Copy the blob to another tier
+- [ ] Change the access permissions
+- [ ] Change the account kind
+
+Answers: Archive blobs cannot be accessed directly. To read the data of an archived blob, you must first either:
+
+- Change its tier to Hot or Cool (this process is known as rehydration).
+- Copy the blob to a Hot or Cool tier to access its data without affecting the original blob in Archive storage.
+
+---
+
+Question: The organization DataGenix has developed a machine learning model for predictive maintenance of industrial machinery. The model runs periodically and stores the predictive results in Blob storage. Additionally, it stores sensor data from the machinery in a separate container. The predictive results are frequently accessed for immediate action and need to be available within minutes. The sensor data is primarily used for compliance and can be accessed less frequently. What would be the optimal Access tier for storing Predictive Results and Sensor Data?
+
+Options:
+
+- [ ] Predictive Results – Archive access tier, Sensor Data – Cool access tier
+- [ ] Predictive Results – Hot access tier, Sensor Data – Archive access tier
+- [x] Predictive Results – Cool access tier, Sensor Data – Archive access tier
+- [ ] Predictive Results – Hot access tier, Sensor Data – Cool access tier
+
+Answer: "Optimal" means "cost effective". Both Hot and Cool are instantly available, but Cool is most optimal for Predictive Results. Anything needing less than an hour could be put in Cool. Use Hot only if you don't want to keep things (frequent deletion).
+
+---
+
+Question: A video streaming company stores large media files, typically 8-9 GB in size, in Azure Blob Storage. These files are infrequently accessed but are preferably needed within an hour when requested for editing. What would be the most cost-effective Access tier for storing these media files, considering the one-hour access time is a preference but not a strict requirement?
+
+- [ ] Hot access tier
+- [ ] Cool access tier
+- [ ] Cold access tier
+- [x] Archive access tier
+
+Answers: Files up to 10 GB can be rehydrated within an hour on High Priority, but it's not guaranteed.
+
+---
+
+Question: Which of the following methods can be used to move blobs from one container to another?
+
+- [x] Powershell
+- [x] AzCopy
+- [x] AZ CLI
+- [x] .Net SDK
+- [x] Azure Portal
+
+Answer: You can use any of these
+
+---
+
+Question: You need to retrieve and update the metadata of blobs in an Azure storage account using a .Net library. Which functions would you use:
+
+- [ ] `GetMetadataAsync` and `SetMetadataAsync`
+- [x] `GetPropertiesAsync` and `SetMetadataAsync`
+- [ ] `GetMetadataAsync` and `SetPropertiesAsync`
+
+Answer: Beautiful! [BlobClient](https://learn.microsoft.com/en-us/dotnet/api/azure.storage.blobs.blobclient?view=azure-dotnet) doesn't support `GetMetadataAsync`, but it has `SetMetadataAsync`.
+
+---
+
+Question: An intern inadvertently misconfigures an application, bypassing the necessary safety checks, which leads to the deletion of a crucial file. Soft delete is enabled on the Azure storage account where this file is stored. Before the incident, two snapshots — Snapshot A and Snapshot B — had been created for the file. Snapshot A was deleted for optimization before the mishap occurred. As a result of the intern's error, the crucial blob and all its remaining snapshots are deleted. Is it possible to restore Snapshot B?
+
+- [x] Yes
+- [ ] No
+
+Answer: Since soft delete is enabled on the storage account, both the blob and its snapshots, including Snapshot B, are soft-deleted. This means they can be recovered during the retention period specified in the soft delete policy. Therefore, it is possible to restore Snapshot B.
+
+---

@@ -14,7 +14,7 @@ Offers both the open-source OSS Redis and a commercial Redis Enterprise as a man
 
 ### [**Cache-Aside Pattern**](https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside)
 
-A strategy to load data into a cache from a data store on demand, improving performance and maintaining data consistency. If data is not in the cache, it's retrieved from the data store and added to the cache. If data is updated, it's modified in the data store and the corresponding cache item is invalidated. Use Cache-Aside when a cache doesn't provide native read-through and write-through operations, or when resource demand is unpredictable. If the data is static and fits in the cache, better load it at startup and prevent it from expiring. Avoid this pattern for caching session state in a web farm to prevent client-server affinity dependencies.
+A strategy to load data into a cache from a data store on demand, improving performance and maintaining data consistency. If data is not in the cache, it's retrieved from the data store and added to the cache. If data is updated, it's modified in the data store and the corresponding cache item is invalidated. Use Cache-Aside when a _cache doesn't provide native read-through and write-through operations_, or when _resource demand is unpredictable_. If the data is static and fits in the cache, better load it at startup and prevent it from expiring. Avoid this pattern for caching session state in a web farm to prevent client-server affinity dependencies.
 
 Example:
 

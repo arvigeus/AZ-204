@@ -360,9 +360,11 @@ Store text and binary data. Block blobs are made up of blocks of data that can b
 - Cold tier - same as cool tier, but for 90 days.
 - Archive tier - Available only for individual block blobs. Rarely accessed, very high ("flexible") latency (in matter of hours). Minimum for 180 days.  
   Does not support \*ZRS redundancy.  
-  To access data, either [copy](https://learn.microsoft.com/en-us/azure/storage/blobs/archive-rehydrate-overview#copy-an-archived-blob-to-an-online-tier) or [change](https://learn.microsoft.com/en-us/azure/storage/blobs/archive-rehydrate-overview#change-a-blobs-access-tier-to-an-online-tier) data to online tier. Rehydration copy to a different account is supported if the other account is within the same region. Destination cannot be at archive tier. Rehydration can take up to 15 hours (Standard), or up to 1 hour (High). Priority can be upgraded any time. Can be checked by `x-ms-rehydrate-priority` header.
+  To access data, either [copy](https://learn.microsoft.com/en-us/azure/storage/blobs/archive-rehydrate-overview#copy-an-archived-blob-to-an-online-tier) or [change](https://learn.microsoft.com/en-us/azure/storage/blobs/archive-rehydrate-overview#change-a-blobs-access-tier-to-an-online-tier) data to online tier. Rehydration copy to a different account is supported if the other account is within the same region. Destination cannot be at archive tier. Rehydration can take up to 15 hours (Standard Priority), or 1 hour (High Priority, not guaranteed) for objects less than 10GB. Priority can be upgraded any time. Can be checked by `x-ms-rehydrate-priority` header.
 
 Non-hot is perfect for short-term data backup and disaster recovery. Access tiers are available for block blobs only (other types of blobs are considered "Hot").
+
+Non-archive have access latency of ms. If access needs to be within an hour, optimized for cost, then Cold/Cool is recommended.
 
 There is a penalty for removing data, or moving it to different tier, earlier (copying is fine though). If needs to be kept for at least X days without early deletion penalty, then a tier with <= days should be chosen. Example: for 45 days you choose cool tier - if you delete data on day 45 on cold tier there will be penalty, while there won't be for cool tier.
 
@@ -617,6 +619,25 @@ Blobs:
 - Origin (`x-ms-meta-origin`)
 - Range (`x-ms-meta-range`)
 
+## Data Protection
+
+| Feature            | [Snapshots](https://learn.microsoft.com/en-us/azure/storage/blobs/snapshots-overview) | [Versioning](https://learn.microsoft.com/en-us/azure/storage/blobs/versioning-overview) |
+| ------------------ | ------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| Creation           | Manually                                                                              | Automatically (when enbled)                                                             |
+| Immutability       | Read-only once created.                                                               | Previous versions are read-only.                                                        |
+| URI                | DateTime value appended to base blob URI.                                             | Unique version ID for each version.                                                     |
+| Deletion           | Must be deleted explicitly or with the base blob.                                     | Automatically managed; older versions can be deleted based on policies.                 |
+| Flexibility        | More manual control, suitable for point-in-time backups.                              | Easier to manage, better for frequent changes.                                          |
+| Tiers              | Not in Archive.                                                                       | All.                                                                                    |
+| Soft Delete Impact | Soft-deleted along with the base blob; can be recovered during retention period.      | Current version becomes a previous version, and there's no longer a current version     |
+
+```cs
+BlobSnapshotInfo snapshotInfo = await blobClient.CreateSnapshotAsync();
+Uri snapshotUri = snapshotInfo.SnapshotUri;
+// If you attempt to delete a blob that has snapshots, the operation will fail unless you explicitly specify that you also want to delete the snapshots
+await blobClient.DeleteIfExistsAsync(DeleteSnapshotsOption.IncludeSnapshots);
+```
+
 ## Encryption
 
 ata in Azure Storage is encrypted and decrypted transparently using 256-bit AES encryption (similar to BitLocker). Enforced for all tiers. Object metadata is also encrypted.
@@ -754,6 +775,20 @@ az login --service-principal --username <client-id> --password <client-secret> -
 az storage blob upload --account-name myaccount --name myblob --type block --file ./local/path/to/file --container-name mycontainer
 ```
 
+### [Use OAuth access tokens for authentication](https://learn.microsoft.com/en-us/rest/api/storageservices/authorize-with-azure-active-directory#use-oauth-access-tokens-for-authentication)
+
+**Delegation Scope**: Use `user_impersonation` to allow applications to perform actions permitted by the user.
+
+**Resource ID**: Use `https://storage.azure.com/` to request tokens.
+
+**Making API Calls**: Use `Authorization: Bearer [Your_Token]` and `x-ms-version: [Date]` headers.
+
+### [Manage access rights with RBAC](https://learn.microsoft.com/en-us/rest/api/storageservices/authorize-with-azure-active-directory#manage-access-rights-with-rbac)
+
+In addition to `Storage Blob Data [Standard Role]` there also is `Storage Blob Delegator` for getting user delegation key.
+
+Permissions for Blob service operations: `Microsoft.Storage/storageAccounts/blobServices/<op>` for top level operations, sub `containers/<op>` and `containers/blobs/<op>` for fine grained control. `<op>` can be `read`, `write`, `delete`, `filter/action` (find blobs, blob level only).
+
 ### [Anonymous public read access](https://learn.microsoft.com/en-us/azure/storage/blobs/anonymous-read-access-prevent?tabs=azure-cli)
 
 Anonymous public access to your data is always prohibited by default. If the storage account doesn't allow public access, then no container within it can have public access, regardless of its own settings. If public access is allowed at the storage account level, then a container's access depends on its own settings (**Public access: Container**, or **Public access: Blob**).
@@ -881,14 +916,72 @@ az storage account update --access-tier Cool ...
 az storage blob upload --file "<file>" --tier "<tier>" ... #--auth-mode login
 ```
 
-[AzCopy](https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azcopy-v10):
-
 ```ps
-# Move data to blob storage
-azcopy copy "C:\local\path" "https://<storage-account>.blob.core.windows.net/<container>/<sas-token>" --recursive=true
+# Change the storage Tier Level of Blobs older than 6 months to Archive Tier.
+# Note: The code is for Powershell, with AZ CLI bellow
+
+# Step 1: Connect to Azure Account
+Connect-AzAccount
+# az login
+
+# Step 2: Get Storage Account details
+$storageaccount = Get-AzStorageAccount -Name $storageaccountname -ResourceGroupName $storageresourcegroup
+
+# Step 3: Get Storage Account credentials
+$key = (Get-AzStorageAccountKey -ResourceGroupName $storageaccount.ResourceGroupName -Name $storageaccount.StorageAccountName).Value[0]
+# key=$(az storage account keys list --resource-group $storageresourcegroup --account-name $storageaccountname --query '[0].value' --output tsv)
+
+# Step 4: Get the storage account context
+$context = New-AzStorageContext -StorageAccountName $storageaccount.StorageAccountName -StorageAccountKey $key
+
+# Step 5: Get the storage account container to perform the operation
+$containers = Get-AzStorageContainer -Context $context
+# containers=$(az storage container list --account-name $storageaccountname --account-key $key --query '[].name' --output tsv)
+
+# Step 6: Iterate through each blob in each container
+foreach ($container in $containers) {
+# for container in $containers
+    $blobs = Get-AzStorageBlob -Container $container.Name -Context $context
+    # blobs=$(az storage blob list --container-name $container --account-name $storageaccountname --account-key $key --query '[].name' --output tsv)
+    foreach ($blob in $blobs) {
+    # for blob in $blobs
+        $blobCreatedTime = $blob.ICloudBlob.Properties.Created.Value
+        # blobCreatedTime=$(az storage blob show --name $blob --container-name $container --account-name $storageaccountname --account-key $key --query 'properties.creationTime' --output tsv)
+        $currentDate = Get-Date
+        # currentTime=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+        $timeDifference = $currentDate - $blobCreatedTime
+        # timeDifference=$(( ( $(date -u -d "$currentTime" +%s) - $(date -u -d "$blobCreatedTime" +%s) )/(60*60*24) ))
+
+        # Check if the blob is older than 6 months
+        if ($timeDifference.Days -gt 180) {
+        # if [ $timeDifference -gt 180 ]; then
+            # Set its access tier to "Archive"
+            $blob.ICloudBlob.SetStandardBlobTier("Archive")
+            # az storage blob set-tier --name $blob --container-name $container --account-name $storageaccountname --account-key $key --tier Archive
+        }
+    }
+}
 ```
 
-[Working with blobs](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-dotnet)
+### [AzCopy](https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azcopy-v10)
+
+```sh
+# Move local data to blob storage
+azcopy copy "C:\local\path" "https://<storage-account>.blob.core.windows.net/<container>/<sas-token>" --recursive=true
+
+# Syncronize (avoid copying existing files again, when running multiple times)
+azcopy sync \
+  "https://<source-storage-account>.blob.core.windows.net/<container>/<sas-token>" \
+  "https://<destination-storage-account>.blob.core.windows.net/<container>/<sas-token>" \
+  --recursive=true
+```
+
+Destination needs `Microsoft.Storage/storageAccounts/blobServices/containers/blobs/add/action` permission when adding new lob to the destination.  
+If copying existing blob, source needs `Microsoft.Storage/storageAccounts/blobServices/containers/blobs/read` permission.
+
+You can also use [AZ CLI](https://learn.microsoft.com/en-us/cli/azure/storage/blob/copy?view=azure-cli-latest), [Powershell](https://learn.microsoft.com/en-us/powershell/module/az.storage/start-azstorageblobcopy?view=azps-10.2.0&viewFallbackFrom=azps-4.6.0), or [SDK](https://learn.microsoft.com/en-us/dotnet/api/microsoft.azure.storage.blob.cloudblockblob.startcopyasync?view=azure-dotnet).
+
+### [Working with blobs](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-dotnet)
 
 ```cs
 var blobServiceClient = new BlobServiceClient(new Uri("https://<storage-account-name>.blob.core.windows.net"), new DefaultAzureCredential());
@@ -897,12 +990,12 @@ var blobServiceClient = new BlobServiceClient(new Uri("https://<storage-account-
 await foreach (BlobContainerItem container in blobServiceClient.GetBlobContainersAsync()) {}
 
 // Create the container and return a container client object
-var containerClient = await blobServiceClient.CreateBlobContainerAsync("quickstartblobs" + Guid.NewGuid().ToString());
+BlobContainerClient containerClient = await blobServiceClient.CreateBlobContainerAsync("quickstartblobs" + Guid.NewGuid().ToString());
 // var containerClient = blobServiceClient.GetBlobContainerClient(containerName);
 // var containerClient = new BlobContainerClient(new Uri($"https://{accountName}.blob.core.windows.net/{containerName}"), new DefaultAzureCredential(), clientOptions);
 // Note: BlobContainerClient allows you to manipulate both Azure Storage containers and their blobs
 
-var blobClient = containerClient.GetBlobClient(fileName);
+BlobClient blobClient = containerClient.GetBlobClient(fileName);
 
 await blobClient.UploadAsync(localFilePath, true);
 
@@ -919,4 +1012,11 @@ using (FileStream downloadFileStream = File.OpenWrite(downloadFilePath))
 {
    await download.Content.CopyToAsync(downloadFileStream);
 }
+
+// Copy from one container to another, without downloading locally
+BlobContainerClient sourceContainer = blobServiceClient.GetBlobContainerClient("sourcecontainer");
+BlobClient sourceBlob = sourceContainer.GetBlobClient("sourceblob.txt");
+BlobContainerClient targetContainer = blobServiceClient.GetBlobContainerClient("targetcontainer");
+BlobClient targetBlob = targetContainer.GetBlobClient("targetblob.txt");
+await targetBlob.StartCopyFromUriAsync(sourceBlob.Uri);
 ```

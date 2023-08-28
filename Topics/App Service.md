@@ -628,6 +628,15 @@ Logs written to .txt, .log, or .htm files in `/home/LogFiles` (or `D:\home\LogFi
 
 CLI: `az webapp log tail ...`
 
+```sh
+# Stream HTTP logs
+az webapp log tail --name <app> --resource-group <resource-group> --provider http
+
+# Stream errors
+az webapp log tail --name <app> --resource-group <resource-group> --filter Error
+az webapp log tail --name <app> --resource-group <resource-group> --only-show-errors
+```
+
 ### [Monitoring apps](https://learn.microsoft.com/en-us/azure/app-service/web-sites-monitor)
 
 Metrics: CPU Percentage, Memory Percentage, Data In, Data Out - used across all instances of the plan (**not a single app!**).

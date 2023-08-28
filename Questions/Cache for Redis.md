@@ -252,3 +252,19 @@ Question: What feature in Azure Cache for Redis links two Premium instances?
 Answer: Geo-replication is the feature that provides a mechanism for linking two Premium tier Azure Cache for Redis instances, allowing data written to the primary cache to be replicated to the secondary linked cache. This functionality can be used to replicate a cache across Azure regions.
 
 ---
+
+Question: Invalidate "teamsList":
+
+```cs
+IDatabase cache = Connection.GetDatabase();
+// Code here
+```
+
+Answer:
+
+```cs
+IDatabase cache = Connection.GetDatabase();
+cache.KeyDelete("teamsList");
+```
+
+---

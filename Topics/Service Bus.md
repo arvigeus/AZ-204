@@ -184,3 +184,7 @@ az servicebus namespace authorization-rule keys list --name RootManageSharedAcce
 az servicebus queue delete --name myqueue --namespace-name mynamespace --resource-group myresourcegroup
 az servicebus namespace delete --name mynamespace --resource-group myresourcegroup
 ```
+
+```ps
+New-AzServiceBusNamespace -ResourceGroupName myResourceGroup -Name myNamespace -SkuName Premium -Location northeurope -IdentityType UserAssigned
+```
