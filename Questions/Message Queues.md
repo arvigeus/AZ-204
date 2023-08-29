@@ -109,3 +109,14 @@ Question: Which of the following queues supports automatic dead-lettering?
 - [ ] None has automatic dead-lettering enabled by default
 
 ---
+
+Question: Your company's financial analytics team has created a FraudDetectionService that scans incoming transactions for potential fraudulent activity. Any transaction with a risk score above a certain level must be manually verified by a company employee. You are tasked with securely storing these high-risk transaction records, which are expected to number in the millions every hour, for subsequent scrutiny. Which Azure service would be most appropriate for storing these records for later evaluation?
+
+- [ ] Azure Storage Queue
+- [ ] Azure Service Bus Topic
+- [ ] Azure Event Grid Topic
+- [x] Azure Event Hub
+
+Answer: Azure Event Hub is ideal for storing high-volume data like high-risk transaction records for future scrutiny.
+
+---

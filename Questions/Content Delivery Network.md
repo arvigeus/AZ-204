@@ -159,3 +159,25 @@ Question: What are the Azure CDN configuration propagation times for Standard (A
 Answer: 10 minutes is for Standard (Verizon).
 
 ---
+
+Question: An Azure developer has configured a web application and also integrated Azure CDN to direct requests to the web application. The requirement is to make sure that requests containing an ID parameter should always be served from a Point of Presence (PoP). Given this requirement, what should be the configuration for the query string setting in the CDN service?
+
+- [ ] Ignore query strings
+- [ ] Use default setting
+- [ ] Bypass caching
+- [x] Cache every unique URL
+
+Answer: To meet the requirement of caching requests that include an ID parameter, the setting should be 'Cache each distinct URL'. This ensures that each unique URL, including the query string, is cached.
+
+---
+
+Question: You are tasked with developing an ASP.Net application for an on-demand video streaming service, which will be hosted on Azure Web App service. You plan to use Azure Content Delivery Network for content delivery. The video content must be purged from the cache after one hour, and videos of different quality levels should be served from the nearest regional Point of Presence (PoP). What caching behavior should you implement?
+
+- [ ] Default
+- [ ] Set if missing
+- [ ] Bypass cache
+- [x] Override
+
+Answer: In this scenario, to make certain that all video content is removed from the cache after a 60-minute period, the 'Apply custom rules' or 'Override' setting must be selected.
+
+---

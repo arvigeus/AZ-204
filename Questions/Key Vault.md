@@ -175,3 +175,14 @@ Question: What format the response of this command is: `az keyvault secret show 
 Answer: JSON.
 
 ---
+
+Question: You have configured an Azure Key Vault and stored a secret in it. The secret has multiple versions. You need to retrieve a particular version of the secret using a REST API call. What should you include in the REST API call to specify the version you want to retrieve?
+
+A. A session variable
+B. A query string parameter
+C. A JSON payload
+D. A POST parameter
+
+Answer: To retrieve a specific version of the secret, you would include it as a query string argument in the REST API call: `GET {vaultBaseUrl}/secrets/{secret-name}/{secret-version}?api-version=7.4`. This allows you to specify which version of the secret you wish to retrieve from the Azure Key Vault.
+
+---

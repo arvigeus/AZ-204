@@ -186,13 +186,21 @@ await using (var producer = new EventHubProducerClient(eventHubsConnectionString
 await using (var producer = new EventHubProducerClient(eventHubsConnectionString, eventHubName))
 {
     using EventDataBatch eventBatch = await producer.CreateBatchAsync();
-    eventBatch.TryAdd(new EventData(new BinaryData("First")));
-    eventBatch.TryAdd(new EventData(new BinaryData("Second")));
+    eventBatch.TryAdd(new EventData(new BinaryData("First event")));
+    eventBatch.TryAdd(new EventData(new BinaryData("Second event")));
 
     await producer.SendAsync(eventBatch); // Send events
 
     var eventData = new EventData(Encoding.UTF8.GetBytes("Message body")); // Works with BinaryData and string too
     await producer.SendAsync(eventData);
+}
+
+// Using buffer
+// EventHubBufferedProducerClient abstracts away the complexities of batching and sending events, making it easier to use but with less control.
+using(var bufferedProducerClient = new EventHubBufferedProducerClient(connectionString, eventHubName))
+{
+    await bufferedProducerClient.EnqueueEventAsync(new EventData(Encoding.UTF8.GetBytes("First event")));
+    await bufferedProducerClient.EnqueueEventAsync(new EventData(Encoding.UTF8.GetBytes("Second event")));
 }
 
 // Read events from Event Hubs

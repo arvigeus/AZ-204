@@ -30,6 +30,8 @@ EncryptResult encryptResult = cryptoClient.Encrypt(EncryptionAlgorithm.RsaOaep, 
 DecryptResult decryptResult = cryptoClient.Decrypt(EncryptionAlgorithm.RsaOaep, encryptResult.Ciphertext);
 ```
 
+Get secret version: `GET {vaultBaseUrl}/secrets/{secret-name}/{secret-version}?api-version=7.4`
+
 ## [Security](https://learn.microsoft.com/en-us/azure/key-vault/general/security-features)
 
 **Network Security**: You can specify which IP addresses have access to your vaults, reducing exposure. This is done through virtual network service endpoints for Azure Key Vault.
