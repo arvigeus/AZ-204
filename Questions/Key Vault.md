@@ -186,3 +186,34 @@ D. A POST parameter
 Answer: To retrieve a specific version of the secret, you would include it as a query string argument in the REST API call: `GET {vaultBaseUrl}/secrets/{secret-name}/{secret-version}?api-version=7.4`. This allows you to specify which version of the secret you wish to retrieve from the Azure Key Vault.
 
 ---
+
+Question: Write the Azure CLI commands to perform the following tasks:
+
+1. Create a Key Vault in Azure.
+1. Add a certificate to the newly created Key Vault using the default policy.
+
+```ps
+kvName="<your-unique-keyvault-name>"
+rgName="myResourceGroup"
+locationName="EastUS"
+certName="ExampleCertificate"
+
+# Code here
+```
+
+Answer:
+
+```bash
+kvName="<your-unique-keyvault-name>"
+rgName="myResourceGroup"
+locationName="EastUS"
+certName="ExampleCertificate"
+
+# Create a key vault
+az keyvault create --name $kvName --resource-group $rgName --location $locationName
+
+# Add a certificate to Key Vault
+az keyvault certificate create --vault-name $kvName -n $certName -p "$(az keyvault certificate get-default-policy)"
+```
+
+---

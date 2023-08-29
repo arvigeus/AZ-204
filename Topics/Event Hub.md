@@ -237,3 +237,13 @@ try { await processor.StopProcessingAsync(); } finally
     processor.ProcessErrorAsync -= processErrorHandler;
 }
 ```
+
+### CLI
+
+```sh
+# Get the connection string for a namespace
+az eventhubs namespace authorization-rule keys list --resource-group MyResourceGroupName --namespace-name MyNamespaceName --name RootManageSharedAccessKey
+
+# Get the connection string for a specific event hub within a namespace
+az eventhubs eventhub authorization-rule keys list --resource-group MyResourceGroupName --namespace-name MyNamespaceName --eventhub-name MyEventHubName --name MyAuthRuleName
+```

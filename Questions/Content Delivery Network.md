@@ -181,3 +181,23 @@ Question: You are tasked with developing an ASP.Net application for an on-demand
 Answer: In this scenario, to make certain that all video content is removed from the cache after a 60-minute period, the 'Apply custom rules' or 'Override' setting must be selected.
 
 ---
+
+Question: Click on the following steps in the correct order to explain how Azure CDN works:
+
+- [x] The request is directed to the nearest server location, also known as Point of Presence (POP).
+- [x] The file stays in the cache until its time-to-live (TTL) expires.
+- [x] The file is then sent to the user from the POP server and stored there for future requests.
+- [x] If the file isn’t in the server’s cache, it’s fetched from the origin server.
+- [x] A user requests a file using a special URL.
+- [x] This cached file can be quickly sent to any other users requesting the same file, providing a faster user experience.
+
+Answer:
+
+- A user requests a file using a special URL.
+- The request is directed to the nearest server location, also known as Point of Presence (POP).
+- If the file isn’t in the server’s cache, it’s fetched from the origin server.
+- The file is then sent to the user from the POP server and stored there for future requests.
+- This cached file can be quickly sent to any other users requesting the same file, providing a faster user experience.
+- The file stays in the cache until its time-to-live (TTL) expires.
+
+---

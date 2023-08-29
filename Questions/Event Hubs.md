@@ -162,3 +162,25 @@ Question: Your team is tasked with creating an application to collect data from 
 Answer: To store data in Azure Blob Storage, you would use the Azure Event Hubs Capture feature. Azure Event Hubs Capture allows for the automatic saving of event data to Azure Blob Storage.
 
 ---
+
+Question: Complete the following command: `az eventhubs ??? authorization-rule keys list --resource-group MyResourceGroupName --namespace-name MyNamespaceName --eventhub-name MyEventHubName --name SomeName`. What should you put instead of `???`?
+
+- [ ] `namespace`
+- [x] `eventhub`
+- [ ] `get`
+- [ ] `show`
+
+Answer: The command is to get connection string for a specific event hub within a namespace.
+
+---
+
+Question: Complete the following command: `az eventhubs ??? authorization-rule keys list --resource-group MyResourceGroupName --namespace-name MyNamespaceName --name SomeName`. What should you put instead of `???`?
+
+- [x] `namespace`
+- [ ] `eventhub`
+- [ ] `get`
+- [ ] `show`
+
+Answer: The command is to get connection string for a namespace.
+
+---

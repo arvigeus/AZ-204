@@ -120,3 +120,18 @@ Question: Your company's financial analytics team has created a FraudDetectionSe
 Answer: Azure Event Hub is ideal for storing high-volume data like high-risk transaction records for future scrutiny.
 
 ---
+
+Question: You are tasked with designing an Azure-based solution to collect data from 10,000 IoT devices located globally. Each device will send up to 1 MB of data every 24 hours. The data must be stored in Azure Blob Storage and should be easily correlated based on the device identifier. Which Azure service would be the most appropriate to receive and route this device data?
+
+- [ ] Azure Event Grid
+- [ ] Azure IoT Hub
+- [ ] Azure Data Lake Storage with Azure Databricks
+- [x] Azure Event Hubs
+- [ ] Azure Queue Storage
+
+Answer: Designed for high-throughput, real-time data ingestion and processing. It can handle the data volume and allows for easy correlation based on sensor identifiers. It also integrates well with Azure Blob Storage for long-term data retention. Note: Another option would be _Azure IoT Hub_.  
+Azure Event Grid: While it can route events effectively, it's not designed for high-throughput data ingestion. The payload size is also limited to 64 KB.  
+Azure Data Lake Storage with Azure Databricks: This combination is more suitable for big data analytics and could be an overkill for simple storage requirements. It's also more expensive.  
+Azure Queue Storage: Useful for message queuing but not optimized for the IoT data ingestion scenario described.
+
+---

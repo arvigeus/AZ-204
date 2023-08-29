@@ -48,6 +48,17 @@ Answer: `/me?$select=displayName`
 
 ---
 
+Question: You are tasked with building a web service that integrates with Microsoft Graph. You need to fetch users who have the job title "Developer" and only return their email addresses. Which of the following query parameter combinations should you use?
+
+- [x] `?$filter=jobTitle eq 'Developer'&$select=email`
+- [ ] `?$filter=equals(jobTitle,'Developer')&$select=email`
+- [ ] `?$filter=jobTitle eq 'Developer'&$only=email`
+- [ ] `?$filter=equals(jobTitle,'Developer')&$only=email`
+
+Answer: Use `$filter` query parameter with the correct syntax `jobTitle eq 'Developer'` to filter users who have the job title "Developer". Use `$select` query parameter to only return the email addresses of those users.
+
+---
+
 Question: Which HTTP method below is used to update a resource with new values?
 
 - [ ] POST
@@ -164,7 +175,7 @@ Question: The app is granted the `Calendars.Read` permission to access Microsoft
 - [ ] Apply rhe `ReadWrite` constraint.
 - [x] Apply the `Shared`` constraint.
 - [ ] Leave the constraint blank.
-- [ ] Use the User.Read permission.
+- [ ] Use the `User.Read` permission.
 
 Answer: The correct way to ensure that the app can read both the calendars owned by the signed-in user and the calendars that other users have shared with the signed-in user is to use the `Calendars.Read.Shared` permission.
 
@@ -172,13 +183,27 @@ Answer: The correct way to ensure that the app can read both the calendars owned
 
 Question: Which of the following permissions require admin consent?
 
-- [x] AppCatalog.Submit
-- [x] BusinessScenarioConfig.Read.OwnedBy
-- [x] Calendars.ReadBasic
-- [ ] Calendars.Read.Shared
-- [ ] Users.Read
-- [x] Users.Read.All
+- [x] `AppCatalog.Submit`
+- [x] `BusinessScenarioConfig.Read.OwnedBy`
+- [x] `Calendars.ReadBasic`
+- [ ] `Calendars.Read.Shared`
+- [ ] `Users.Read`
+- [x] `Users.Read.All`
 
 Answer: Rule of thumb - everything ending with ".All".
+
+---
+
+Question: You are building an application that leverages the Microsoft Graph API to manage user activities. You need to retrieve the most recent activities for a user and also be able to update a specific activity. Which REST API calls should you opt for?
+
+- [x] `GET /me/activities/recent`
+- [ ] `GET /me/activities`
+- [x] `PATCH /me/activities/{activityId}`
+- [ ] `POST /me/activities`
+- [ ] `PUT /me/activities/{activityId}/recent`
+
+Answer: The `GET` method fetches the specified resources, and the `/recent` endpoint specifies that only the most recent activities should be returned.
+
+The `PATCH` method is used for partial updates to a resource. In this case, you would replace `{activityId}` with the ID of the activity you wish to update.
 
 ---

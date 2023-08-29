@@ -12,6 +12,50 @@ A value isn't required for Data
 
 ---
 
+Question: You are tasked with creating and deploying an Azure Function App that will handle events from a custom Azure Event Grid topic. To allow subscribers to effectively filter and route these events, which event schema property should you leverage?
+
+- [ ] `eventTime`
+- [ ] `eventType`
+- [x] `subject`
+- [ ] `data`
+
+Answer: Explanation: The `subject` property is used by subscribers to filter and route events when dealing with custom topics in Azure Event Grid. You can include the path where the event occurred in the `subject` property, enabling subscribers to filter events based on segments of that path. This flexibility allows subscribers to filter events either narrowly or broadly.
+
+---
+
+Question: You are responsible for monitoring various Azure resources in your organization. You want to set up an Azure Event Grid subscription to specifically receive only failure messages for any type of resource. Which of the following options should you configure in your Event Grid subscription to achieve this?
+
+- [ ] Subject begins with or ends with
+- [ ] Advanced fields and operators
+- [ ] ResourceType
+- [x] EventType
+
+Answer: In Azure Event Grid, you can configure your subscription to filter events based on `EventType`. This allows you to specifically receive failure messages for any type of Azure resource. By setting up your Event Grid subscription to only pass along events of a certain type, such as failure messages, you can effectively monitor the health of various resources in your organization.
+
+---
+
+Question: You manage Azure Virtual Machines, SQL Databases, and Blob Storage. Each resource type requires a unique action when an event occurs: VMs need restarting, SQL Databases need backups, and Blob Storage needs old log deletion. To route events to specific actions based on the Azure resource involved, which Event Grid option should you configure?
+
+- [ ] Subject begins with or ends with
+- [ ] Advanced fields and operators
+- [x] ResourceType
+- [ ] EventType
+
+Answer: By using `ResourceTypes`, you can ensure that each type of resource triggers its corresponding action, allowing for targeted and efficient automated responses.
+
+---
+
+Question: You are managing an Azure Blob Storage account that contains multiple containers. One of these containers is critical and stores time-sensitive data. You need to set up an alerting mechanism to receive messages whenever objects are added to this specific container. To receive messages specifically when objects are added to a particular container in Azure Blob Storage, which Event Grid option should you configure?
+
+- [x] Subject begins with or ends with
+- [ ] Advanced fields and operators
+- [ ] ResourceType
+- [ ] EventType
+
+Answer: By using "Subject begins with or ends with," you can precisely target events related to the specific container in Azure Blob Storage, ensuring that you receive messages only when objects are added to that container. This allows for targeted alerting and monitoring.
+
+---
+
 Question: Which of the following Event Grid built-in roles is appropriate for managing Event Grid resources?
 
 - [x] Event Grid Contributor
@@ -103,5 +147,77 @@ Question: Does Event Grid allow Azure Functions to respond to Azure Blob storage
 - [ ] No
 
 Answer: It's a valid use case.
+
+---
+
+Question: Fill in "XXX" and "YYY" for this Event Grid filter:
+
+```json
+{
+  "XXX": [
+    {
+      "operatorType": "StringContains",
+      "key": "Subject",
+      "YYY": ["container1", "container2"]
+    }
+  ]
+}
+```
+
+Answer:
+
+```jsonc
+{
+  "advancedFilters": [
+    {
+      "operatorType": "StringContains",
+      "key": "Subject",
+      "values": ["container1", "container2"]
+    }
+  ]
+}
+```
+
+Question: Configure Azure Event Grid service to send events to an Azure Event Hub instance.
+
+```ps
+topicName="<Topic_Name>"
+location="<Location>"
+resourceGroupName="<Resource_Group_Name>"
+namespaceName="<Namespace_Name>"
+eventHubName="<Event_Hub_Name>"
+
+# Code here
+```
+
+Answer:
+
+```ps
+topicName="<Topic_Name>"
+location="<Location>"
+resourceGroupName="<Resource_Group_Name>"
+namespaceName="<Namespace_Name>"
+eventHubName="<Event_Hub_Name>"
+
+az eventgrid topic create --name $topicName --location $location --resource-group $resourceGroupName
+
+# az eventgrid topic show --name $topicName --resource-group $resourceGroupName --query "{endpoint:endpoint, primaryKey:primaryKey}" --output json
+
+# Create a namespace
+az eventhubs namespace create --name $namespaceName --location $location --resource-group $resourceGroupName
+
+# Create an event hub
+az eventhubs eventhub create --name $eventHubName --namespace-name $namespaceName --resource-group $resourceGroupName
+
+topicId=$(az eventgrid topic show --name $topicName --resource-group $resourceGroupName --query "id" --output tsv)
+hubId=$(az eventhubs eventhub show --name $eventHubName --namespace-name $namespaceName --resource-group $resourceGroupName --query "id" --output tsv)
+
+# Link the Event Grid Topic to the Event Hub
+az eventgrid event-subscription create \
+  --name "<Event_Subscription_Name>" \
+  --source-resource-id $topicId \
+  --endpoint-type eventhub \
+  --endpoint $hubId
+```
 
 ---

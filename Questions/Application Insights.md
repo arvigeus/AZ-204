@@ -147,10 +147,13 @@ Question: You have a very old Azure function app and you want to integrate it wi
 - [x] Store the name of the instrumentation key in an app setting named `APPINSIGHTS_INSTRUMENTATIONKEY`.
 - [ ] Call the `TrackEvent` method of the `TelemetryClient` class.
 - [ ] Disable built-in logging in the function app.
+- [ ] Add the Azure App Insights into function App using RBAC.
+- [ ] Add the function App into Azure App Insights using RBAC.
+- [ ] Add Azure App Insights Service Principle Id to the App settings.
 - [ ] Store a key named `APPINSIGHTS_INSTRUMENTATIONKEY` as a secret named applicationinsights in an Azure Key Vault.
 
 Answer: Application Insights may have to be manually enabled for old functions. To send data, you need the key named `APPINSIGHTS_INSTRUMENTATIONKEY`. `ILogger` is used to log to Application Insights (not `TelemetryClient`!).  
- Azure function apps use app settings to find the Application Insights key, not secrets from the Key Vault.
+Azure function apps use app settings to find the Application Insights key, not secrets from the Key Vault.
 
 ---
 

@@ -413,3 +413,54 @@ Question: In Azure Active Directory (Azure AD), what is the requirement for appl
 Answer: In Azure AD, all applications must register to delegate identity and access management. This registration process allows the application to be integrated with Azure AD, enabling features like authentication, authorization, and more.
 
 ---
+
+Question: You are developing a web application using ASP.Net Core. The application needs to authenticate users via Azure AD and also needs to access Azure Blob Storage on behalf of the authenticated users. What settings should you set in API permissions pane to allow this?
+
+Answer:
+
+Microsoft Graph: Set `User.Read` to "Delegate" to allow application to read the user's profile only when the user is signed in.
+
+Azure Storage: Set `user_impersonation` to "Delegate" to allow the application to access Azure Storage only when the user is signed in.
+
+---
+
+Question: You are developing a web application using ASP.Net Core. The application needs to authenticate users via Azure AD and also access Azure Blob Storage on behalf of the authenticated users. Which of the following permissions should be set to "Delegated" in the Azure Portal to meet these requirements?
+
+- [x] `Microsoft Graph > User.Read`
+- [ ] `Microsoft Graph > User.ReadWrite`
+- [ ] `Microsoft Graph > user_impersonation`
+- [ ] `Microsoft Graph > Microsoft Greaph Reader`
+- [x] `Azure Storage > user_impersonation`
+- [ ] `Azure Storage > Storage Blob Data Reader`
+- [ ] `Azure Storage > Files.Read`
+- [ ] `Microsoft Graph > Files.Read`
+
+Answer:
+
+Microsoft Graph > User.Read should be set to "Delegated". This allows the application to authenticate users and read their basic profile on their behalf.
+
+Azure Storage > user_impersonation should be set to "Delegated". This allows the application to access Azure Blob Storage on behalf of the authenticated users.
+
+---
+
+Question: You are developing a web application using ASP.Net Core. The application needs to authenticate users via Azure AD. What value should be set for the `Microsoft Graph > User.Read` permission in the Azure Portal to meet this requirement?
+
+- [ ] None
+- [ ] Application
+- [x] Delegated
+- [ ] Admin
+
+Answer: "Delegated" allows the application to authenticate users and read their basic profile on their behalf.
+
+---
+
+Question: Your ASP.Net Core web application also needs to access Azure Blob Storage on behalf of the authenticated users. What value should be set for the `Azure Storage > user_impersonation` permission in the Azure Portal to meet this requirement?
+
+- [ ] None
+- [ ] Application
+- [x] Delegated
+- [ ] Admin
+
+Answer: "Delegated" allows the application to access Azure Blob Storage on behalf of the authenticated users.
+
+---

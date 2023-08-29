@@ -680,6 +680,16 @@ Identify which part of the system or user code generated the log.
 }
 ```
 
+## [Custom Handlers](https://learn.microsoft.com/en-us/azure/azure-functions/functions-custom-handlers)
+
+Essentially, custom handlers are lightweight web servers that interact with the Azure Functions host. They can be implemented in any language that supports HTTP primitives.
+
+When an event occurs, the Azure Functions host forwards the request to the custom handler's web server, which executes the function and returns the output for further processing by the host.
+
+The custom handler web server needs to start within 60 seconds.
+
+In `host.json`, use the `customHandler` property to set the executable path and arguments (`customHandler.description.defaultExecutablePath`). In `local.settings.json`, set `FUNCTIONS_WORKER_RUNTIME` to "custom" for local development.
+
 ## CLI
 
 | Command                                                                                                                                     | Brief Explanation                        | Example                                                                                                            |

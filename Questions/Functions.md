@@ -520,6 +520,19 @@ public static void Run(
 
 ---
 
+Question: You are tasked with developing an Azure Function that will be triggered by Azure Blob storage. The function should only be triggered when `.jpg` files are added to a container named `images`. Which of the following filter criteria for `path` in the `function.json` file would meet the requirement?
+
+- [ ] `images/jpg`
+- [x] `images/{name}.jpg`
+- [ ] `images/{name}/jpg`
+- [ ] `images/*.jpg`
+- [ ] `images/jpg/{name}`
+
+Answer: The `{name}` is a placeholder that captures the blob name.  
+`images/*.jpg` syntax is incorrect.
+
+---
+
 Question: Imagine you're devising a real-time analytics solution for a social media company. They desire to oversee and scrutinize user posts and reactions instantaneously. Your assignment is to develop an Azure function that is activated by this live activity. Considering the company's requirement for low-latency data access, complex querying, and globally distributed data, which Azure services would you utilize to accomplish this task? Please provide the triggers and bindings in the given code:
 
 ```cs
@@ -1057,5 +1070,66 @@ Question: What method should you use to create a function key, example: `https:/
 - [x] PUT
 
 Answer: `PUT`, huh...
+
+---
+
+Question: How do you configure custom handlers in Azure Functions?
+
+- [x] Modify `host.json` to include the `customHandler` property with the executable path and arguments.
+- [ ] Modify `local.settings.json` to include the `customHandler` property with the executable path and arguments.
+- [ ] Add `"FUNCTIONS_WORKER_RUNTIME": "node"` in `local.settings.json`.
+- [x] Set `"FUNCTIONS_WORKER_RUNTIME": "custom"` in `local.settings.json`.
+- [ ] Add `"FUNCTIONS_WORKER_RUNTIME": "node"` in `host.json`.
+- [ ] Set `"FUNCTIONS_WORKER_RUNTIME": "custom"` in `host.json`.
+- [ ] Add `"FUNCTIONS_RUNTIME": "node"` in `local.settings.json`.
+- [ ] Set `"FUNCTIONS_RUNTIME": "custom"` in `local.settings.json`.
+- [ ] Add `"FUNCTIONS_RUNTIME": "node"` in `host.json`.
+- [ ] Set `"FUNCTIONS_RUNTIME": "custom"` in `host.json`.
+- [ ] Add `"WORKER_RUNTIME": "node"` in `local.settings.json`.
+- [ ] Set `"WORKER_RUNTIME": "custom"` in `local.settings.json`.
+- [ ] Add `"WORKER_RUNTIME": "node"` in `host.json`.
+- [ ] Set `"WORKER_RUNTIME": "custom"` in `host.json`.
+- [ ] Use Azure Portal to set the custom handler settings.
+
+Answer:
+
+- Modify `host.json` to include the `customHandler` property with the executable path and arguments.
+- Set `"FUNCTIONS_WORKER_RUNTIME": "custom"` in `local.settings.json`.
+
+---
+
+Question: You're working on a collection of Azure Functions and have recently deployed a new Function App that runs on .Net Core 3.1. Where would you specify the logging settings for these Azure Functions?
+
+- [ ] `local.function.json`
+- [ ] `function.json`
+- [x] `host.json`
+- [ ] `app.json`
+- [ ] `appsettings.json`
+
+Answer: The logging configurations for Azure Functions are set in the `host.json` file.
+
+---
+
+Question: You have an Azure Function set up in your Azure account. This Function pulls data from an Azure Storage Queue and deposits it into an Azure SQL Database. Sometimes, the function fails and shows a "Timeout expired" error. This could be because the connection pool has reached its limit. How can you address this problem?
+
+- [x] Tweak the batchSize value in the `host.json` file
+- [ ] Adjust the `queueMax` setting in the function.json file
+- [ ] Switch to a Timer-based trigger
+- [ ] Upgrade to a Premium-tier App Service Plan
+
+Answer: The root cause could be the function running too many tasks at once, using up all the available database connections. You can either expand the database's connection pool or alter the batchSize parameter in the host.json file to limit concurrent function runs.
+
+---
+
+Question: You are developing an application using Azure Functions to handle HTTP requests. The programming language you wish to use is not natively supported by Azure Functions. You decide to use a custom handler for this purpose. Which of the following custom handler web servers would meet the requirements of custom handlers?
+
+- [x] Node.js Express server with a startup time of 45 seconds
+- [ ] Python Flask server with a startup time of 65 seconds
+- [x] Ruby on Rails server with a startup time of 55 seconds
+- [ ] Java Spring Boot server with a startup time of 70 seconds
+- [x] Go HTTP server with a startup time of 50 seconds
+- [ ] ArnoldC server with a startup time of 90 seconds
+
+Answer: The requirement is to have a custom handler web server that starts up in less than 60 seconds.
 
 ---

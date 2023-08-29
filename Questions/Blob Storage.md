@@ -221,7 +221,7 @@ Question: A healthcare organization is considering Azure Blob Storage for storin
 - [ ] Change the access permissions
 - [ ] Change the account kind
 
-Answers: Archive blobs cannot be accessed directly. To read the data of an archived blob, you must first either:
+Answer: Archive blobs cannot be accessed directly. To read the data of an archived blob, you must first either:
 
 - Change its tier to Hot or Cool (this process is known as rehydration).
 - Copy the blob to a Hot or Cool tier to access its data without affecting the original blob in Archive storage.
@@ -248,7 +248,7 @@ Question: A video streaming company stores large media files, typically 8-9 GB i
 - [ ] Cold access tier
 - [x] Archive access tier
 
-Answers: Files up to 10 GB can be rehydrated within an hour on High Priority, but it's not guaranteed.
+Answer: Files up to 10 GB can be rehydrated within an hour on High Priority, but it's not guaranteed.
 
 ---
 
@@ -280,5 +280,15 @@ Question: An intern inadvertently misconfigures an application, bypassing the ne
 - [ ] No
 
 Answer: Since soft delete is enabled on the storage account, both the blob and its snapshots, including Snapshot B, are soft-deleted. This means they can be recovered during the retention period specified in the soft delete policy. Therefore, it is possible to restore Snapshot B.
+
+---
+
+What authentication supported by AzCopy to copy data from public blob into Azure Blob:
+
+- [x] OAuth
+- [x] SAS
+- [ ] Operation is not permitted
+
+Answer: Azcopy supports both SAS and OAuth authentication for data transfer between two Azure Blobs.
 
 ---

@@ -365,3 +365,14 @@ Answer: `*/read` grants read access to all resources within the subscription.
 `Microsoft.Insights/diagnosticSettings/*/read` is incorrect because it only allows read access to Microsoft Insights, but support team wants all resources.
 
 ---
+
+Question: Your organization utilizes Azure for various resources. The development team creates web applications and forwards the builds to the deployment team for implementation on Azure. You need to ensure that your development team can view Azure resources and also create support tickets for all subscriptions. You are tasked with creating a new custom role based on an existing role definition. What actions should you include in the "Actions" section of this custom role?
+
+- [x] `*/read`
+- [ ] `*/write`
+- [ ] `Microsoft.Support/*/read`
+- [x] `Microsoft.Support/*`
+
+Answer: `*/read` grants read permissions for resources. Adding `Microsoft.Support/*` allows the team to create support tickets for all subscriptions.
+
+---

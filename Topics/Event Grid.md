@@ -308,6 +308,36 @@ event='[ {"id": "'"$RANDOM"'", "eventType": "recordInserted", "subject": "myapp/
 curl -X POST -H "aeg-sas-key: $key" -d "$event" $topicEndpoint
 ```
 
+## [Configure Azure Event Grid service to send events to an Azure Event Hub instance](https://learn.microsoft.com/en-us/azure/event-grid/custom-event-to-eventhub)
+
+```sh
+topicName="<Topic_Name>"
+location="<Location>"
+resourceGroupName="<Resource_Group_Name>"
+namespaceName="<Namespace_Name>"
+eventHubName="<Event_Hub_Name>"
+
+az eventgrid topic create --name $topicName --location $location --resource-group $resourceGroupName
+
+# az eventgrid topic show --name $topicName --resource-group $resourceGroupName --query "{endpoint:endpoint, primaryKey:primaryKey}" --output json
+
+# Create a namespace
+az eventhubs namespace create --name $namespaceName --location $location --resource-group $resourceGroupName
+
+# Create an event hub
+az eventhubs eventhub create --name $eventHubName --namespace-name $namespaceName --resource-group $resourceGroupName
+
+topicId=$(az eventgrid topic show --name $topicName --resource-group $resourceGroupName --query "id" --output tsv)
+hubId=$(az eventhubs eventhub show --name $eventHubName --namespace-name $namespaceName --resource-group $resourceGroupName --query "id" --output tsv)
+
+# Link the Event Grid Topic to the Event Hub
+az eventgrid event-subscription create \
+  --name "<Event_Subscription_Name>" \
+  --source-resource-id $topicId \
+  --endpoint-type eventhub \
+  --endpoint $hubId
+```
+
 ## Working with EventGrid
 
 ### Enable an Event Grid resource provider for subscriptions

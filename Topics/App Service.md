@@ -543,7 +543,7 @@ A certificate is accessible to all apps in the same resource group and region co
 
 - **Free Managed Certificate**: Auto renewed every 6 months, no wildcard certificates or private DNS, can't be exported, not supported in ASE.
 - **App Service Certificate**: A private certificate that is managed by Azure. Automated certificate management, renewal and export options.
-- **Using Key Vault**: Store private certificates (same requerenments) in Key Vault. Automatic renewal, except for non-integrated certificates (`az keyvault certificate create ...`)
+- **Using Key Vault**: Store private certificates (same requerenments) in Key Vault. Automatic renewal, except for non-integrated certificates (`az keyvault certificate create ...`, default policy: `az keyvault certificate get-default-policy`)
 - **Uploading a Private Certificate**: Requires a password-protected PFX file encrypted with triple DES, with 2048-bit private key and all intermediate/root certificates in the chain.
 - **Uploading a Public Certificate**: For accessing remote resources.
 
