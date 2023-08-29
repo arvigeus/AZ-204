@@ -340,3 +340,28 @@ Question: In the Azure Portal, where do you navigate to assign roles and grant a
 Answer: Access control (IAM) is the specific section within the Azure Portal where you can manage access to Azure resources by assigning roles.
 
 ---
+
+Question: A new web application has been deployed in a specific Azure subscription. The DevOps team will be responsible for monitoring the application and executing future deployments. You need to set up Role-Based Access Control (RBAC) for the DevOps team to allow them to view and manage deployment pipelines within the subscription. What RBAC role should you assign to the DevOps team?
+
+- [ ] `*/write`
+- [x] Microsoft.Pipelines/write
+- [ ] Microsoft.DevOps//write
+- [ ] Microsoft.Management/write
+- [ ] Microsoft.Management/read
+
+Answer: The correct option is `Microsoft.DevOps/write` because to manage deployment pipelines and monitor the application, the DevOps team would require write access to DevOps resources within the subscription. This role allows them to view and manage DevOps resources, including deployment pipelines.  
+`*/write`: Provides write access to all resources within the subscription, which could be overly permissive and pose a security risk.
+
+---
+
+Question: A freshly deployed application service exists within a specific subscription. When the application goes live and gains users, a support team will oversee logs and assist with subsequent deployments. To enable the support team to view subscription details via RBAC, which access roles should be granted?
+
+- [x] `*/read`
+- [ ] `Microsoft.Support/*/read`
+- [ ] `Microsoft.Compute/*`
+- [ ] `Microsoft.Insights/diagnosticSettings/*/read`
+
+Answer: `*/read` grants read access to all resources within the subscription.  
+`Microsoft.Insights/diagnosticSettings/*/read` is incorrect because it only allows read access to Microsoft Insights, but support team wants all resources.
+
+---

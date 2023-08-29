@@ -17,6 +17,8 @@ Managed identities are specific to the Azure cloud and _cannot be directly assig
 
 Azure RBAC is the authorization system you use to manage access to Azure resources. To assign Azure roles, you must have `Microsoft.Authorization/roleAssignments/write` permissions, such as `User Access Administrator` or `Owner`.
 
+Read access to all resources: `*/read`
+
 ## Using Managed Identity with an Azure Virtual Machine
 
 User-assigned identities need to be created first before they can be assigned to a VM. System-assigned identities are automatically created when the VM is set up.

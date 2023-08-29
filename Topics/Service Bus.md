@@ -62,6 +62,20 @@ Routing is managed interally, but applications can also use user properties for 
 | Geo-disaster recovery      | Continues data processing in a different region or datacenter during downtime.                |
 | Security                   | Supports standard AMQP 1.0 and HTTP/REST protocols.                                           |
 
+## [Scheduled messages](https://learn.microsoft.com/en-us/azure/service-bus-messaging/message-sequencing#scheduled-messages)
+
+To schedule messages, you have two options:
+
+1. Use the regular API and set the `ScheduledEnqueueTimeUtc` property before sending.
+1. Use the schedule API, provide the message and time, and get a `SequenceNumber` for possible cancellation later.
+
+## [Best Practices for performance improvements](https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-performance-improvements?tabs=net-standard-sdk-2)
+
+- Always prefer asynchronous methods to improve performance and responsiveness.
+- Message factories: Use multiple message factories to enhance throughput, particularly when both sides have a large number of senders and receivers. Opt for a single message factory per process when one side has significantly fewer senders or receivers.
+- Batched store access (batching): Increases throughput. Consider disabling for low-latency requirements.
+- Prefetch count: Set to 20 times the maximum processing rates of all receivers. Use a smaller prefetch count when dealing with a large number of receivers to balance resource utilization and responsiveness. For low-latency with a single client, set to 20 times the processing rate of the receiver. With multiple clients, set to 0.
+
 ## Security
 
 RBAC:
@@ -78,7 +92,7 @@ Also supports SAS and Managed Identities
 
 - **SQL Filters** (`SqlRuleFilter`):
 
-  - **Use**: Complex conditions using SQL-like expressions.
+  - **Use**: Complex conditions using SQL-like expressions. All system properties must be prefixed with `sys.` in the conditional expression. (IS NULL, EXISTS, LIKE, AND/OR/NOT).
   - **Example**: Filtering messages having specific property value (or not) and quantities.
   - **Impact**: Lower throughput compared to Correlation Filters.
 
@@ -88,7 +102,7 @@ Also supports SAS and Managed Identities
   - **Example**: `new TrueRuleFilter()` for all messages.
 
 - **Correlation Filters** (`CorrelationRuleFilter`):
-  - **Use**: Match messages based on specific properties like CorrelationId.
+  - **Use**: Match messages based on specific properties like CorrelationId, ContentType, Label, MessageId, ReplyTo, ReplyToSessionId, SessionId, To, any user-defined properties.
   - **Example**: Filtering messages with a specific subject and correlation ID.
   - **Impact**: More efficient in processing, preferred over SQL filters.
 
