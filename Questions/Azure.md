@@ -39,8 +39,8 @@ Notification Hubs are used for sending mobile push notifications, not for subscr
 
 Question: You are tasked with developing an ASP.Net web application for deployment on Azure Web App service. The application has two critical requirements:
 
-1. Manage and save session state data that should be accessible across all ASP.Net web applications.
-1. Store full HTTP responses for specific operations.
+- Manage and save session state data that should be accessible across all ASP.Net web applications.
+- Store full HTTP responses for specific operations.
 
 Additionally, the application should support controlled and concurrent access to the session state data for multiple readers and a single writer. Which Azure service is best suited to meet these session state management and HTTP response storage requirements?
 

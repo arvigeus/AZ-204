@@ -464,3 +464,95 @@ Question: Your ASP.Net Core web application also needs to access Azure Blob Stor
 Answer: "Delegated" allows the application to access Azure Blob Storage on behalf of the authenticated users.
 
 ---
+
+Question: You are a solutions architect for 'StreamBox,' a video streaming service. The company wants to implement a feature that allows users to quickly sign in using their social media credentials like Instagram, Reddit, or Google, in addition to their regular email accounts. Which Azure service should be utilized to meet this requirement?
+
+- [ ] Azure AD B2B
+- [ ] Azure Multi-Factor Authentication
+- [x] Azure AD B2C
+- [ ] Azure AD Single Tenant Authentication
+
+Answer: AD B2C supports authentication through a variety of social media platforms and email accounts, making it the most suitable choice for this scenario.
+
+---
+
+Question: Click on the following steps in the correct order to integrate authentication and authorization working with the Microsoft identity platform for Web API:
+
+- [x] Store token cache
+- [x] Register app
+- [x] Control access to web API (authorization)
+- [x] Configure app with code sample
+- [x] Configure permission & call API of choice
+- [x] Validate access token
+- [x] Configure secrets & certificates
+
+Answer:
+
+1. Register app
+1. Configure app with code sample
+1. Validate access token
+1. Configure secrets & certificates
+1. Configure permission & call API of choice
+1. Control access to web API (authorization)
+1. Store token cache
+
+---
+
+Question: Click on the following steps in the correct order to protect an API in Azure API Management with Azure Active Directory:
+
+- [x] Register the backend API application in Azure AD.
+- [x] Register the web App (website containing summarized results) in Azure AD so that it can call the backend API.
+- [x] Allow permissions between the website app to call the backend API app. Add the configurations in Azure AD.
+- [x] Enable OAuth 2.0 user authorization and add the validate-jwt policy to validate the OAuth token for API calls.
+
+Answer:
+
+1. Register the backend API application in Azure AD.
+1. Register the web App (website containing summarized results) in Azure AD so that it can call the backend API.
+1. Allow permissions between the website app to call the backend API app. Add the configurations in Azure AD.
+1. Enable OAuth 2.0 user authorization and add the validate-jwt policy to validate the OAuth token for API calls.
+
+---
+
+Question: You need to implement authentication for two applications: a web application and an API. Only users from a specific AD tenant should be able to access both applications. Which of the following account types should you select to meet the security requirements?
+
+- [ ] Accounts in any organizational directory (Any Azure AD directory - Multitenant)
+- [ ] Accounts in any organizational directory (Any Azure AD directory - Multitenant) and personal Microsoft accounts
+- [x] Accounts in this organizational directory only (Single tenant)
+- [ ] Personal Microsoft accounts only
+
+Answer: This option restricts access to only users in the specific AD tenant, meeting the requirement.  
+Allowing accounts from any organizational directory would violate the requirements.  
+Personal Microsoft accounts are related to Skype, Xbox, etc accounts.
+
+---
+
+Question: You are tasked with developing a web-based solution that will be hosted on Azure. The application should enforce secure access through Azure Active Directory (Azure AD). The requirements are as follows:
+
+- Users should authenticate using their Azure AD accounts.
+- The application should offer personalized experiences based on the user's Active Directory group memberships.
+
+How would you modify the Azure AD application manifest file to meet these requirements?
+
+```jsonc
+{
+  "appId": "your-app-id-here",
+  "displayName": "Your App Name"
+  // Write related properties here
+}
+```
+
+Answer:
+
+```jsonc
+{
+  "appId": "your-app-id-here",
+  "displayName": "Your App Name",
+  "groupMembershipClaims": "SecurityGroup",
+  "oauth2AllowImplicitFlow": true
+}
+```
+
+`groupMembershipClaims` will include the user's security group memberships in the claims whenever a token is requested. `oauth2AllowImplicitFlow` is often relevant when you're working with SPAs or other scenarios where the Implicit Grant Flow is used.
+
+---

@@ -2,6 +2,8 @@
 
 Application Insights, an extension of Azure Monitor, is a comprehensive Application Performance Monitoring (APM) tool. It provides unique features that help monitor applications throughout their lifecycle, from development and testing to production.
 
+Note: Application Insights utomatically captures Session Id, so no need to manually capture it.
+
 | Feature                            | Description                                                                                                                                                    |
 | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Live Metrics                       | Observe activity from your deployed application in real time with no effect on the host environment.                                                           |
@@ -308,3 +310,33 @@ Records subscription-level events, such as modifications to resources or startin
 ### Connection string
 
 From env var `APPLICATIONINSIGHTS_CONNECTION_STRING`. Controls where telemetry is sent.
+
+## Metric Source Scaling Rule
+
+### Service Bus Queue
+
+- **Message Count**: The number of messages currently in the queue.
+- **Active Message Count**: The number of active messages in the queue.
+- **Dead-letter Message Count**: The number of messages that have been moved to the dead-letter queue.
+- **Scheduled Message Count**: The number of messages that are scheduled to appear in the queue at a future time.
+- **Transfer Message Count**: The number of messages transferred to another queue or topic.
+- **Transfer Dead-letter Message Count**: The number of messages transferred to the dead-letter queue for another queue or topic.
+
+### Azure Blob Storage
+
+- **Blob Count**: Number of blobs in a container.
+- **Blob Size**: Total size of blobs in a container.
+- **Egress**: Data egress rate.
+- **Ingress**: Data ingress rate.
+
+### Azure Event Hub
+
+- **Incoming Messages**: Number of messages received.
+- **Outgoing Messages**: Number of messages sent.
+- **Capture Backlog**: Number of messages waiting to be captured.
+
+### Azure Redis Cache
+
+- **Cache Hits**: Number of successful data retrievals.
+- **Cache Misses**: Number of failed data retrievals.
+- **Get/Set Operations**: Number of get/set operations.

@@ -639,6 +639,16 @@ Answer: Always restart
 
 ---
 
+Question: In Azure Container Instances, which restart policy should you choose if you want the containers in the container group to execute only once and not restart?
+
+- [x] Never
+- [ ] OnFailure
+- [ ] Always
+
+Answer: `Never` policy ensures that the containers in the container group will not be restarted. It aligns with the requirement of running the containers at most once.
+
+---
+
 Question: Which command will set environment variable `MinLength` to `8`?
 
 - [x] `az container create --environment-variables 'MinLength'='8'`
@@ -746,5 +756,61 @@ Answer: `az container create` is the correct command to deploy a container in Az
 `az container push` is not a valid Azure CLI command.  
 `az container export` exports a container group in yaml format.  
 `docker build` builds a Docker image from a Dockerfile, not related to deploying a container.
+
+---
+
+Question: You are planning to use Azure Container Registry for your application. Which identity type should you use to ensure both headless authentication and role-based access control (RBAC)?
+
+- [ ] Individual AD Identity
+- [ ] Managed Identity for Azure Resources
+- [x] AD Service Principal
+- [ ] Admin User
+
+Answer: Service principals are designed for headless authentication and can be assigned specific Azure roles, making them ideal for both requirements.  
+Individual AD Identity and Admin User are used for interactive push/pull operations.  
+Managed Identity for Azure Resources: While it supports unattended operations, it's limited to select Azure services and may not offer the full range of RBAC options.
+
+---
+
+Question: You need to attach the standard output and standard error streams of a running container in Azure to your terminal. Which Azure CLI command should you use?
+
+- [ ] `az container logs`
+- [ ] `az container exec`
+- [x] `az container attach`
+- [ ] `az container start`
+
+Answer: `az container attach` is used to attach the standard output and standard error streams of a running container to your terminal.  
+`az container logs` is used to fetch the logs for a container in a container group.
+
+---
+
+Question: You need to mount KeyVault in `/mnt/secrets`. Under which property in the YAML file `mountPath: /mnt/secrets/` will go?
+
+- [ ] volumes
+- [x] volumesMounts
+
+Answer: `volumesMounts` - Where to mount.
+
+---
+
+Question: You need to mount KeyVault in `/mnt/secrets`. Under which property in the YAML file `azureKeyVault:` will go?
+
+- [x] volumes
+- [ ] volumesMounts
+
+Answer: `volumes` - What to mount.
+
+---
+
+Question:
+
+Your organization utilizes an Azure container registry. What is the most restrictive role you should assign to developers so they can upload/publish images to the registry without granting excessive permissions?
+
+- [ ] `Owner`
+- [ ] `Contributor`
+- [x] `AcrPush`
+- [ ] `AcrPull`
+
+Answer: The `AcrPush` role allows developers to push images to the Azure container registry while adhering to the principle of least privilege.
 
 ---

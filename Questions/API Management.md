@@ -289,3 +289,56 @@ Generating OpenAPI specifications is not directly related to managing APIs acros
 Configuring a VPN connection is not relevant to the scenario described.
 
 ---
+
+Here's the modified question using generic Azure CLI commands instead of PowerShell:
+
+Your team has developed an application API based on the OpenAPI specification. You have to ensure that the API can be accessed via an Azure API management service instance. Which of the following Azure CLI commands would you run?
+
+- [ ] `az apim api import`
+- [ ] `az apim backend create`
+- [x] `az apim create`
+- [ ] `az apim backend proxy create`
+
+Answer: First, you need to create a new API management instance using `az apim create`.  
+`az apim api import` imports an API into an existing API Management service instance.  
+`az apim backend create` creates a new backend entity in API Management.
+`az apim backend proxy create` is for creating a proxy backend, not an API Management instance.
+
+---
+
+Question: In a company's API system hosted behind an Azure API Management service, you are tasked with implementing response caching. The user ID of the client must first be detected and saved. Then, the response must be cached specifically for that saved user ID. What types of policies should be used to accomplish this task?
+
+- [ ] Inbound policy only
+- [ ] Outbound policy only
+- [x] Both inbound and outbound policies
+- [ ] Backend policy only
+- [ ] Global policy only
+
+Answer: Both inbound and outbound policies
+
+- Inbound Policy: The inbound policy is used to extract and save the user ID from the incoming request. The `<set-variable>` policy is used to save the user ID, and the `<cache-lookup>` policy with a custom key is used to check if a cached response exists for that user ID.
+- Outbound Policy: The outbound policy is used to store the response in the cache. The `<cache-store>` policy with a custom key is used to cache the response specifically for the saved user ID.
+
+Therefore, both inbound and outbound policies are needed to meet the requirements.
+
+---
+
+Question: A company uses Azure API Management to publish APIs for external consultants. The API needs to forward the user ID associated with the subscription key to the back-end service. Which type of policy should be used for this requirement?
+
+- [x] Inbound
+- [ ] Outbound
+- [ ] Backend
+- [ ] Error
+
+Answer: Forwarding the user ID that is associated with the subscription key to the back-end service would be done in an inbound policy.
+
+```xml
+<policies>
+    <inbound>
+        <set-header name="x-user-id" exists-action="override">
+            <value>@(context.Subscription.Id)</value>
+        </set-header>
+    </inbound>
+</policies>
+
+```

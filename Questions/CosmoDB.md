@@ -804,3 +804,184 @@ Question: What operations can a stored procedure perform of document in CosmoDB?
 Answer: Stored procedures are capable of performing CRUD and query operations on any document in a collection.
 
 ---
+
+Question: Complete the following pre-trigger that adds timestampt to every new item:
+
+```js
+function validateToDoItemTimestamp() {
+  /* Code here */
+
+  // item to be created in the current operation
+  var itemToCreate = /* Code here */;
+
+  // validate properties
+  if (!("timestamp" in itemToCreate)) {
+    var ts = new Date();
+    itemToCreate["timestamp"] = ts.getTime();
+  }
+
+  // update the item that will be created
+  /* Code here */
+}
+```
+
+Answer:
+
+```js
+function validateToDoItemTimestamp() {
+  var context = getContext();
+  var request = context.getRequest();
+
+  // item to be created in the current operation
+  var itemToCreate = request.getBody();
+
+  // validate properties
+  if (!("timestamp" in itemToCreate)) {
+    var ts = new Date();
+    itemToCreate["timestamp"] = ts.getTime();
+  }
+
+  // update the item that will be created
+  request.setBody(itemToCreate);
+}
+```
+
+---
+
+Question: You are working on a project that involves storing large amounts of data in Azure Cosmos DB using the SQL API. The data consists of user profiles, each with a variety of attributes. During the design phase, you realize that no single attribute is suitable for partitioning, as they either appear too frequently or not frequently enough to distribute the workload evenly across partitions. Which of the following strategies could you use to create a synthetic partition key that ensures even distribution of workloads?
+
+- [x] Concatenating multiple common properties, followed by a random number
+- [ ] Using the user's email address as it is unique
+- [x] Appending a timestamp to the user's country of residence
+- [ ] Using the user's age as the partition key
+- [ ] Using the user's membership status (e.g., Free, Premium, VIP)
+
+Answer:
+
+- Concatenating multiple common properties, followed by a random number, would create a synthetic partition key that is likely to distribute data more evenly across partitions. The random number ensures that the key is unique and helps in distributing the workload.
+- Appending a timestamp to the user's country of residence would also create a synthetic partition key that can distribute data more evenly. The timestamp ensures that even if many users are from the same country, their data will be spread across multiple partitions.
+- Using the user's email address as it is unique would not necessarily distribute the workload evenly, especially if the application has operations that need to query or update multiple documents that can't be guaranteed to be in the same partition.
+- Using the user's age would not be a good choice for partitioning, as it could lead to hot partitions. Age groups like 20-30 or 30-40 could have more data, leading to uneven distribution.
+- Using the user's membership status could also lead to hot partitions if one membership type is significantly more common than others.
+
+---
+
+Question: How to retain the change feed in Azure Cosmos DB until the data is deleted? What should be the value of TTL (Time to Live) property?
+
+- [ ] null
+- [x] -1
+- [ ] 0
+- [ ] 1
+
+Answer: If the TTL property is set on an item to -1, the change feed will remain if the data is not deleted.
+
+---
+
+Question: Create a stored procedure that creates a document.
+
+```js
+var createDocumentStoredProc = {
+  id: "createMyDocument",
+  // This stored procedure creates a new item in the Azure Cosmos container
+  body: function createMyDocument(documentToCreate) {
+    // Code here
+  },
+};
+```
+
+Answer:
+
+```js
+var createDocumentStoredProc = {
+  id: "createMyDocument",
+  // This stored procedure creates a new item in the Azure Cosmos container
+  body: function createMyDocument(documentToCreate) {
+    var context = getContext();
+    var collection = context.getCollection();
+
+    // Async 'createDocument' operation, depends on JavaScript callbacks
+    // returns true if creation was successful
+    var accepted = collection.createDocument(
+      collection.getSelfLink(),
+      documentToCreate,
+      // Callback function with error and created document parameters
+      function (err, documentCreated) {
+        // Handle or throw error inside the callback
+        if (err) throw new Error("Error" + err.message);
+        // Return the id of the newly created document
+        context.getResponse().setBody(documentCreated.id);
+      }
+    );
+
+    // If the document creation was not accepted, return
+    if (!accepted) return;
+  },
+};
+```
+
+---
+
+Question: How to set Time-To-Live property of `ContainerProperties` to be 1 hour?
+
+- [ ] `DefaultTimeToLive = 60`
+- [x] `DefaultTimeToLive = 3600`
+- [ ] `TTL = 60`
+- [ ] `TTL = 3600`
+
+Answer: Property is `DefaultTimeToLive`, unit is _seconds_,
+
+---
+
+Question: You have to ensure the following query can be executed:
+
+```sql
+select * from customers order by customername, city asc
+```
+
+You have to define a policy for this:
+
+```jsonc
+{
+  "automatic": true,
+  "indexingMode": "Consistent",
+  "includedPaths": [{ "path": "/*" }],
+  "excludedPaths": []
+  /* Code here */
+}
+```
+
+Answer: Queries that have an `ORDER BY` clause with two or more properties require a composite index.
+
+```json
+{
+  "automatic": true,
+  "indexingMode": "Consistent",
+  "includedPaths": [{ "path": "/*" }],
+  "excludedPaths": [],
+  "compositeIndexes": [
+    [
+      {
+        "path": "/city",
+        "order": "ascending"
+      },
+      {
+        "path": "/customername",
+        "order": "descending"
+      }
+    ]
+  ]
+}
+```
+
+---
+
+Question: You are working on an Azure-based application that utilizes Azure Cosmos DB for data storage. You've noticed scalability issues attributed to hot partitioning. What is the likely cause of this hot partitioning issue in Azure Cosmos DB?
+
+- [ ] Executing queries that don't use the partition key
+- [ ] Running queries focused on a single partition key
+- [ ] Failing to set an indexing policy
+- [x] Designing a partition key that leads to uneven request distribution
+
+Answer: Hot partitioning typically arises when there is an uneven distribution of requests or data across logical partitions. This imbalance prevents Azure Cosmos DB from scaling effectively. The ideal partition key should ensure a balanced distribution of both storage and throughput across partitions.
+
+---

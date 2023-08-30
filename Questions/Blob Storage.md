@@ -292,3 +292,20 @@ What authentication supported by AzCopy to copy data from public blob into Azure
 Answer: Azcopy supports both SAS and OAuth authentication for data transfer between two Azure Blobs.
 
 ---
+
+Question: You're building an ASP.Net Core app to interact with Azure Blob containers using Azure AD and role-based access. What permission should you set for the Azure Storage API?
+
+- [ ] `User.Read`
+- [ ] `User.Write`
+- [ ] `client_id`
+- [ ] `user_impersonation`
+- [ ] `Blob.Read`
+- [ ] `Storage.Access`
+- [ ] `AzureAD.Auth`
+- [ ] `Storage Blob Data Contributor`
+- [ ] `Storage Blob Data Reader`
+- [ ] `Storage Account Contributor`
+
+Answer: `user_impersonation` allows the application to act as the user, inheriting their roles and permissions for blob access.
+
+---

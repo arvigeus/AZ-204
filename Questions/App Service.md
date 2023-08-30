@@ -961,6 +961,17 @@ Answer: You cannot have Always On on the `Free` and `Shared` tiers.
 
 ---
 
+Question: A corporation has an Azure-based web application that triggers an email alert during specific events. Users have noticed that alerts for irregular activities are sometimes delayed by several minutes. What should be done to address this delay?
+
+- [ ] Configure the Azure Function to operate on an App Service plan.
+- [ ] Disable the Always On feature.
+- [ ] Switch the Azure Function to a consumption-based plan.
+- [x] Enable the Always On feature.
+
+Answer: The problem arises because the Azure Web App goes into an idle state when not in use, causing delays in sending anomaly detection emails. To prevent this, the Always On feature should be enabled. This ensures that the Web App is always running, thereby eliminating the delay.
+
+---
+
 Question: Which App Service plans support staging environments (deployment slots):
 
 - [ ] Free
@@ -1384,5 +1395,39 @@ Question: What is Transient Fault Handling in the context of cloud applications?
 - [ ] A method for handling user interface glitches in cloud-based applications.
 
 Answer: A technique to handle temporary service interruptions by implementing smart retry/back-off logic, possibly using circuit breakers.
+
+---
+
+Question: You are managing a web application hosted on an Azure Web App. The application is expected to experience a significant increase in traffic soon. You are tasked with configuring auto-scaling for the web app. The requirement is to scale out when the CPU usage goes above 85% for a period of 10 minutes and to scale in when the CPU usage drops below 70%. Which two Azure CLI commands would you use to set up the required auto-scaling rules?
+
+- [x] `az monitor autoscale rule create -g ResourceGroup --resource WebAppName --autoscale-name AutoScaleName --scale out 1 --condition "Percentage CPU > 85 avg 10m"`
+- [ ] `az webapp autoscale rule create -g ResourceGroup --resource WebAppName --autoscale-name AutoScaleName --scale out 1 --condition "Percentage CPU > 85 avg 10m"`
+- [x] `az monitor autoscale rule create -g ResourceGroup --resource WebAppName --autoscale-name AutoScaleName --scale in 1 --condition "Percentage CPU < 70 avg 10m"`
+- [ ] `az webapp autoscale rule create -g ResourceGroup --resource WebAppName --autoscale-name AutoScaleName --scale in 1 --condition "Percentage CPU < 70 avg 10m"`
+
+Answer: `az monitor autoscale rule create`, not `az webapp autoscale rule create`
+
+---
+
+Question: To utilize Application Insights Profiler in an Azure Web App, which configuration must be enabled?
+
+- [ ] Cross-Origin Resource Sharing (CORS)
+- [x] Always On Feature
+- [ ] Identity Activation
+- [ ] Custom Domain Configuration
+
+Answer: The "Always On" setting is required to enable Application Insights Profiler for an Azure Web App. This setting keeps the app loaded even when there's no incoming traffic, allowing the profiler to collect data effectively.
+
+---
+
+Question: Your organization has a web app deployed on Azure using the D1 App Service Plan. You are tasked with setting up the infrastructure to automatically scale when CPU utilization hits 85%, while also keeping costs low. Which of the following actions should you take to meet these objectives? Select four options.
+
+- [ ] Activate autoscaling for the Web App
+- [ ] Set up a scaling condition
+- [x] Switch the web app to the Standard App Service Plan
+- [ ] Upgrade the web app to the Premium App Service Plan
+- [ ] Establish a scaling rule
+
+Answer: The D1 App Service Plan is a Shared Service Plan, which doesn't support autoscaling. Therefore, you would need to switch the web app to the Standard App Service Plan.
 
 ---

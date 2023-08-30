@@ -193,11 +193,27 @@ Question: Click on the following steps in the correct order to explain how Azure
 
 Answer:
 
-- A user requests a file using a special URL.
-- The request is directed to the nearest server location, also known as Point of Presence (POP).
-- If the file isn’t in the server’s cache, it’s fetched from the origin server.
-- The file is then sent to the user from the POP server and stored there for future requests.
-- This cached file can be quickly sent to any other users requesting the same file, providing a faster user experience.
-- The file stays in the cache until its time-to-live (TTL) expires.
+1. A user requests a file using a special URL.
+1. The request is directed to the nearest server location, also known as Point of Presence (POP).
+1. If the file isn’t in the server’s cache, it’s fetched from the origin server.
+1. The file is then sent to the user from the POP server and stored there for future requests.
+1. This cached file can be quickly sent to any other users requesting the same file, providing a faster user experience.
+1. The file stays in the cache until its time-to-live (TTL) expires.
+
+---
+
+Question: You have configured an Azure Front Door service to route requests to web applications in the Azure Web App service. A request is made for a 10 MB XML file with Brotli compression, but the file is not being compressed. What could be the reasons for this issue?
+
+- [x] The XML file exceeds Azure Front Door's file size limit for compression.
+- [x] The `Content-Type` header for the XML file is not set to a type that Azure Front Door is configured to compress.
+- [ ] Brotli compression is not enabled in the Azure Front Door settings.
+- [x] The origin server where the Azure Web App is hosted is not configured to handle Brotli compression for XML files.
+- [x] The file was initially requested without compression settings and got cached.
+- [ ] The XML file is encrypted, making it ineligible for compression.
+- [ ] Brotli compression does not support XML
+- [x] Caching is not enabled.
+
+Answer: File size limit is 1KB to 8MB. Compression only works when caching is enabled.  
+The question already states that a request was made for a file "with Brotli compression".
 
 ---

@@ -279,3 +279,16 @@ Question: To enhance performance and ensure data consistency between your data s
 Answer Explanation: Cache-Aside pattern is ideal for scenarios where native read-through and write-through operations are not supported by the cache. It also allows for on-demand data loading, making it suitable for situations with fluctuating resource demand.
 
 ---
+
+Question: You are using Azure Cache for Redis to improve the performance of your web application. Which of the following would you store in Azure Cache for Redis?
+
+- [ ] HttpContext.Items
+- [ ] ViewState
+- [x] Session state
+- [ ] Application state
+- [ ] Query strings
+- [ ] Cookies
+
+Answer: Storing session state in Azure Cache for Redis is one of the common patterns / use cases.
+
+---

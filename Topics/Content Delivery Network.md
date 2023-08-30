@@ -96,6 +96,14 @@ az cdn endpoint load \
     --resource-group ExampleGroup
 ```
 
+## [Compression (Front Door)](https://learn.microsoft.com/en-us/azure/frontdoor/standard-premium/how-to-compression)
+
+- Files must be of a specific MIME type.
+- File size should be larger than 1 KB and smaller than 8 MB.
+- Supported encodings are gzip and brotli.
+- Configuration changes take up to 10 minutes to propagate.
+- Compression is part of the caching feature, it only works when caching is enabled.
+
 ### Geo-filtering
 
 Geo-filtering allows for the control of content access by country/region codes. The **Standard** tier allows only site-wide allowance or blocking, while the **Verizon** and **Akamai** tiers offer additional directory path restrictions.

@@ -36,9 +36,11 @@ Similar to rows or documents in other databases. An item is the smallest unit of
 
 #### [Time to live (TTL)](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/time-to-live)
 
-Auto-deletes items after a specified time period based on their last modified time, without requiring a client-initiated delete operation. The TTL value is set in seconds at either the container or item level, with item-level settings overriding the container level.
+Auto-deletes items after a specified time period (in seconds) based on their last modified time, without requiring a client-initiated delete operation. The TTL value is set in seconds at either the container or item level, with item-level settings overriding the container level.
 
 Deletion uses leftover Request Units (RUs), and if RUs are insufficient due to heavy load, deletion is delayed but expired data isn't returned in queries. If container-level TTL is absent or null, items don't auto-expire. If it's -1, items also don't expire unless they have their own TTL. If container's TTL isn't set, item-level TTL is ineffective.
+
+TTL is set via `DefaultTimeToLive` property of `ContainerProperties`.
 
 ![Image showing the hierarchy of Azure Cosmos DB entities: Database accounts are at the top, Databases are grouped under accounts, Containers are grouped under databases.](https://learn.microsoft.com/en-us/training/wwl-azure/explore-azure-cosmos-db/media/cosmos-entities.png)
 
@@ -148,7 +150,8 @@ cosmosClient.ConsistencyLevel = ConsistencyLevel.BoundedStaleness;
 
 Azure Cosmos DB employs partitioning to efficiently distribute and manage data across multiple machines or regions. This technique enhances performance by providing high throughput and low latency. It also offers the flexibility to scale storage capacity and throughput independently.
 
-- **Partition Key**: This is a specific property in your data that Cosmos DB uses to distribute the data across multiple partitions. Selecting an optimal partition key is a critical decision for the performance and scalability of a Cosmos DB. A well-chosen partition key evenly disperses the workload across all partitions, thereby avoiding 'hot' partitions that could become a performance bottleneck. They can be _string_ value only.
+- **Partition Key**: This is a specific property in your data that Cosmos DB uses to distribute the data across multiple partitions. Selecting an optimal partition key is a critical decision for the performance and scalability of a Cosmos DB. It's the best practice to have a partition key with many distinct values, such as hundreds or thousands. A well-chosen partition key evenly disperses the workload across all partitions, thereby avoiding _'hot' partitions_ (imbalance of logical partitions, where some logical partitions are
+  very large and some are very small which does not allow Azure Cosmos DB to scale) that could become a performance bottleneck. They can be _string_ value only.
 
 - **Logical Partitions**: Each logical partition comprises a set of items sharing the same partition key value. Cosmos DB uses logical partitions to organize data, which enables rapid and efficient query processing and transaction management. Each logical partition can store up to 20 GB of data and can serve up to 10,000 RU/s.
 
@@ -163,6 +166,14 @@ For example, a container holds items. Each item has a unique value for the UserI
 Choosing the right partition key is crucial to evenly distribute data and workload, preventing performance degradation caused by overloaded partitions.
 
 To optimize, consider selecting a partition key that is commonly used in the `WHERE` clause of your queries and has numerous distinct values. For example, in a multi-tenant application, utilizing the tenant ID as the partition key offers advantages. This approach localizes each tenant's data to specific partitions, enhancing read/write performance and maintaining data isolation for tenants.
+
+### [Synthetic partition key](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/synthetic-partition-keys)
+
+When no property has many distinct values:
+
+- Concatenate multiple properties of an item
+- Use a partition key with a random suffix
+- Use a partition key with pre-calculated suffixes
 
 ## [Request Units (RUs)](https://learn.microsoft.com/en-us/azure/cosmos-db/request-units)
 
@@ -388,7 +399,38 @@ Azure Cosmos DB allows transactional execution of JavaScript in the form of stor
   }
   ```
 
-Do note, Cosmos DB operations must complete within a limited time frame!
+Cosmos DB operations must complete within a limited time frame.
+
+### [Register and use stored procedures, triggers, and user-defined functions](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/how-to-use-stored-procedures-triggers-udfs)
+
+```cs
+// Register Stored Procedure
+await client.GetContainer("db", "container").Scripts.CreateStoredProcedureAsync(new StoredProcedureProperties { Id = "spCreateToDoItems", Body = File.ReadAllText("sp.js") });
+
+// Call Stored Procedure
+dynamic[] items = { new { category = "Personal", name = "Groceries" } };
+await client.GetContainer("db", "container").Scripts.ExecuteStoredProcedureAsync<string>("spCreateToDoItem", new PartitionKey("Personal"), new[] { items });
+
+// Register Pretrigger
+await client.GetContainer("db", "container").Scripts.CreateTriggerAsync(new TriggerProperties { Id = "preTrigger", Body = File.ReadAllText("preTrigger.js"), TriggerOperation = TriggerOperation.Create, TriggerType = TriggerType.Pre });
+
+// Call Pretrigger
+dynamic newItem = new { category = "Personal", name = "Groceries" };
+await client.GetContainer("db", "container").CreateItemAsync(newItem, null, new ItemRequestOptions { PreTriggers = new List<string> { "preTrigger" } });
+
+// Register Post-trigger
+await client.GetContainer("db", "container").Scripts.CreateTriggerAsync(new TriggerProperties { Id = "postTrigger", Body = File.ReadAllText("postTrigger.js"), TriggerOperation = TriggerOperation.Create, TriggerType = TriggerType.Post });
+
+// Call Post-trigger
+await client.GetContainer("db", "container").CreateItemAsync(newItem, null, new ItemRequestOptions { PostTriggers = new List<string> { "postTrigger" } });
+
+// Register UDF
+await client.GetContainer("db", "container").Scripts.CreateUserDefinedFunctionAsync(new UserDefinedFunctionProperties { Id = "Tax", Body = File.ReadAllText("Tax.js") });
+
+// Call UDF
+var iterator = client.GetContainer("db", "container").GetItemQueryIterator<dynamic>("SELECT * FROM Incomes t WHERE udf.Tax(t.income) > 20000");
+
+```
 
 ## [Change feed](https://docs.microsoft.com/en-us/azure/cosmos-db/change-feed)
 
@@ -486,6 +528,25 @@ OFFSET 10 LIMIT 20
 - `FROM` clause is just an alias (no need to specify container name).
 - You can only join within a single container. You can't join data across different containers.
 - Aggregation functions are not supported.
+
+Queries that have an `ORDER BY` clause with two or more properties require a composite index:
+
+```json
+{
+  "compositeIndexes": [
+    [
+      {
+        "path": "/name",
+        "order": "ascending"
+      },
+      {
+        "path": "/age",
+        "order": "descending"
+      }
+    ]
+  ]
+}
+```
 
 ### Flattening data
 

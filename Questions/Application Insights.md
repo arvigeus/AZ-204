@@ -325,3 +325,55 @@ Answer: The connection string in Application Insights is used to define where th
 It doesn't handle authentication, appearance, or encryption of the data.
 
 ---
+
+Question: As an Azure Developer, you are tasked with integrating Azure Application Insights into a mobile application using the Azure Mobile Apps SDK. Your goal is to collect telemetry data for analyzing user behavior. Which of the following telemetry types should you avoid manually capturing for this purpose?
+
+- [ ] Exception
+- [ ] Events
+- [ ] Session Id
+- [ ] Trace
+
+Answer: Application Insights already takes care of this for you. Manually capturing it would be redundant and could interfere with the automatically generated Session Ids.
+
+---
+
+Question: Your web application must be able to scale on demand. Which Azure Application Insights data model should you use?
+
+- [x] An Application Insights metric
+- [ ] An Application Insights dependency
+- [ ] An Application Insights trace
+- [ ] An Application Insights event
+
+Answer: You can use Application Insights metrics to scale Web Apps.
+
+---
+
+Question: Your ASP.NET application is generating a high volume of telemetry data, causing you to exceed your data quota. You want to reduce the telemetry traffic while maintaining a statistically correct analysis. Which sampling method would you use?
+
+- [x] Adaptive Sampling
+- [ ] Fixed-rate Sampling
+- [ ] Ingestion Sampling
+
+Answer: Adaptive sampling automatically adjusts the volume of telemetry sent from the SDK in your ASP.NET application. It is particularly useful for high-volume applications to avoid exceeding data quotas.
+
+---
+
+Question: You have a Java application and you need fine-grained control to apply different sampling rates to selected dependencies, requests, and health checks. Which sampling method would you use?
+
+- [ ] Adaptive Sampling
+- [x] Fixed-rate Sampling
+- [ ] Ingestion Sampling
+
+Answer: Fixed-rate sampling is available for Java applications and allows you to set the rate yourself. It also supports sampling overrides for fine-grained control over telemetry.
+
+---
+
+Question: You have a running application and you want to control the rate of data ingestion without redeploying the application. Which sampling method would you use?
+
+- [ ] Adaptive Sampling
+- [ ] Fixed-rate Sampling
+- [x] Ingestion Sampling
+
+Answer: Ingestion sampling happens at the Application Insights service endpoint and allows you to set the sampling rate without redeploying your app. It helps you keep within your monthly quota.
+
+---

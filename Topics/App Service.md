@@ -74,6 +74,15 @@ Horizontal scaling: Adding/removing virtual machines.
 
 [**Flapping**](https://learn.microsoft.com/en-us/azure/azure-monitor/autoscale/autoscale-flapping): a loop condition where a scale event triggers its opposite in a series of alternating events.
 
+## [Custom deployment](https://github.com/projectkudu/kudu/wiki/Customizing-deployments)
+
+`.deployment file`:
+
+```txt
+command = deploy.cmd # Run script before deployment
+# project = WebProject/WebProject.csproj
+```
+
 ## [Deployment slots](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots)
 
 Require Standard+.
@@ -231,6 +240,8 @@ zip_archive() {
 App settings are always encrypted when stored (encrypted-at-rest).
 
 App Service passes app settings to the container using the `--env` flag to set the environment variable in the container.
+
+- **Always On**: Keep the app loaded even when there's no traffic. By default, **Always On** isn't enabled and the app is unloaded after 20 minutes without any incoming requests.
 
 ### App Settings
 
@@ -611,6 +622,8 @@ The roles that handle incoming HTTP or HTTPS requests are called _front ends_. T
 The _App Service file system_ option is for temporary debugging purposes, and turns itself off in 12 hours.  
 _The Blob_ option is for long-term logging, includes additional information. Only available for .Net application.
 
+`az webapp log config --application-logging {azureblobstorage, filesystem, off} --name MyWebapp --resource-group MyResourceGroup`
+
 Accessing log files:
 
 - Linux/custom containers: `https://<app-name>.scm.azurewebsites.net/api/logs/docker/zip`. The ZIP file contains console output logs for both the docker host and the docker container.
@@ -658,6 +671,10 @@ For private endpoints check if `x-ms-auth-internal-token` request header equals 
 
 Configure path: `az webapp config set --health-check-path <Path> --resource-group <ResourceGroup> --name <AppName>`
 
+### [Application Insights Profiler](https://learn.microsoft.com/en-us/azure/azure-monitor/profiler/profiler)
+
+Requires the **Always on** setting is _enabled_.
+
 ## [Mount Azure Storage as a local share in App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-connect-to-azure-storage)
 
 - Built-in Linux images use Azure Storage with higher latency. For heavy read-only file access, custom containers are better as they reduce latency by storing files in the container filesystem.
@@ -678,7 +695,6 @@ Configure path: `az webapp config set --health-check-path <Path> --resource-grou
 
 - Place app and storage in the same Azure region.
 - Avoid regenerating access key.
-- Don't use for local databases or apps relying on file handles and locks.
 
 ## Read more
 
@@ -701,6 +717,7 @@ Configure path: `az webapp config set --health-check-path <Path> --resource-grou
 | [az webapp identity](https://learn.microsoft.com/en-us/cli/azure/webapp/identity?view=azure-cli-latest)                                  | Manage web app's managed service identity.                | `az webapp identity assign --name MyApp --resource-group MyResourceGroup`                                                            |
 | [az identity](https://learn.microsoft.com/en-us/cli/azure/identity?view=azure-cli-latest)                                                | Manage Managed Service Identities (MSI).                  | `az identity create --resource-group MyResourceGroup --name MyIdentity`                                                              |
 | [az webapp log](https://learn.microsoft.com/en-us/cli/azure/webapp/log?view=azure-cli-latest)                                            | Manage web app logs.                                      | `az webapp log tail --name MyApp --resource-group MyResourceGroup`                                                                   |
+| [az webapp log config](https://learn.microsoft.com/en-us/cli/azure/webapp/log?view=azure-cli-latest#az-webapp-log-config)                | Configure logging for a web app.                          | `az webapp log config --name MyWebApp --resource-group MyResourceGroup --web-server-logging filesystem`                              |
 | [az resource update](https://learn.microsoft.com/en-us/cli/azure/resource?view=azure-cli-latest#az-resource-update)                      | Update a resource.                                        | `az resource update --ids RESOURCE_ID --set properties.key=value`                                                                    |
 | [az webapp config storage-account](https://learn.microsoft.com/en-us/cli/azure/webapp/config/storage-account?view=azure-cli-latest)      | Manage web app's Azure Storage account configurations.    | `az webapp config storage-account update --name MyApp --custom-id CustomId --storage-type AzureBlob --account-name MyStorageAccount` |
 | [az webapp list-runtimes](https://learn.microsoft.com/en-us/cli/azure/webapp?view=azure-cli-latest#az-webapp-list-runtimes)              | List available runtime stacks.                            | `az webapp list-runtimes --linux`                                                                                                    |

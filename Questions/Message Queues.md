@@ -135,3 +135,38 @@ Azure Data Lake Storage with Azure Databricks: This combination is more suitable
 Azure Queue Storage: Useful for message queuing but not optimized for the IoT data ingestion scenario described.
 
 ---
+
+Question: Create a sequence of actions in Azure Logic App service with these objectives:
+
+- Activate the sequence when a virtual machine undergoes deallocation.
+- Forward an email to the IT Administrator outlining the event's particulars.
+
+Which Azure service would you enlist to kickstart your sequence?
+
+- [ ] Azure Event Hubs
+- [x] Azure Event Grid
+- [ ] Azure Service Bus
+- [ ] Azure Functions
+
+Answer: Azure Event Grid is specialized for event-driven architecture and can be seamlessly coupled with Azure Logic Apps. It's the optimal choice for being alerted about VM deallocation events within a specific resource group.
+
+---
+
+Question: Your organization is tasked with building a solution requiring a messaging service in Azure. The messaging framework must:
+
+- Enable transactional operations
+- Detect duplicate messages
+- Ensure messages have an indefinite lifespan
+
+Which two of the following options meet these criteria?
+
+- [ ] Azure Event Hubs
+- [x] Azure Service Bus Queue
+- [x] Azure Service Bus Topic
+- [ ] Azure Storage Queues
+
+Answer: Both Azure Service Bus Queue and Azure Service Bus Topic can be configured to support transactions, detect duplicate messages, and allow messages to remain indefinitely. You can specify an extremely long time-to-live (TTL) for messages in both the queue and topic.  
+Azure Event Hubs is designed for high-throughput data streaming and doesn't offer transactional support or duplicate detection.  
+Azure Storage Queues lack features like transactional support and duplicate detection, making them unsuitable for these requirements.
+
+---

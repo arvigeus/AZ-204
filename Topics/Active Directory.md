@@ -334,7 +334,7 @@ Here are some of the most noteworthy attributes found in the application manifes
 Tenant-specific in Azure AD, groups persist even after the associated app is removed.
 
 - "None"
-- "SecurityGroup" (for security groups and Azure AD roles)
+- "SecurityGroup" (will include security groups and Azure AD roles)
 - "ApplicationGroup" (this option includes only groups that are assigned to the application)
 - "DirectoryRole" (gets the Azure AD directory roles the user is a member of)
 - "All" (this will get all of the security groups, distribution groups, and Azure AD directory roles that the signed-in user is a member of).
@@ -358,6 +358,29 @@ Defined in the app registration, roles are application-specific and get removed 
 ],
 ```
 
+#### oauth2AllowImplicitFlow
+
+Often relevant when you're working with SPAs or other scenarios where the Implicit Grant Flow is used.
+
 ## [Register your app for automatic Azure AD authentication](https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-provider-aad?tabs=workforce-tenant)
 
 `Portal > app > 'Authentication' > 'Add identity provider' > set provider to Microsoft > 'Add'`
+
+## [Integrate authentication and authorization in your apps](https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-overview)
+
+![Integrate authentication and authorization in your apps](https://learn.microsoft.com/en-us/azure/active-directory/develop/media/v2-overview/application-scenarios-identity-platform.png#lightbox)
+
+1. Register app
+1. Configure app with code sample
+1. Validate access token
+1. Configure secrets & certificates
+1. Configure permission & call API of choice
+1. Control access to web API (authorization)
+1. Store token cache
+
+## [Protect an API in Azure API Management with Azure Active Directory](https://learn.microsoft.com/en-us/azure/api-management/api-management-howto-protect-backend-with-aad)
+
+1. Register the backend API application in Azure AD.
+1. Register the web App (website containing summarized results) in Azure AD so that it can call the backend API.
+1. Allow permissions between the website app to call the backend API app. Add the configurations in Azure AD.
+1. Enable OAuth 2.0 user authorization and add the validate-jwt policy to validate the OAuth token for API calls.
