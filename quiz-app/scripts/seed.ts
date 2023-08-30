@@ -79,6 +79,8 @@ const parseItem = (name: string, text: string, idCounter: number): QAPair[] => {
   // For QA pair without trailing empty line
   if (currentQuestion.length > 0) {
     const question = currentQuestion.join("\n").trimEnd();
+    if (currentOptions.length > 0 && currentAnswerIndex.length === 0)
+      throw new Error(`Question '${question}' has missing answer`);
     qaPairs.push({
       id: createHash("sha256").update(question).digest("hex"),
       question,

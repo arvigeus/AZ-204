@@ -49,7 +49,7 @@ export const getQA = (
 export const getQAById = (id: string) => {
   var index = data.findIndex((item) => item.id == id);
   if (index < 0) return null;
-  return { ...data[index], index };
+  return shuffleQA({ ...data[index], index });
 };
 
 const getRandomElement = <T>(array: T[]): T =>

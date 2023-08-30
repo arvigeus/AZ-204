@@ -298,7 +298,7 @@ Question: You're building an ASP.Net Core app to interact with Azure Blob contai
 - [ ] `User.Read`
 - [ ] `User.Write`
 - [ ] `client_id`
-- [ ] `user_impersonation`
+- [x] `user_impersonation`
 - [ ] `Blob.Read`
 - [ ] `Storage.Access`
 - [ ] `AzureAD.Auth`
