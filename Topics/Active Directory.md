@@ -71,9 +71,7 @@ An app requests the permissions it needs by specifying the permission in the `sc
 ### [Consent](https://learn.microsoft.com/en-us/azure/active-directory/manage-apps/user-admin-consent-overview)
 
 - **Static user consent**: requires specifying all app permissions in Azure portal config. If users haven't consented, they're prompted. Issues: long permission lists and knowing all resources in advance.
-
 - **Incremental user consent**: lets you request permissions gradually using Microsoft identity platform endpoint. Specify scopes when requesting access token without predefining them. Only for delegated permissions, not app-only access.
-
 - **Admin consent**: needed for high-privilege permissions. Admins authorize apps to access privileged data. Requires static permissions registration.
 
 #### Requesting individual user consent
@@ -120,13 +118,11 @@ You can set _conditional access_ (requires Premium P1) for specific user(s).
 
 ## Other Azure AD features
 
-[Azure AD B2B](https://learn.microsoft.com/en-us/azure/active-directory/external-identities/what-is-b2b) allows you to share your company's applications with external users in a secure manner.
-
-[Azure AD Application Proxy](https://learn.microsoft.com/en-us/azure/active-directory/app-proxy/what-is-application-proxy) provides secure remote access to on-premises applications.
-
-[Azure AD Connect](https://en.wikipedia.org/wiki/Azure_AD_Connect) allows you to synchronize an AD tenant with an on-premises AD domain.
-
-[Azure AD Enterprise Application](https://learn.microsoft.com/en-us/azure/active-directory/manage-apps/add-application-portal) allow you to integrate other applications with Azure AD, including your own apps.
+- [Azure AD B2C](https://learn.microsoft.com/en-us/azure/active-directory-b2c/overview) supports multiple login methods, including social media, email/password.
+- [Azure AD B2B](https://learn.microsoft.com/en-us/azure/active-directory/external-identities/what-is-b2b) allows you to share your company's applications with external users in a secure manner.
+- [Azure AD Application Proxy](https://learn.microsoft.com/en-us/azure/active-directory/app-proxy/what-is-application-proxy) provides secure remote access to on-premises applications.
+- [Azure AD Connect](https://en.wikipedia.org/wiki/Azure_AD_Connect) allows you to synchronize an AD tenant with an on-premises AD domain.
+- [Azure AD Enterprise Application](https://learn.microsoft.com/en-us/azure/active-directory/manage-apps/add-application-portal) allow you to integrate other applications with Azure AD, including your own apps.
 
 ## MSAL (Microsoft Authentication Library)
 
@@ -170,6 +166,11 @@ builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
 
 builder.Services.AddRazorPages()
   .AddMicrosoftIdentityUI();
+
+// OpenIdConnectDefaults.AuthenticationScheme: Enables OpenID Connect authentication, best for OAuth 2.0 and Single Sign-On (SSO).
+// JwtBearerDefaults.AuthenticationScheme: Used for authenticating APIs via JSON Web Tokens (JWT), suitable for stateless and scalable APIs.
+// CookieAuthenticationDefaults.AuthenticationScheme: Employs cookies for session-based authentication, optimal for traditional web apps that manage user sessions server-side.
+// Custom Authentication Scheme: Allows for custom string identifiers for authentication middleware, ideal for specialized or unique authentication scenarios.
 ```
 
 ```cs
