@@ -30,7 +30,7 @@ Question: Which of the following metrics are pre-aggregated?
 - [x] Standard metrics
 - [ ] All metrics
 - [ ] Metrics cannot be pre-aggregated
-- [ ] Only metrics enabled by thr developer
+- [ ] Only metrics enabled by the developer
 
 Answer: Standard metrics are pre-aggregated.
 
