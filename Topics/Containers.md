@@ -169,6 +169,7 @@ Azure Files shares can only be mounted to _Linux containers_ _running as root_, 
 Azure CLI:
 
 ```sh
+# To mount an Azure File Share to an Azure Container Instance, you need the Storage Account Key
 az container create \
     --azure-file-volume-account-name $ACI_PERS_STORAGE_ACCOUNT_NAME \
     --azure-file-volume-account-key $STORAGE_KEY \
