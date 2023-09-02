@@ -609,8 +609,8 @@ Answer: ACR Tasks is a suite of features within Azure Container Registry that pr
 Question: What is the default platform for building images with ACR Tasks?
 
 - [ ] Windows/amd64
-- [x] Linux/arm64
-- [ ] Linux/amd64
+- [ ] Linux/arm64
+- [x] Linux/amd64
 - [ ] Linux/arm
 
 Answer: By default, ACR Tasks builds images for the Linux OS and the amd64 architecture.
