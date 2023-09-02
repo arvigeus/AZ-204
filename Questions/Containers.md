@@ -814,3 +814,14 @@ Your organization utilizes an Azure container registry. What is the most restric
 Answer: The `AcrPush` role allows developers to push images to the Azure container registry while adhering to the principle of least privilege.
 
 ---
+
+Question: You are using Azure Container Instances (ACI) to run a container that requires access to an Azure File Share. Which of the following is required to mount the Azure File Share to the ACI?
+
+- [x] Storage Account Key
+- [ ] Shared Access Signature (SAS) Token
+- [ ] OAuth Token
+- [ ] Azure AD Credentials
+
+Answer: To mount an Azure File Share to an Azure Container Instance, you need the Storage Account Key. SAS Tokens, OAuth Tokens, and Azure AD Credentials are not used for this specific operation.
+
+---
