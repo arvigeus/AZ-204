@@ -16,10 +16,11 @@ Question: You need to deploy a containerized application to Azure and require au
 
 - [ ] Azure Container Instances (ACI)
 - [x] Azure App Service
+- [ ] Azure Container Apps
 - [ ] Azure Functions
 - [ ] Azure Logic Apps
 
-Answer: Azure App Service supports autoscaling and allows you to scale based on custom metrics. ACI doesn't offer autoscaling, and Azure Functions and Logic Apps are not primarily container services.
+Answer: Both Azure App Service and Azure Container Apps support autoscaling and allows you to scale based on custom metrics. ACI doesn't offer autoscaling, and Azure Functions and Logic Apps are not primarily container services.
 
 ---
 

@@ -825,3 +825,12 @@ Question: You are using Azure Container Instances (ACI) to run a container that 
 Answer: To mount an Azure File Share to an Azure Container Instance, you need the Storage Account Key. SAS Tokens, OAuth Tokens, and Azure AD Credentials are not used for this specific operation.
 
 ---
+
+Question: You have a containerized application that requires automatic updates whenever the image in Azure Container Registry (ACR) is updated. What should you configure?
+
+- [ ] Azure DevOps Pipeline
+- [x] Webhooks
+- [ ] Azure Event Hub
+- [ ] Azure Event Grid
+
+Answer: Webhooks in Azure Container Registry allow you to trigger actions in response to events like image pushes or pulls, making it suitable for automating updates.

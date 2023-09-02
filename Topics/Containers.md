@@ -169,7 +169,7 @@ Azure Files shares can only be mounted to _Linux containers_ _running as root_, 
 Azure CLI:
 
 ```sh
-# To mount an Azure File Share to an Azure Container Instance, you need the Storage Account Key
+# Note: To mount an Azure File Share to an Azure Container Instance, you need the Storage Account Key
 az container create \
     --azure-file-volume-account-name $ACI_PERS_STORAGE_ACCOUNT_NAME \
     --azure-file-volume-account-key $STORAGE_KEY \
@@ -205,6 +205,8 @@ Fully managed (no need to manage other Azure infrastructure) environment. Common
 - Running microservices
 
 Cannot run privileged containers requiring _root_ access and strictly requires _Linux-based (linux/amd64)_ container images.
+
+A webhook can be used to notify Azure Container Apps when a new image has been pushed to the ACR, triggering automatic deployment of the updated container.
 
 ### [Auth](https://learn.microsoft.com/en-us/azure/container-apps/managed-identity)
 

@@ -11,3 +11,15 @@
 - **Azure Container Apps** vs. **AKS**: If you require access to the Kubernetes APIs and control plane, use AKS. If you want to build Kubernetes-style applications without needing direct access to all native Kubernetes APIs, Container Apps is preferable.
 - **Azure Container Instances** vs. **Container Apps**: ACI is a more basic building block without application-specific concepts like scale and load balancing, while Container Apps provides these features.
 - **Azure Functions** vs. **Container Apps**: Both are suitable for event-driven applications, but Functions is optimized for short-lived functions, while Container Apps is more general-purpose.
+
+## Comparison by feature
+
+| Feature                  | Container Apps | Container Instances | App Services                | Kubernetes Service (AKS)    | Functions                      |
+| ------------------------ | -------------- | ------------------- | --------------------------- | --------------------------- | ------------------------------ |
+| **Scaling**              | Auto-scaling   | Manual scaling only | Auto-scaling                | Cluster Autoscaler (say no) | Consumption-based auto-scaling |
+| **State Management**     | Stateless      | Stateless           | Both stateless and stateful | Both stateless and stateful | Stateless                      |
+| **Resource Isolation**   | Shared         | Dedicated           | Shared/Dedicated            | Dedicated                   | Shared                         |
+| **Cost**                 | Pay-as-you-go  | Pay-as-you-go       | Fixed + Scale               | Cluster costs + Node costs  | Pay-as-you-go or fixed         |
+| **Multi-Region Support** | No             | No                  | Yes                         | Yes                         | Yes                            |
+
+Note: Functions is not a containerized solution.
