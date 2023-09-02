@@ -693,8 +693,8 @@ Question: What will happen if you change `template.scale.maxReplicas` from 3 to 
 ```
 
 - [ ] All existing revisions will have max 5 replicas now.
-- [x] A new revision is created. All revisions now have 5 max replicas now.
-- [ ] A new revision is created with 5 max replicas. All existing revisions remain unchanged.
+- [ ] A new revision is created. All revisions now have 5 max replicas now.
+- [x] A new revision is created with 5 max replicas. All existing revisions remain unchanged.
 
 Answer: Changes made to the `template` section are revision-scope changes, which triggers a new revision. The changes are limited to the revision in which they're deployed, and don't affect other revisions.
 
