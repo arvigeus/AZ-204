@@ -12,6 +12,17 @@ Answer: Azure Container Apps is designed to handle microservices architecture, p
 
 ---
 
+Question: You need to deploy a containerized application to Azure and require autoscaling based on custom metrics. Which Azure service would you use?
+
+- [ ] Azure Container Instances (ACI)
+- [x] Azure App Service
+- [ ] Azure Functions
+- [ ] Azure Logic Apps
+
+Answer: Azure App Service supports autoscaling and allows you to scale based on custom metrics. ACI doesn't offer autoscaling, and Azure Functions and Logic Apps are not primarily container services.
+
+---
+
 Question: An e-commerce company is looking to host its web platform, which includes a customer-facing website and internal web APIs. They want a service that integrates well with other Azure services and is tailored for web applications. Which Azure service would you choose?
 
 - [x] Azure App Service
