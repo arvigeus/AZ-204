@@ -191,8 +191,8 @@ The `IfMatch` property of the `BlobRequestConditions` object can be set to the E
 Question: GreenTech Energy Solutions specializes in providing real-time energy consumption data to its clients. They store sensor data in Azure Blob Storage and have decided to maintain two copies of each data file in the 'North Europe' and 'South Africa North' Azure regions. New sensor data files are initially uploaded to the 'North Europe' blob storage. What Azure tool and command would you use to ensure both blob containers have completely identical data?
 
 - [ ] `Copy-AzStorageBlob`
-- [x] `az storage blob copy start-batch`
-- [ ] `azcopy sync --recursive`
+- [ ] `az storage blob copy start-batch`
+- [x] `azcopy sync --recursive`
 - [ ] `azcopy copy --recursive`
 
 Answer: `azcopy sync --recursive` is the correct choice because it not only copies the blobs but also ensures that both blob containers are in sync. The `--recursive` flag ensures that all subdirectories and their files are also synced.  
