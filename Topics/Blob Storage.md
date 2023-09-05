@@ -669,7 +669,7 @@ Encryption scope for storage account:
 az storage account encryption-scope create --key-source Microsoft.Storage ...
 ```
 
-Encryption scope for storage account:
+Encryption scope for container:
 
 - Azure Portal: `storage account > containers > Add > Advanced > Encryption scope`
 - CLI:
@@ -678,8 +678,6 @@ Encryption scope for storage account:
 az storage container create \
     --default-encryption-scope "<scope>" \
     --prevent-encryption-scope-override true \ # force all blobs in a container to use the container's default scope
-    ...
-    #--auth-mode login
 ```
 
 Upload a blob with an encryption scope:
