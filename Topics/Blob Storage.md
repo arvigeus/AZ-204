@@ -61,7 +61,7 @@ Example: `https://<mystorageaccount>.blob.core.windows.net/<mycontainer></<myblo
 
 #### Azure DNS Zone Endpoints
 
-Storage accounts dynamically get assigned n Azure DNS zone (`z[00-50]`) when created: `https://<storage-account>.z[00-50].<storage-service>b.core.windows.net`
+Storage accounts dynamically get assigned n Azure DNS zone (`z[00-50]`) when created: `https://<storage-account>.z[00-50].<storage-service>.core.windows.net`
 
 #### Retrieve Endpoints
 
