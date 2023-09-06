@@ -279,9 +279,6 @@ mySiteURL="https://${mySiteName}.azurewebsites.net"
 # Create a resource group
 az group create --name az204-evgrid-rg --location $myLocation
 
-# Enable an Event Grid resource provider (needed only once)
-az provider register --namespace Microsoft.EventGrid
-
 # Create a custom topic
 az eventgrid topic create --name $myTopicName \
     --location $myLocation \
@@ -340,11 +337,7 @@ az eventgrid event-subscription create \
 
 ## Working with EventGrid
 
-### Enable an Event Grid resource provider for subscriptions
-
-Only needed on subscriptions that haven't previously used Event Grid: `az provider register --namespace Microsoft.EventGrid`
-
-Check status: `az provider show --namespace Microsoft.EventGrid --query "registrationState"`
+[Register `Microsoft.EventGrid` provider](./AZ%20CLI.md)
 
 ### Publish new events
 
