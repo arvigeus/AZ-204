@@ -1,6 +1,8 @@
-# Resource Group
+# [Resource group](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/manage-resource-groups-portal)
 
-All services/resources require a **resource group** to be created.  
+Resource group is a logical container into which Azure resources (web apps, databases, storage aacounts) are deployed and managed.
+
+**Required** by all services/resources to be created.  
 Updating resource requires resource group to be passed (unless resource name is unique).
 
 API: [az group create](https://learn.microsoft.com/en-us/cli/azure/group?view=azure-cli-latest#az-group-create) | [New-AzResourceGroup](https://learn.microsoft.com/en-us/powershell/module/az.resources/new-azresourcegroup)

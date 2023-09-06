@@ -1,6 +1,6 @@
-# General
+# AZ CLI
 
-## AZ CLI Prerequisites
+## Prerequisites
 
 ```sh
 # Upgrade the Azure CLI to the latest version

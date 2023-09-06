@@ -209,7 +209,7 @@ byte[] value = db.StringGet(key);
 db.StringSet(key, value);
 ```
 
-### [Common operations](<(https://github.com/StackExchange/StackExchange.Redis/blob/master/src/StackExchange.Redis/Interfaces/IDatabase.cs)>)
+### [Common operations](https://github.com/StackExchange/StackExchange.Redis/blob/master/src/StackExchange.Redis/Interfaces/IDatabase.cs)
 
 | Method              | Description                                                                                                                  | Return Type    |
 | ------------------- | ---------------------------------------------------------------------------------------------------------------------------- | -------------- |

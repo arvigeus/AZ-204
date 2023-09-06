@@ -155,52 +155,6 @@ az vm encryption enable -g "MyResourceGroup" --name "MyVM" --disk-encryption-key
 
 ## [Logging](https://learn.microsoft.com/en-us/azure/key-vault/key-vault-insights-overview)
 
-```kusto
-// Old TLS?
-AzureDiagnostics
-| where TimeGenerated > ago(90d)
-| where ResourceProvider =="MICROSOFT.KEYVAULT"
-| where isnotempty(tlsVersion_s) and strcmp(tlsVersion_s,"TLS1_2") <0
-| project TimeGenerated,Resource, OperationName, requestUri_s, CallerIPAddress, OperationVersion,clientInfo_s,tlsVersion_s,todouble(tlsVersion_s)
-| sort by TimeGenerated desc
-
-// Slow requests?
-AzureDiagnostics
-| where ResourceProvider =="MICROSOFT.KEYVAULT"
-| where DurationMs > 1000
-| summarize count() by OperationName, _ResourceId
-
-// How fast is this KeyVault serving requests?
-AzureDiagnostics
-| where ResourceProvider =="MICROSOFT.KEYVAULT"
-| summarize avg(DurationMs) by requestUri_s, bin(TimeGenerated, 1h) // requestUri_s contains the URI of the request
-| render timechart
-
-// Failures?
-AzureDiagnostics
-| where ResourceProvider =="MICROSOFT.KEYVAULT"
-| where httpStatusCode_d >= 300 and not(OperationName == "Authentication" and httpStatusCode_d == 401)
-| summarize count() by requestUri_s, ResultSignature, _ResourceId
-// ResultSignature contains HTTP status, e.g. "OK" or "Forbidden"
-// httpStatusCode_d contains HTTP status code returned
-
-// Shows errors caused due to malformed events that could not be deserialized by the job.
-AzureDiagnostics
-| where ResourceProvider == "MICROSOFT.KEYVAULT" and parse_json(properties_s).DataErrorType in ("InputDeserializerError.InvalidData", "InputDeserializerError.TypeConversionError", "InputDeserializerError.MissingColumns", "InputDeserializerError.InvalidHeader", "InputDeserializerError.InvalidCompressionType")
-| project TimeGenerated, Resource, Region_s, OperationName, properties_s, Level, _ResourceId
-
-// How active has this KeyVault been?
-AzureDiagnostics
-| where ResourceProvider =="MICROSOFT.KEYVAULT"
-| summarize count() by bin(TimeGenerated, 1h), OperationName // Aggregate by hour
-| render timechart
-
-// Who is calling this KeyVault?
-AzureDiagnostics
-| where ResourceProvider =="MICROSOFT.KEYVAULT"
-| summarize count() by CallerIPAddress
-```
-
 ### [Monitoring Key Vault with Azure Event Grid](https://learn.microsoft.com/en-us/azure/key-vault/general/event-grid-overview)
 
 `Portal > All Services > Key Vaults > key vault > Events > Event Grid Subscriptions > + Event Subscription` and fill in the details including name, event types, and endpoint (like an Azure Function).

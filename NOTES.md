@@ -14,7 +14,7 @@ You should be able to not only learn commands, but also explain them - what they
 
 ## Powershell
 
-All commands use `AZ<COMMAND>` format, not `Azure<COMMAND>`. Examples: `New-AzKeyVault`, `Add-AzKeyVaultCertificate`.
+All commands use `AZ<COMMAND>` format, not `Azure<COMMAND>`. Examples: `New-AzKeyVault`, `Add-AzKeyVaultCertificate`. Usually create operations are `New-Az<Service>`, update operations are `Set-Az<Service>`.
 
 ## Save for later
 

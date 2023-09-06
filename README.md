@@ -149,6 +149,27 @@ TLDR;
 - [AZ-204 Developing Solutions for Microsoft Azure - Udemy](https://www.udemy.com/course/70532-azure/)
 - [Microsoft Certifications Knowledge Hub](https://github.com/mscerts/hub/blob/main/README.md)
 
+## Emojis
+
+Emojis are used to substitute some common concepts that have same meaning, but different words may be used on the exam. Sometimes the correct meaning has to be guessed from the context.
+
+- ⭐: Recommended
+- ❌: Not recommended / Not Supported
+- ⏺️: Default
+- 🏷️: Cheap
+- 💲: High price (cost) / Expensive
+- ⚡: Low latency / High throughput (transactions)
+- 🐌: High ("flexible") latency / Low throughput (transactions)
+- 🎲: Random
+- 💎: Premium only
+- 🦺: Standard / Not premium
+- 🏋🏿: Transaction-intensive
+- 🙋‍♂️: High availability
+- ⏫: Ingress / Upload
+- ⏬: Egress / Download
+- 🧊: Immutable / Cannot be changed
+- 🙂: Simple / Easy
+
 ## Disclaimer
 
 The content found in this repository is a result of my personal study and understanding of the AZ-204 exam topics. While I have made every effort to ensure accuracy, there may be inaccuracies, or even incorrect or missing information contained within these notes.

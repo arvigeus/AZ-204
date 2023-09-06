@@ -594,27 +594,6 @@ Automatic collection of Performance Counters isn't supported when running on Lin
 
 Application Insights are configured in [host.json](https://learn.microsoft.com/en-us/azure/azure-functions/functions-host-json#applicationinsights) (`logging.applicationInsights` and `aggregator`)
 
-```kusto
-# Monitor all functions app logs
-FunctionAppLogs
-| order by TimeGenerated desc
-
-# Select fields
-FunctionAppLogs
-| project TimeGenerated, HostInstanceId, Message, _ResourceId
-| order by TimeGenerated desc
-
-# Monitor a specific functions app logs
-FunctionAppLogs
-| where FunctionName == "<Function name>"
-
-# Monitor exceptions on a specific functions app logs
-FunctionAppLogs
-| where ExceptionDetails != ""
-| where FunctionName == "<Function name>"
-| order by TimeGenerated asc
-```
-
 ### [Configure monitorung](https://learn.microsoft.com/en-us/azure/azure-functions/configure-monitoring)
 
 Enable SQL query:

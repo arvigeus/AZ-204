@@ -61,14 +61,6 @@ High sampling rates can reduce log-based query accuracy (especially at ~60% or h
 
 For web apps, to keep or discard a set of custom events together, they must share the same `OperationId` value.
 
-Knowing whether sampling is in operation:
-
-```kusto
-union requests,dependencies,pageViews,browserTimings,exceptions,traces
-| where timestamp > ago(1d)
-| summarize RetainedPercentage = 100/avg(itemCount) by bin(timestamp, 1h), itemType
-```
-
 ### Configuring sampling
 
 ASP.NET:
@@ -84,70 +76,6 @@ builder.UseAdaptiveSampling(maxTelemetryItemsPerSecond:5);
 
 // If you have other telemetry processors:
 builder.Use((next) => new AnotherProcessor(next));
-```
-
-## [Kusto Queries](https://learn.microsoft.com/en-us/azure/data-explorer/kusto/query/tutorials/learn-common-operators)
-
-```kusto
-StormEvents
-| count # Count rows
-| take 5 # Take 5 rows
-| project State, EventType, DamageProperty # Select columns
-| distinct EventType # List unique values
-| where State == 'TEXAS' and EventType == 'Flood' # Filter
-| sort by DamageProperty # Sort (desc, asc)
-| top 5 by DamageProperty # Get the top n rows
-| project StartTime, EndTime, Duration = EndTime - StartTime, DamageProperty # Calculated columns
-```
-
-Map values from one set to another:
-
-```kusto
-let sourceMapping = dynamic(
-  {
-    "Emergency Manager" : "Public",
-    "Utility Company" : "Private"
-  });
-StormEvents
-| where Source == "Emergency Manager" or Source == "Utility Company"
-| project EventId, Source, FriendlyName = sourceMapping[Source]
-```
-
-```kusto
-browserTimings
-| summarize avg(networkDuration), avg(processingDuration), avg(totalDuration) by name
-
-pageViews
-| summarize count() by client_Browser
-
-# To associate page views to AJAX calls, join with dependencies
-pageViews
-| join (dependencies) on operation_Id
-
-requests
-| summarize count = sum(itemCount), avgduration = avg(duration) by name
-
-exceptions
-| summarize sum(itemCount) by type
-
-# Pull apart the details structure to get more mariables
-
-exceptions
-| extend method2 = tostring(details[0].parsedStack[1].method)
-
-# To associate exceptions with their related requests, use a join
-exceptions
-| join (requests) on operation_Id
-
-dependencies
-| summarize sum(itemCount) by target
-
-# To associate dependencies with their related requests, use a join
-dependencies
-| join (requests) on operation_Id
-
-requests
-| summarize sum(itemCount), avg(todouble(customMeasurements.score)) by tostring(customDimensions.game)
 ```
 
 ## [Enable Application Insights for a Function App](https://learn.microsoft.com/en-us/azure/azure-functions/configure-monitoring?tabs=v2#enable-application-insights-integration)
@@ -301,7 +229,7 @@ Records subscription-level events, such as modifications to resources or startin
 
 **Diagnostic Settings**: Allows sending the activity log to different locations:
 
-- **Log Analytics workspace**: Utilize log queries for deep insights (Kusto queries) and complex alerting. By default events are retained for 90 days, but you can create a diagnostic setting for longer retention.
+- **Log Analytics workspace**: Utilize log queries for deep insights (_Kusto queries_) and complex alerting. By default events are retained for 90 days, but you can create a diagnostic setting for longer retention.
 - **Azure Storage account**: For audit, static analysis, or backup. Less expensive, and logs can be kept there indefinitely.
 - **Azure Event Hubs**: Stream data to external systems such as third-party SIEMs and other Log Analytics solutions.
 

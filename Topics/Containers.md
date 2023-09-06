@@ -312,17 +312,6 @@ properties:
 
 #### Query Log with Log Analytics
 
-Kusto:
-
-```kusto
-ContainerAppConsoleLogs_CL # or ContainerAppSystemLogs_CL
-| where ContainerAppName_s == 'album-api'
-| project Time=TimeGenerated, AppName=ContainerAppName_s, Revision=RevisionName_s, Container=ContainerName_s, Message=Log_s
-| take 100
-```
-
-CLI:
-
 ```sh
 # ContainerAppConsoleLogs_CL or ContainerAppSystemLogs_CL
 az monitor log-analytics query --workspace $WORKSPACE_CUSTOMER_ID --analytics-query "ContainerAppConsoleLogs_CL | where ContainerAppName_s == 'album-api' | project Time=TimeGenerated, AppName=ContainerAppName_s, Revision=RevisionName_s, Container=ContainerName_s, Message=Log_s, LogLevel_s | take 5" --out table

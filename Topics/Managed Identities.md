@@ -13,8 +13,6 @@ Managed identities are specific to the Azure cloud and _cannot be directly assig
 
 ## [Role-based access control (Azure RBAC)](https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal#assign-a-user-as-an-administrator-of-a-subscription)
 
-`Azure Portal > Access control (IAM)`
-
 Azure RBAC is the authorization system you use to manage access to Azure resources. To assign Azure roles, you must have `Microsoft.Authorization/roleAssignments/write` permissions, such as `User Access Administrator` or `Owner`.
 
 Read access to all resources: `*/read`
@@ -66,7 +64,7 @@ Both system-assigned and user-assigned managed identities can be assigned specif
 az role assignment create --assignee <PrincipalId> --role <RoleName> --scope <Scope>
 ```
 
-[Roles](<(https://docs.microsoft.com/en-us/azure/role-based-access-control/role-definitions)>) can be high-level, like owner, or specific, like virtual machine reader.
+[Roles](https://docs.microsoft.com/en-us/azure/role-based-access-control/role-definitions) can be high-level, like owner, or specific, like virtual machine reader.
 
 - **Owner**: Grants full access to manage all resources, including the ability to assign roles in Azure RBAC.
 - **Contributor**: Grants full access to manage all resources, but does not allow you to assign roles in Azure RBAC, manage assignments in Azure Blueprints, or share image galleries.
