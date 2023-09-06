@@ -151,7 +151,8 @@ TLDR;
 
 ## Emojis
 
-Emojis are used to substitute some common concepts that have same meaning, but different words may be used on the exam. Sometimes the correct meaning has to be guessed from the context.
+Emojis are used to represent common concepts with shared meanings. However, during the exam, different variations of the same meaning may be utilized.  
+In these study notes, emojis may be ambiguous and the correct meaning has to be guessed from the context.
 
 - ⭐: Recommended
 - ❌: Not recommended / Not Supported
