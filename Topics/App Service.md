@@ -76,7 +76,7 @@ Horizontal scaling: Adding/removing virtual machines.
 
 ## [Custom deployment](https://github.com/projectkudu/kudu/wiki/Customizing-deployments)
 
-`.deployment file`:
+`.deployment` file:
 
 ```txt
 command = deploy.cmd # Run script before deployment

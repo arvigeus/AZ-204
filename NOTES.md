@@ -19,3 +19,7 @@ All commands use `AZ<COMMAND>` format, not `Azure<COMMAND>`. Examples: `New-AzKe
 ## Save for later
 
 All questions you have doubts on, **mark them for review** as you can't go back to them if you don't. **If you go to the bathroom / take a break, you cannot go back to previous questions!!!**
+
+## Always true facts
+
+- Dashes are not allowed in account names. Probably because MS uses them to differentiate between primary `<account>.<url>` and secondary `<account>-secondary.<url>`.

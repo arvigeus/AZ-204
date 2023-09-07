@@ -1,48 +1,27 @@
-# Azure Cosmos DB
+# [Azure Cosmos DB](https://docs.microsoft.com/en-us/azure/cosmos-db/introduction)
 
 `https://<account-name>.documents.azure.com:443/` (SQL)
 
-## [Overview](https://docs.microsoft.com/en-us/azure/cosmos-db/introduction)
-
-Azure Cosmos DB is a fully managed NoSQL database service provided by Microsoft Azure. It provides global distribution, can scale horizontally, and offers multiple models of consistency. Cosmos DB supports multiple data models, including document, column family, graph, and key-value pairs.
-
-### Key Benefits of Azure Cosmos DB
-
-- **Global Distribution:** Cosmos DB allows you to distribute your data globally, enabling low latency (99% of reads and writes completed in under 10 milliseconds) access to data for end users from any geographic location (99.999% read and write availability for multi-region databases).
-- **Multi-Model Database:** Cosmos DB is multi-modal, meaning it supports multiple types of data models like Key-Value, Document, Column-family and Graph.
-- **Elastically Scalable Throughput and Storage:** Azure Cosmos DB enables you to elastically scale throughput and storage based on demand.
-- **Multiple Consistency Models:** It offers five consistency models - Eventual, Consistent Prefix, Session, Bounded Staleness, and Strong. This gives developers flexibility to choose consistency according to their application needs.
-- **Comprehensive SLAs:** Microsoft provides comprehensive SLAs (Service Level Agreements) that cover latency, throughput, consistency, and availability.
+- **Global Distribution:** ⚡ and 99.999% availability for multi-region databases.
+- **Data Models:** Supports Key-Value, Document, Column-family, and Graph formats.
+- **Scalability:** Scales throughput and storage elastically as needed.
+- **Consistency:** Choose trade-off between data accuracy and performance.
+- **SLAs:** Covers latency, throughput, consistency, and availability.
 
 ## [Core Components](https://docs.microsoft.com/en-us/azure/cosmos-db/databases-containers-items)
 
-### [Cosmos DB Account](https://docs.microsoft.com/en-us/azure/cosmos-db/manage-account)
-
-The root resource for Azure Cosmos DB. It contains a unique DNS name and can be managed using various tools. It can virtually manage an unlimited amount of data and provisioned throughput. You can create one or more databases within your account, and then one or more containers to store your data. 50 max (soft limit).
-
-You can have up to 1 free tier account per sunscription.
-
-### Databases
-
-A logical container for containers and users. A database is analogous to a namespace. Databases manage users, permissions, and the consistency level. Database names should be 3-63 characters long, start with a lowercase letter or number, and only contain lowercase letters, numbers, or dashes.
-
-### Containers
-
-A container in Azure Cosmos DB is where data is stored. Data is stored on one or more servers, called partitions. When a container is created, you need to supply a partition key. The partition key is a property you select from your items to help Azure Cosmos DB distribute the data efficiently across partitions. Containers are schema-agnostic, meaning items within a container can have arbitrary schemas or different entities so long as they share the same partition key. Container names should be 3-63 characters long, start with a lowercase letter or number, and only contain lowercase letters, numbers, or dashes.
-
-### Items
-
-Similar to rows or documents in other databases. An item is the smallest unit of data that can be read or written in Cosmos DB. The shape and content of items can vary as they are schema-agnostic - depending on which API you use, an item can represent either a document in a collection, a row in a table, or a node or edge in a graph. By default, all items that you add to a container are automatically indexed without requiring explicit index or schema management.
-
-#### [Time to live (TTL)](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/time-to-live)
-
-Auto-deletes items after a specified time period (in seconds) based on their last modified time, without requiring a client-initiated delete operation. The TTL value is set in seconds at either the container or item level, with item-level settings overriding the container level.
-
-Deletion uses leftover Request Units (RUs), and if RUs are insufficient due to heavy load, deletion is delayed but expired data isn't returned in queries. If container-level TTL is absent or null, items don't auto-expire. If it's -1, items also don't expire unless they have their own TTL. If container's TTL isn't set, item-level TTL is ineffective.
-
-TTL is set via `DefaultTimeToLive` property of `ContainerProperties`.
-
 ![Image showing the hierarchy of Azure Cosmos DB entities: Database accounts are at the top, Databases are grouped under accounts, Containers are grouped under databases.](https://learn.microsoft.com/en-us/training/wwl-azure/explore-azure-cosmos-db/media/cosmos-entities.png)
+
+- [**Cosmos DB Account**](https://docs.microsoft.com/en-us/azure/cosmos-db/manage-account): Manages databases like storage accounts manage containers. Free tier availability is limited to one per subscription.
+- **Databases**: Serves as a _namespace_, managing containers, users, permissions, and consistency levels.
+- **Containers**: Data is stored on one or more servers, called partitions. Partition keys are used for efficient data distribution. Containers are schema-agnostic.
+- **Items**: Smallest read/write data units. Schema-agnostic and API-dependent, they can represent documents, rows, nodes, or edges. Automatically indexed in containers without explicit management.
+
+Note: Partition keys always start with '/', ex: `/partitionkey`. Min length for all names is 3 chars, alphanumeric.
+
+### [Time to live (TTL)](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/time-to-live)
+
+Automatically removes items after a set time (in seconds) based on last modification. TTL can be configured at the container or item level; item settings take precedence. Deletion uses spare RUs; if RUs are low, deletion lags but expired data isn't shown in queries. No container-level TTL means items won't auto-expire; a value of -1 has the same effect unless items have their own TTL. Use `DefaultTimeToLive` in `ContainerProperties` to set TTL.
 
 ### Examples
 
@@ -50,16 +29,16 @@ TTL is set via `DefaultTimeToLive` property of `ContainerProperties`.
 
 ```ps
 # Create a Cosmos DB account
-az cosmosdb create --name $account --resource-group $resourceGroup --kind GlobalDocumentDB --locations "WestUS=0" "EastUS=1"
+az cosmosdb create --name $account --kind GlobalDocumentDB ...
 
 # Create a database
-az cosmosdb sql database create --account-name $account --resource-group $resourceGroup --name $database
+az cosmosdb sql database create --account-name $account --name $database
 
 # Create a container
-az cosmosdb sql container create --account-name $account --database-name $database --resource-group $resourceGroup --name $container --partition-key-path "/mypartitionkey"
+az cosmosdb sql container create --account-name $account --database-name $database --name $container --partition-key-path "/mypartitionkey"
 
 # Create an item
-az cosmosdb sql container create --account-name $account --database-name $database --resource-group $resourceGroup --container-name $container --value "{\"id\": \"1\", \"mypartitionkey\": \"mypartitionvalue\", \"description\": \"mydescription\"}"
+az cosmosdb sql container create --account-name $account --database-name $database --container-name $container --value "{\"id\": \"1\", \"mypartitionkey\": \"mypartitionvalue\", \"description\": \"mydescription\"}"
 ```
 
 [Azure Cosmos DB .NET SDK](https://learn.microsoft.com/en-us/dotnet/api/microsoft.azure.cosmos?view=azure-dotnet):
@@ -123,19 +102,13 @@ Azure Cosmos DB provides a balanced approach to consistency, availability, and l
 - **Consistent prefix** - Readers might be a bit behind, but they always see things in order. Good for situations where sequence matters, like following a chain of events.
 - **Eventual** - Readers might see things out of order (non-consistent) or slightly old, but it eventually catches up. Best when speed and availability are more important than immediate consistency, like a social media like counter. Lowest latency and highest availability.
 
-### Managing consistency levels
-
-[Azure CLI](https://learn.microsoft.com/en-us/cli/azure/cosmosdb?view=azure-cli-latest):
-
 ```ps
 # Get the default consistency level
-az cosmosdb show --name $database --resource-group $resourceGroup --query defaultConsistencyLevel
+az cosmosdb show --name $database--query defaultConsistencyLevel ...
 
 # Set the default consistency level
-az cosmosdb update --name $database --resource-group $resourceGroup --default-consistency-level "BoundedStaleness"
+az cosmosdb update --name $database--default-consistency-level "BoundedStaleness" ...
 ```
-
-[Azure Cosmos DB .NET SDK](https://learn.microsoft.com/en-us/dotnet/api/microsoft.azure.cosmos?view=azure-dotnet):
 
 ```cs
 ConsistencyLevel defaultConsistencyLevel = cosmosClient.ConsistencyLevel;
@@ -144,24 +117,16 @@ cosmosClient.ConsistencyLevel = ConsistencyLevel.BoundedStaleness;
 
 ## [Partitioning in Cosmos DB](https://docs.microsoft.com/en-us/azure/cosmos-db/partitioning-overview)
 
-Azure Cosmos DB employs partitioning to efficiently distribute and manage data across multiple machines or regions. This technique enhances performance by providing high throughput and low latency. It also offers the flexibility to scale storage capacity and throughput independently.
+Improves⚡. Enables independent scaling of storage and throughput.
 
-- **Partition Key**: This is a specific property in your data that Cosmos DB uses to distribute the data across multiple partitions. Selecting an optimal partition key is a critical decision for the performance and scalability of a Cosmos DB. It's the best practice to have a partition key with many distinct values, such as hundreds or thousands. A well-chosen partition key evenly disperses the workload across all partitions, thereby avoiding _'hot' partitions_ (imbalance of logical partitions, where some logical partitions are
-  very large and some are very small which does not allow Azure Cosmos DB to scale) that could become a performance bottleneck. They can be _string_ value only.
+- **Partition Key**: A property in data used to distribute data across partitions. Critical for performance and scalability. Best practice: many distinct values to avoid _'hot' partitions_ (overused, or uneven partition sizes) that could become a performance bottleneck. Type: string only.
+- **Logical Partitions**: Sets of items with the same partition key. Enables efficient queries and transactions. Max storage: 20 GB; Max throughput: 10,000 RU/s.
+- **Physical Partitions**: Internal resources hosting logical partitions. Cosmos DB auto-splits and merges these for workload balance. Max throughput: 10,000 RU/s.
+- **Partition Sets**: Groups of physical partitions. Split into subsets for ⚡.
 
-- **Logical Partitions**: Each logical partition comprises a set of items sharing the same partition key value. Cosmos DB uses logical partitions to organize data, which enables rapid and efficient query processing and transaction management. Each logical partition can store up to 20 GB of data and can serve up to 10,000 RU/s.
+### [Partitioning Key Selection](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/model-partition-example#identify-the-main-access-patterns)
 
-- **Physical Partitions**: These are internal resources that Azure Cosmos DB manages. They host one or more logical partitions, providing the computational resources (CPU, I/O, memory) for them. Cosmos DB automatically splits and merges physical partitions to evenly distribute the workload as the data volume and throughput. Max throughput: 10 000 RU/s.
-
-- **Partition Sets**: A partition set is essentially a group of physical partitions. A container might start with a single partition set, but as the data volume or throughput requirements increase, Cosmos DB can split the partition set into multiple subsets to maintain performance.
-
-For example, a container holds items. Each item has a unique value for the UserID property. If UserID serves as the partition key for the items in the container and there are 1,000 unique UserID values, 1,000 logical partitions are created for the container.
-
-### Partitioning Strategies
-
-Choosing the right partition key is crucial to evenly distribute data and workload, preventing performance degradation caused by overloaded partitions.
-
-To optimize, consider selecting a partition key that is commonly used in the `WHERE` clause of your queries and has numerous distinct values. For example, in a multi-tenant application, utilizing the tenant ID as the partition key offers advantages. This approach localizes each tenant's data to specific partitions, enhancing read/write performance and maintaining data isolation for tenants.
+Selecting an optimal partition key is essential for balanced data distribution and workload, which ensures high performance. Use a key that appears often in your queries' `WHERE` clause and has many unique values. For instance, in multi-tenant apps, using the tenant ID as the key improves read/write speeds and data isolation. Validate your choice through Azure SDKs and monitor metrics like data size, throughput, and cost for any needed adjustments.
 
 ### [Synthetic partition key](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/synthetic-partition-keys)
 
@@ -185,49 +150,11 @@ Here's a practical rule of thumb: A read operation on a 1-KB document typically 
 
 You set the number of Request Units (RUs) per second your application needs in multiples of 100. Minimum value: 400.
 
-- **Database-level throughput**: Shared among all the containers in the database. It's a cost-effective option for small workloads with light traffic. Suitable for multitenant applications
+- **Database-level throughput**: Shared among all the containers in the database. 🏷️. ⭐: small workloads with light traffic, multitenant applications.
+- **Container-level throughput**: Dedicated to a single container. ⭐: 🏋🏿 workloads, large data volumes. They have two throughput modes that _cannot be changed later_:
 
-- **Container-level throughput**: Dedicated to a single container. More suitable for workloads with heavy traffic or large data volumes. They have two throughput modes that _cannot be changed later_:
-
-  - **Dedicated provisioned throughput mode**: In this mode, a specific amount of throughput (the capacity of the system to process and transfer data) is set aside just for _one container_. The system assures this through Service Level Agreements (SLAs), which are formal contracts that ensure this throughput is dedicated and maintained only for that container. This means that the processing power of the system is not shared with any other container, providing you with _predictable performance_ and _speeds_ for your specific container.
-
-    ```ps
-    az cosmosdb sql container create \
-      -a $accountName -g $resourceGroupName \
-      -d $databaseName -n $containerName \
-      -p $partitionKey --throughput $throughput
-    ```
-
-    ```cs
-    await this.cosmosClient.GetDatabase(databaseName).CreateContainerAsync(
-      id: containerName,
-      partitionKeyPath: "/myPartitionKey",
-      throughput: 1000);
-    ```
-
-  - **Shared provisioned throughput mode**: The throughput is shared among _multiple containers within the same database_. This shared throughput is spread across all containers that are configured to use the shared mode. This allows for flexibility and efficiency in distributing resources, particularly when _dealing with a large number of containers with variable load_. Any containers in the database that have their own dedicated throughput will not be part of this sharing, they continue to operate independently with their allocated resources.
-
-    ```ps
-    az cosmosdb sql database create \
-      -a $accountName \
-      -g $resourceGroupName \
-      -n $databaseName \
-      --throughput $throughput
-    ```
-
-    ```cs
-    await this.cosmosClient.CreateDatabaseIfNotExistsAsync(
-          id: databaseName,
-          throughput: 1000);
-    ```
-
-```sh
-az cosmosdb sql container create --throughput 400
-```
-
-```cs
-await this.cosmosDatabase.CreateContainerAsync(new ContainerProperties(id, partitionKeyPath), 400);
-```
+  - **Dedicated Throughput Mode** (set at **container** level): Reserves a set amount of processing power for _one container_. Service Level Agreements (SLAs) guarantee this, ensuring no other container can use it. This gives you consistent speed and performance for that specific container.
+  - **Shared Throughput Mode** (set at **database** level): _Multiple containers in the same database_ share processing power. ⭐: _Large number of containers with variable load_. Containers with their own dedicated throughput aren't part of this sharing and operate independently.
 
 ### [Serverless mode](https://learn.microsoft.com/en-us/azure/cosmos-db/serverless)
 
@@ -531,14 +458,8 @@ Queries that have an `ORDER BY` clause with two or more properties require a com
 {
   "compositeIndexes": [
     [
-      {
-        "path": "/name",
-        "order": "ascending"
-      },
-      {
-        "path": "/age",
-        "order": "descending"
-      }
+      { "path": "/name", "order": "ascending" },
+      { "path": "/age", "order": "descending" }
     ]
   ]
 }
@@ -577,7 +498,7 @@ SELECT VALUE COUNT(1) FROM models
 
 - **Gateway mode** (default): For environments that have a limited number of socket connections, or corporate network with strict firewall restrictions. It uses HTTPS port and a single DNS endpoint.
 
-- **Direct mode**: Connectivity through TCP protocol, using TLS for initial authentication and encryption. Better performance.
+- **Direct mode**: Connectivity through TCP protocol, using TLS for initial authentication and encryption. ⚡
 
 ## Performance and best practices
 
@@ -590,13 +511,9 @@ For write-heavy operations enable bulk support for dealing with large data volum
 ## [Global Distribution](https://docs.microsoft.com/en-us/azure/cosmos-db/distribute-data-globally)
 
 - **Multi-region Writes** - Perform writes in all configured regions. This enhances write latency and availability.
-
 - **Consistency and Latency**
-
 - **Automatic Failover** - If an Azure region goes down, Cosmos DB can automatically failover to another region.
-
 - **Manual Failover** - For testing purposes, you can trigger a manual failover to see how your application behaves during regional failures.
-
 - **No downtime when adding or removing regions**
 
 ### [Conflict resolution](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/how-to-manage-conflicts)
@@ -609,9 +526,7 @@ In a multi-master setup, multiple regions can simultaneously read from and write
 ## [Security](https://docs.microsoft.com/en-us/azure/cosmos-db/database-security)
 
 - Authentication - Cosmos DB uses Azure AD for authentication. When creating a Cosmos DB account, an access key is created that can be used to authenticate requests to the account.
-
 - Authorization - Authorization in Cosmos DB is role-based. It provides built-in user and permission resources that allow fine-grained access control to containers and documents.
-
 - Network Security - Azure Cosmos DB can be integrated with Azure Virtual Networks (VNet) and firewall rules for enhanced network security.
 
   ```ps
@@ -633,56 +548,20 @@ Azure Cosmos DB takes automatic backups of data regularly without affecting data
 
 Restores can only be done between accounts within the same subscription and you can't restore into an account with lower Request Units per second (RU/s) or fewer partitions.
 
-### Backup modes
-
 - **Continuous backup mode** has two tiers: 7-day retention and 30-day retention. You can restore to any point within these retention periods, into a new or existing account. You select the tier when creating a Cosmos DB account. Note that if you configure a new account with continuous backup, you can do self-service restore but you can't switch it back to periodic mode.
-
 - **Periodic backup mode** is the default for all existing accounts. Backups are taken at intervals you configure, with data restored through a request to the support team. The maximum retention period is a month, and the minimum backup interval is an hour.
 
 ## [Monitoring and Diagnostics](https://docs.microsoft.com/en-us/azure/cosmos-db/how-to-monitor-account)
 
-Azure Cosmos DB provides built-in monitoring and diagnostics features to help you track usage, capacity, performance, availability, and other metrics. Key concepts include:
-
-### Metrics
-
-Cosmos DB provides built-in metrics for various aspects of a Cosmos DB account, such as request charge, storage, availability, latency, etc.
-
-### Azure Monitor
-
-You can use Azure Monitor to create dashboards, set alerts, and visualize metrics from your Cosmos DB account.
-
-### Diagnostic Logs
-
-Diagnostic logs provide detailed traces of operations and can be sent to Log Analytics, Event Hubs, or Azure Storage for further analysis.
-
-### Query Statistics
-
-You can retrieve statistics about query execution (like request charge) to help optimize and troubleshoot your queries.
+- Metrics: Built-in tracking for aspects like storage, latency, and availability.
+- Azure Monitor: Enables custom dashboards, alerts, and metric visualization.
+- Diagnostic Logs: Offers operation traces, which can be analyzed further in various Azure services.
+- Query Stats: Provides execution metrics to help optimize and troubleshoot queries.
 
 ## [Use Cases](https://docs.microsoft.com/en-us/azure/cosmos-db/use-cases)
 
-Azure Cosmos DB is designed to support a wide range of application scenarios. Its multi-model, globally distributed architecture makes it suitable for many types of applications. Here are a few examples:
-
-### IoT and Telemetry
-
-Cosmos DB can ingest massive amounts of data in real-time, making it suitable for IoT and telemetry scenarios. The provisioned throughput feature can handle spikes in traffic during peak times.
-
-### Retail and Marketing
-
-Cosmos DB's global distribution capabilities make it a good fit for applications that require low latency access to data from any part of the world, such as retail and marketing applications.
-
-### Gaming
-
-Cosmos DB can scale to accommodate millions of players, and its low-latency multi-master replication guarantees that all players see the same game state at the same time.
-
-### Real-Time Analytics
-
-Cosmos DB's support for multiple consistency models allows developers to balance between consistency and performance, making it suitable for real-time analytics workloads.
-
-### Personalization
-
-With Cosmos DB, you can store and query user activity data to drive real-time, personalized experiences.
-
-## [Identifying access patterns](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/model-partition-example#identify-the-main-access-patterns)
-
-Helps design the data model to optimize application interactions, such as minimizing cross-partition queries or reducing request numbers through denormalization (optimize read queries by organizing data efficiently within containers).
+- IoT: Handles massive real-time data and traffic spikes.
+- Retail: Offers low-latency data access worldwide.
+- Gaming: Scales for millions of players with synchronized game states.
+- Analytics: Balances performance and consistency for real-time analysis.
+- Personalization: query user activity data to drive real-time, personalized experiences

@@ -2,6 +2,8 @@
 
 A Shared Access Signature (SAS) is a URI that grants restricted access rights to Azure Storage resources. It's a signed URI that points to one or more storage resources and includes a token that contains a special set of query parameters.
 
+Use a SAS for secure, temporary access to your storage account, especially when users need to read/write their own data or for copying data within Azure Storage.
+
 Note: You should prefer Azure AD
 
 ## Types of SAS
@@ -10,7 +12,7 @@ Note: You should prefer Azure AD
 
 1. [**Service SAS**](https://learn.microsoft.com/en-us/azure/storage/blobs/sas-service-create-dotnet): This method uses your storage account key to create a SAS. It's a straightforward way to grant limited access to your Azure Storage resources. However, it's less secure than the User Delegation SAS because it involves sharing your account key. It's typically used when you want to provide access to clients who are not authenticated with Azure AD.
 
-1. [**Account (SAS)**](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-sas-create-dotnet): This method uses your storage account key to create a SAS. It's created at the storage account level, allowing access to multiple services within the account. It's typically used when you need to provide access to several services in your storage account. However, it involves sharing your account key, similar to the Service SAS.
+1. [**Account SAS**](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-sas-create-dotnet): This method uses your storage account key to create a SAS. It's created at the storage account level, allowing access to multiple services within the account. It's typically used when you need to provide access to several services in your storage account. However, it involves sharing your account key, similar to the Service SAS.
 
    - Ad hoc SAS: Defines start, expiry, and permissions in the SAS URI. Any SAS can be an ad hoc SAS.
    - Service SAS: Uses a stored policy on resources to inherit start, expiry, and permissions.
@@ -19,29 +21,29 @@ Note: You should prefer Azure AD
 
 A SAS requires two components: a URI to the resource you want to access and a SAS token that you've created to authorize access to that resource.
 
-Example:
-
-- **URI**: `https://medicalrecords.blob.core.windows.net/patient-images/patient-116139-nq8z7f.jpg?`
+- **URI**: `https://<account>.blob.core.windows.net/<container>/<blob>?`
 - **SAS token**: `sp=r&st=2020-01-20T11:42:32Z&se=2020-01-20T19:42:32Z&spr=https&sv=2019-02-02&sr=b&sig=SrW1HZ5Nb6MbRzTbXCaPm%2BJiSEn15tC91Y4umMPwVZs%3D`
 
 [Reference](https://learn.microsoft.com/en-us/rest/api/storageservices/create-service-sas):
 
-| Component | Description                                                                                                                                                                                                |
-| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| sp        | Controls the access rights. Possible values include: (`a`)dd, (`c`)reate, (`d`)elete, (`l`)ist, (`r`)ead, (`w`)rite. For example, `sp=acdlrw` grants all the available rights.                             |
-| st        | The date and time when access starts. For example, `st=2023-07-28T11:42:32Z` means the access starts at 11:42:32 UTC on July 28, 2023.                                                                     |
-| se        | The date and time when access ends. For example, `se=2023-07-28T19:42:32Z` means the access ends at 19:42:32 UTC on July 28, 2023.                                                                         |
-| sv        | The version of the storage API to use. For example, `sv=2020-02-10` means the storage API version 2020-02-10 is used.                                                                                      |
-| sr        | The kind of storage being accessed. Possible values include: (`b`)lob, (`f`)ile, (`q`)ueue, (`t`)able, (`c`)ontainer, (`d`)irectory. For example, `sr=b` means a blob is being accessed.                   |
-| sig       | The cryptographic signature. For example, `sig=SrW1HZ5Nb6MbRzTbXCaPm%2BJiSEn15tC91Y4umMPwVZs%3D` is a cryptographic signature.                                                                             |
-| sip       | (Optional) Allowed IP addresses or IP range. For example, `sip=168.1.5.60-168.1.5.70` means only the IP addresses from 168.1.5.60 to 168.1.5.70 are allowed.                                               |
-| spr       | (Optional) Allowed protocols. Possible values include: 'https', 'http,https'. For example, `spr=https` means only HTTPS is allowed.                                                                        |
-| si        | (Optional) The name of the stored access policy. For example, `si=MyAccessPolicy` means the stored access policy named "MyAccessPolicy" is used.                                                           |
-| rscc      | (Optional) The response header override for cache control. For example, `rscc=public` means the "Cache-Control" header is set to "public".                                                                 |
-| rscd      | (Optional) The response header override for content disposition. For example, `rscd=attachment; filename=example.txt` means the "Content-Disposition" header is set to "attachment; filename=example.txt". |
-| rsce      | (Optional) The response header override for content encoding. For example, `rsce=gzip` means the "Content-Encoding" header is set to "gzip".                                                               |
-| rscl      | (Optional) The response header override for content language. For example, `rscl=en-US` means the "Content-Language" header is set to "en-US".                                                             |
-| rsct      | (Optional) The response header override for content type. For example, `rsct=text/plain` means the "Content-Type" header is set to "text/plain".                                                           |
+| Component | Friendly Name                           | Description                                                                                                                                                                                       |
+| --------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| sp        | `S`hared `P`ermissions                  | Controls the access rights. Possible values include: `a`dd, `c`reate, `d`elete, `l`ist, `r`ead, `w`rite. Ex: `sp=acdlrw` grants all the available rights.                                         |
+| st        | `S`hared Access Signature Start `T`ime  | The date and time when access starts. Ex: `st=2023-07-28T11:42:32Z` means the access starts at 11:42:32 UTC on July 28, 2023.                                                                     |
+| se        | `S`hared Access Signature `E`xpiry Time | The date and time when access ends. Ex: `se=2023-07-28T19:42:32Z` means the access ends at 19:42:32 UTC on July 28, 2023.                                                                         |
+| sv        | `S`torage API `V`ersion                 | The version of the storage API to use. Ex: `sv=2020-02-10` means the storage API version 2020-02-10 is used.                                                                                      |
+| sr        | `S`torage `R`esource                    | The kind of storage being accessed. Possible values include: `b`lob, `f`ile, `q`ueue, `t`able, `c`ontainer, `d`irectory. Ex: `sr=b` means a blob is being accessed.                               |
+| sig       | `Sig`nature                             | The cryptographic signature. Ex: `sig=SrW1HZ5Nb6MbRzTbXCaPm%2BJiSEn15tC91Y4umMPwVZs%3D` is a cryptographic signature.                                                                             |
+| sip       | `S`ource `IP` Range                     | (Optional) Allowed IP addresses or IP range. Ex: `sip=168.1.5.60-168.1.5.70` means only the IP addresses from 168.1.5.60 to 168.1.5.70 are allowed.                                               |
+| spr       | `S`upported `Pr`otocols                 | (Optional) Allowed protocols. Possible values include: 'https', 'http,https'. Ex: `spr=https` means only HTTPS is allowed.                                                                        |
+| si        | `S`tored Access **Policy** `I`dentifier | (Optional) The name of the stored access policy. Ex: `si=MyAccessPolicy` means the stored access policy named "MyAccessPolicy" is used.                                                           |
+| rscc      | `R`e`s`ponse `C`ache `C`ontrol          | (Optional) The response header override for cache control. Ex: `rscc=public` means the "Cache-Control" header is set to "public".                                                                 |
+| rscd      | `R`e`s`ponse `C`ontent `D`isposition    | (Optional) The response header override for content disposition. Ex: `rscd=attachment; filename=example.txt` means the "Content-Disposition" header is set to "attachment; filename=example.txt". |
+| rsce      | `R`e`s`ponse `C`ontent `E`ncoding       | (Optional) The response header override for content encoding. Ex: `rsce=gzip` means the "Content-Encoding" header is set to "gzip".                                                               |
+| rscl      | `R`e`s`ponse `C`ontent `L`anguage       | (Optional) The response header override for content language. Ex: `rscl=en-US` means the "Content-Language" header is set to "en-US".                                                             |
+| rsct      | `R`e`s`ponse `C`ontent `T`ype           | (Optional) The response header override for content type. Ex: `rsct=text/plain` means the "Content-Type" header is set to "text/plain".                                                           |
+
+Note: All 2-letter parameters are required, except `si` (Access Policy)
 
 ## Best Practices
 
@@ -53,13 +55,9 @@ Example:
 
 ## Stored Access Policies
 
-A stored access policy provides an extra level of control over service-level shared access signatures (SAS) on the server side. It supports Blob containers, File shares, Queues, and Tables.
+Use `SetAccessPolicy` on `BlobContainer` to apply an array containing a single `BlobSignedIdentifier` that has a configured `BlobAccessPolicy` for the `AccessPolicy` property.
 
-### Creating a Stored Access Policy
-
-Here's how to create a stored access policy using C# .NET:
-
-```csharp
+```cs
 BlobSignedIdentifier identifier = new BlobSignedIdentifier
 {
     Id = "stored access policy identifier",
@@ -73,8 +71,6 @@ BlobSignedIdentifier identifier = new BlobSignedIdentifier
 blobContainer.SetAccessPolicy(permissions: new BlobSignedIdentifier[] { identifier });
 ```
 
-And here's how to do it using Azure CLI:
-
 ```sh
 az storage container policy create \
     --name <stored access policy identifier> \
@@ -86,13 +82,7 @@ az storage container policy create \
     --account-name <storage account name> \
 ```
 
-### Modifying or Revoking a Stored Access Policy
-
-To modify the parameters of the stored access policy you can call the access control list operation for the resource type to replace the existing policy. To revoke a stored access policy you can delete it, rename it by changing the signed identifier, or change the expiry time to a value in the past.
-
-## When to Use SAS
-
-Use a SAS when you want to provide secure access to resources in your storage account to any client who doesn't otherwise have permissions to those resources. A common scenario where a SAS is useful is a service where users read and write their own data to your storage account; or you need to copy data within Azure Storage: copying between different types of storage (like from a blob to a file), between different storage accounts, or even within the same storage account.
+To cancel (revoke) a policy, you can either delete it, rename it, or set its expiration time to a past date.
 
 ## Working with SAS
 
@@ -113,7 +103,7 @@ BlobSasBuilder sasBuilder = new BlobSasBuilder()
 {
     BlobContainerName = blobClient.BlobContainerName,
     BlobName = blobClient.Name,
-    Resource = "b",
+    Resource = "b", // HINT: in case of missing BlobName property, then Resource = "c"
     StartsOn = DateTimeOffset.UtcNow,
     ExpiresOn = DateTimeOffset.UtcNow.AddDays(1),
     Permissions = BlobSasPermissions.Read | BlobSasPermissions.Write

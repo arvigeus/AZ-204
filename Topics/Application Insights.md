@@ -121,7 +121,6 @@ var timer = System.Diagnostics.Stopwatch.StartNew();
 try
 {
     // Some code that might throw an exception
-
     success = true;
 }
 catch (Exception ex)
@@ -153,31 +152,17 @@ To write to event log use, `ILogger` or a class inheriting `EventSource`.
 
 ## [Usage analysis](https://learn.microsoft.com/en-us/azure/azure-monitor/app/usage-overview)
 
-### [User, session, and event analysis](https://learn.microsoft.com/en-us/azure/azure-monitor/app/usage-segmentation)
+- [User, session, and event analysis](https://learn.microsoft.com/en-us/azure/azure-monitor/app/usage-segmentation)
 
-- **Users tool**: Counts how many people used the app and its features. If a person uses different browsers or machines, they're counted as more than one user.
-- **Sessions tool**: Tracks how many user activity sessions included certain pages and features. A session resets after 30 minutes of inactivity or 24 hours of continuous use.
-- **Events tool**: Measures how often pages and features are used. Page views are counted when loaded, and custom events represent specific occurrences like button clicks or task completions.
+  - **Users tool**: Counts how many people used the app and its features. If a person uses different browsers or machines, they're counted as more than one user.
+  - **Sessions tool**: Tracks how many user activity sessions included certain pages and features. A session resets after 30 minutes of inactivity or 24 hours of continuous use.
+  - **Events tool**: Measures how often pages and features are used. Page views are counted when loaded, and custom events represent specific occurrences like button clicks or task completions.
 
-### [Funnels](https://learn.microsoft.com/en-us/azure/azure-monitor/app/usage-funnels)
-
-Track how users move through different stages of your web application, for example how many users go from the home page to creating a ticket. Use funnels to identify where users may stop or leave your app, helping you understand its effective areas and where improvements are needed.
-
-### [Cohorts](https://learn.microsoft.com/en-us/azure/azure-monitor/app/usage-cohorts)
-
-Group and analyze sets of users, sessions, events, or operations that have something in common. For example, you might make a cohort of users who all tried a new feature.
-
-### [Impact](https://learn.microsoft.com/en-us/azure/azure-monitor/app/usage-impact)
-
-Helps you understand how different factors like load times and user properties influence conversion rates in various parts of your app.
-
-### [Retention](https://learn.microsoft.com/en-us/azure/azure-monitor/app/usage-retention)
-
-Helps you understand how many users come back to your app and how often they engage with specific tasks or goals. For example, if you have a game site, you can see how many users return after winning or losing a game.
-
-### [User Flows](https://learn.microsoft.com/en-us/azure/azure-monitor/app/usage-flows)
-
-Helps you analyze how users navigate between pages and features of your web app. It can answer questions like where users go after visiting a page, where they leave your site, or if they repeat the same action many times.
+- [Funnels](https://learn.microsoft.com/en-us/azure/azure-monitor/app/usage-funnels): Track how users move through different stages of your web application, for example how many users go from the home page to creating a ticket. Use funnels to identify where users may stop or leave your app, helping you understand its effective areas and where improvements are needed.
+- [Cohorts](https://learn.microsoft.com/en-us/azure/azure-monitor/app/usage-cohorts): Group and analyze sets of users, sessions, events, or operations that have something in common. For example, you might make a cohort of users who all tried a new feature.
+- [Impact](https://learn.microsoft.com/en-us/azure/azure-monitor/app/usage-impact): Helps you understand how different factors like load times and user properties influence conversion rates in various parts of your app.
+- [Retention](https://learn.microsoft.com/en-us/azure/azure-monitor/app/usage-retention): Helps you understand how many users come back to your app and how often they engage with specific tasks or goals. For example, if you have a game site, you can see how many users return after winning or losing a game.
+- [User Flows](https://learn.microsoft.com/en-us/azure/azure-monitor/app/usage-flows): Helps you analyze how users navigate between pages and features of your web app. It can answer questions like where users go after visiting a page, where they leave your site, or if they repeat the same action many times.
 
 ## Instrument an app for monitoring
 

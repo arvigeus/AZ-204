@@ -157,14 +157,14 @@ In these study notes, emojis may be ambiguous and the correct meaning has to be 
 - ⭐: Recommended
 - ❌: Not recommended / Not Supported
 - ⏺️: Default
-- 🏷️: Cheap
+- 🏷️: Cheap / Cost-effective
 - 💲: High price (cost) / Expensive
 - ⚡: Low latency / High throughput (transactions)
 - 🐌: High ("flexible") latency / Low throughput (transactions)
 - 🎲: Random
 - 💎: Premium only
 - 🦺: Standard / Not premium
-- 🏋🏿: Transaction-intensive
+- 🏋🏿: Transaction-intensive / Heavy traffic
 - 🙋‍♂️: High availability
 - ⏫: Ingress / Upload
 - ⏬: Egress / Download
