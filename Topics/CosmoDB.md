@@ -8,6 +8,14 @@
 - **Consistency:** Choose trade-off between data accuracy and performance.
 - **SLAs:** Covers latency, throughput, consistency, and availability.
 
+## [Use Cases](https://docs.microsoft.com/en-us/azure/cosmos-db/use-cases)
+
+- IoT: Handles massive real-time data and traffic spikes.
+- Retail: Offers low-latency data access worldwide.
+- Gaming: Scales for millions of players with synchronized game states.
+- Analytics: Balances performance and consistency for real-time analysis.
+- Personalization: query user activity data to drive real-time, personalized experiences
+
 ## [Core Components](https://docs.microsoft.com/en-us/azure/cosmos-db/databases-containers-items)
 
 ![Image showing the hierarchy of Azure Cosmos DB entities: Database accounts are at the top, Databases are grouped under accounts, Containers are grouped under databases.](https://learn.microsoft.com/en-us/training/wwl-azure/explore-azure-cosmos-db/media/cosmos-entities.png)
@@ -17,11 +25,11 @@
 - **Containers**: Data is stored on one or more servers, called partitions. Partition keys are used for efficient data distribution. Containers are schema-agnostic.
 - **Items**: Smallest read/write data units. Schema-agnostic and API-dependent, they can represent documents, rows, nodes, or edges. Automatically indexed in containers without explicit management.
 
-Note: Partition keys always start with '/', ex: `/partitionkey`. Min length for all names is 3 chars, alphanumeric.
+Note: Partition keys always start with `/` (ex: `/partitionkey`). Min length for all names is 3 chars, alphanumeric.
 
 ### [Time to live (TTL)](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/time-to-live)
 
-Automatically removes items after a set time (in seconds) based on last modification. TTL can be configured at the container or item level; item settings take precedence. Deletion uses spare RUs; if RUs are low, deletion lags but expired data isn't shown in queries. No container-level TTL means items won't auto-expire; a value of -1 has the same effect unless items have their own TTL. Use `DefaultTimeToLive` in `ContainerProperties` to set TTL.
+Automatically removes items after a set time (in seconds) based on last modification. TTL can be configured at the container or item level; item settings take precedence. Deletion uses spare RUs; if RUs are low, deletion lags but expired data isn't shown in queries. No container-level TTL means items won't auto-expire; a value of -1 has the same effect unless items have their own TTL. Use `DefaultTimeToLive` in `ContainerProperties` to set TTL in C#.
 
 ### Examples
 
@@ -96,11 +104,11 @@ Azure Cosmos DB provides a balanced approach to consistency, availability, and l
 
 ![Image showing data consistency as a spectrum.](https://learn.microsoft.com/en-us/training/wwl-azure/explore-azure-cosmos-db/media/five-consistency-levels.png)
 
-- **Strong** - Every reader sees the latest data right away, but it may be slower (higher latency) and less available. Best for serious stuff like bank transactions where accuracy is vital. Clients will never receive a partial write.
+- **Strong** - Every reader sees the latest data right away, but it may be slower (higher latency) and less available. ⭐: serious stuff like bank transactions where accuracy is vital. Clients will never receive a partial write.
 - **Bounded staleness** - Readers may see slightly old data, but there's a limit on how old (determined by number of operations K or the time interval T for staleness - in single-region accounts, the minimum values are 10 write operations or 5 seconds, while in multi-region accounts, they are 100,000 write operations or 300 seconds). Good for things like game leaderboards where a small delay is okay.
 - **Session** (default, can be configured) - Within a single user's session, the data is always up-to-date. Great for scenarios like a personal shopping cart on a website.
 - **Consistent prefix** - Readers might be a bit behind, but they always see things in order. Good for situations where sequence matters, like following a chain of events.
-- **Eventual** - Readers might see things out of order (non-consistent) or slightly old, but it eventually catches up. Best when speed and availability are more important than immediate consistency, like a social media like counter. Lowest latency and highest availability.
+- **Eventual** - Readers might see things out of order (non-consistent) or slightly old, but it eventually catches up. ⭐: when speed and availability are more important than immediate consistency, like a social media like counter. Lowest latency and highest availability.
 
 ```ps
 # Get the default consistency level
@@ -119,14 +127,14 @@ cosmosClient.ConsistencyLevel = ConsistencyLevel.BoundedStaleness;
 
 Improves⚡. Enables independent scaling of storage and throughput.
 
-- **Partition Key**: A property in data used to distribute data across partitions. Critical for performance and scalability. Best practice: many distinct values to avoid _'hot' partitions_ (overused, or uneven partition sizes) that could become a performance bottleneck. Type: string only.
+- **Partition Key**: A property in data used to distribute data across partitions. Critical for performance and scalability. Type: string only.
 - **Logical Partitions**: Sets of items with the same partition key. Enables efficient queries and transactions. Max storage: 20 GB; Max throughput: 10,000 RU/s.
 - **Physical Partitions**: Internal resources hosting logical partitions. Cosmos DB auto-splits and merges these for workload balance. Max throughput: 10,000 RU/s.
 - **Partition Sets**: Groups of physical partitions. Split into subsets for ⚡.
 
 ### [Partitioning Key Selection](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/model-partition-example#identify-the-main-access-patterns)
 
-Selecting an optimal partition key is essential for balanced data distribution and workload, which ensures high performance. Use a key that appears often in your queries' `WHERE` clause and has many unique values. For instance, in multi-tenant apps, using the tenant ID as the key improves read/write speeds and data isolation. Validate your choice through Azure SDKs and monitor metrics like data size, throughput, and cost for any needed adjustments.
+Use a key that appears often in your queries' `WHERE` clause and has many unique (distinct) values to avoid _'hot' partitions_ (overused, or uneven partition sizes) that could become a performance bottleneck. For instance, in multi-tenant apps, using the tenant ID as the key improves read/write speeds and data isolation. Validate your choice through Azure SDKs and monitor metrics like data size, throughput, and cost for any needed adjustments.
 
 ### [Synthetic partition key](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/synthetic-partition-keys)
 
@@ -138,51 +146,37 @@ When no property has many distinct values:
 
 ## [Request Units (RUs)](https://learn.microsoft.com/en-us/azure/cosmos-db/request-units)
 
-Represent the currency of throughput in Azure Cosmos DB. Each operation (e.g., read, write, query) consumes a certain number of RUs, depending on factors such as the item size, item property count, and query complexity.
-
-If an operation's RU cost exceeds your provisioned RUs, the operation is rate-limited until sufficient RUs become available.
-
-Here's a practical rule of thumb: A read operation on a 1-KB document typically consumes 1 RU.
+RUs measure the cost of operations like read, write, and query. The cost varies based on factors like item size and query complexity. If an operation costs more RUs than you have, it's rate-limited until more RUs are available. Typically, reading a 1-KB document costs 1 RU.
 
 ![Image showing how database operations consume request units.](https://learn.microsoft.com/en-us/training/wwl-azure/explore-azure-cosmos-db/media/request-units.png)
 
 ### [Provisioned Throughput](https://learn.microsoft.com/en-us/azure/cosmos-db/set-throughput)
 
-You set the number of Request Units (RUs) per second your application needs in multiples of 100. Minimum value: 400.
+🧊. You set the number of Request Units (RUs) per second your application needs in multiples of 100. Minimum value: 400.
 
-- **Database-level throughput**: Shared among all the containers in the database. 🏷️. ⭐: small workloads with light traffic, multitenant applications.
-- **Container-level throughput**: Dedicated to a single container. ⭐: 🏋🏿 workloads, large data volumes. They have two throughput modes that _cannot be changed later_:
+- **Container-level throughput** (**Dedicated**): Reserves a set amount of processing power (consistent ⚡) for _one container_ (guaranteed by [SLA](https://www.azure.cn/en-us/support/sla/cosmos-db/)). ⭐: 🏋🏿 workloads, large data volumes.
+- **Database-level throughput** (**Shared**): _Multiple containers in the same database_ share processing power. Does not effect containers with dedicated throughput. 🏷️. ⭐: small to large workloads with light/variable traffic, multitenant applications.
+- [**Serverless mode**](https://learn.microsoft.com/en-us/azure/cosmos-db/serverless): No need to set throughput in Azure Cosmos DB. You're billed for the RUs used by database operations at the end of the billing cycle.
+- [**Autoscale Throughput**](https://learn.microsoft.com/en-us/azure/cosmos-db/provision-throughput-autoscale): Dynamically adjusts provisioned RUs based on current usage, applicable to both single containers and databases. It scales between 10% and 100% of a set maximum (100 to 1000 RU/s), optimizing for unpredictable traffic while maintaining high performance and scale SLAs.
 
-  - **Dedicated Throughput Mode** (set at **container** level): Reserves a set amount of processing power for _one container_. Service Level Agreements (SLAs) guarantee this, ensuring no other container can use it. This gives you consistent speed and performance for that specific container.
-  - **Shared Throughput Mode** (set at **database** level): _Multiple containers in the same database_ share processing power. ⭐: _Large number of containers with variable load_. Containers with their own dedicated throughput aren't part of this sharing and operate independently.
+  ```sh
+  az cosmosdb sql container create --throughput-type autoscale --max-throughput 4000
+  ```
 
-### [Serverless mode](https://learn.microsoft.com/en-us/azure/cosmos-db/serverless)
-
-You don't have to assign any throughput when creating resources in your Azure Cosmos DB account. At the end of your billing period, you get billed for the number of Request Units consumed by your database operations
-
-### [Autoscale Throughput](https://learn.microsoft.com/en-us/azure/cosmos-db/provision-throughput-autoscale)
-
-Autoscale automatically adjusts the provisioned RUs based on the current usage. You can enable autoscale on a single container, or provision autoscale throughput on a database and share it among all the containers in the database. It scales between 10% and 100% of a set maximum - from 100 to 1000 RU/s. Throughput scales automatically based on usage without affecting performance, suited for workloads with unpredictable traffic requiring high performance and scale SLAs.
-
-```sh
-az cosmosdb sql container create --throughput-type autoscale --max-throughput 4000
-```
-
-```cs
-var autoscaleThroughputProperties = ThroughputProperties.CreateAutoscaleThroughput(4000);  // 4000 max RU/s
-await this.cosmosDatabase.CreateContainerAsync(new ContainerProperties(id, partitionKeyPath), autoscaleThroughputProperties);
-```
+  ```cs
+  await this.cosmosDatabase.CreateContainerAsync(new ContainerProperties(id, partitionKeyPath), ThroughputProperties.CreateAutoscaleThroughput(1000));
+  ```
 
 ## [API Models](https://learn.microsoft.com/en-us/azure/cosmos-db/choose-api)
 
 All API models return JSON formatted objects, regardless of the API used.
 
-- **API for NoSQL** - A JSON-based, document-centric API that provides SQL querying capabilities. Ideal for web, mobile, and gaming applications, and anything that requires handling complex _hierarchical_ data with a _schemaless_ design.
+- **API for NoSQL** - A JSON-based, document-centric API that provides SQL querying capabilities. ⭐: web, mobile, and gaming applications, and anything that requires handling complex _hierarchical data_ with a _schemaless_ design.
 - **API for MongoDB** - stores data in a document structure, via BSON format.
 - **API for PostgreSQL** - Stores data either on a single node, or distributed in a multi-node configuration.
 - **API for Apache Cassandra** - Supports a column-oriented schema, aligns with Apache Cassandra's distributed, scalable NoSQL philosophy, and is wire protocol compatible with it.
-- **API for Table** - A _key-value_ based API that offers compatibility with Azure Table Storage, overcoming its limitations. Ideal for applications that need a simple schemaless _key-value_ store. Only supports OLTP scenarios.
-- **API for Apache Gremlin** - _Graph-based_ API for highly _interconnected_ datasets. It's ideal for handling dynamic, complexly related data that exceeds the capabilities of relational databases.
+- **API for Table** - A _key-value_ based API that offers compatibility with Azure Table Storage, overcoming its limitations. ⭐: applications that need a simple schemaless _key-value_ store. Only supports OLTP scenarios.
+- **API for Apache Gremlin** - _Graph-based_ API for highly _interconnected_ datasets. ⭐: handling dynamic, complexly related data that exceeds the capabilities of relational databases.
 
 Using these APIs, you can emulate various database technologies, modeling real-world data via documents, key-value, graph, and column-family models, minus the management and scaling overheads.
 
@@ -326,44 +320,52 @@ Cosmos DB operations must complete within a limited time frame.
 
 ### [Register and use stored procedures, triggers, and user-defined functions](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/how-to-use-stored-procedures-triggers-udfs)
 
+Registering pre/post trigger uses `TriggerProperties` class with specific `TriggerType`. Calling them is a matter of using `ItemRequestOptions` with proper property and `new List<string> { "<name-of-registered-trigger>" } }`.
+
 ```cs
+var container = await client.GetContainer("db", "container");
+
 // Register Stored Procedure
-await client.GetContainer("db", "container").Scripts.CreateStoredProcedureAsync(new StoredProcedureProperties { Id = "spCreateToDoItems", Body = File.ReadAllText("sp.js") });
+container.Scripts.CreateStoredProcedureAsync(new StoredProcedureProperties { Id = "spCreateToDoItems", Body = File.ReadAllText("sp.js") });
 
 // Call Stored Procedure
 dynamic[] items = { new { category = "Personal", name = "Groceries" } };
-await client.GetContainer("db", "container").Scripts.ExecuteStoredProcedureAsync<string>("spCreateToDoItem", new PartitionKey("Personal"), new[] { items });
+container.Scripts.ExecuteStoredProcedureAsync<string>("spCreateToDoItem", new PartitionKey("Personal"), new[] { items });
 
 // Register Pretrigger
-await client.GetContainer("db", "container").Scripts.CreateTriggerAsync(new TriggerProperties { Id = "preTrigger", Body = File.ReadAllText("preTrigger.js"), TriggerOperation = TriggerOperation.Create, TriggerType = TriggerType.Pre });
+container.Scripts.CreateTriggerAsync(new TriggerProperties { Id = "preTrigger", Body = File.ReadAllText("preTrigger.js"), TriggerOperation = TriggerOperation.Create, TriggerType = TriggerType.Pre });
 
 // Call Pretrigger
 dynamic newItem = new { category = "Personal", name = "Groceries" };
-await client.GetContainer("db", "container").CreateItemAsync(newItem, null, new ItemRequestOptions { PreTriggers = new List<string> { "preTrigger" } });
+container.CreateItemAsync(newItem, null, new ItemRequestOptions { PreTriggers = new List<string> { "preTrigger" } });
 
 // Register Post-trigger
-await client.GetContainer("db", "container").Scripts.CreateTriggerAsync(new TriggerProperties { Id = "postTrigger", Body = File.ReadAllText("postTrigger.js"), TriggerOperation = TriggerOperation.Create, TriggerType = TriggerType.Post });
+container.Scripts.CreateTriggerAsync(new TriggerProperties { Id = "postTrigger", Body = File.ReadAllText("postTrigger.js"), TriggerOperation = TriggerOperation.Create, TriggerType = TriggerType.Post });
 
 // Call Post-trigger
-await client.GetContainer("db", "container").CreateItemAsync(newItem, null, new ItemRequestOptions { PostTriggers = new List<string> { "postTrigger" } });
+container.CreateItemAsync(newItem, null, new ItemRequestOptions { PostTriggers = new List<string> { "postTrigger" } });
 
 // Register UDF
-await client.GetContainer("db", "container").Scripts.CreateUserDefinedFunctionAsync(new UserDefinedFunctionProperties { Id = "Tax", Body = File.ReadAllText("Tax.js") });
+container.Scripts.CreateUserDefinedFunctionAsync(new UserDefinedFunctionProperties { Id = "Tax", Body = File.ReadAllText("Tax.js") });
 
 // Call UDF
-var iterator = client.GetContainer("db", "container").GetItemQueryIterator<dynamic>("SELECT * FROM Incomes t WHERE udf.Tax(t.income) > 20000");
+var iterator = container.GetItemQueryIterator<dynamic>("SELECT * FROM Incomes t WHERE udf.Tax(t.income) > 20000");
 
 ```
 
-## [Change feed](https://docs.microsoft.com/en-us/azure/cosmos-db/change-feed)
+## [Azure Cosmos DB Change Feed](https://docs.microsoft.com/en-us/azure/cosmos-db/change-feed)
 
-Enabled by default. Records changes in a container in chronological order. Order is guaranteed within each logical partition key value, but not across them. It listens for changes and then returns an ordered list of modified documents, which can be processed asynchronously and incrementally. Currently, the change feed shows all inserts and updates but not deletes. You can add a "deleted" attribute to items you plan to delete, setting its value to "true" and adding a time-to-live (TTL) value for automatic deletion.
+Enabled by default, the change feed in Azure Cosmos DB tracks container changes in chronological order. It only captures inserts and updates, not deletes. To handle deletions, add a "deleted" attribute set to "true" and specify a time-to-live (TTL) for automatic removal. Azure Functions utilizes the change feed processor internally.
 
-There are two ways to interact with the change feed: push and pull models. In the push model, the change feed processor automatically sends work to a client. The pull model requires the client to request work from the server, providing low-level control of processing. The push model is generally recommended in order to avoid polling the change feed for future changes. The pull model offers extra control for specific use-cases like reading changes from a specific partition key, controlling change processing speed, or performing a one-time read for tasks like data migration.
+Interaction Models:
 
-Azure Functions uses the change feed processor behind the scenes.
+- **Push Model**: Automatically sends updates to the client. ⭐.
+- **Pull Model**: Requires manual client requests for updates. Useful for specialized tasks like data migration or controlling processing speed.
 
-NOTE: Change feed does not work with Table and PostgreSQL!
+Limitations:
+
+- Order is guaranteed only within each logical partition key.
+- Not compatible with Table and PostgreSQL databases.
 
 ### Change feed processor
 
@@ -423,7 +425,7 @@ static async Task HandleChangesAsync(
 }
 ```
 
-## Querying data
+## [Querying data](https://cosmosdb.github.io/labs/dotnet/labs/03-querying_in_azure_cosmosdb.html)
 
 - Data in Azure Cosmos DB is stored as JSON documents. This means you can query nested properties and arrays directly.
 - Queries in Azure Cosmos DB are case sensitive.
@@ -484,8 +486,7 @@ This is similar to aliasing `SELECT p.name AS name`
 ### Using UDF
 
 ```sql
-SELECT c.id, udf.GetMaxNutritionValue(c.nutrients) AS MaxNutritionValue
-FROM c
+SELECT c.id, udf.GetMaxNutritionValue(c.nutrients) AS MaxNutritionValue FROM c
 ```
 
 ### Get count
@@ -502,11 +503,14 @@ SELECT VALUE COUNT(1) FROM models
 
 ## Performance and best practices
 
-For best performance, always use the latest SDK version and ensure the application is in the same Azure region as the Cosmos DB account. Utilize a single instance of `CosmosClient` throughout the application's lifetime and adopt `Direct` mode for lower latency and higher throughput. Leverage `PartitionKey` for efficient point reads and writes, and implement retry logic for handling transient errors.
-
-For read-heavy operations use the `Stream API` and `FeedIterator` for better memory usage and efficient reading of multiple query result pages. Use `ChangeFeedProcessor` for reading changes in containers, and SQL Query Metrics for detailed logging of backend query executions.
-
-For write-heavy operations enable bulk support for dealing with large data volumes, and set `EnableContentResponseOnWrite` to false for workloads with heavy payloads. Exclude unused paths from indexing and keep the size of your documents minimal to facilitate faster writes.
+- Latest SDK version
+- Application must be in the same Azure region as the Cosmos DB account
+- Use single instance of `CosmosClient`
+- `Direct` mode for ⚡
+- Leverage `PartitionKey` for efficient point reads and writes
+- Retry logic for handling transient errors
+- Read 🏋🏿: `Stream API` and `FeedIterator`
+- Write 🏋🏿: Enable bulk support, set `EnableContentResponseOnWrite` to false, exclude unused paths from indexing and keep the size of your documents minimal
 
 ## [Global Distribution](https://docs.microsoft.com/en-us/azure/cosmos-db/distribute-data-globally)
 
@@ -518,38 +522,23 @@ For write-heavy operations enable bulk support for dealing with large data volum
 
 ### [Conflict resolution](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/how-to-manage-conflicts)
 
-In a multi-master setup, multiple regions can simultaneously read from and write to your Azure Cosmos DB database to maximize availability and performance. Conflicts can occur when the same data is modified concurrently in different regions. Conflict resolution policies determine how these conflicts should be resolved automatically or through custom procedures.
+🧊, conflict resolution policy can only be specified at container creation time.
 
 - **Automatic**: Uses a Last Writer Wins (LWW) policy based on a system or user-defined property.
 - **Custom**: Uses a user-defined stored procedure to handle conflicts.
 
 ## [Security](https://docs.microsoft.com/en-us/azure/cosmos-db/database-security)
 
-- Authentication - Cosmos DB uses Azure AD for authentication. When creating a Cosmos DB account, an access key is created that can be used to authenticate requests to the account.
-- Authorization - Authorization in Cosmos DB is role-based. It provides built-in user and permission resources that allow fine-grained access control to containers and documents.
-- Network Security - Azure Cosmos DB can be integrated with Azure Virtual Networks (VNet) and firewall rules for enhanced network security.
+- **Authentication**: Utilizes Azure AD and generates an access key upon account creation for request authentication.
+- **Authorization**: Role-based with built-in resources for granular control over containers and documents.
+- **Encryption**: 🔑 (⏺️) or 🗝️ for at-rest data; TLS for in-transit data.
 
-  ```ps
-  # Create a virtual network and subnet
-  az network vnet create --name $vnet --resource-group $resourceGroup --location eastus --address-prefix 10.0.0.0/16
-  az network vnet subnet create --name $subnet --resource-group $resourceGroup --vnet-name $vnet --address-prefixes 10.0.0.0/24
+## [Azure Cosmos DB Backup & Restore](https://docs.microsoft.com/en-us/azure/cosmos-db/online-backup-and-restore)
 
-  # Create a private endpoint connection
-  az network private-endpoint create --name $privateEndpoint --resource-group $resourceGroup --vnet-name $vnet --subnet $subnet --private-connection-resource-id /subscriptions/<subscription_id>/resourceGroups/$resourceGroup/providers/Microsoft.DocumentDB/databaseAccounts/$cosmosDBAccount --group-ids sql
-  ```
+Regular automatic secure (🔑) backups without affecting performance. Restores are limited to accounts in the same subscription with equal or higher RU/s and partitions.
 
-- Encryption - Cosmos DB supports encryption at rest and in transit. Data at rest is encrypted with service-managed keys, and you can also bring your own keys (BYOK) for added control. Data in transit is protected using TLS.
-
-- Auditing and Monitoring - You can monitor activity on your Cosmos DB account using Azure Monitor and Azure Log Analytics.
-
-## [Backup and Restore](https://docs.microsoft.com/en-us/azure/cosmos-db/online-backup-and-restore)
-
-Azure Cosmos DB takes automatic backups of data regularly without affecting database performance. Backups are stored separately, encrypted (with Microsoft managed service keys), and transferred securely.
-
-Restores can only be done between accounts within the same subscription and you can't restore into an account with lower Request Units per second (RU/s) or fewer partitions.
-
-- **Continuous backup mode** has two tiers: 7-day retention and 30-day retention. You can restore to any point within these retention periods, into a new or existing account. You select the tier when creating a Cosmos DB account. Note that if you configure a new account with continuous backup, you can do self-service restore but you can't switch it back to periodic mode.
-- **Periodic backup mode** is the default for all existing accounts. Backups are taken at intervals you configure, with data restored through a request to the support team. The maximum retention period is a month, and the minimum backup interval is an hour.
+- **Continuous**: 7 or 30-day retention. Can't switch to periodic.
+- **Periodic**: ⏺️. Custom intervals (min 1 hour), max retention: 1 month. Support team handles restores.
 
 ## [Monitoring and Diagnostics](https://docs.microsoft.com/en-us/azure/cosmos-db/how-to-monitor-account)
 
@@ -557,11 +546,3 @@ Restores can only be done between accounts within the same subscription and you 
 - Azure Monitor: Enables custom dashboards, alerts, and metric visualization.
 - Diagnostic Logs: Offers operation traces, which can be analyzed further in various Azure services.
 - Query Stats: Provides execution metrics to help optimize and troubleshoot queries.
-
-## [Use Cases](https://docs.microsoft.com/en-us/azure/cosmos-db/use-cases)
-
-- IoT: Handles massive real-time data and traffic spikes.
-- Retail: Offers low-latency data access worldwide.
-- Gaming: Scales for millions of players with synchronized game states.
-- Analytics: Balances performance and consistency for real-time analysis.
-- Personalization: query user activity data to drive real-time, personalized experiences

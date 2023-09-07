@@ -170,6 +170,8 @@ In these study notes, emojis may be ambiguous and the correct meaning has to be 
 - ⏬: Egress / Download
 - 🧊: Immutable / Cannot be changed
 - 🙂: Simple / Easy
+- 🔑: Microsoft Managed Keys
+- 🗝️: User Managed Keys
 
 ## Disclaimer
 
