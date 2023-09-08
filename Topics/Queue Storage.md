@@ -5,7 +5,7 @@ Endpoint: `https://queue.core.windows.net`
 - May contain millions of messages, up to the total capacity limit of a storage account.
 - Commonly used to create a backlog of work to process asynchronously.
 - Max size: 64KB
-- TTL: 7 days (default), -1 to never expire.
+- TTL: 7 days (⏺️), -1 to never expire.
 - Applications can scale indefinitely to meet demand.
 
 - [Azure.Core library for .NET](https://www.nuget.org/packages/azure.core/): Shared primitives, abstractions

@@ -4,11 +4,13 @@ Use managed identities if you want to build an app using Azure App Services that
 
 Managed identities are specific to the Azure cloud and _cannot be directly assigned to instances of any other cloud provider_, such as AWS, Google Cloud Platform (GCP), or any other third-party cloud services.
 
+Configure the target resource to allow access from your app or function (mandatory step): `Azure Portal <Settings > Access policies > Add Access Policy`. Choose permissions and managed identity name and type (system/user). Policy removal may take 24hrs due to cache.
+
 | Property                       | System-assigned managed identity                                                                                                                                       | User-assigned managed identity                                                                                                                                                                                                                                                                                                                                    |
 | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Creation                       | Created as part of an Azure resource (for example, Azure Virtual Machines or Azure App Service).                                                                       | Created as a stand-alone Azure resource.                                                                                                                                                                                                                                                                                                                          |
 | Life cycle                     | Shared life cycle with the Azure resource that the managed identity is created with.<br>When the parent resource is deleted, the managed identity is deleted as well.  | Independent life cycle.<br>Must be explicitly deleted.                                                                                                                                                                                                                                                                                                            |
-| Sharing across Azure resources | Can’t be shared.<br>It can only be associated with a single Azure resource.                                                                                            | Can be shared.<br>The same user-assigned managed identity can be associated with more than one Azure resource.                                                                                                                                                                                                                                                    |
+| Sharing across Azure resources | Can’t be shared.<br>It can only be associated with a single Azure resource.                                                                                            | Can be shared.<br>The same user-assigned managed identity can be associated (shared) with more than one Azure resource.                                                                                                                                                                                                                                           |
 | Common use cases               | Workloads contained within a single Azure resource.<br>Workloads needing independent identities.<br>For example, an application that runs on a single virtual machine. | Workloads that run on multiple resources and can share a single identity.<br>Workloads needing pre-authorization to a secure resource, as part of a provisioning flow.<br>Workloads where resources are recycled frequently, but permissions should stay consistent.<br>For example, a workload where multiple virtual machines need to access the same resource. |
 
 ## [Role-based access control (Azure RBAC)](https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal#assign-a-user-as-an-administrator-of-a-subscription)
@@ -35,28 +37,28 @@ A _security principal_ in Azure RBAC is an object that represents a user, group,
 
 1. **System-assigned Identity**
 
-```sh
-# Creating a resource (like a VM or any other service that supports it) with a system-assigned identity
-az <service> create --resource-group myGroup --name myResource --assign-identity '[system]'
+   ```sh
+   # Creating a resource (like a VM or any other service that supports it) with a system-assigned identity
+   az <service> create --resource-group myGroup --name myResource --assign-identity '[system]'
 
-# Assigning a system-assigned identity to an existing resource
-az <service> identity assign --resource-group myGroup --name myResource --identities '[system]'
-```
+   # Assigning a system-assigned identity to an existing resource
+   az <service> identity assign --resource-group myGroup --name myResource --identities '[system]'
+   ```
 
 1. **User-assigned Identity**
 
-User-assigned identities are standalone Azure resources that can be assigned to one or more instances of an Azure service.
+   ```sh
+   # First, create the identity
+   az identity create --resource-group myGroup --name identityName
 
-```sh
-# First, create the identity
-az identity create --resource-group myGroup --name myIdentity
+   # Creating a resource (like a VM or any other service that supports it) with a user-assigned identity
+   az <service> create --assign-identity $identityName --resource-group $rgName --name $resourceName
+   #az <service> create --assign-identity '/subscriptions/<SubId>/resourcegroups/myGroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myIdentity' --resource-group $rgName --name $resourceName
 
-# Creating a resource (like a VM or any other service that supports it) with a user-assigned identity
-az <service> create --resource-group myGroup --name myResource --assign-identity '/subscriptions/<SubId>/resourcegroups/myGroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myIdentity'
-
-# Assigning a user-assigned identity to an existing resource
-az <service> identity assign --resource-group myGroup --name myResource --identities '/subscriptions/<SubId>/resourcegroups/myGroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myIdentity'
-```
+   # Assigning a user-assigned identity to an existing resource
+   az <service> identity assign --identities $identityName --resource-group $rgName --name $resourceName
+   # az <service> identity assign --identities '/subscriptions/<SubId>/resourcegroups/myGroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myIdentity' --resource-group myGroup --name $resourceName
+   ```
 
 Both system-assigned and user-assigned managed identities can be assigned specific Azure roles, allowing them to perform certain actions on specific Azure resources. These roles are part of Azure's Role-Based Access Control ([RBAC](https://docs.microsoft.com/en-us/azure/role-based-access-control/overview)) system, which provides fine-grained access management to Azure resources.
 

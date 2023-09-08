@@ -20,6 +20,10 @@ All commands use `AZ<COMMAND>` format, not `Azure<COMMAND>`. Examples: `New-AzKe
 
 All questions you have doubts on, **mark them for review** as you can't go back to them if you don't. **If you go to the bathroom / take a break, you cannot go back to previous questions!!!**
 
-## Always true facts
+## Random thoughts
 
 - Dashes are not allowed in account names. Probably because MS uses them to differentiate between primary `<account>.<url>` and secondary `<account>-secondary.<url>`.
+- Bet on Azure Portal if a question asks "What is the easiest way to achive X?" or "From where you can manage Y?" (except for automations). Not always true, but at least it's something.
+- You need to use some sort of storage for something (app service web app, container)? Then you'll need storage account and storage account key.
+- `az ? deployment` or `az webapp` means you are using [App Service](./Topics/App%20Service.md) (needs App Service Account). `az containerapp` means you are using Container Apps. `az container` means Container Instance. May sound obvious, but I want to point that out.
+- `az acr create` creates registry, doesn't run anything. To run docker image use `az acr build` (quick task)

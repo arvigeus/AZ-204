@@ -15,3 +15,4 @@
 ## Security
 
 - RBAC: `Azure Portal > Access control (IAM)`
+- Configure the target resource to allow access from your app or function: `Azure Portal <Settings > Access policies > Add Access Policy`

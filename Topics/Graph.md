@@ -68,6 +68,8 @@ Sure, here's the table based on the provided information:
 | GET groups in my organization            | `https://graph.microsoft.com/v1.0/groups`                                                                                |
 | GET people related to me                 | `https://graph.microsoft.com/v1.0/me/people`                                                                             |
 | GET items trending around me             | `https://graph.microsoft.com/beta/me/insights/trending`                                                                  |
+| GET my recent activities                 | `https://graph.microsoft.com/v1.0//me/activities/recent`                                                                 |
+| PATCH (update) a recent activity of mine | `https://graph.microsoft.com/v1.0//me/activities/{activityId}`                                                           |
 | GET my notes                             | `https://graph.microsoft.com/v1.0/me/onenote/notebooks`                                                                  |
 | Select specific fields                   | `https://graph.microsoft.com/v1.0/groups?$filter=adatumisv_courses/id eq '123'&$select=id,displayName,adatumisv_courses` |
 | Alerts, filter by Category, top 5        | `https://graph.microsoft.com/v1.0/security/alerts?$filter=Category eq 'ransomware'&$top=5`                               |

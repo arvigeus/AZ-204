@@ -5,8 +5,8 @@
 ### Features
 
 - Multi-tenant workers: Free and Shared
-- Custom DNS Name: Shared+
 - Dedicated workers: Basic+
+- Custom DNS Name: Shared+
 - Scalability (scaling out): Basic+
 - TLS Bindings: Basic+
 - Always On: Basic+
@@ -25,7 +25,7 @@
 
 - **Shared compute**: **Free** (F1) and **Shared** (D1) tiers run apps on the same Azure VM with other customer apps, sharing resources and limited CPU quotas. They are suitable for _development_ and _testing_ only. Each app is charged for _CPU quota_.
 
-- **Dedicated compute**: **Basic** (_default_) (B1), **Standard** (S1), **Premium** (P1V1), **PremiumV2** (P1V2), and **PremiumV3** (P1V3) tiers utilize dedicated Azure VMs. Apps within the same App Service plan share compute resources. Higher tiers provide more VM instances for scale-out capabilities. Scaling out (_autoscale_) simply adds another VM with the same applications and services. _Each VM instance_ is charged.
+- **Dedicated compute**: **Basic** ⏺️ (B1), **Standard** (S1), **Premium** (P1V1), **PremiumV2** (P1V2), and **PremiumV3** (P1V3) tiers utilize dedicated Azure VMs. Apps within the same App Service plan share compute resources. Higher tiers provide more VM instances for scale-out capabilities. Scaling out (_autoscale_) simply adds another VM with the same applications and services. _Each VM instance_ is charged.
 
 - **Isolated** (I1): The **Isolated** and **IsolatedV2** tiers run dedicated Azure VMs on _dedicated Azure Virtual Networks_. It provides network isolation on top of compute isolation to your apps. It provides the _maximum scale-out capabilities_. Charging is based on the _number of isolated workers that run your apps_.
 
@@ -74,15 +74,6 @@ Horizontal scaling: Adding/removing virtual machines.
 
 [**Flapping**](https://learn.microsoft.com/en-us/azure/azure-monitor/autoscale/autoscale-flapping): a loop condition where a scale event triggers its opposite in a series of alternating events.
 
-## [Custom deployment](https://github.com/projectkudu/kudu/wiki/Customizing-deployments)
-
-`.deployment` file:
-
-```txt
-command = deploy.cmd # Run script before deployment
-# project = WebProject/WebProject.csproj
-```
-
 ## [Deployment slots](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots)
 
 Require Standard+.
@@ -105,6 +96,15 @@ Require Standard+.
 |                                                | Settings that end with the suffix `\_EXTENSION_VERSION` |
 
 To enable settings swapping, add `WEBSITE_OVERRIDE_PRESERVE_DEFAULT_STICKY_SLOT_SETTINGS` as an app setting in every slot and set it to 0 or false. All settings are either swappable or not. Managed identities are never swapped.
+
+### [Custom deployment](https://github.com/projectkudu/kudu/wiki/Customizing-deployments)
+
+`.deployment` file:
+
+```txt
+command = deploy.cmd # Run script before deployment
+# project = WebProject/WebProject.csproj
+```
 
 ### Route production traffic manually
 
@@ -394,7 +394,7 @@ In JSON format.
 
 ## [Persistence](https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container?tabs=debian&pivots=container-linux#use-persistent-shared-storage)
 
-When persistent storage is _on_ (default for Linux containers), the `/home` directory allows file persistence and sharing. All writes to `/home` are accessible by all instances, but existing files overwrite /home's contents on start.
+When persistent storage is _on_ (⏺️ for Linux containers), the `/home` directory allows file persistence and sharing. All writes to `/home` are accessible by all instances, but existing files overwrite /home's contents on start.
 
 `/home/LogFiles` always persists if logging is enabled, regardless of persistent storage status.
 
@@ -423,39 +423,9 @@ In Linux and containers the auth module runs in a separate container, isolated f
 
 #### [Service Identity](https://learn.microsoft.com/en-us/azure/app-service/overview-managed-identity)
 
-Managed identities from Azure Active Directory (Azure AD) allow your app to access other Azure AD-protected resources without needing to provision or rotate any secrets.
-
-- **System-assigned identity**: Tied to specific application and is deleted if the app gets deleted. An app can only have one system-assigned identity.
-- **User-assigned identity**: A standalone Azure resource that can be assigned to any app. An app can have multiple user-assigned identities.
+Main topic: [Managed Identities](./Managed%20Identities.md)
 
 Each deployment slot / app has it's own managed identity configuration.
-
-Managed identities won't behave as expected if your app is migrated across subscriptions or tenants.
-
-Add a system-assigned identity: `az webapp identity assign --name $app --resource-group $resourceGroup`
-
-Add a user-assigned identity:
-
-```sh
-az identity create --name $identityName --resource-group $resourceGroup
-az webapp identity assign --identities $identityName --resource-group $resourceGroup --name $app
-```
-
-##### Connect to Azure services in app code
-
-When you're using managed identities in Azure, you need to configure the target resource to allow access from your app or function.
-
-From Azure Portal: `Settings > Access policies > Add Access Policy` select the permissions you want to grant to the managed identity, then the name of the managed identity (system or user assigned). Removing policy may take up to 24hrs to take effect (cache).
-
-Using SDK:
-
-```cs
-// This will return a token using the Managed Identity if available (either System-assigned or User-assigned).
-new DefaultAzureCredential();
-
-// This will return a token using the specified User-Assigned Managed Identity.
-new DefaultAzureCredential(new DefaultAzureCredentialOptions { ManagedIdentityClientId = "<your managed identity client Id>" });
-```
 
 ##### REST endpoint reference
 
@@ -480,7 +450,7 @@ X-IDENTITY-HEADER: {IDENTITY_HEADER}
 
 #### [On-Behalf-Of (OBO)](https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization)
 
-An OAuth feature allowing an application to access resources using a user's permissions, without needing their credentials. Azure App Service's built-in authentication module manages this process, handling sessions and OAuth tokens. It can authenticate all or specific requests, redirecting unauthenticated users appropriately (login page for web and 401 for mobile). When enabled, user tokens are managed in a token store.
+OAuth enables apps to access resources via user permissions, bypassing the need for credentials. Azure App Service manages this through its authentication module, which handles sessions and tokens. It can authenticate requests and redirect unauthenticated users (login page or 401). Tokens are stored in a token store when enabled. Note: An Access Rule is required.
 
 ##### Authentication flows
 
