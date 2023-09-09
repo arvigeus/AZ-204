@@ -5,13 +5,9 @@ Azure Event Grid is a serverless broker that facilitates application integration
 ## Concepts
 
 - **Events** - What happened. An event describes something that occurred, with common details like source, time, and unique identifier, and specific details relevant to the event type (example: in Azure Storage, a new file event includes details like `lastTimeModified` value, and in Event Hubs, it contains the Capture file URL). Events up to 64 KB are covered by the Service Level Agreement (SLA), and larger events are charged in increments.
-
 - **Event sources** - Where the event took place. Each source is related to one or more event types, such as Azure Storage for blob creation, IoT Hub for device created events. Event sources send events to Event Grid.
-
 - **Topics** - The endpoint where publishers send events. Topics are used for related events, and subscribers choose which to subscribe to. **System topics** are built-in and , while **custom topics** are application and third-party specific. You don't see system topics in your Azure subscription, but you can subscribe to them.
-
 - **Event subscriptions** - The endpoint or mechanism to route events, sometimes to multiple handlers. Subscriptions filter incoming events by type or subject pattern and can be set with an expiration for temporary needs (_no need of cleanup_).
-
 - **Event handlers** - Receives and processes events. Handlers can be Azure services or custom webhooks. Event Grid ensures event delivery based on handler type. Webhooks are retried until 200 - OK, and Azure Storage Queue retries until successful processing.
 
 ## Schemas

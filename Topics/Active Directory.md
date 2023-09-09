@@ -6,7 +6,7 @@ Implements [OAuth 2.0](https://learn.microsoft.com/en-us/azure/active-directory/
 
 | Feature        | Azure AD                                                            | Azure RBAC                                                                                   |
 | -------------- | ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| **Purpose**    | Identity & Access Management                                        | Authorization                                                                                |
+| **Purpose**    | Authentication. Identity & Access Management                        | Authorization                                                                                |
 | **Focus**      | Azure AD Resources                                                  | Azure Resources                                                                              |
 | **Scope**      | Tenant                                                              | Management Group, Subscription, Resource Group, Resource                                     |
 | **Roles**      | Global, User, Billing Admins; Custom roles; Multiple roles per user | Owner, Contributor, Reader, User Access Admin; Custom roles (P1/P2); Multiple roles per user |
@@ -41,7 +41,7 @@ List service principals associated with an app: `az ad sp list --filter "appId e
 | 6. Control access (authorization)                                                                                          | ✓       | ✓ (add `validate-jwt` policy to validate the OAuth token) | ✕      |
 | 7. Store token cache                                                                                                       | ✓       | ✓                                                         | ✓      |
 
-To [protect an API in Azure API Management](https://learn.microsoft.com/en-us/azure/api-management/api-management-howto-protect-backend-with-aad), register both the backend API and web app, configure permissions to allow the web app to call the backend API, and enable OAuth 2.0 user authorization along with adding the `validate-jwt policy` for token validation.
+To [protect an API in Azure API Management](https://learn.microsoft.com/en-us/azure/api-management/api-management-howto-protect-backend-with-aad), register both the backend API and web app, configure permissions to allow the web app to call the backend API (`az ad app permission add --id <WebApp-Application-Id> --api <Backend-API-Application-Id> --api-permissions <Permission-Id>=Scope`), and enable OAuth 2.0 user authorization along with adding the `validate-jwt` policy for token validation.
 
 ## [Permissions (Scopes)](https://learn.microsoft.com/en-us/azure/active-directory/develop/permissions-consent-overview)
 
@@ -55,11 +55,13 @@ The app specifies required permissions using the `scope` query parameter, which 
 | Who can consent  | - Users can consent for their data<br>- Admins can consent for all users | Only admin can consent                     |
 | Consent methods  | Static or Dynamic                                                        | Static ONLY                                |
 
+`az ad app permission add --id {appId} --api {apiID} --api-permissions {permissionId}={Scope,Role}`
+
 ### [Consent](https://learn.microsoft.com/en-us/azure/active-directory/manage-apps/user-admin-consent-overview)
 
 - **Static user consent**: Requires all permissions to be specified in the Azure portal during app registration. Users or admins are prompted for consent if not previously granted. Issues: requires long lists of permissions and knowing all resources in advance.
 - **Incremental (Dynamic) user consent**: Allows permissions to be requested gradually. Scopes can be specified during runtime without predefinition in Azure portal.
-- **Admin consent**: needed for high-privilege permissions. Admins authorize apps to access privileged data. Requires static permissions registration.
+- **Admin consent**: needed for high-privilege permissions. Admins authorize apps to access privileged data. Requires static permissions registration. `az ad app permission admin-consent`
 
 Requesting individual user consent:
 
@@ -193,16 +195,16 @@ An Azure AD application manifest configures an app's identity and attributes, fa
   - "DirectoryRole" (gets the Azure AD directory roles the user is a member of)
   - "All" (this will get all of the security groups, distribution groups, and Azure AD directory roles that the signed-in user is a member of).
 
-- [`appRoles`](https://learn.microsoft.com/en-us/azure/active-directory/develop/howto-add-app-roles-in-apps) (_Application-specific_) Collection of roles that an app may declare. Defined in the app registration, and will get removed with it.
+- [`appRoles`](https://learn.microsoft.com/en-us/azure/active-directory/develop/howto-add-app-roles-in-apps) (_Application-specific_): Collection of roles that an app may declare. Defined in the app registration, and will get removed with it. Correspond to `Role` in `--api-permissions`
 
   ```jsonc
-  "appRoles": [
-      {
-          "allowedMemberTypes": [ "User" ],
-          "value": "ReadOnly" // expected value of the roles claim in the token, which must match the string in the application's code without spaces.
-      }
-  ],
+  "appRoles": [{
+      "allowedMemberTypes": [ "User" ],
+      "value": "ReadOnly" // expected value of the roles claim in the token, which must match the string in the application's code without spaces.
+  }]
   ```
+
+- `oauth2Permissions`: Specifies the collection of OAuth 2.0 permission scopes that the web API (resource) app exposes to client apps. Correspond to `Scope` in `--api-permissions`.
 
 - `oauth2AllowImplicitFlow` - If the web app can request implicit flow access tokens (`oauth2AllowIdTokenImplicitFlow` for ID tokens). ⭐: SPAs, when using Implicit Grant Flow.
 
@@ -233,7 +235,6 @@ An Azure AD application manifest configures an app's identity and attributes, fa
 | `appId`                      | Specifies the unique identifier for the app that is assigned to an app by Azure AD.                                                   |
 | `name`                       | The display name for the app.                                                                                                         |
 | `id`                         | The unique identifier for the app in the directory.                                                                                   |
-| `oauth2Permissions`          | Specifies the collection of OAuth 2.0 permission scopes that the web API (resource) app exposes to client apps.                       |
 
 ## ASP.NET Core Authorization: Working with Roles, Claims, and Policies
 

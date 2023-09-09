@@ -126,7 +126,7 @@ Redis Commands:
 | `expire [key] [seconds]` | Sets a key to expire after a given time. | -                          |
 | `ttl [key]`              | Checks remaining time-to-live of a key.  | Time left in seconds       |
 
-When the TTL elapses, the key is automatically deleted as if using the `DEL` command. The expiration time can be set in seconds or milliseconds precision, with a resolution of _1 millisecond_. The information about expirations is replicated and persisted on disk, so the expiration date of a key is saved even if the Redis server is stopped.
+When the TTL expires, the key is auto-deleted, mimicking the `DEL` command. You can set the expiration time with up to 1-millisecond precision. Expiration data is replicated and saved on disk, preserving key expiration even if the Redis server stops.
 
 Example:
 
@@ -167,10 +167,10 @@ Note: volatile is for when _expiration is set_.
 
 ## [Data persistence](https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-how-to-premium-persistence)
 
-- **RDB Persistence**: Takes snapshots of your cache in binary format, saved in Azure Storage. Snapshots are saved based on a configurable frequency. If both primary and replica caches fail, the cache is rebuilt using the latest snapshot.
-- **AOF Persistence**: Logs every write operation, saving at least once per second in Azure Storage. If both primary and replica caches fail, the cache is rebuilt using these logged operations.
+- **RDB**: Creates binary snapshots, stored in Azure Storage. Configurable save intervals. Restores cache from latest snapshot if both primary and replica fail.
+- **AOF**: Logs write operations, saved at least once per second in Azure Storage. Rebuilds cache using logs if both primary and replica fail.
 
-These persistence features restore data to the same cache after data loss; they can't import data to a new cache.
+Note: These methods only restore data to the original cache, not to a new one.
 
 ## [Geo-replication](https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-configure#geo-replication)
 
@@ -198,9 +198,9 @@ redisConnection.Dispose();
 
 ### Getting and Setting binary values
 
-- Keys are of `RedisKey` type. This class has implicit conversions to and from both `string` and `byte[]`, allowing both text and binary keys to be used without any complication.
-- Values are of `RedisValue` type. As with `RedisKey`, there are implicit conversions in place to allow you to pass `string` or `byte[]`
-- Result is of `RedisResult` type. Properties: `Type` ("STRING", "INTEGER", etc) and `IsNull`. Use `.ToString()` to get the value.
+- `RedisKey` keys. Seamlessly converts between `string` and `byte[]`.
+- `RedisValue` values, also supporting `string` and `byte[]` conversions.
+- `RedisResult` holds results, with properties like `Type` and `IsNull`. Retrieve value using `.ToString()`.
 
 ```cs
 byte[] key = ...;

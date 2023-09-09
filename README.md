@@ -159,7 +159,7 @@ In these study notes, emojis may be ambiguous and the correct meaning has to be 
 - ⏺️: Default
 - 🏷️: Cheap / Cost-effective
 - 💲: High price (cost) / Expensive
-- ⚡: Low latency / High throughput (transactions)
+- ⚡: Low latency / High throughput (transactions) / Fast
 - 🐌: High ("flexible") latency / Low throughput (transactions)
 - 🎲: Random
 - 💎: Premium only

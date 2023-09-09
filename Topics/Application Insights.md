@@ -39,31 +39,25 @@ NOTE: `az monitor activity-log` _cannot_ display data from Application Insight t
 
 ## Metrics
 
-**Log-based metrics** are generated from stored events and offer thorough data analysis and diagnostics. Developers can manually send events using the SDK or utilize automatic event collection. While these metrics provide deep insights, managing them can be challenging for high-volume applications, requiring techniques like sampling and filtering to reduce event count. However, these techniques can potentially reduce the accuracy of log-based metrics.
+**Log-based metrics** are generated from stored events and offer thorough data analysis and diagnostics. They can be manually or automatically collected. While powerful, they can be hard to manage in high-volume apps and may require techniques like sampling and filtering, which can affect accuracy.
 
-**Standard metrics** are **pre-aggregated** time-series data, offering faster query times and thus are ideal for dashboards and real-time alerts. The Application Insights SDK can pre-aggregate these metrics during collection for more accurate results, unaffected by sampling or filtering. In scenarios where the SDK doesn't pre-aggregate, the backend of Application Insights does the job.
+**Standard metrics** are **pre-aggregated** time-series data, offering ⚡ query, ideal for dashboards and real-time alerts. They can be pre-aggregated by the SDK or the backend for better accuracy, and are not affected by sampling, filtering, or SDK version.
 
-Even without SDK pre-aggregation, you can use pre-aggregated metrics for improved performance and real-time alerts. It's worth noting that ingestion sampling does not affect the accuracy of pre-aggregated metrics, regardless of your SDK version.
-
-You can switch between these two types of metrics using the namespace selector in the metrics explorer.
+You can toggle between these metrics types using the metrics explorer's namespace selector.
 
 [Supported Metrics](https://learn.microsoft.com/en-us/azure/azure-monitor/reference/supported-metrics/metrics-index)
 
-## [Sampling](https://learn.microsoft.com/en-us/azure/azure-monitor/app/sampling)
+### [Sampling](https://learn.microsoft.com/en-us/azure/azure-monitor/app/sampling)
 
-Reduces telemetry traffic, data costs, and storage expenses while maintaining accurate application data analysis. It prevents telemetry throttling and allows navigation between related items for diagnostic investigations. Metric counts are renormalized to minimize statistical impact.
+Reduces data traffic and costs while keeping analysis accurate. Helps avoid data limits and makes diagnostics easier. High sampling rates (> 60%) can affect log-based accuracy. Pre-aggregated metrics in SDKs solve this issue, but too much filtering can miss alerts.
 
-High sampling rates can reduce log-based query accuracy (especially at ~60% or higher rates). To address this, pre-aggregated metrics are employed in the SDKs, ensuring accurate results even with sampling. Aggressive filtering may result in alerts not firing as expected.
+- **Adaptive sampling**: On by default, adjusts data volume to stay within set limits. Used in Azure Functions.
+- **Fixed-rate sampling**: You set the rate to reduce data volume, useful for syncing client and server data, aiding investigations of related events.
+- **Ingestion sampling**: Discards some data at the service endpoint to stay within monthly limits. Doesn't reduce app traffic. Use if you hit monthly limits, or get too much data, or using older SDK.
 
-- **Adaptive sampling**: Enabled by default in SDK, used by Azure Functions. Adjusts telemetry volume from your app to stay within a specified traffic rate.
-- **Fixed-rate sampling**: Reduces telemetry volume from your server and users' browsers at a rate you set. This is useful for achieving synchronized sampling between client and server, aiding investigations of related events in Search, such as page views and HTTP requests.
-- **Ingestion sampling**: Operates at the Application Insights service endpoint. Discards some telemetry from your app at a rate you set, helping to stay within your monthly quota. Doesn't reduce telemetry traffic from your app. Use it if you often reach your monthly quota, or getting too much telemetry from browsers, or if you use older SDK.
+For web apps, to group custom events, use the same `OperationId` value.
 
-For web apps, to keep or discard a set of custom events together, they must share the same `OperationId` value.
-
-### Configuring sampling
-
-ASP.NET:
+#### Configuring sampling
 
 ```cs
 var builder = TelemetryConfiguration.Active.DefaultTelemetrySink.TelemetryProcessorChainBuilder;
@@ -72,7 +66,7 @@ var builder = TelemetryConfiguration.Active.DefaultTelemetrySink.TelemetryProces
 builder.UseAdaptiveSampling(maxTelemetryItemsPerSecond:5);
 
 // Fixed rate sampling
-// builder.UseSampling(10.0); // percentage
+builder.UseSampling(10.0); // percentage
 
 // If you have other telemetry processors:
 builder.Use((next) => new AnotherProcessor(next));
@@ -80,15 +74,13 @@ builder.Use((next) => new AnotherProcessor(next));
 
 ## [Enable Application Insights for a Function App](https://learn.microsoft.com/en-us/azure/azure-functions/configure-monitoring?tabs=v2#enable-application-insights-integration)
 
-To send data to Application Insights from a function app, you need the key named `APPINSIGHTS_INSTRUMENTATIONKEY`.
+Enabled by default for new functions (created in the same or nearest region to your function app), but it may have to be manually enabled for old functions.
 
-Application Insights is usually enabled by default for new functions (created in the same or nearest region to your function app), but it may have to be manually enabled for old functions.
-
-`ILogger` is used to log to Application Insights (not `TelemetryClient`!).
+To send data, you need the key named `APPINSIGHTS_INSTRUMENTATIONKEY`. `ILogger` is used (not `TelemetryClient`!).
 
 ## [Custom events and metrics](https://learn.microsoft.com/en-us/azure/azure-monitor/app/api-custom-events-metrics#getmetric)
 
-Use [`GetMetric()`](https://learn.microsoft.com/en-us/azure/azure-monitor/app/get-metric) instead of `TrackMetric()` in Application Insights. `GetMetric()` handles pre-aggregation, reducing costs and performance issues associated with raw telemetry. It avoids sampling, ensuring reliable alerts. Tracking metrics at a granular level can lead to increased costs, network traffic, and throttling risks. `GetMetric()` solves these concerns by sending summarized data every minute.
+Use [`GetMetric()`](https://learn.microsoft.com/en-us/azure/azure-monitor/app/get-metric) instead of `TrackMetric()`. `GetMetric()` handles pre-aggregation, reducing costs and performance issues associated with raw telemetry. It avoids sampling, ensuring reliable alerts. Tracking metrics at a granular level can lead to increased costs, network traffic, and throttling risks. `GetMetric()` solves these concerns by sending summarized data every minute.
 
 ```cs
 // Set properties such as UserId and DeviceId to identify the machine.
@@ -164,13 +156,13 @@ To write to event log use, `ILogger` or a class inheriting `EventSource`.
 - [Retention](https://learn.microsoft.com/en-us/azure/azure-monitor/app/usage-retention): Helps you understand how many users come back to your app and how often they engage with specific tasks or goals. For example, if you have a game site, you can see how many users return after winning or losing a game.
 - [User Flows](https://learn.microsoft.com/en-us/azure/azure-monitor/app/usage-flows): Helps you analyze how users navigate between pages and features of your web app. It can answer questions like where users go after visiting a page, where they leave your site, or if they repeat the same action many times.
 
-## Instrument an app for monitoring
+## Monitor an app
 
-Application Insights can be activated via Auto-Instrumentation (agent) or by incorporating its SDK into your application code. The preferred method is Auto-Instrumentation as it requires no developer involvement, reduces future overhead from SDK updates, and allows for application instrumentation without source code access. Additionally, Application Insights supports `OpenCensus` for distributed tracing, aiding metrics collection for services and enabling tracing with technologies like Redis, Memcached, and MongoDB.
+Use Auto-Instrumentation or SDK. Auto-Instrumentation is better as it needs no coding and lowers future update hassles. It also supports `OpenCensus` for tracking metrics across services and technologies like Redis and MongoDB.
 
 ## [Availability test](https://learn.microsoft.com/en-us/azure/azure-monitor/app/troubleshoot-availability)
 
-Up to 100 per Application Insights resource.
+Up to 100 tests per Application Insights resource.
 
 - [URL ping test (classic)](https://learn.microsoft.com/en-us/azure/azure-monitor/app/monitor-web-app-availability): Check endpoint response and measure performance. Customize success criteria with advanced features like parsing dependent requests and retries. It relies on public internet DNS; ensure public domain name servers resolve all test domain names. Use custom **TrackAvailability** tests otherwise.
 - [Standard test (Preview)](https://learn.microsoft.com/en-us/azure/azure-monitor/app/availability-standard-tests): Similar to URL ping, this single request test covers SSL certificate validity, proactive lifetime check, HTTP request verb (`GET`, `HEAD`, or `POST`), custom headers, and associated data.
@@ -182,13 +174,7 @@ Example: Create an alert that will notify you via email if the web app becomes u
 
 ## [Troubleshoot app performance by using Application Map](https://learn.microsoft.com/en-us/azure/azure-monitor/app/app-map?tabs=net)
 
-Application Map is a tool for identifying app issues, visualizing app parts, and providing comprehensive health metrics, alerts, and diagnostic insights, with Azure service links if used in your app. It terms each deployable part of your app as a "component," allowing developers and operations teams to review performance data.
-
-Components, distinct from inaccessible external dependencies like SQL or Event Hubs, can operate on different servers, roles, or containers. They appear in the Application Insights individually or as roles under one key, but all are visible on the app map regardless of the setup.
-
-The app map presents your app's complete structure, including component interactions. It identifies and updates the number of components upon launching. If components are roles within a single Application Insights resource, they're displayed immediately.
-
-Application Map is designed to represent complex structures with multiple components. Clicking a component provides detailed performance and failure data. Lastly, components are identified by their "cloud role name" in Application Map, which can be manually adjusted to change their display.
+Application Map is an Azure tool that helps you find issues and understand your app's structure. It labels each part of your app as a "component" for easy performance review. Unlike external dependencies like SQL or Event Hubs, components can run on various servers and appear individually or as roles under one key (always visible, regardless of setup). The app map displays your entire app, updating component counts as needed. Clicking on a component provides performance and failure data. You can also customize how components are displayed by changing their "cloud role name."
 
 ## Monitor a local web API by using Application Insights
 

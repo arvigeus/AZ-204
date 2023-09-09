@@ -53,3 +53,16 @@ Additionally, the application should support controlled and concurrent access to
 Answer: Azure Cache for Redis: This is the ideal solution for both storing session state data and supporting controlled and concurrent access to the same session state data for multiple readers and a single writer. It provides high throughput and low-latency access to data, making it suitable for session state management and storing full HTTP responses.
 
 ---
+
+Question: What is the level of awesomeness of the services part of the AZ-204 exam?
+
+- [x] Amazing
+- [ ] Good
+- [ ] Adequate
+- [ ] Meh
+- [ ] 3.6
+- [ ] I prefer using Google Cloud / AWS / Something else
+
+Answer: This is my F-U to Microsoft for providing insufficient, ad-like information in the Learning Path, while also making the exam needlessly hard. Thanks.
+
+---

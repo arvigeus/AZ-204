@@ -1,52 +1,21 @@
 # [Azure App Configuration](https://learn.microsoft.com/en-us/azure/azure-app-configuration/)
 
-Azure App Configuration, complementing Azure Key Vault's application secrets storage, provides a centralized service for managing application settings and feature flags. It simplifies the implementation of hierarchical configuration data management and distribution across various environments and geographies, enables dynamic application settings adjustments without redeployment or restart, and allows real-time control of feature availability. _All data is encrypted_ at rest (using a 256-bit AES encryption key) and in transit. Unlike KeyVault, it does not offer hardware level encryption (available in Premium tier), granular access policies, and management environments.
+Azure App Configuration centralizes app settings and feature flags, making it easier to manage hierarchical configurations across different settings and locations. It allows real-time updates without needing to restart the app. While it _encrypts all data_, it lacks the advanced security features of Azure Key Vault, such as hardware-level encryption, granular access policies, and management environments.
 
-You can both import and export configuration information between Azure App Configuration and separate files. Additionally, you can set up different configuration stores for various environments like development, test, and production, allowing you to manage applications throughout their lifecycle.
+You can import and export configuration between Azure App Configuration and separate files. It also supports separate stores for different development stages like testing and production.
 
-## Azure App Configuration: Key-Value Pairs
+## Azure App Configuration Overview
 
-Azure App Configuration uses key-value pairs to store configuration data.
+Azure App Configuration manages configuration data using key-value pairs.
 
-### Keys
+- **Keys**: Unique, _case-sensitive_ identifiers for values. They can include any unicode character except `*`, `,`, and `\` (reserved can be escaped with '\'). Use delimiters like `/` or `:` for hierarchical organization. Azure treats _keys as a whole_ and doesn't enforce any structure. Example: `AppName:Service1:ApiEndpoint`
+- **Labels**: Differentiate keys for various environments or versions. Default label is `null`. Labels can also be used _to version key values_ (versioning is not supported natively). Example: `Key = AppName:DbEndpoint & Label = Test`
+- **Values**: Unicode strings optionally associated with a user-defined content type for additional metadata.
 
-Keys are unique identifiers for values. They can be organized hierarchically using delimiters like `/` or `:`. Azure treats _keys as a whole_ and doesn't enforce any structure.
-
-Keys are _case-sensitive_ and can include any unicode character, except for `*`, `,`, and `\`. These reserved characters can be included by escaping them with `\{Reserved Character}`.
-
-Example key namespaces:
-
-- Component-based keys: `AppName:Service1:ApiEndpoint`, `AppName:Service2:ApiEndpoint`
-- Region-based keys: `AppName:Region1:DbEndpoint`, `AppName:Region2:DbEndpoint`
-
-#### Key Labels
-
-Labels can be added to keys to differentiate similar keys. For example, the same key can have different labels for different environments:
-
-- `Key = AppName:DbEndpoint & Label = Test`
-- `Key = AppName:DbEndpoint & Label = Staging`
-- `Key = AppName:DbEndpoint & Label = Production`
-
-Labels can also be used _to version key values_ (versioning is not supported natively), such as using application version numbers or Git commit IDs. By default, the label for a key value is empty, or `null`.
-
-#### Querying Keys
-
-Keys can be queried by specifying a pattern. Azure returns all matching keys with their values and attributes.
+### Configuration and Querying
 
 ```cs
-AsyncPageable<ConfigurationSetting> settings = client.GetConfigurationSettingsAsync(new SettingSelector { KeyFilter = "AppName:*" });
-await foreach (ConfigurationSetting setting in settings)
-    Console.WriteLine($"Key: {setting.Key}, Value: {setting.Value}");
-```
-
-### Values
-
-Values are unicode strings associated with keys. They can include any unicode character and an optional user-defined content type. This attribute can store additional information about the value, like an encoding scheme.
-
-### Configuration
-
-```cs
-// Load configuration from Azure App Configuration
+// Load configuration
 builder.Configuration.AddAzureAppConfiguration(options =>
 {
     options.Connect(connectionString)
@@ -56,12 +25,13 @@ builder.Configuration.AddAzureAppConfiguration(options =>
            // Configure to reload configuration if the registered sentinel key is modified
            .ConfigureRefresh(refreshOptions => refreshOptions.Register("TestApp:Settings:Sentinel", refreshAll: true));
 });
-
-// ...
-
-// Add feature management to the container of services.
 builder.Services.AddFeatureManagement();
 builder.Services.AddFeatureFilter<TargetingFilter>(); // (for example)
+
+// Query keys
+AsyncPageable<ConfigurationSetting> settings = client.GetConfigurationSettingsAsync(new SettingSelector { KeyFilter = "AppName:*" });
+await foreach (ConfigurationSetting setting in settings)
+    Console.WriteLine($"Key: {setting.Key}, Value: {setting.Value}");
 ```
 
 #### Chaining
@@ -95,11 +65,8 @@ Feature flags are used as Boolean state variables in conditional statements:
 bool featureFlag = true; // static value
 bool featureFlag = isBetaUser(); // evaluated value
 
-if (featureFlag) {
-    // Code for featureFlag = true
-} else {
-    // Code for featureFlag = false
-}
+if (featureFlag) { /* ... */ }
+else { /* ... */ }
 ```
 
 #### [Configure feature flags](https://learn.microsoft.com/en-us/azure/azure-app-configuration/quickstart-feature-flag-aspnet-core)
@@ -120,6 +87,7 @@ builder.Configuration.AddAzureAppConfiguration(options =>
 
 // Add feature management to the container of services.
 builder.Services.AddFeatureManagement();
+// Registering a feature filter
 builder.Services.AddFeatureFilter<TargetingFilter>(); // (for example)
 ```
 
@@ -130,8 +98,6 @@ Allows the feature flag to be enabled or disabled dynamically.
 - `PercentageFilter` enables the feature flag based on a percentage.
 - `TimeWindowFilter` enables the feature flag during a specified window of time.
 - `TargetingFilter` enables the feature flag for specified users and groups.
-
-Registering a feature filter: `services.AddFeatureManagement().AddFeatureFilter<PercentageFilter>();`
 
 #### [Enable staged rollout of features for targeted audiences with `TargetingFilter`](https://learn.microsoft.com/en-us/azure/azure-app-configuration/howto-targetingfilter-aspnet-core)
 
@@ -167,24 +133,24 @@ Registering a feature filter: `services.AddFeatureManagement().AddFeatureFilter<
 
 ### Declaring Feature Flags
 
-A feature flag consists of a name and one or more filters determining if the feature is on (`True`). When multiple filters are used, they are evaluated in order until one enables the feature. If none do, the feature is off.
+A feature flag consists of a name and one or more filters determining if the feature is on (`true`). When multiple filters are used, they are evaluated in order until one enables the feature. If none do, the feature is off.
 
 The feature manager supports _appsettings.json_ as a configuration source for feature flags:
 
 ```jsonc
-"FeatureManagement": {
+{
+  "FeatureManagement": {
     "FeatureA": true, // Feature on
     "FeatureB": false, // Feature off
     "FeatureC": {
-        "EnabledFor": [
-            {
-                "Name": "Percentage",
-                "Parameters": {
-                    "Value": 50
-                }
-            }
-        ]
+      "EnabledFor": [
+        {
+          "Name": "Percentage",
+          "Parameters": { "Value": 50 }
+        }
+      ]
     }
+  }
 }
 ```
 
@@ -210,20 +176,6 @@ After setup, assign a managed identity to the App Configuration and grant it `GE
 az keyvault set-policy --name 'MyVault' --object-id 'userObjectId' --key-permissions get list --secret-permissions get list
 ```
 
-## Managed Identities for Easy Access
-
-Add a system-assigned identity: `az appconfig identity assign --name myTestAppConfigStore --resource-group myResourceGroup`
-
-Add a user-assigned identity:
-
-```sh
-az identity create --resource-group myResourceGroup --name myUserAssignedIdentity
-
-az appconfig identity assign --name myTestAppConfigStore \
-    --resource-group myResourceGroup \
-    --identities /subscriptions/[subscription id]/resourcegroups/myResourceGroup/providers/Microsoft.ManagedId
-```
-
 ## Configure Key Vault
 
 ```cs
@@ -231,10 +183,7 @@ builder.Configuration.AddAzureAppConfiguration(options =>
 {
     options.Connect(
         builder.Configuration["ConnectionStrings:AppConfig"])
-            .ConfigureKeyVault(kv =>
-            {
-                kv.SetCredential(new DefaultAzureCredential());
-            });
+            .ConfigureKeyVault(kv => kv.SetCredential(new DefaultAzureCredential()));
 });
 ```
 

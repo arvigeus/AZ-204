@@ -12,7 +12,7 @@ Azure CDN offers features like _dynamic site acceleration_, _caching rules_, _HT
 
 ## [Caching](https://learn.microsoft.com/en-us/azure/cdn/cdn-how-caching-works)
 
-Caching occurs both at the browser level and on edge servers situated near the user. While browser caches store data for individual users, a CDN utilizes a shared cache that allows a file requested by one user to be cached for others. Dynamic resources that change frequently are optimized through dynamic site acceleration (DSA). Caching can occur at various levels, including web servers, CDNs, and Internet service providers, each managing its resource freshness. Specific cache-directive headers and validators like ETag and Last-Modified can be used to control caching behavior.
+Caching occurs both at the browser level and on edge servers situated near the user. While browser caches store data for individual users, a CDN utilizes a shared cache that allows a file requested by one user to be cached for others. Dynamic resources that change frequently are optimized through _dynamic site acceleration_ (DSA). Caching can occur at various levels, including web servers, CDNs, and Internet service providers, each managing its resource freshness. Specific cache-directive headers and validators like `ETag` and `Last-Modified` can be used to control caching behavior.
 
 Azure Front Door delivers large files without a cap on file size.
 
@@ -48,7 +48,7 @@ Caching rules provide configuration options for your content at the endpoint lev
 
 The caching behavior for query strings can be adjusted in the `Caching rules > Endpoint pane`:
 
-- **Ignore query strings** (default): The CDN Point of Presence (POP) passes the request and query strings to the origin server on the first request and caches the asset. Subsequent requests for the same asset ignore query strings until the TTL expires.
+- **Ignore query strings** ⏺️: The CDN Point of Presence (POP) passes the request and query strings to the origin server on the first request and caches the asset. Subsequent requests for the same asset ignore query strings until the TTL expires.
 - **Bypass caching for query strings**: Each query request from the client is passed directly to the origin server with no caching.
 - **Cache every unique URL**: When a client generates a unique URL, that URL is passed back to the origin server, and the response is cached with its own TTL. This method is inefficient for unique URL requests as the cache-hit ratio becomes low.
 

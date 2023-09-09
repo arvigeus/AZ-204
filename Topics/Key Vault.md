@@ -2,15 +2,13 @@
 
 Endpoint: `https://vault.azure.net`
 
-- Azure Key Vault is a service for securely storing and accessing secrets, keys, and certificates.
-- It offers two tiers: Standard (software key encryption) and Premium (hardware security module-protected keys - HSM).
-- It centralizes application secrets, reducing the risk of accidental leaks and removing the need to store security information in application code.
-- Access to a key vault requires authentication (via Azure Active Directory) and authorization (via Azure RBAC or Key Vault access policy).
-- It provides monitoring capabilities, allowing you to track access to your keys and secrets.
-- It simplifies administration by scaling to meet demand, ensuring high availability through data replication, and automating tasks on certificates.
-- It can integrate with other Azure services for various scenarios, such as disk encryption and database encryption.
-
-Key Vault is managed through Azure Resource Manager. Azure role-based access control (RBAC) controls access to the management layer. The predefined Key Vault Contributor role can grant management access to Key Vault.
+- Azure Key Vault securely stores secrets, keys, and certificates.
+- Available in two tiers: **Standard** for software encryption, **Premium** for HSM-protected keys.
+- Centralizes security data to minimize leaks and avoid storing sensitive info in code.
+- Offers monitoring to track key and secret access.
+- Scales automatically and ensures high availability through data replication.
+- Automates certificate tasks.
+- Integrates with other Azure services for disk and database encryption.
 
 `az keyvault create --name <YourKeyVaultName> --resource-group <YourResourceGroupName> --location <YourLocation>`
 
@@ -34,13 +32,16 @@ Get secret version: `GET {vaultBaseUrl}/secrets/{secret-name}/{secret-version}?a
 
 ## [Security](https://learn.microsoft.com/en-us/azure/key-vault/general/security-features)
 
-**Network Security**: You can specify which IP addresses have access to your vaults, reducing exposure. This is done through virtual network service endpoints for Azure Key Vault.
-
-**TLS and HTTPS**: Azure Key Vault uses the HTTPS protocol and TLS (min 1.2) for secure communication.
-
 ### Access Model
 
-Access to a key vault is controlled through two interfaces: the management plane (for managing Key Vault itself) and the data plane (for working with the data stored in a key vault). Both planes use Azure Active Directory (Azure AD) for authentication. For authorization, the management plane uses Azure role-based access control (Azure RBAC) and the data plane uses a [Key Vault access policy](https://learn.microsoft.com/en-us/azure/key-vault/general/assign-access-policy?tabs=azure-portal) and [Azure RBAC](https://learn.microsoft.com/en-us/azure/key-vault/general/rbac-guide?tabs=azure-cli) for Key Vault data plane operations. Minimum standard role for managing access policies: `Contributor`.
+- **Management plane**: for managing the Key Vault itself
+- **Data plane**: for working with the data stored in the Key Vault
+
+Both planes use Azure Active Directory (Azure AD) for authentication, and [RBAC](https://learn.microsoft.com/en-us/azure/key-vault/general/rbac-guide?tabs=azure-cli) for authorization (access control). _Data plane_ also uses a [access policies](https://learn.microsoft.com/en-us/azure/key-vault/general/assign-access-policy?tabs=azure-portal) (legacy) for authorization. Minimum standard role for granting management and data (policies) access: `Contributor`.
+
+```sh
+az keyvault set-policy --name myKeyVault --object-id <object-id> --secret-permissions <secret-permissions> --key-permissions <key-permissions> --certificate-permissions <certificate-permissions>
+```
 
 ### Authentication
 
@@ -53,16 +54,14 @@ For applications, there are two ways to obtain a service principal:
 
 `var client = new SecretClient(new Uri("<YourVaultUri>"), new DefaultAzureCredential());`
 
-#### Authentication to Key Vault with REST
-
-Send access tokens to the service using the HTTP Authorization header:
+Authentication using REST:
 
 ```http
 PUT https://<your-key-vault-name>.vault.azure.net/keys/<your-key-name>?api-version=7.2 HTTP/1.1
 Authorization: Bearer <access_token> # token obtained from Azure Active Directory
 ```
 
-If a token is missing or rejected, an `HTTP 401` error is returned, including the `WWW-Authenticate` header:
+If Authorization token is missing or rejected:
 
 ```http
 401 Not Authorized
@@ -76,11 +75,15 @@ The `WWW-Authenticate` header parameters are:
 
 ### Restricting access
 
-For secure access to Azure Key Vault secrets, restricted to a single Azure resource only, use System Managed Identities. This removes the need to include any credentials in your code. Managed identities (for example Azure AD application) can be used from other resources, thus exposing the Key Vault. Even using environment variable makes them potentially exposed to anyone with an access.
+For secure, single-resource access to Azure Key Vault secrets, use System Managed Identities to avoid hardcoding credentials. Using managed identities or environment variables can expose them in your code.
+
+Limit vault access to specific IPs via **virtual network service endpoints**.
 
 ### Data Transit Encryption
 
-Azure Key Vault uses Transport Layer Security (TLS) for data transit protection. Perfect Forward Secrecy (PFS - protects connections between customer and cloud services by unique keys) and RSA-based 2,048-bit encryption key lengths secure connections.
+Secure communication through **HTTPS** and **TLS** (min 1.2).
+
+**Perfect Forward Secrecy** (PFS - protects connections between customer and cloud services by unique keys) and RSA-based 2,048-bit encryption key lengths secure connections.
 
 ## [Certificates](https://learn.microsoft.com/en-us/azure/key-vault/certificates/quick-create-net)
 
@@ -109,7 +112,7 @@ var certificate = await client.GetCertificateAsync(certificateName);
 - Restrict vault access to authorized applications and users. (`az keyvault set-policy --name <YourKeyVaultName> --object-id <PrincipalObjectId> --secret-permissions get list`)
 - Regularly backup your vault. (`az keyvault key backup --vault-name <YourKeyVaultName> --name <KeyName> --file <BackupFileName>`)
 - Enable logging and alerts.
-- Activate soft-delete and purge protection to prevent force deletion of secrets (retention: 90 days; If the object is an HSM-key, a charge applies per key version per month within the last 30 days of usage. Once the object is in a deleted state, no operations can be performed, and no charges will apply).
+- Enable **soft-delete** and **purge protection** to keep secrets for 90 days and prevent forced deletion. Charges apply for HSM-keys in the last 30 days of use. Operations are disabled on deleted objects, and no charges apply.
 
   ```ps
   az keyvault update --name <YourKeyVaultName> --enable-soft-delete true
@@ -118,7 +121,7 @@ var certificate = await client.GetCertificateAsync(certificateName);
 
 ## [Disaster and recovery](https://learn.microsoft.com/en-us/azure/key-vault/general/disaster-recovery-guidance)
 
-Azure Key Vault ensures the availability of keys and secrets through multiple redundancy layers. Content is replicated within the region and to a secondary region, with some exceptions like Brazil South and Qatar Central, where data remains within the same region using zone redundant storage (ZRS). For AKV Premium, only two of the three regions are used to replicate data from the HSMs. In rare cases of an entire Azure region's unavailability, requests are automatically routed to a secondary region, and this process is transparent to the user. Some regions do not support failover, and during failover, the key vault is in read-only mode. Users in specific regions must plan for recovery in case of region failure.
+Redundancy: Data is usually replicated within the primary region and to a secondary region (except for some countries where data regulation require to keep it in the seame region with ZRS). For AKV Premium, data from HSMs is replicated to only two regions. If a primary Azure region becomes unavailable, requests are automatically rerouted to a secondary region. Note that some regions don't support failover and the key vault becomes read-only during this time. Users in these regions should prepare for recovery plans.
 
 ## Disk Encryption ([Windows](https://learn.microsoft.com/en-us/azure/virtual-machines/windows/disk-encryption-key-vault?tabs=azure-portal), [Linux](https://learn.microsoft.com/en-us/azure/virtual-machines/linux/disk-encryption-key-vault?tabs=azure-portal))
 
@@ -142,13 +145,11 @@ az keyvault update --name "<keyvault-id>" --resource-group "MyResourceGroup" --e
 # This step is optional. When a key encryption key (KEK) is specified, Azure Disk Encryption uses that key to wrap the encryption secrets before writing to Key Vault.
 az keyvault key create --name "myKEK" --vault-name "<keyvault-id>" --kty RSA --size 4096
 
-# Enable disk encryption
-
-# Linux
+# Enable disk encryption:
+## Linux
 az vm encryption enable -g "MyResourceGroup" --name "myVM" --disk-encryption-keyvault "<keyvault-id>" --key-encryption-key "myKEK"
-
-# Windows
-# Obtain <kek-url>
+## Windows
+## Obtain <kek-url>
 az keyvault key show --vault-name "<keyvault-id>" --name "myKEK" --query "key.kid"
 az vm encryption enable -g "MyResourceGroup" --name "MyVM" --disk-encryption-keyvault "<keyvault-id>" --key-encryption-key-url <kek-url> --volume-type All
 ```
@@ -162,8 +163,7 @@ az vm encryption enable -g "MyResourceGroup" --name "MyVM" --disk-encryption-key
 ```cs
 [FunctionName("KeyVaultMonitoring")]
 public static async Task<IActionResult> Run(
-    [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
-    ILogger log)
+    [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req, ILogger log)
 {
     var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
     var eventGridEvent = EventGridEvent.Parse(new BinaryData(requestBody));
@@ -172,14 +172,11 @@ public static async Task<IActionResult> Run(
     {
         case SystemEventNames.KeyVaultCertificateNewVersionCreated:
         case SystemEventNames.KeyVaultSecretNewVersionCreated:
-            log.LogInformation($"New Key Vault secret/certificate version created event. Data: {eventGridEvent.Data}");
-            break;
+            log.LogInformation($"New Key Vault secret/certificate version created event. Data: {eventGridEvent.Data}"); break;
         case SystemEventNames.KeyVaultKeyNewVersionCreated:
-            log.LogInformation($"New Key Vault key version created event. Data: {eventGridEvent.Data}");
-            break;
+            log.LogInformation($"New Key Vault key version created event. Data: {eventGridEvent.Data}"); break;
         default:
-            log.LogInformation($"Event Grid Event of type {eventGridEvent.EventType} occurred, but it's not processed.");
-            break;
+            log.LogInformation($"Event Grid Event of type {eventGridEvent.EventType} occurred, but it's not processed."); break;
     }
 
     return new OkResult();
