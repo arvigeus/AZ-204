@@ -4,77 +4,64 @@ Implements [OAuth 2.0](https://learn.microsoft.com/en-us/azure/active-directory/
 
 ## Azure Active Directory (AD) vs Role-Based Access Control (RBAC)
 
-| Feature              | Azure AD                                                                                                            | Azure RBAC                                                                                                                                        |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Description**      | Identity & access management service for internal & external resources.                                             | Authorization system managing user access to Azure resources.                                                                                     |
-| **Focus**            | Grants permissions to manage access to Azure Active Directory resources.                                            | Grants permissions to manage access to Azure resources.                                                                                           |
-| **Scope**            | Tenant level.                                                                                                       | Multiple levels: management group, subscription, resource group, and resource.                                                                    |
-| **Roles**            | Important built-in roles: Global Admin, User Admin, Billing Admin; Supports custom roles; Multiple roles on a user. | Fundamental built-in roles: Owner, Contributor, Reader, User Access Admin; Supports custom roles in P1 and P2 licenses; Multiple roles on a user. |
-| **Role Information** | Accessible in Azure Portal, Microsoft 365 admin center, Microsoft Graph, AzureAD PowerShell.                        | Accessible in Azure Portal, CLI, PowerShell, Resource Manager templates, REST API.                                                                |
-| **Pricing**          | Three editions: Free, Premium P1, Premium P2; P1 & P2 charged monthly.                                              | Free and included in Azure subscription.                                                                                                          |
+| Feature        | Azure AD                                                            | Azure RBAC                                                                                   |
+| -------------- | ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| **Purpose**    | Identity & Access Management                                        | Authorization                                                                                |
+| **Focus**      | Azure AD Resources                                                  | Azure Resources                                                                              |
+| **Scope**      | Tenant                                                              | Management Group, Subscription, Resource Group, Resource                                     |
+| **Roles**      | Global, User, Billing Admins; Custom roles; Multiple roles per user | Owner, Contributor, Reader, User Access Admin; Custom roles (P1/P2); Multiple roles per user |
+| **Access Via** | Azure Portal, MS 365 Admin, Graph, PowerShell                       | Azure Portal, CLI, PowerShell, ARM templates, REST API                                       |
+| **Pricing**    | Free, P1, P2 (Monthly charged)                                      | Free (With Azure subscription)                                                               |
 
-## [Service principals](https://learn.microsoft.com/en-us/azure/active-directory/develop/app-objects-and-service-principals?tabs=browser)
+## Application Registration
 
-Azure AD uses application and service principal objects for identity and access management.
+All applications _must [register with Azure AD](<(https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-provider-aad?tabs=workforce-tenant)>)_ to delegate identity and access management: `Portal > app > 'Authentication' > 'Add identity provider' > set provider to Microsoft > 'Add'`. This creates an application object and a globally unique ID (app/client ID).
 
-You can use the **Enterprise applications** page in the Azure portal to list and manage the service principals in a tenant.
+- **Application Object**: Resides in the Azure AD tenant where the app is registered. It serves as the _global representation_ of your application for use across all tenants. This object has:
 
-### Application Registration
+  - A 1:1 relationship with the Software Application.
+  - A 1:N relationship with _Service Principal Objects_, meaning one Application Object can have multiple corresponding _Service Principal Objects_.
 
-All applications _must register with Azure AD_ to delegate identity and access management. This creates an application object and a globally unique ID (app/client ID).
+- **[Service principals](https://learn.microsoft.com/en-us/azure/active-directory/develop/app-objects-and-service-principals?tabs=browser) Objects**: These are _local representations_ within each tenant (use **Enterprise applications** page in the Azure portal to manage). They are derived from the Application Object and come in three types:
+  - **Application**: Created when an app gains resource access permissions.
+  - **Managed Identity**: Automatically created when enabled. It grants access but is not directly modifiable.
+  - **Legacy**: For apps created before modern registration methods, restricted to the tenant where created.
 
-- **Application Object**: Resides in the Azure AD tenant where the application was registered. It's a template for creating service principal objects and defines how the service can issue tokens, the resources the application might need, and the actions it can take.
-
-- **Service Principal Object**: Represents the entity requiring access to resources secured by an Azure AD tenant. There are three types:
-
-  - **Application** - A local representation of a global application object in a tenant, defining the app's capabilities, access, and resources. A service principal object is created when an application gets permission to access resources.
-
-  - **Managed Identity** - It provides an identity for applications connecting to resources supporting Azure AD authentication. A service principal for the managed identity is created when enabled, which can be granted access and permissions but can't be directly modified.
-
-  - **Legacy** - Represents a legacy app, created before app registrations or through legacy experiences. It can only be used in the tenant where it was created.
-
-### Relationship between Application Objects and Service Principals
-
-The application object is the global representation of your application for use across all tenants, and the service principal is the local representation for use in a specific tenant. The application object serves as the template from which common and default properties are derived for use in creating corresponding service principal objects. A service principal must be created in each tenant where the application is used.
-
-An application object has:
-
-- A one-to-one relationship with the software application
-- A one-to-many relationship with its corresponding service principal object(s)
-
-### Modifying and Deleting Applications
-
-Any changes made to your application object are also reflected in its service principal object in the application's home tenant only. Deleting an application object will also delete its home tenant service principal object. However, restoring that application object won't restore its corresponding service principal.
-
-### Examples
+Changes to your application object also affect its service principals in the home tenant only. Deleting the application also deletes its home tenant service principal, but restoring that application object won't recover its service principals.
 
 List service principals associated with an app: `az ad sp list --filter "appId eq '{AppId}'"`
 
-## Permissions and consent
+| [Integrate authentication and authorization](https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-overview) | Web App | Backend API                                               | Daemon |
+| -------------------------------------------------------------------------------------------------------------------------- | ------- | --------------------------------------------------------- | ------ |
+| 1. Register in Azure AD                                                                                                    | ✓       | ✓                                                         | ✓      |
+| 2. Configure app with code sample                                                                                          | ✕       | ✓                                                         | ✕      |
+| 3. Validate token                                                                                                          | ID      | Access                                                    | ✕      |
+| 4. Configure secrets & certificates                                                                                        | ✓       | ✓                                                         | ✓      |
+| 5. Configure permission & call API of choice                                                                               | ✓       | ✓                                                         | ✓      |
+| 6. Control access (authorization)                                                                                          | ✓       | ✓ (add `validate-jwt` policy to validate the OAuth token) | ✕      |
+| 7. Store token cache                                                                                                       | ✓       | ✓                                                         | ✓      |
 
-### [Permissions (Scopes)](https://learn.microsoft.com/en-us/azure/active-directory/develop/permissions-consent-overview)
+To [protect an API in Azure API Management](https://learn.microsoft.com/en-us/azure/api-management/api-management-howto-protect-backend-with-aad), register both the backend API and web app, configure permissions to allow the web app to call the backend API, and enable OAuth 2.0 user authorization along with adding the `validate-jwt policy` for token validation.
 
-Delegated permissions are used by apps that have a signed-in user present. The app is delegated with the permission to act as a signed-in user when it makes calls to the target resource.
+## [Permissions (Scopes)](https://learn.microsoft.com/en-us/azure/active-directory/develop/permissions-consent-overview)
 
-App-only access permissions are used by apps that run without a signed-in user present, for example, apps that run as background services or daemons.
+The app specifies required permissions using the `scope` query parameter, which defines the resource type. If unspecified, the default resource is Microsoft Graph. For instance, `scope=User.Read` is the same as `https://graph.microsoft.com/User.Read`.
 
-An app requests the permissions it needs by specifying the permission in the `scope` query parameter. `scope` indicates the type of resource being requested. If the resource identifier is omitted in the scope parameter, the resource is assumed to be Microsoft Graph. For example, `scope=User.Read` is equivalent to `https://graph.microsoft.com/User.Read`, requesting `Read` permissions for resource type `User`.
-
-| Permission types | Delegated permissions                                                                               | Application permissions                            |
-| ---------------- | --------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| Types of apps    | Web / Mobile / single-page app (SPA)                                                                | Web / Daemon                                       |
-| Access context   | Get access on behalf of a user                                                                      | Get access without a user                          |
-| Who can consent  | - Users can consent for their data<br>- Admins can consent for all users                            | Only admin can consent                             |
-| Consent methods  | - Static: configured list on app registration<br>- Dynamic: request individual permissions at login | - Static ONLY: configured list on app registration |
-| Other names      | - Scopes<br>- OAuth2 permission scopes                                                              | - App<br>- App-only permissions roles              |
+| Permission types | Delegated permissions                                                    | Application permissions                    |
+| ---------------- | ------------------------------------------------------------------------ | ------------------------------------------ |
+| Access context   | Get access on behalf of a user (a signed-in user is present)             | Get access without a user (signed-in user) |
+| Types of apps    | Web / Mobile / single-page app (SPA)                                     | Web / Daemon / Background services         |
+| Other names      | Scopes / OAuth2 permission scopes                                        | App / App-only permissions roles           |
+| Who can consent  | - Users can consent for their data<br>- Admins can consent for all users | Only admin can consent                     |
+| Consent methods  | Static or Dynamic                                                        | Static ONLY                                |
 
 ### [Consent](https://learn.microsoft.com/en-us/azure/active-directory/manage-apps/user-admin-consent-overview)
 
-- **Static user consent**: requires specifying all app permissions in Azure portal config. If users haven't consented, they're prompted. Issues: long permission lists and knowing all resources in advance.
-- **Incremental user consent**: lets you request permissions gradually using Microsoft identity platform endpoint. Specify scopes when requesting access token without predefining them. Only for delegated permissions, not app-only access.
+- **Static user consent**: Requires all permissions to be specified in the Azure portal during app registration. Users or admins are prompted for consent if not previously granted. Issues: requires long lists of permissions and knowing all resources in advance.
+- **Incremental (Dynamic) user consent**: Allows permissions to be requested gradually. Scopes can be specified during runtime without predefinition in Azure portal.
 - **Admin consent**: needed for high-privilege permissions. Admins authorize apps to access privileged data. Requires static permissions registration.
 
-#### Requesting individual user consent
+Requesting individual user consent:
 
 ```http
 GET https://login.microsoftonline.com/common/oauth2/v2.0/authorize?
@@ -82,39 +69,22 @@ client_id=6731de76-14a6-49ae-97bc-6eba6914391e
 &response_type=code
 &redirect_uri=http%3A%2F%2Flocalhost%2Fmyapp%2F
 &response_mode=query
-&scope=
-https%3A%2F%2Fgraph.microsoft.com%2Fcalendars.read%20
-https%3A%2F%2Fgraph.microsoft.com%2Fmail.send
+&scope=https%3A%2F%2Fgraph.microsoft.com%2Fcalendars.read%20https%3A%2F%2Fgraph.microsoft.com%2Fmail.send
 &state=12345
 ```
 
-If permissions haven't been granted before by the user or the administrator on behalf of the organization, the Microsoft identity platform prompts the user to grant the requested permissions.
+## [Conditional Access](https://learn.microsoft.com/en-us/azure/active-directory/conditional-access/overview) (Premium P1 tier)
 
-## [Conditional Access](https://learn.microsoft.com/en-us/azure/active-directory/conditional-access/overview)
+- Prompt additional verification (e.g., second password or fingerprint) when users sign in
+- Using a middle tier to solve a "challenge" presented by API
+- [Multi-Factor Authentication](https://learn.microsoft.com/en-us/azure/active-directory/authentication/concept-mfa-licensing) (**all Microsoft 365 plans**). When [Security Defaults](https://learn.microsoft.com/en-us/azure/active-directory/fundamentals/security-defaults) is enabled, MFA is activated for **all users**. To apply MFA to specific users only, _disable Security Defaults_.
+- Risk-based policies (require Azure AD Identity Protection - **Premium P2** tier)
+- Device restrictions (enrolled in Microsoft's Intune service)
+- Certain physical locations or IP ranges
 
-It allows you to set extra security measures or conditions before users can access a service or app. This could mean multi-factor authentication, device restrictions (enrolled in Microsoft's Intune service), or certain physical locations or IP ranges.
+When Conditional Access licenses expire, policies stay active but can't be updated.
 
-Requires _Premium P1_ tier.
-
-Risk-based policies require access to Azure AD Identity Protection, which is an Azure AD Premium P2 feature.
-
-When licenses required for Conditional Access expire, the policies aren't automatically disabled or deleted. They remain active and can be viewed and deleted, but they can no longer be updated.
-
-Apps typically don't require any changes to adhere to these conditions. However, in certain instances, especially when an app must access a service indirectly or silently, code modifications may be necessary.
-
-Examples:
-
-1. A Conditional Access policy that prompts additional verification (e.g., second password or fingerprint) when users sign in.
-
-1. Using a middle tier service to access an API with Conditional Access policy: The app communicates with the middle tier, which in turn interacts with the API presenting a "challenge." The app must meet this challenge according to the policy.
-
-## [Multi-Factor Authentication](https://learn.microsoft.com/en-us/azure/active-directory/authentication/concept-mfa-licensing)
-
-All Microsoft 365 plans can enable Azure AD Multi-Factor Authentication for all users.
-
-You can set _conditional access_ (requires Premium P1) for specific user(s).
-
-[Security defaults in Azure AD](https://learn.microsoft.com/en-us/azure/active-directory/fundamentals/security-defaults) include mandatory multi-factor authentication for **all users** (don't enable this if you want MFA for specific users only).
+Apps don't need to be changed, unless they need silent or indirect services access, or on-behalf-of flow .
 
 ## Other Azure AD features
 
@@ -150,9 +120,7 @@ Enables secure access to various APIs, with a unified API across platforms.
 - **Public client applications**: User-facing apps without the ability to securely store secrets. They interact with web APIs on the user's behalf.
 - **Confidential client applications**: Server-based apps that can securely handle secrets. Each instance maintains a unique configuration, including identifiers and secrets.
 
-Apps performing the on-behalf-of flow require code to handle Conditional Access challenges.
-
-The Integrated Windows authentication flow allows applications on domain or Azure Active Directory (Azure AD) joined computers to acquire a token silently.
+The Integrated Windows authentication flow allows applications on domain or Azure AD joined computers to acquire a token silently.
 
 ### Working with MSAL
 
@@ -213,11 +181,65 @@ AuthenticationResult result = await app.AcquireTokenInteractive(scopes).ExecuteA
 Console.WriteLine($"Token: {result.AccessToken}");
 ```
 
+## [Application manifest](https://learn.microsoft.com/en-us/azure/active-directory/develop/reference-app-manifest)
+
+An Azure AD application manifest configures an app's identity and attributes, facilitating OAuth authorization and user consent. It serves as a mechanism for updating the application object in the Microsoft identity platform.
+
+- `groupMembershipClaims`: (_Tenant-specific_) Groups claim issued in access token that the app expects. Groups persist even after the associated app is removed.
+
+  - "None"
+  - "SecurityGroup" (will include security groups and Azure AD roles)
+  - "ApplicationGroup" (this option includes only groups that are assigned to the application)
+  - "DirectoryRole" (gets the Azure AD directory roles the user is a member of)
+  - "All" (this will get all of the security groups, distribution groups, and Azure AD directory roles that the signed-in user is a member of).
+
+- [`appRoles`](https://learn.microsoft.com/en-us/azure/active-directory/develop/howto-add-app-roles-in-apps) (_Application-specific_) Collection of roles that an app may declare. Defined in the app registration, and will get removed with it.
+
+  ```jsonc
+  "appRoles": [
+      {
+          "allowedMemberTypes": [ "User" ],
+          "value": "ReadOnly" // expected value of the roles claim in the token, which must match the string in the application's code without spaces.
+      }
+  ],
+  ```
+
+- `oauth2AllowImplicitFlow` - If the web app can request implicit flow access tokens (`oauth2AllowIdTokenImplicitFlow` for ID tokens). ⭐: SPAs, when using Implicit Grant Flow.
+
+| Attribute Name               | Brief Explanation                                                                                                                     |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `requiredResourceAccess`     | Specifies the resources that the app requires access to.                                                                              |
+| `keyCredentials`             | Holds references to app-assigned credentials, string-based shared secrets and X.509 certificates.                                     |
+| `acceptMappedClaims`         | Allows an application to use claims mapping without specifying a custom signing key.                                                  |
+| `optionalClaims`             | The optional claims returned in the token by the security token service for this specific app.                                        |
+| `addIns`                     | Defines custom behavior that a consuming service can use to call an app in specific contexts.                                         |
+| `allowPublicClient`          | Specifies the fallback application type.                                                                                              |
+| `knownClientApplications`    | Used for bundling consent if you have a solution that contains two parts: a client app and a custom web API app.                      |
+| `oauth2RequirePostResponse`  | Specifies whether, as part of OAuth 2.0 token requests, Azure AD will allow POST requests, as opposed to GET requests.                |
+| `passwordCredentials`        | Similar to `keyCredentials`, holds references to app-assigned credentials, string-based shared secrets.                               |
+| `preAuthorizedApplications`  | Lists applications and requested permissions for implicit consent.                                                                    |
+| `replyUrlsWithType`          | Holds the list of registered redirect_uri values that Azure AD will accept as destinations when returning tokens.                     |
+| `signInAudience`             | Specifies what Microsoft accounts are supported for the current application.                                                          |
+| `identifierUris`             | User-defined URI(s) that uniquely identify a web app within its Azure AD tenant or verified customer owned domain.                    |
+| `tags`                       | Custom strings that can be used to categorize and identify the application.                                                           |
+| `parentalControlSettings`    | Specifies the countries/regions in which the app is blocked for minors and the legal age group rule that applies to users of the app. |
+| `accessTokenAcceptedVersion` | Specifies the access token version expected by the resource.                                                                          |
+| `logoutUrl`                  | The URL to log out of the app.                                                                                                        |
+| `signInUrl`                  | Specifies the URL to the app's home page.                                                                                             |
+| `logoUrl`                    | Read only value that points to the CDN URL to logo that was uploaded in the portal.                                                   |
+| `samlMetadataUrl`            | The URL to the SAML metadata for the app.                                                                                             |
+| `publisherDomain`            | The verified publisher domain for the application.                                                                                    |
+| `informationalUrls`          | Specifies the links to the app's terms of service and privacy statement.                                                              |
+| `appId`                      | Specifies the unique identifier for the app that is assigned to an app by Azure AD.                                                   |
+| `name`                       | The display name for the app.                                                                                                         |
+| `id`                         | The unique identifier for the app in the directory.                                                                                   |
+| `oauth2Permissions`          | Specifies the collection of OAuth 2.0 permission scopes that the web API (resource) app exposes to client apps.                       |
+
 ## ASP.NET Core Authorization: Working with Roles, Claims, and Policies
 
+- [**Policies**](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/policies?view=aspnetcore-3.1): A policy is a function that can look at a user's identity and decide whether they are authorized to perform a given action.
 - [**Roles**](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/roles?view=aspnetcore-3.1): A role represents a group of users that have certain privileges as defined by the role.
 - [**Claims**](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/claims?view=aspnetcore-3.1): A claim is a name-value pair that represents what the subject is, not what the subject can do.
-- [**Policies**](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/policies?view=aspnetcore-3.1): A policy is a function that can look at a user's identity and decide whether they are authorized to perform a given action.
 
 ```cs
 // Startup.cs
@@ -253,135 +275,19 @@ public async Task<IActionResult> Login(LoginViewModel model)
   await _userManager.AddClaimAsync(user, claim);
 }
 
-// ClientController.cs
 [Authorize(Policy = "ClientsOnly")] // Allow premium clients only
-public class AdminController : Controller
-{
-    public IActionResult Index() => Content("Client Panel");
-}
+public class AdminController : Controller { }
 
-// CorporateController.cs
 [Authorize(Role = "CorporateClient")] // Allow corporate clients only
-public class AdminController : Controller
-{
-    public IActionResult Index() => Content("Corporate Panel");
-}
+public class AdminController : Controller { }
 
-// WorkController.cs
 [Authorize(Policy = "EmployeeOnly")] // Apply EmployeeOnly policy
-public class WorkController : Controller
-{
-    public IActionResult Index() => Content("Work Details");
-}
+public class WorkController : Controller { }
 
-// AdminController.cs
 [Authorize(Policy = "AdminOnly")] // Apply AdminOnly policy
-public class AdminController : Controller
-{
-    public IActionResult Index() => Content("Admin Panel");
-}
+public class AdminController : Controller { }
 
 [Authorize(Policy = "ClientsOnly")] // Clients only that also have "Administrator" role (AND)
 [Authorize(Roles = "Administrator")]
-public class ClientAdminController : Controller
-{
-    public IActionResult Index() => Content("ClientAdmin Panel");
-}
+public class ClientAdminController : Controller { }
 ```
-
-## [Application manifest](https://learn.microsoft.com/en-us/azure/active-directory/develop/reference-app-manifest)
-
-An application manifest in the context of Azure Active Directory represents an application's identity configuration within an Azure AD tenant. It is used to facilitate OAuth authorization, consent experience, and more. The application manifest contains a definition of all the attributes of an application object in the Microsoft identity platform and serves as a mechanism for updating the application object.
-
-Here are some of the most noteworthy attributes found in the application manifest:
-
-| Attribute Name                   | Brief Explanation                                                                                                                     |
-| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| `id`                             | The unique identifier for the app in the directory.                                                                                   |
-| `acceptMappedClaims`             | Allows an application to use claims mapping without specifying a custom signing key.                                                  |
-| `accessTokenAcceptedVersion`     | Specifies the access token version expected by the resource.                                                                          |
-| `addIns`                         | Defines custom behavior that a consuming service can use to call an app in specific contexts.                                         |
-| `allowPublicClient`              | Specifies the fallback application type.                                                                                              |
-| `appId`                          | Specifies the unique identifier for the app that is assigned to an app by Azure AD.                                                   |
-| `appRoles`                       | Specifies the collection of roles that an app may declare.                                                                            |
-| `groupMembershipClaims`          | Configures the groups claim issued in a user or OAuth 2.0 access token that the app expects.                                          |
-| `optionalClaims`                 | The optional claims returned in the token by the security token service for this specific app.                                        |
-| `identifierUris`                 | User-defined URI(s) that uniquely identify a web app within its Azure AD tenant or verified customer owned domain.                    |
-| `informationalUrls`              | Specifies the links to the app's terms of service and privacy statement.                                                              |
-| `keyCredentials`                 | Holds references to app-assigned credentials, string-based shared secrets and X.509 certificates.                                     |
-| `knownClientApplications`        | Used for bundling consent if you have a solution that contains two parts: a client app and a custom web API app.                      |
-| `logoUrl`                        | Read only value that points to the CDN URL to logo that was uploaded in the portal.                                                   |
-| `logoutUrl`                      | The URL to log out of the app.                                                                                                        |
-| `name`                           | The display name for the app.                                                                                                         |
-| `oauth2AllowImplicitFlow`        | Specifies whether this web app can request OAuth2.0 implicit flow access tokens.                                                      |
-| `oauth2AllowIdTokenImplicitFlow` | Specifies whether this web app can request OAuth2.0 implicit flow ID tokens.                                                          |
-| `oauth2Permissions`              | Specifies the collection of OAuth 2.0 permission scopes that the web API (resource) app exposes to client apps.                       |
-| `oauth2RequirePostResponse`      | Specifies whether, as part of OAuth 2.0 token requests, Azure AD will allow POST requests, as opposed to GET requests.                |
-| `parentalControlSettings`        | Specifies the countries/regions in which the app is blocked for minors and the legal age group rule that applies to users of the app. |
-| `passwordCredentials`            | Similar to `keyCredentials`, holds references to app-assigned credentials, string-based shared secrets.                               |
-| `preAuthorizedApplications`      | Lists applications and requested permissions for implicit consent.                                                                    |
-| `publisherDomain`                | The verified publisher domain for the application.                                                                                    |
-| `replyUrlsWithType`              | Holds the list of registered redirect_uri values that Azure AD will accept as destinations when returning tokens.                     |
-| `requiredResourceAccess`         | Specifies the resources that the app requires access to.                                                                              |
-| `samlMetadataUrl`                | The URL to the SAML metadata for the app.                                                                                             |
-| `signInUrl`                      | Specifies the URL to the app's home page.                                                                                             |
-| `signInAudience`                 | Specifies what Microsoft accounts are supported for the current application.                                                          |
-| `tags`                           | Custom strings that can be used to categorize and identify the application.                                                           |
-
-### Noteworthy attributes
-
-#### groupMembershipClaims
-
-Tenant-specific in Azure AD, groups persist even after the associated app is removed.
-
-- "None"
-- "SecurityGroup" (will include security groups and Azure AD roles)
-- "ApplicationGroup" (this option includes only groups that are assigned to the application)
-- "DirectoryRole" (gets the Azure AD directory roles the user is a member of)
-- "All" (this will get all of the security groups, distribution groups, and Azure AD directory roles that the signed-in user is a member of).
-
-#### [appRoles](https://learn.microsoft.com/en-us/azure/active-directory/develop/howto-add-app-roles-in-apps)
-
-Defined in the app registration, roles are application-specific and get removed with the app registration.
-
-```jsonc
-"appRoles": [
-    {
-        "allowedMemberTypes": [
-            "User"
-        ],
-        "description": "Read-only access to device information",
-        "displayName": "Read Only",
-        "id": "601790de-b632-4f57-9523-ee7cb6ceba95",
-        "isEnabled": true,
-        "value": "ReadOnly" // expected value of the roles claim in the token, which must match the string in the application's code without spaces.
-    }
-],
-```
-
-#### oauth2AllowImplicitFlow
-
-Often relevant when you're working with SPAs or other scenarios where the Implicit Grant Flow is used.
-
-## [Register your app for automatic Azure AD authentication](https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-provider-aad?tabs=workforce-tenant)
-
-`Portal > app > 'Authentication' > 'Add identity provider' > set provider to Microsoft > 'Add'`
-
-## [Integrate authentication and authorization in your apps](https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-overview)
-
-![Integrate authentication and authorization in your apps](https://learn.microsoft.com/en-us/azure/active-directory/develop/media/v2-overview/application-scenarios-identity-platform.png#lightbox)
-
-1. Register app
-1. Configure app with code sample
-1. Validate access token
-1. Configure secrets & certificates
-1. Configure permission & call API of choice
-1. Control access to web API (authorization)
-1. Store token cache
-
-## [Protect an API in Azure API Management with Azure Active Directory](https://learn.microsoft.com/en-us/azure/api-management/api-management-howto-protect-backend-with-aad)
-
-1. Register the backend API application in Azure AD.
-1. Register the web App (website containing summarized results) in Azure AD so that it can call the backend API.
-1. Allow permissions between the website app to call the backend API app. Add the configurations in Azure AD.
-1. Enable OAuth 2.0 user authorization and add the validate-jwt policy to validate the OAuth token for API calls.
