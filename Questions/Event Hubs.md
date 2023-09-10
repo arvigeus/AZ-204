@@ -126,7 +126,7 @@ Tier does not affect performance.
 
 ---
 
-Question: Which protocol should you choose if you want tp publish a single event, with minimal network cost?
+Question: Which protocol should you choose if you want to publish a single event, with minimal network cost?
 
 - [x] Use HTTPS protocol
 - [ ] Use HTTP protocol
