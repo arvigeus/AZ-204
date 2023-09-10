@@ -276,7 +276,7 @@ Question: To enhance performance and ensure data consistency between your data s
 - [x] When the demand for resources is highly variable
 - [ ] When you need to cache web session state information across multiple servers
 
-Answer Explanation: Cache-Aside pattern is ideal for scenarios where native read-through and write-through operations are not supported by the cache. It also allows for on-demand data loading, making it suitable for situations with fluctuating resource demand.
+Answer: Cache-Aside pattern is ideal for scenarios where native read-through and write-through operations are not supported by the cache. It also allows for on-demand data loading, making it suitable for situations with fluctuating resource demand.
 
 ---
 
