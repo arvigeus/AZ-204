@@ -834,3 +834,19 @@ Question: You have a containerized application that requires automatic updates w
 - [ ] Azure Event Grid
 
 Answer: Webhooks in Azure Container Registry allow you to trigger actions in response to events like image pushes or pulls, making it suitable for automating updates.
+
+---
+
+What storage service should you utilize to ensure persistent storage for a new Azure container instance running a SQL Server database within a Docker image?
+
+- [ ] Azure Table storage
+- [ ] Azure Queue storage
+- [ ] Azure Blob storage
+- [x] Azure Files
+
+Answer:
+
+- Azure Files is the correct choice as it offers SMB protocol support, making it suitable for persistent storage for SQL Server instances in containers.
+- Azure Blob storage lacks SMB support needed for SQL Server instances in containers.
+- Azure Table storage is for NoSQL data and not suitable for SQL Server persistent storage.
+- Azure Queue storage is for message queuing and not for persistent storage.

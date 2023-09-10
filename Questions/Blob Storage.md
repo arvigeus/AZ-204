@@ -309,3 +309,29 @@ Question: You're building an ASP.Net Core app to interact with Azure Blob contai
 Answer: `user_impersonation` allows the application to act as the user, inheriting their roles and permissions for blob access.
 
 ---
+
+Question: Which of the following accounts are eligable for using ZRS?
+
+- [x] General purpose v2 account at Standard performace tier
+- [x] General purpose v2 account at Premium performace tier
+- [ ] General purpose v1 account at Standard performace tier
+- [ ] General purpose v1 account at Premium performace tier
+- [ ] Blob storage account at Standard performace tier
+- [ ] Blob storage account at Premium performace tier
+
+Answer: Only General purpose v2 accounts are eligable for using ZRS
+
+---
+
+Question: Which of the following accounts are eligable for using GRS?
+
+- [x] General purpose v2 account at Standard performace tier
+- [ ] General purpose v2 account at Premium performace tier
+- [ ] General purpose v1 account at Standard performace tier
+- [ ] General purpose v1 account at Premium performace tier
+- [ ] Blob storage account at Standard performace tier
+- [ ] Blob storage account at Premium performace tier
+
+Answer: Only General purpose v2 accounts at standard tier are eligable for using GRS
+
+---

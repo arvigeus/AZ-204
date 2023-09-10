@@ -556,3 +556,14 @@ Answer:
 `groupMembershipClaims` will include the user's security group memberships in the claims whenever a token is requested. `oauth2AllowImplicitFlow` is often relevant when you're working with SPAs or other scenarios where the Implicit Grant Flow is used.
 
 ---
+
+Question : You created a new user account named AppAdmin. You must assign the role of Application Administrator to the AppAdmin user account. What should you do?
+
+- [x] Assign the `Administrator` role
+- [ ] Add to `Administrators` group
+- [ ] Add "Request Admin" access policy
+
+Answer: Administrator is a role.  
+Adding the user to the admin group doesn’t mean that the Application Administrator’s role is automatically assigned to the user account.
+
+---

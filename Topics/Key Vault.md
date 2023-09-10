@@ -112,7 +112,7 @@ var certificate = await client.GetCertificateAsync(certificateName);
 - Restrict vault access to authorized applications and users. (`az keyvault set-policy --name <YourKeyVaultName> --object-id <PrincipalObjectId> --secret-permissions get list`)
 - Regularly backup your vault. (`az keyvault key backup --vault-name <YourKeyVaultName> --name <KeyName> --file <BackupFileName>`)
 - Enable logging and alerts.
-- Enable **soft-delete** and **purge protection** to keep secrets for 90 days and prevent forced deletion. Charges apply for HSM-keys in the last 30 days of use. Operations are disabled on deleted objects, and no charges apply.
+- Enable **soft-delete** and **purge protection** to keep secrets for 7-90 days and prevent forced deletion. Charges apply for HSM-keys in the last 30 days of use. Operations are disabled on deleted objects, and no charges apply.
 
   ```ps
   az keyvault update --name <YourKeyVaultName> --enable-soft-delete true

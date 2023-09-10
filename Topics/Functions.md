@@ -68,7 +68,6 @@ az appservice plan list --query "[?id=='$appServicePlanId'].sku.tier" --output t
 
 # Get a list of all Premium plans in your resource group
 az functionapp plan list --resource-group <MY_RESOURCE_GROUP> --query "[?sku.family=='EP'].{PlanName:name,Sites:numberOfSites}" -o table
-
 ```
 
 ## [Storage Considerations](https://learn.microsoft.com/en-us/azure/azure-functions/storage-considerations?tabs=azure-cli)

@@ -17,13 +17,13 @@ All tiers support the same basic features, the main difference is image storage 
 
 - **Basic** - Lowest throughput. 10GB storage
 - **Standard** - For most production scenarios, 100GB storage
-- **Premium** - Highest amount of included storage (500GB) and concurrent operations, enabling high-volume scenarios (higher image throughput). Additional features: geo-replication (zone redundancy), content trust for image tag signing, private link.
+- **Premium** - Highest amount of included storage (500GB) and concurrent operations, enabling high-volume scenarios (higher image throughput). Additional features: geo-replication (zone redundancy), customer-Managed Key, content trust for image tag signing, private link.
 
 **Throttling**: May happen if you exceed the registry's limits, causing temporary `HTTP 429` errors and requiring retry logic or reducing the request rate.
 
 Change tier: `az acr update --name myContainerRegistry --sku Premium`
 
-[**Zone Redundancy**](https://learn.microsoft.com/en-us/azure/container-registry/zone-redundancy) (requires Premium): Minimum of three separate zones in each enabled region. Enable with `--zone-redundancy enabled`. The environment must include a virtual network (VNET) with an available subnet.
+[**Zone Redundancy**](https://learn.microsoft.com/en-us/azure/container-registry/zone-redundancy) (requires _Premium_): Minimum of three separate zones in each enabled region. Enable with `--zone-redundancy enabled`. The environment must include a virtual network (VNET) with an available subnet.
 
 **Performance**: High numbers of repositories and tags can impact the performance. Periodically delete unused.
 
@@ -162,14 +162,23 @@ Example: `az container create --restart-policy OnFailure ...`.
 - Resource Manager template: when you need to deploy additional Azure service resources (for example, an Azure Files share)
 - YAML file: when your deployment includes only container instances.
 
-### Mount an Azure file share in Azure Container Instances
+### [Mount an Azure file share in Azure Container Instances](https://learn.microsoft.com/en-us/azure/container-instances/container-instances-volume-azure-files)
+
+Azure Files is accessible via Server Message Block (SMB) protocol.
 
 Azure Files shares can only be mounted to _Linux containers_ _running as root_, limited by the requirement of CIFS support.
+
+**Azure Container Instances does not support direct integration Blob Storage** because it lacks SMB support.
 
 Azure CLI:
 
 ```sh
-# Note: To mount an Azure File Share to an Azure Container Instance, you need the Storage Account Key
+# 1) Create the storage account
+
+# 2) Create a file share
+
+# 3) Deploy container and mount volume
+# To mount an Azure file share as a volume in Azure Container Instances, you need: Storage account name, Share name, and Storage account key.
 az container create \
     --azure-file-volume-account-name $ACI_PERS_STORAGE_ACCOUNT_NAME \
     --azure-file-volume-account-key $STORAGE_KEY \
@@ -178,7 +187,7 @@ az container create \
     # ...
 ```
 
-YAML:
+Deploy container and mount volume:
 
 ```yaml
 volumes:

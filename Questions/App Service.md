@@ -1431,3 +1431,31 @@ Question: Your organization has a web app deployed on Azure using the D1 App Ser
 Answer: The D1 App Service Plan is a Shared Service Plan, which doesn't support autoscaling. Therefore, you would need to switch the web app to the Standard App Service Plan.
 
 ---
+
+Question: You are an Azure developer responsible for maintaining a web application hosted on Azure App Service. Users are reporting unexpected behavior within the application, and you need to diagnose the issue by capturing errors and trace information from your application code. What should you do?
+
+- [ ] Configure Azure Monitor to capture telemetry data.
+- [ ] Enable the Web Server Logging feature.
+- [x] Enable the Application Logging feature.
+- [ ] Create resource health alerts.
+
+Answer: Enabling the Application Logging feature allows you to capture application-level events and errors, which is useful for debugging issues within your application code.  
+Azure Monitor is more for monitoring performance metrics and not specifically tailored for application-level logging.  
+Web Server Logging captures HTTP-level information, not application-level issues.  
+Resource health alerts are for monitoring the health of Azure resources, not for application-level debugging.
+
+---
+
+Question: Your Azure App Service-hosted web application named `webapp-prod` is experiencing issues. Users are complaining about receiving HTTP `404` errors when trying to access certain pages. You need to diagnose these issues by capturing detailed information about each HTTP request. What should you do?
+
+- [ ] Enable Azure Application Insights.
+- [ ] Enable the Application Logging feature.
+- [x] Enable the Web Server Logging feature.
+- [ ] Set up Azure Network Watcher.
+
+Answer: Enabling the Web Server Logging feature captures all HTTP requests and responses, which is useful for diagnosing issues like HTTP 404 errors.  
+Azure Application Insights is more focused on application performance monitoring and not specifically tailored for capturing all HTTP requests and responses.  
+Application Logging is for capturing application-level events and errors, not HTTP-level information.  
+Azure Network Watcher is for monitoring, diagnosing, and viewing metrics for Azure networking resources, not specifically for HTTP-level logging.
+
+---

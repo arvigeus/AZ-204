@@ -570,6 +570,15 @@ PUT https://<account>.blob.core.windows.net/<container>/<blob> # upload file
 GET https://<account>.blob.core.windows.net/<container>/<blob> # download file
 ```
 
+### [Object replication](https://learn.microsoft.com/en-us/azure/storage/blobs/object-replication-overview)
+
+Asynchronously copies block blobs from a source to a destination account. To use this feature, you'll need to enable **Change Feed** and **Blob Versioning**, and it's compatible only with **general-purpose v2** and **premium block blob accounts**. However, it doesn't support append blobs, page blobs, or custom encryption keys.
+
+The process involves 2 main steps:
+
+1. Creating a replication policy.
+1. Setting rules to specify which blobs to replicate.
+
 ### [AzCopy](https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azcopy-v10)
 
 ```sh

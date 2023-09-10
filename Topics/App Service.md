@@ -23,7 +23,7 @@
 
 ### Tiers
 
-- **Shared compute**: **Free** (F1) and **Shared** (D1) tiers run apps on the same Azure VM with other customer apps, sharing resources and limited CPU quotas. They are suitable for _development_ and _testing_ only. Each app is charged for _CPU quota_.
+- **Shared compute**: **Free** (F1) and **Shared** (D1) tiers run apps on the same Azure VM with other customer apps, sharing resources and limited CPU quotas. ⭐: _development_ and _testing_ only. Each app is charged for _CPU quota_.
 
 - **Dedicated compute**: **Basic** ⏺️ (B1), **Standard** (S1), **Premium** (P1V1), **PremiumV2** (P1V2), and **PremiumV3** (P1V3) tiers utilize dedicated Azure VMs. Apps within the same App Service plan share compute resources. Higher tiers provide more VM instances for scale-out capabilities. Scaling out (_autoscale_) simply adds another VM with the same applications and services. _Each VM instance_ is charged.
 
@@ -581,13 +581,13 @@ The roles that handle incoming HTTP or HTTPS requests are called _front ends_. T
 
 ## [Diagnostics](https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs)
 
-| Type                    | Platform       | Location                                           | Notes                                                                           |
-| ----------------------- | -------------- | -------------------------------------------------- | ------------------------------------------------------------------------------- |
-| Application logging     | Windows, Linux | App Service file system and/or Azure Storage blobs |                                                                                 |
-| Web server logging      | Windows        | App Service file system or Azure Storage blobs     | Raw HTTP request data.                                                          |
-| Detailed Error Messages | Windows        | App Service file system                            | Copies of the .htm error pages that would have been sent to the client browser. |
-| Failed request tracing  | Windows        | App Service file system                            |                                                                                 |
-| Deployment logging      | Windows, Linux | App Service file system                            | Logs for when you publish content to an app.                                    |
+| Type                    | Platform       | Location                                           | Notes                                                                                                                              |
+| ----------------------- | -------------- | -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Application logging     | Windows, Linux | App Service file system and/or Azure Storage blobs | Useful for debugging issues (bugs or unexpected behavior) within application code.                                                 |
+| Web server logging      | Windows        | App Service file system or Azure Storage blobs     | Raw HTTP request data. Useful for diagnosing issues related to connectivity, HTTP errors (`404`), and server-level issues (`5xx`). |
+| Detailed Error Messages | Windows        | App Service file system                            | Copies of the .htm error pages that would have been sent to the client browser.                                                    |
+| Failed request tracing  | Windows        | App Service file system                            |                                                                                                                                    |
+| Deployment logging      | Windows, Linux | App Service file system                            | Logs for when you publish content to an app.                                                                                       |
 
 The _App Service file system_ option is for temporary debugging purposes, and turns itself off in 12 hours.  
 _The Blob_ option is for long-term logging, includes additional information. Only available for .Net application.

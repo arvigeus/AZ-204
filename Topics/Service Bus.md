@@ -2,6 +2,8 @@
 
 Endpoint: `https://servicebus.azure.net`
 
+## Overview
+
 Supports AMQP 1.0, enabling applications to work with Service Bus, and on-premises brokers like ActiveMQ or RabbitMQ.
 
 Up to 80 GB only.
@@ -24,6 +26,14 @@ Up to 80 GB only.
 | Ability to scale workload up and down | N/A                            |
 | Message size up to 100 MB             | Message size up to 256 KB      |
 
+## Components
+
+- **Namespace**: A container for all messaging components.
+- **Queues** (point-to-point communication): Send and receive messages from.  
+  Multiple queues and topics are supported in a single namespace, and namespaces often serve as application containers.
+- **Topics**: Also allow you to send and receive messages and mainly used in publish/subscribe scenarios. It contains multiple independent subscriptions called entities.  
+  To filter specific messages, you can use rules and filters to define conditions that trigger optional actions.
+
 ## Payload and serialization
 
 In the form of key-value pairs. The payload is always an opaque _binary block_ when stored or in transit. Its format can be described using the `ContentType` property. Applications are advised to manage object serialization themselves.
@@ -45,22 +55,22 @@ Routing is managed interally, but applications can also use user properties for 
 
 ## Advanced features
 
-| Feature                    | Description                                                                                   |
-| -------------------------- | --------------------------------------------------------------------------------------------- |
-| Message sessions           | Enables FIFO guaranteed handling of related messages sequence.                                |
-| Parallel Stream Processing | Can process messages as parallel, long-running streams using **session ID**                   |
-| Autoforwarding             | Chains a queue or subscription to another within the same namespace.                          |
-| Dead-letter queue          | Holds messages that can't be delivered, allows for removal and inspection.                    |
-| Scheduled delivery         | Allows delayed processing by scheduling a message for a certain time.                         |
-| Message deferral           | Defers message retrieval until a later time, message remains set aside.                       |
-| Batching                   | Delays sending a message for a certain period.                                                |
-| Transactions               | Groups operations into an execution scope for a single messaging entity.                      |
-| Filtering and actions      | Enables subscribers to define received messages using subscription rules.                     |
-| Autodelete on idle         | Automatically deletes a queue after a specified idle interval. Minimum duration is 5 minutes. |
-| Duplicate detection        | Resends same message or discards any duplicate copies in case of send operation doubt.        |
-| Security protocols         | Supports protocols like SAS, RBAC, and Managed identities for Azure.                          |
-| Geo-disaster recovery      | Continues data processing in a different region or datacenter during downtime.                |
-| Security                   | Supports standard AMQP 1.0 and HTTP/REST protocols.                                           |
+| Feature                    | Description                                                                                                            |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Message sessions           | Enables FIFO guaranteed handling of related messages sequence.                                                         |
+| Parallel Stream Processing | Can process messages as parallel, long-running streams using **session ID**                                            |
+| Autoforwarding             | Removes messages from a queue or subscription and transfer it to a different queue or topic within the same namespace. |
+| Dead-letter queue          | Holds messages that can't be delivered, allows for removal and inspection.                                             |
+| Scheduled delivery         | Allows delayed processing by scheduling a message for a certain time.                                                  |
+| Message deferral           | Defers message retrieval until a later time, message remains set aside.                                                |
+| Batching                   | Delays sending a message for a certain period.                                                                         |
+| Transactions               | Groups operations into an execution scope for a single messaging entity.                                               |
+| Filtering and actions      | Enables subscribers to define received messages using subscription rules.                                              |
+| Autodelete on idle         | Automatically deletes a queue after a specified idle interval. Minimum duration is 5 minutes.                          |
+| Duplicate detection        | Resends same message or discards any duplicate copies in case of send operation doubt.                                 |
+| Security protocols         | Supports protocols like SAS, RBAC, and Managed identities for Azure.                                                   |
+| Geo-disaster recovery      | Continues data processing in a different region or datacenter during downtime.                                         |
+| Security                   | Supports standard AMQP 1.0 and HTTP/REST protocols.                                                                    |
 
 ## [Scheduled messages](https://learn.microsoft.com/en-us/azure/service-bus-messaging/message-sequencing#scheduled-messages)
 
