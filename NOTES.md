@@ -20,6 +20,10 @@ All commands use `AZ<COMMAND>` format, not `Azure<COMMAND>`. Examples: `New-AzKe
 
 All questions you have doubts on, **mark them for review** as you can't go back to them if you don't. **If you go to the bathroom / take a break, you cannot go back to previous questions!!!**
 
+## Encryption
+
+Everything is encrypted at rest with 256-bit AES, and in-transit with TLS. You can use your own encryption - provided by Azure (they manage it), or third party (you manage it).
+
 ## Random thoughts
 
 - Dashes are not allowed in account names. Probably because MS uses them to differentiate between primary `<account>.<url>` and secondary `<account>-secondary.<url>`.
