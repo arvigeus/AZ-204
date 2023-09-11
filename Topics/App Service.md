@@ -29,8 +29,6 @@
 
 - **Isolated** (I1): The **Isolated** and **IsolatedV2** tiers run dedicated Azure VMs on _dedicated Azure Virtual Networks_. It provides network isolation on top of compute isolation to your apps. It provides the _maximum scale-out capabilities_. Charging is based on the _number of isolated workers that run your apps_.
 
-You can move an app to another App Service plan, as long as the source plan and the target plan are in the same resource group, geographical region, and of the same OS type, and supports the currently used features.
-
 App Service plans that have no apps associated with them still incur charges because they continue to reserve the configured VM instances.
 
 Deployment slots, diagnostic logs, perforing backups, apps in the same App Service plan, and WebJobs _run on the same VM instances_.
@@ -41,19 +39,21 @@ When to isolate an app into a new App Service plan:
 - You want to scale the app independently from the other apps in the existing plan.
 - The app needs resource in a different geographical region.
 
-```sh
-# Move web app to another location by cloning it
+#### [Move App Service plan](https://learn.microsoft.com/en-us/azure/app-service/app-service-plan-manage)
 
+By cloning it. Source plan and destination plan must be in the same resource group, geographical region, same OS type, and supports the currently used features.
+
+```ps
 New-AzResourceGroup -Name DestinationAzureResourceGroup -Location $destinationLocation
 New-AzAppServicePlan -Location $destinationLocation -ResourceGroupName DestinationAzureResourceGroup -Name DestinationAppServicePlan -Tier Standard
 
-$srcapp = Get-AzWebApp -ResourceGroupName SourceAzureResourceGroup -Name MyAppService
-$destapp = New-AzWebApp -ResourceGroupName DestinationAzureResourceGroup -Name MyAppService2 -Location $destinationLocation -AppServicePlan DestinationAppServicePlan -SourceWebApp $srcapp
+$srcapp = Get-AzWebApp -Name MyAppService -ResourceGroupName SourceAzureResourceGroup
+$destapp = New-AzWebApp -SourceWebApp $srcapp -AppServicePlan DestinationAppServicePlan -Location $destinationLocation -ResourceGroupName DestinationAzureResourceGroup -Name MyAppService2
 ```
 
 ### [Scaling](https://learn.microsoft.com/en-us/azure/app-service/manage-automatic-scaling?tabs=azure-portal)
 
-The scale settings affect all apps in your App Service plan
+Settings affect all apps in your App Service plan
 
 - **Manual scaling** (Basic+) - one time events (example: doing X on this date)
 - **Autoscale** (Standard+) - for predictable changes of application load, based on schedules (every X days/weeks/months) or resources
@@ -112,128 +112,7 @@ command = deploy.cmd # Run script before deployment
 
 Example: `<a href="<webappname>.azurewebsites.net/?x-ms-routing-name=self">Go back to production app</a> | <a href="<webappname>.azurewebsites.net/?x-ms-routing-name=staging">Go back to staging app</a>`
 
-By default, all client requests go to the production slot. You can route a portion of the traffic to another slot. The default rule for a new deployment slot is 0% (no random transfers to other slots).
-
-```sh
-let "randomIdentifier=$RANDOM*$RANDOM"
-location="East US"
-resourceGroup="app-service-rg-$randomIdentifier"
-tag="deploy-github.sh"
-appServicePlan="app-service-plan-$randomIdentifier"
-webapp="web-app-$randomIdentifier"
-
-az group create --name $resourceGroup --location "$location" --tag $tag
-
-az appservice plan create --name $appServicePlan --resource-group $resourceGroup --location "$location" # --sku B1
-# az appservice plan create --name $appServicePlan --resource-group $resourceGroup --sku S1 --is-linux
-
-az webapp create --name $webapp --plan $appServicePlan --resource-group $resourceGroup --runtime "DOTNET|6.0"
-
-# https://learn.microsoft.com/en-us/azure/app-service/scripts/cli-deploy-github
-github_deployment() {
-    echo "Deploying from GitHub"
-    gitrepo=https://github.com/Azure-Samples/dotnet-core-sample
-    az webapp deployment source config --name $webapp --resource-group $resourceGroup --repo-url $gitrepo --branch master --manual-integration
-
-    # Change deploiment branch to "main"
-    # az webapp config appsettings set --name $webapp --resource-group $resourceGroup --settings DEPLOYMENT_BRANCH='main'
-}
-
-# https://learn.microsoft.com/en-us/azure/app-service/scripts/cli-deploy-staging-environment
-staging_deployment() {
-    # Deployment slots require Standard tier, default is Basic (B1)
-    az appservice plan update --name $appServicePlan --resource-group $resourceGroup --sku S1
-
-    echo "Creating a deployment slot"
-    az webapp deployment slot create --name $webapp --resource-group $resourceGroup --slot staging
-
-    echo "Deploying to Staging Slot"
-    gitrepo=https://github.com/Azure-Samples/dotnet-core-sample
-    az webapp deployment source config \
-      --slot staging \
-      --repo-url $gitrepo \
-      --branch master --manual-integration \
-      --name $webapp --resource-group $resourceGroup
-
-    echo "Swapping staging slot into production"
-    az webapp deployment slot swap --name $webapp --resource-group $resourceGroup --slot staging
-}
-
-# https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container?tabs=debian&pivots=container-linux#change-the-docker-image-of-a-custom-container
-docker_deployment() {
-    echo "Deploying from DockerHub" # Custom container
-    az webapp config container set \
-      --docker-custom-image-name <docker-hub-repo>/<image> \
-      --name $webapp --resource-group $resourceGroup
-}
-
-# https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container?tabs=debian&pivots=container-linux#use-an-image-from-a-private-registry
-private_registry_deployment() {
-    echo "Deploying from a private registry"
-    az webapp config container set \
-      --docker-custom-image-name <image-name> \
-      --docker-registry-server-url <private-repo-url> \
-      --docker-registry-server-user <username> \
-      --docker-registry-server-password <password> \
-      --name $webapp --resource-group $resourceGroup
-}
-
-# https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container?tabs=debian&pivots=container-linux#change-the-docker-image-of-a-custom-container
-managed_entity_registry_deployment() {
-  # Enable the system-assigned managed identity for the web app
-  az webapp identity assign --query principalId --output tsv --resource-group $resourceGroup --name $webapp
-
-  # Get the resource ID of your Azure Container Registry
-  az acr show --name <registry-name> --query id --output tsv --resource-group $resourceGroup
-
-  # Grant the managed identity permission to access the container registry
-  az role assignment create --assignee <principal-id> --scope <registry-resource-id> --role "AcrPull"
-
-  # Configure your app to use the managed identity to pull from Azure Container Registry
-  az webapp config set --generic-configurations '{"acrUseManagedIdentityCreds": true}' --resource-group $resourceGroup --name $webapp
-
-  # (Optional) If your app uses a user-assigned managed identity, get its client ID
-  az identity show --name <identity-name> --query clientId --output tsv --resource-group $resourceGroup
-
-  # (Optional) Set the user-assigned managed identity ID for your app
-  az  webapp config set --generic-configurations '{"acrUserManagedIdentityID": "<client-id>"}' --resource-group $resourceGroup --name $webapp
-
-  # # Set the web application to use the Docker image from ACR
-  az webapp config container set \
-    --docker-custom-image-name <acr-login-server>/<image>:<tag> \
-    --docker-registry-server-url https://<acr-login-server> \
-    --resource-group $resourceGroup --name $webapp
-}
-
-# https://learn.microsoft.com/en-us/azure/app-service/tutorial-multi-container-app
-compose_deployment() {
-    echo "Creating webapp with Docker Compose configuration"
-    $dockerComposeFile=docker-compose-wordpress.yml
-    # Note that az webapp create is different
-    az webapp create --resource-group $resourceGroup --plan $appServicePlan --name wordpressApp --multicontainer-config-type compose --multicontainer-config-file $dockerComposeFile
-
-    echo "Setup database"
-    az mysql server create --resource-group $resourceGroup --name wordpressDb  --location $location --admin-user adminuser --admin-password letmein --sku-name B_Gen5_1 --version 5.7
-    az mysql db create --resource-group $resourceGroup --server-name <mysql-server-name> --name wordpress
-
-    echo "Setting app settings for WordPress"
-      --settings WORDPRESS_DB_HOST="<mysql-server-name>.mysql.database.azure.com" WORDPRESS_DB_USER="adminuser" WORDPRESS_DB_PASSWORD="letmein" WORDPRESS_DB_NAME="wordpress" MYSQL_SSL_CA="BaltimoreCyberTrustroot.crt.pem" \
-    az webapp config appsettings set \
-      --resource-group $resourceGroup \
-      --name wordpressApp
-}
-
-# https://learn.microsoft.com/en-us/azure/app-service/deploy-zip?tabs=cli
-# uses the same Kudu service that powers continuous integration-based deployments
-zip_archive() {
-  az webapp deploy --resource-group <group-name> --name <app-name> --src-path <zip-package-path>
-  # Zip from url
-  # az webapp deploy --resource-group <group-name> --name <app-name> --src-url "https://storagesample.blob.core.windows.net/sample-container/myapp.zip?sv=2021-10-01&sb&sig=slk22f3UrS823n4kSh8Skjpa7Naj4CG3
-
-  # (Optional) Enable build automation
-  # az webapp config appsettings set --resource-group <group-name> --name <app-name> --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true
-}
-```
+⏺️: All requests go to production. Traffic can be split; new slots start at 0% (no random transfers to other slots).
 
 ## [Configuration](https://learn.microsoft.com/en-us/azure/app-service/configure-common?tabs=cli)
 
@@ -241,79 +120,48 @@ App settings are always encrypted when stored (encrypted-at-rest).
 
 App Service passes app settings to the container using the `--env` flag to set the environment variable in the container.
 
-- **Always On**: Keep the app loaded even when there's no traffic. By default, **Always On** isn't enabled and the app is unloaded after 20 minutes without any incoming requests.
+App Settings and Connection Strings are set at app startup and **trigger a restart when changed**. They override settings in `Web.config` or `appsettings.json`.
+
+- **Always On**: Keeps app loaded; off by default and app unloads after 20 mins of inactivity. Needed for Application Insights Profiler.
 
 ### App Settings
 
-Variables passed as environment variables to the application code, injected into app environment at startup. When you add, remove, or edit app settings, App Service triggers an app restart. The values in App Service override the ones in `Web.config` (`<appSettings>`) or `appsettings.json`.
-
-```sh
-az webapp config appsettings set --settings <setting-name>="<value>" ...
-```
-
-Example:
+Configuration data is hierarchical (settings can have sub-settings). In Azure CLI `__` denotes the hierarchy.
 
 ```cs
-// az webapp config appsettings set --settings MySetting="MyValue" --name <app-name> --resource-group <group-name>
+// az webapp config appsettings set --settings MySetting="<value>" MyParentSetting__MySubsetting="<value>" ...
 string mySettingValue = Configuration["MySetting"];
+string myParentSettingValue = Configuration["MyParentSetting/MySubSetting"]; // same as "MyParentSetting:MySubSetting" and "MyParentSetting__MySubSetting"
 ```
 
-Buk editing:
-
 ```jsonc
-// Save: az webapp config appsettings list --name <app-name> --resource-group <group-name> > settings.json
+// Save: az webapp config appsettings list --name $appName --resource-group $resourceGroup > settings.json
 
 // settings.json
 [
-  {
-    "name": "key1",
-    "slotSetting": false,
-    "value": "value1"
-  },
-  {
-    "name": "key2",
-    "value": "value2"
-  }
+  { "name": "key1", "value": "value1", "slotSetting": false },
+  { "name": "key2", "value": "value2" }
   // ...
 ]
 
-// Load: az webapp config appsettings set --resource-group <group-name> --name <app-name> --settings @settings.json
+// Load: az webapp config appsettings set --resource-group $resourceGroup --name $appName --settings @settings.json
 ```
 
-Configuration data is hierarchical (settings can have sub-settings). In Azure CLI `__` denotes the hierarchy.
+### Connection strings
 
-Example:
+Connection strings are prefixed with connection type. Similar to how they're set in the `Web.config` under `<connectionStrings>`.
 
 ```cs
-// az webapp config appsettings set --settings MySetting__MySubSetting="MyValue" --name <app-name> --resource-group <group-name>
-Configuration["MySetting__MySubSetting"];
-Configuration["MySetting:MySubSetting"];
-Configuration["MySetting/MySubSetting"];
-```
-
-### Connection Strings
-
-Like setting them in `<connectionStrings>` in `Web.config`. Available as environment variables at runtime, prefixed with the connection types like SQLServer, MySQL, SQLAzure, Custom, PostgreSQL.
-
-```sh
-az webapp config connection-string set --connection-string-type <type> --settings <string-name>='<value> ...'
-```
-
-Example:
-
-```cs
-//az webapp config connection-string set --connection-string-type SQLServer --settings MyDb="Server=myserver;Database=mydb;User Id=myuser;Password=mypassword;" --name <app-name> --resource-group <group-name>
+// az webapp config connection-string set --connection-string-type SQLServer --settings MyDb="Server=myserver;Database=mydb;User Id=myuser;Password=mypassword;" ...
 string myConnectionString = Configuration.GetConnectionString("MyDb");
 string myConnectionStringVerbose = Configuration.GetConnectionString("SQLCONNSTR_MyDb"); // Same as above
 string myConnectionStringEnv = Environment.GetEnvironmentVariable("SQLCONNSTR_MyDb"); // Same as above
 ```
 
-Bulk editing:
-
 ```jsonc
-// Save: az webapp config connection-string list --name <app-name> --resource-group <group-name> > settings.json
+// Save: az webapp config connection-string list --name $appName --resource-group $resourceGroup > conn-settings.json
 
-// settings.json
+// conn-settings.json
 [
   {
     "name": "name-1",
@@ -329,13 +177,13 @@ Bulk editing:
   // ...
 ]
 
-// Load: az webapp config connection-string set --resource-group <group-name> --name <app-name> --settings @settings.json
+// Load: az webapp config connection-string set --resource-group $resourceGroup --name $appName --settings @conn-settings.json
 ```
 
 ### General Settings
 
 ```sh
-az webapp config set --name <app-name> --resource-group <resource-group-name> \
+az webapp config set --name $appName --resource-group $resourceGroup \
     --use-32bit-worker-process [true|false] \
     --web-sockets-enabled [true|false] \
     --always-on [true|false] \
@@ -344,7 +192,7 @@ az webapp config set --name <app-name> --resource-group <resource-group-name> \
     --remote-debugging-enabled [true|false] \ # turn itself off after 48 hours
     --number-of-workers
 
-az webapp config appsettings set --name <app-name> --resource-group <resource-group-name> /
+az webapp config appsettings set --name $appName --resource-group $resourceGroup /
     --settings \
         WEBSITES_PORT=8000
         PRE_BUILD_COMMAND="echo foo, scripts/prebuild.sh" \
@@ -377,10 +225,170 @@ Add custom script processors to handle requests for specific file extensions.
   }
 ]
 
-// az resource update --set properties.virtualApplications=@json.txt --resource-type Microsoft.Web/sites/config --resource-group <group-name> --name <app-name>
+// az resource update --set properties.virtualApplications=@json.txt --resource-type Microsoft.Web/sites/config --resource-group $resourceGroup --name $appName
 ```
 
 This works for both Windows and Linux apps.
+
+## [Persistence](https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container?tabs=debian&pivots=container-linux#use-persistent-shared-storage)
+
+When persistent storage is _on_ (⏺️ for Linux containers), the `/home` directory allows file persistence and sharing. All writes to `/home` are accessible by all instances, but existing files overwrite /home's contents on start.
+
+`/home/LogFiles` always persists if logging is enabled, regardless of persistent storage status.
+
+Disable default persistent storage on Linux containers: `az webapp config appsettings set --settings WEBSITES_ENABLE_APP_SERVICE_STORAGE=false ...`
+
+### [Mount Azure Storage as a local share in App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-connect-to-azure-storage)
+
+- Supports Azure Files (read/write) and Azure Blobs (read-only for Linux).
+- App backups don't include storage mounts.
+- Custom containers offer lower latency for heavy read-only file access compared to built-in Linux images that use Azure Storage.
+- Storage mount changes will restart the app.
+- Deleting Azure Storage requires corresponding mount configuration removal.
+- Storage failover requires app restart or remounting of Azure Storage.
+- Don't use mounts for local databases or apps needing file locks.
+
+Mount: `az webapp config storage-account add --custom-id <custom-id> --storage-type AzureFiles --share-name <share-name> --account-name <storage-account-name> --access-key "<access-key>" --mount-path <mount-path-directory> ...`  
+Check: `az webapp config storage-account list ...`
+
+### Limitations
+
+- Don't map to `/`, `/home`, or `/tmp` to avoid issues.
+- Storage firewall support via service and private endpoints only.
+- No FTP/FTPS for custom-mounted storage.
+- Azure Storage billed separately from App Service.
+
+### Best Practices
+
+- Place app and storage in the same Azure region.
+- Avoid regenerating access key.
+
+## Deploy apps
+
+1. Create resource group: `az group create`
+1. Create App Service plan: `az appservice plan create --location $location`
+1. Create web app: `az webapp create --runtime "DOTNET|6.0"`
+1. (optinal) Use managed identity for ACR:
+   - Assign `AcrPull` role: `az role assignment create --assignee $principalId --scope $registry_resource_id --role "AcrPull"`
+   - Set generic config to `{acrUseManagedIdentityCreds:true}` for system identity and `{acrUserManagedIdentityID:id}` for user identity: `az webapp config set --generic-configurations '<json>'`
+1. (optional) Create deployment slot (staging) (Standard+): `az webapp deployment slot create`
+1. Deploy app (add `--slot staging` to use deployment slot):
+   - Git: `az webapp deployment source config --repo-url $gitrepo --branch master --manual-integration`
+   - Docker: `az webapp config container set --docker-custom-image-name`
+   - Compose (skip step 3): `az webapp create --multicontainer-config-type compose --multicontainer-config-file $dockerComposeFile`
+   - Local ZIP file: `az webapp deploy --src-path "path/to/zip"`
+   - Remote ZIP file: `az webapp deploy --src-url "<url>"`
+1. (optional) Set some settings: `az webapp config appsettings set --settings` (ex: `DEPLOYMENT_BRANCH='main'` for git, `SCM_DO_BUILD_DURING_DEPLOYMENT=true` for build automation)
+1. (optional) Swap slots: `az webapp deployment slot swap --slot staging`
+
+Full examples:
+
+```sh
+let "randomIdentifier=$RANDOM*$RANDOM"
+location="East US"
+resourceGroup="app-service-rg-$randomIdentifier"
+tag="deploy-github.sh"
+appServicePlan="app-service-plan-$randomIdentifier"
+webapp="web-app-$randomIdentifier"
+gitrepo="https://github.com/Azure-Samples/dotnet-core-sample"
+
+az group create --name $resourceGroup --location "$location" --tag $tag
+
+az appservice plan create --name $appServicePlan --resource-group $resourceGroup --location $location # --sku B1
+# az appservice plan create --name $appServicePlan --resource-group $resourceGroup --sku S1 --is-linux
+
+az webapp create --name $webapp --plan $appServicePlan --runtime "DOTNET|6.0" --resource-group $resourceGroup
+
+# https://learn.microsoft.com/en-us/azure/app-service/scripts/cli-deploy-github
+github_deployment() {
+    echo "Deploying from GitHub"
+    az webapp deployment source config --name $webapp --repo-url $gitrepo --branch master --manual-integration --resource-group $resourceGroup
+
+    # Change deploiment branch to "main"
+    # az webapp config appsettings set --name $webapp --settings DEPLOYMENT_BRANCH='main' --resource-group $resourceGroup
+}
+
+# https://learn.microsoft.com/en-us/azure/app-service/scripts/cli-deploy-staging-environment
+staging_deployment() {
+    # Deployment slots require Standard tier, default is Basic (B1)
+    az appservice plan update --name $appServicePlan --sku S1 --resource-group $resourceGroup
+
+    echo "Creating a deployment slot"
+    az webapp deployment slot create --name $webapp--slot staging --resource-group $resourceGroup
+
+    echo "Deploying to Staging Slot"
+    az webapp deployment source config --name $webapp --resource-group $resourceGroup \
+      --slot staging \
+      --repo-url $gitrepo \
+      --branch master --manual-integration \
+
+
+    echo "Swapping staging slot into production"
+    az webapp deployment slot swap --slot staging --name $webapp --resource-group $resourceGroup
+}
+
+# https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container?tabs=debian&pivots=container-linux#change-the-docker-image-of-a-custom-container
+docker_deployment() {
+    echo "Deploying from DockerHub" # Custom container
+    az webapp config container set --name $webapp --resource-group $resourceGroup \
+      --docker-custom-image-name <docker-hub-repo>/<image> \
+      # Private registry: https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container?tabs=debian&pivots=container-linux#use-an-image-from-a-private-registry
+      --docker-registry-server-url <private-repo-url> \
+      --docker-registry-server-user <username> \
+      --docker-registry-server-password <password>
+}
+
+# https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container?tabs=debian&pivots=container-linux#change-the-docker-image-of-a-custom-container
+managed_entity_registry_deployment() {
+  # Enable the system-assigned managed identity for the web app
+  az webapp identity assign --query principalId --output tsv --name $webapp --resource-group $resourceGroup
+
+  # Get the resource ID of your Azure Container Registry
+  az acr show --query id --output tsv --name $registryName --resource-group $resourceGroup
+
+  # Grant the managed identity permission to access the container registry
+  az role assignment create --assignee $principalId --scope $registry_resource_id --role "AcrPull"
+
+  # Configure your app to use the system managed identity to pull from Azure Container Registry
+  az webapp config set --generic-configurations '{"acrUseManagedIdentityCreds": true}' --name $webapp --resource-group $resourceGroup
+  # (OR) Set the user-assigned managed identity ID for your app
+  az  webapp config set --generic-configurations '{"acrUserManagedIdentityID": "$principalId"}' --name $webapp --resource-group $resourceGroup
+
+  # # Set the web application to use the Docker image from ACR
+  az webapp config container set --name $webapp --resource-group $resourceGroup \
+    --docker-custom-image-name <acr-login-server>/<image>:<tag> \
+    --docker-registry-server-url https://<acr-login-server>
+}
+
+# https://learn.microsoft.com/en-us/azure/app-service/tutorial-multi-container-app
+compose_deployment() {
+    echo "Creating webapp with Docker Compose configuration"
+    $dockerComposeFile=docker-compose-wordpress.yml
+    # Note that az webapp create is different
+    az webapp create --resource-group $resourceGroup --plan $appServicePlan --name wordpressApp --multicontainer-config-type compose --multicontainer-config-file $dockerComposeFile
+
+    echo "Setup database"
+    az mysql server create --resource-group $resourceGroup --name wordpressDb  --location $location --admin-user adminuser --admin-password letmein --sku-name B_Gen5_1 --version 5.7
+    az mysql db create --resource-group $resourceGroup --server-name <mysql-server-name> --name wordpress
+
+    echo "Setting app settings for WordPress"
+    az webapp config appsettings set \
+      --settings WORDPRESS_DB_HOST="<mysql-server-name>.mysql.database.azure.com" WORDPRESS_DB_USER="adminuser" WORDPRESS_DB_PASSWORD="letmein" WORDPRESS_DB_NAME="wordpress" MYSQL_SSL_CA="BaltimoreCyberTrustroot.crt.pem" \
+      --resource-group $resourceGroup \
+      --name wordpressApp
+}
+
+# https://learn.microsoft.com/en-us/azure/app-service/deploy-zip?tabs=cli
+# uses the same Kudu service that powers continuous integration-based deployments
+zip_archive() {
+  az webapp deploy --src-path "path/to/zip" --name $webapp --resource-group $resourceGroup
+  # Zip from url
+  # az webapp deploy --src-url "https://storagesample.blob.core.windows.net/sample-container/myapp.zip?sv=2021-10-01&sb&sig=slk22f3UrS823n4kSh8Skjpa7Naj4CG3 --name $webapp --resource-group $resourceGroup
+
+  # (Optional) Enable build automation
+  # az webapp config appsettings set --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true --name $webapp --resource-group $resourceGroup
+}
+```
 
 ### ARM Templates
 
@@ -391,29 +399,6 @@ In JSON format.
 `az group deployment export --name $resourceGroup --deployment-name $deployment` - create ARM template for specific deploy
 
 `az deployment group create --resource-group $resourceGroup --template-file $armTemplateJsonFile` - create deployment group from ARM template
-
-## [Persistence](https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container?tabs=debian&pivots=container-linux#use-persistent-shared-storage)
-
-When persistent storage is _on_ (⏺️ for Linux containers), the `/home` directory allows file persistence and sharing. All writes to `/home` are accessible by all instances, but existing files overwrite /home's contents on start.
-
-`/home/LogFiles` always persists if logging is enabled, regardless of persistent storage status.
-
-Disable default persistent storage on Linux containers: `az webapp config appsettings set --settings WEBSITES_ENABLE_APP_SERVICE_STORAGE=false ...`
-
-### [Mount Azure Storage as a local share in App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-connect-to-azure-storage?tabs=cli&pivots=container-linux)
-
-Mount: `az webapp config storage-account add --custom-id <custom-id> --storage-type AzureFiles --share-name <share-name> --account-name <storage-account-name> --access-key "<access-key>" --mount-path <mount-path-directory> ...`  
-Check: `az webapp config storage-account list ...`
-
-Linux containers: Azure Files are read/write, Azure blobs are read only. Up to 5 mount points per app. Code deployed to built-in images uses Azure Storage with higher disk latency.
-
-- Don't map to `/`, `/home`, or `/tmp` to avoid issues.
-- App backups don't include storage mounts.
-- Storage mount changes will restart the app.
-- Keep your app and Azure Storage in the same region.
-- Deleting Azure Storage requires corresponding mount configuration removal.
-- Don't use mounts for local databases or apps needing file locks.
-- Storage failover disconnects the mount until app restart or mount reconfiguration.
 
 ## Security
 
@@ -550,7 +535,7 @@ For apps: `az webapp cors add --allowed-origins $website ...`
 
 For storage: `az storage cors add --services blob --methods GET POST --origins $website --allowed-headers '*' --exposed-headers '*' --max-age 200 ...`
 
-To enable the sending of credentials like cookies or authentication tokens in your app, the browser may require the `ACCESS-CONTROL-ALLOW-CREDENTIALS` header in the response: `az resource update --set properties.cors.supportCredentials=true --namespace Microsoft.Web --resource-type config --parent sites/<app-name> ...`
+To enable the sending of credentials like cookies or authentication tokens in your app, the browser may require the `ACCESS-CONTROL-ALLOW-CREDENTIALS` header in the response: `az resource update --set properties.cors.supportCredentials=true --namespace Microsoft.Web --resource-type config --parent sites/$appName ...`
 
 The roles that handle incoming HTTP or HTTPS requests are called _front ends_. The roles that host the customer workload are called _workers_.
 
@@ -596,8 +581,8 @@ _The Blob_ option is for long-term logging, includes additional information. Onl
 
 Accessing log files:
 
-- Linux/custom containers: `https://<app-name>.scm.azurewebsites.net/api/logs/docker/zip`. The ZIP file contains console output logs for both the docker host and the docker container.
-- Windows apps: `https://<app-name>.scm.azurewebsites.net/api/dump`
+- Linux/custom containers: `https://$appName.scm.azurewebsites.net/api/logs/docker/zip`. The ZIP file contains console output logs for both the docker host and the docker container.
+- Windows apps: `https://$appName.scm.azurewebsites.net/api/dump`
 
 `AppServiceFileAuditLogs` and `AppServiceAntivirusScanAuditLogs` log types are available only for Premium+.
 
@@ -613,11 +598,11 @@ CLI: `az webapp log tail ...`
 
 ```sh
 # Stream HTTP logs
-az webapp log tail --name <app> --resource-group <resource-group> --provider http
+az webapp log tail --provider http --name $app --resource-group $resourceGroup
 
 # Stream errors
-az webapp log tail --name <app> --resource-group <resource-group> --filter Error
-az webapp log tail --name <app> --resource-group <resource-group> --only-show-errors
+az webapp log tail --filter Error --name $app --resource-group $resourceGroup
+az webapp log tail --only-show-errors --name $app --resource-group $resourceGroup
 ```
 
 ### [Monitoring apps](https://learn.microsoft.com/en-us/azure/app-service/web-sites-monitor)
@@ -627,7 +612,7 @@ Metrics: CPU Percentage, Memory Percentage, Data In, Data Out - used across all 
 Example: `Metric: CPU Percentage; Resource: <AppServicePlanName>`
 
 ```sh
-az monitor metrics list --resource <app_service_plan_resource_id> --metric "Percentage CPU" --time-grain PT1M --output table
+az monitor metrics list --resource $app_service_plan_resource_id --metric "Percentage CPU" --time-grain PT1M --output table
 ```
 
 CPU Time is valuable for apps on Free or Shared plans, where quotas are set by app's CPU minutes usage.  
@@ -644,31 +629,6 @@ Configure path: `az webapp config set --health-check-path <Path> --resource-grou
 ### [Application Insights Profiler](https://learn.microsoft.com/en-us/azure/azure-monitor/profiler/profiler)
 
 Requires the **Always on** setting is _enabled_.
-
-## [Mount Azure Storage as a local share in App Service](https://learn.microsoft.com/en-us/azure/app-service/configure-connect-to-azure-storage)
-
-- Built-in Linux images use Azure Storage with higher latency. For heavy read-only file access, custom containers are better as they reduce latency by storing files in the container filesystem.
-- Supports Azure Files (read/write) and Azure Blobs (read-only for Linux).
-- Storage failover requires app restart or remounting of Azure Storage.
-
-- Use `az webapp config storage-account add` to mount.
-- Use `az webapp config storage-account list` to verify.
-
-### Limitations
-
-- Storage firewall support via service and private endpoints only.
-- No FTP/FTPS for custom-mounted storage.
-- Mapping restrictions.
-- Azure Storage billed separately from App Service.
-
-### Best Practices
-
-- Place app and storage in the same Azure region.
-- Avoid regenerating access key.
-
-## Read more
-
-- [Manage an App Service plan in Azure](https://learn.microsoft.com/en-us/azure/app-service/app-service-plan-manage)
 
 ## CLI
 

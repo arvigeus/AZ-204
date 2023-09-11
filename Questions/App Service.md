@@ -1459,3 +1459,14 @@ Application Logging is for capturing application-level events and errors, not HT
 Azure Network Watcher is for monitoring, diagnosing, and viewing metrics for Azure networking resources, not specifically for HTTP-level logging.
 
 ---
+
+Questions: Which of the following won't trigger a restart?
+
+- [ ] Changes in App Settings
+- [ ] Changes in Connection strings
+- [ ] Changes in Storage Mounts
+- [x] Storage failover
+
+Answer: Storage failover requires app restart or remounting of Azure Storage.
+
+---

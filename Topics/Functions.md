@@ -149,7 +149,6 @@ type LocalSettings = {
   };
 
   // Used by frameworks that get connection strings from the ConnectionStrings section of a config file
-   */
   ConnectionStrings: {
     [key: string]: string;
   };
