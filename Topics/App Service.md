@@ -263,12 +263,13 @@ Check: `az webapp config storage-account list ...`
 - Place app and storage in the same Azure region.
 - Avoid regenerating access key.
 
-## Deploy apps
+## Deploying apps (gist)
 
 1. Create resource group: `az group create`
 1. Create App Service plan: `az appservice plan create --location $location`
 1. Create web app: `az webapp create --runtime "DOTNET|6.0"`
 1. (optinal) Use managed identity for ACR:
+   - Assign managed identity to thr web app
    - Assign `AcrPull` role: `az role assignment create --assignee $principalId --scope $registry_resource_id --role "AcrPull"`
    - Set generic config to `{acrUseManagedIdentityCreds:true}` for system identity and `{acrUserManagedIdentityID:id}` for user identity: `az webapp config set --generic-configurations '<json>'`
 1. (optional) Create deployment slot (staging) (Standard+): `az webapp deployment slot create`
@@ -280,115 +281,6 @@ Check: `az webapp config storage-account list ...`
    - Remote ZIP file: `az webapp deploy --src-url "<url>"`
 1. (optional) Set some settings: `az webapp config appsettings set --settings` (ex: `DEPLOYMENT_BRANCH='main'` for git, `SCM_DO_BUILD_DURING_DEPLOYMENT=true` for build automation)
 1. (optional) Swap slots: `az webapp deployment slot swap --slot staging`
-
-Full examples:
-
-```sh
-let "randomIdentifier=$RANDOM*$RANDOM"
-location="East US"
-resourceGroup="app-service-rg-$randomIdentifier"
-tag="deploy-github.sh"
-appServicePlan="app-service-plan-$randomIdentifier"
-webapp="web-app-$randomIdentifier"
-gitrepo="https://github.com/Azure-Samples/dotnet-core-sample"
-
-az group create --name $resourceGroup --location "$location" --tag $tag
-
-az appservice plan create --name $appServicePlan --resource-group $resourceGroup --location $location # --sku B1
-# az appservice plan create --name $appServicePlan --resource-group $resourceGroup --sku S1 --is-linux
-
-az webapp create --name $webapp --plan $appServicePlan --runtime "DOTNET|6.0" --resource-group $resourceGroup
-
-# https://learn.microsoft.com/en-us/azure/app-service/scripts/cli-deploy-github
-github_deployment() {
-    echo "Deploying from GitHub"
-    az webapp deployment source config --name $webapp --repo-url $gitrepo --branch master --manual-integration --resource-group $resourceGroup
-
-    # Change deploiment branch to "main"
-    # az webapp config appsettings set --name $webapp --settings DEPLOYMENT_BRANCH='main' --resource-group $resourceGroup
-}
-
-# https://learn.microsoft.com/en-us/azure/app-service/scripts/cli-deploy-staging-environment
-staging_deployment() {
-    # Deployment slots require Standard tier, default is Basic (B1)
-    az appservice plan update --name $appServicePlan --sku S1 --resource-group $resourceGroup
-
-    echo "Creating a deployment slot"
-    az webapp deployment slot create --name $webapp--slot staging --resource-group $resourceGroup
-
-    echo "Deploying to Staging Slot"
-    az webapp deployment source config --name $webapp --resource-group $resourceGroup \
-      --slot staging \
-      --repo-url $gitrepo \
-      --branch master --manual-integration \
-
-
-    echo "Swapping staging slot into production"
-    az webapp deployment slot swap --slot staging --name $webapp --resource-group $resourceGroup
-}
-
-# https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container?tabs=debian&pivots=container-linux#change-the-docker-image-of-a-custom-container
-docker_deployment() {
-    echo "Deploying from DockerHub" # Custom container
-    az webapp config container set --name $webapp --resource-group $resourceGroup \
-      --docker-custom-image-name <docker-hub-repo>/<image> \
-      # Private registry: https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container?tabs=debian&pivots=container-linux#use-an-image-from-a-private-registry
-      --docker-registry-server-url <private-repo-url> \
-      --docker-registry-server-user <username> \
-      --docker-registry-server-password <password>
-}
-
-# https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container?tabs=debian&pivots=container-linux#change-the-docker-image-of-a-custom-container
-managed_entity_registry_deployment() {
-  # Enable the system-assigned managed identity for the web app
-  az webapp identity assign --query principalId --output tsv --name $webapp --resource-group $resourceGroup
-
-  # Get the resource ID of your Azure Container Registry
-  az acr show --query id --output tsv --name $registryName --resource-group $resourceGroup
-
-  # Grant the managed identity permission to access the container registry
-  az role assignment create --assignee $principalId --scope $registry_resource_id --role "AcrPull"
-
-  # Configure your app to use the system managed identity to pull from Azure Container Registry
-  az webapp config set --generic-configurations '{"acrUseManagedIdentityCreds": true}' --name $webapp --resource-group $resourceGroup
-  # (OR) Set the user-assigned managed identity ID for your app
-  az  webapp config set --generic-configurations '{"acrUserManagedIdentityID": "$principalId"}' --name $webapp --resource-group $resourceGroup
-
-  # # Set the web application to use the Docker image from ACR
-  az webapp config container set --name $webapp --resource-group $resourceGroup \
-    --docker-custom-image-name <acr-login-server>/<image>:<tag> \
-    --docker-registry-server-url https://<acr-login-server>
-}
-
-# https://learn.microsoft.com/en-us/azure/app-service/tutorial-multi-container-app
-compose_deployment() {
-    echo "Creating webapp with Docker Compose configuration"
-    $dockerComposeFile=docker-compose-wordpress.yml
-    # Note that az webapp create is different
-    az webapp create --resource-group $resourceGroup --plan $appServicePlan --name wordpressApp --multicontainer-config-type compose --multicontainer-config-file $dockerComposeFile
-
-    echo "Setup database"
-    az mysql server create --resource-group $resourceGroup --name wordpressDb  --location $location --admin-user adminuser --admin-password letmein --sku-name B_Gen5_1 --version 5.7
-    az mysql db create --resource-group $resourceGroup --server-name <mysql-server-name> --name wordpress
-
-    echo "Setting app settings for WordPress"
-    az webapp config appsettings set \
-      --settings WORDPRESS_DB_HOST="<mysql-server-name>.mysql.database.azure.com" WORDPRESS_DB_USER="adminuser" WORDPRESS_DB_PASSWORD="letmein" WORDPRESS_DB_NAME="wordpress" MYSQL_SSL_CA="BaltimoreCyberTrustroot.crt.pem" \
-      --resource-group $resourceGroup \
-      --name wordpressApp
-}
-
-# https://learn.microsoft.com/en-us/azure/app-service/deploy-zip?tabs=cli
-# uses the same Kudu service that powers continuous integration-based deployments
-zip_archive() {
-  az webapp deploy --src-path "path/to/zip" --name $webapp --resource-group $resourceGroup
-  # Zip from url
-  # az webapp deploy --src-url "https://storagesample.blob.core.windows.net/sample-container/myapp.zip?sv=2021-10-01&sb&sig=slk22f3UrS823n4kSh8Skjpa7Naj4CG3 --name $webapp --resource-group $resourceGroup
-
-  # (Optional) Enable build automation
-  # az webapp config appsettings set --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true --name $webapp --resource-group $resourceGroup
-}
-```
 
 ### ARM Templates
 
@@ -456,22 +348,16 @@ Access another app: Add header `Authorization: Bearer ${req.headers['x-ms-token-
 ```cs
 private class ClientPrincipalClaim
 {
-    [JsonPropertyName("typ")]
-    public string Type { get; set; }
-    [JsonPropertyName("val")]
-    public string Value { get; set; }
+    [JsonPropertyName("typ")] public string Type { get; set; }
+    [JsonPropertyName("val")] public string Value { get; set; }
 }
 
 private class ClientPrincipal
 {
-    [JsonPropertyName("auth_typ")]
-    public string IdentityProvider { get; set; }
-    [JsonPropertyName("name_typ")]
-    public string NameClaimType { get; set; }
-    [JsonPropertyName("role_typ")]
-    public string RoleClaimType { get; set; }
-    [JsonPropertyName("claims")]
-    public IEnumerable<ClientPrincipalClaim> Claims { get; set; }
+    [JsonPropertyName("auth_typ")] public string IdentityProvider { get; set; }
+    [JsonPropertyName("name_typ")] public string NameClaimType { get; set; }
+    [JsonPropertyName("role_typ")] public string RoleClaimType { get; set; }
+    [JsonPropertyName("claims")] public IEnumerable<ClientPrincipalClaim> Claims { get; set; }
 }
 
 public static ClaimsPrincipal Parse(HttpRequest req)
@@ -480,21 +366,12 @@ public static ClaimsPrincipal Parse(HttpRequest req)
 
     if (req.Headers.TryGetValue("x-ms-client-principal", out var header))
     {
-        var data = header[0];
-        var decoded = Convert.FromBase64String(data);
-        var json = Encoding.UTF8.GetString(decoded);
+        var json = Encoding.UTF8.GetString(Convert.FromBase64String(header[0]));
         principal = JsonSerializer.Deserialize<ClientPrincipal>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
     }
 
-    /**
-      *  At this point, the code can iterate through `principal.Claims` to
-      *  check claims as part of validation. Alternatively, we can convert
-      *  it into a standard object with which to perform those checks later
-      *  in the request pipeline. That object can also be leveraged for
-      *  associating user data, etc. The rest of this function performs such
-      *  a conversion to create a `ClaimsPrincipal` as might be used in
-      *  other .NET code.
-      */
+    // Code can now iterate through `principal.Claims` for validation
+    // or converts it to a `ClaimsPrincipal` for later use in the request pipeline.
 
     var identity = new ClaimsIdentity(principal.IdentityProvider, principal.NameClaimType, principal.RoleClaimType);
     identity.AddClaims(principal.Claims.Select(c => new Claim(c.Type, c.Value)));
@@ -629,6 +506,103 @@ Configure path: `az webapp config set --health-check-path <Path> --resource-grou
 ### [Application Insights Profiler](https://learn.microsoft.com/en-us/azure/azure-monitor/profiler/profiler)
 
 Requires the **Always on** setting is _enabled_.
+
+## Deploying apps (full)
+
+```sh
+let "randomIdentifier=$RANDOM*$RANDOM"
+location="East US"
+resourceGroup="app-service-rg-$randomIdentifier"
+tag="deploy-github.sh"
+appServicePlan="app-service-plan-$randomIdentifier"
+webapp="web-app-$randomIdentifier"
+gitrepo="https://github.com/Azure-Samples/dotnet-core-sample"
+
+az group create --name $resourceGroup --location "$location" --tag $tag
+
+az appservice plan create --name $appServicePlan --resource-group $resourceGroup --location $location # --sku B1
+# az appservice plan create --name $appServicePlan --resource-group $resourceGroup --sku S1 --is-linux
+
+az webapp create --name $webapp --plan $appServicePlan --runtime "DOTNET|6.0" --resource-group $resourceGroup
+
+# https://learn.microsoft.com/en-us/azure/app-service/scripts/cli-deploy-github
+github_deployment() {
+    echo "Deploying from GitHub"
+    az webapp deployment source config --name $webapp --repo-url $gitrepo --branch master --manual-integration --resource-group $resourceGroup
+
+    # Change deploiment branch to "main"
+    # az webapp config appsettings set --name $webapp --settings DEPLOYMENT_BRANCH='main' --resource-group $resourceGroup
+}
+
+# https://learn.microsoft.com/en-us/azure/app-service/scripts/cli-deploy-staging-environment
+staging_deployment() {
+    # Deployment slots require Standard tier, default is Basic (B1)
+    az appservice plan update --name $appServicePlan --sku S1 --resource-group $resourceGroup
+
+    echo "Creating a deployment slot"
+    az webapp deployment slot create --name $webapp--slot staging --resource-group $resourceGroup
+
+    echo "Deploying to Staging Slot"
+    az webapp deployment source config --name $webapp --resource-group $resourceGroup \
+      --slot staging \
+      --repo-url $gitrepo \
+      --branch master --manual-integration \
+
+
+    echo "Swapping staging slot into production"
+    az webapp deployment slot swap --slot staging --name $webapp --resource-group $resourceGroup
+}
+
+# https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container?tabs=debian&pivots=container-linux#change-the-docker-image-of-a-custom-container
+docker_deployment() {
+    # (Optional) Use managed identity: https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container?tabs=debian&pivots=container-linux#change-the-docker-image-of-a-custom-container
+    ## Enable the system-assigned managed identity for the web app
+    az webapp identity assign --query principalId --output tsv --name $webapp --resource-group $resourceGroup
+    ## Grant the managed identity permission to access the container registry
+    az role assignment create --assignee $principalId --scope $registry_resource_id --role "AcrPull"
+    ## Configure your app to use the system managed identity to pull from Azure Container Registry
+    az webapp config set --generic-configurations '{"acrUseManagedIdentityCreds": true}' --name $webapp --resource-group $resourceGroup
+    ## (OR) Set the user-assigned managed identity ID for your app
+    az  webapp config set --generic-configurations '{"acrUserManagedIdentityID": "$principalId"}' --name $webapp --resource-group $resourceGroup
+
+    echo "Deploying from DockerHub" # Custom container
+    az webapp config container set --name $webapp --resource-group $resourceGroup \
+      --docker-custom-image-name <docker-hub-repo>/<image> \
+      # Private registry: https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container?tabs=debian&pivots=container-linux#use-an-image-from-a-private-registry
+      --docker-registry-server-url <private-repo-url> \
+      --docker-registry-server-user <username> \
+      --docker-registry-server-password <password>
+}
+
+# https://learn.microsoft.com/en-us/azure/app-service/tutorial-multi-container-app
+compose_deployment() {
+    echo "Creating webapp with Docker Compose configuration"
+    $dockerComposeFile=docker-compose-wordpress.yml
+    # Note that az webapp create is different
+    az webapp create --resource-group $resourceGroup --plan $appServicePlan --name wordpressApp --multicontainer-config-type compose --multicontainer-config-file $dockerComposeFile
+
+    echo "Setup database"
+    az mysql server create --resource-group $resourceGroup --name wordpressDb  --location $location --admin-user adminuser --admin-password letmein --sku-name B_Gen5_1 --version 5.7
+    az mysql db create --resource-group $resourceGroup --server-name <mysql-server-name> --name wordpress
+
+    echo "Setting app settings for WordPress"
+    az webapp config appsettings set \
+      --settings WORDPRESS_DB_HOST="<mysql-server-name>.mysql.database.azure.com" WORDPRESS_DB_USER="adminuser" WORDPRESS_DB_PASSWORD="letmein" WORDPRESS_DB_NAME="wordpress" MYSQL_SSL_CA="BaltimoreCyberTrustroot.crt.pem" \
+      --resource-group $resourceGroup \
+      --name wordpressApp
+}
+
+# https://learn.microsoft.com/en-us/azure/app-service/deploy-zip?tabs=cli
+# uses the same Kudu service that powers continuous integration-based deployments
+zip_archive() {
+  az webapp deploy --src-path "path/to/zip" --name $webapp --resource-group $resourceGroup
+  # Zip from url
+  # az webapp deploy --src-url "https://storagesample.blob.core.windows.net/sample-container/myapp.zip?sv=2021-10-01&sb&sig=slk22f3UrS823n4kSh8Skjpa7Naj4CG3 --name $webapp --resource-group $resourceGroup
+
+  # (Optional) Enable build automation
+  # az webapp config appsettings set --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true --name $webapp --resource-group $resourceGroup
+}
+```
 
 ## CLI
 
