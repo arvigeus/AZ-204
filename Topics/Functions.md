@@ -45,20 +45,6 @@ az functionapp plan create
     [--zone-redundant] # Cannot be changed after plan creation. Minimum instance count is 3.
 # az functionapp plan create -g MyResourceGroup -n MyPlan --min-instances 1 --max-burst 10 --sku EP1
 
-az functionapp plan update
-    [--add]
-    [--force-string]
-    [--ids]
-    [--max-burst]
-    [--min-instances]
-    [--name]
-    [--remove]
-    [--resource-group]
-    [--set]
-    [--sku]
-    [--subscription]
-# az functionapp plan update -g MyResourceGroup -n MyPlan --max-burst 20 --sku EP2
-
 # Get a list of all Consumption plans in your resource group
 az functionapp plan list --resource-group <MY_RESOURCE_GROUP> --query "[?sku.family=='Y'].{PlanName:name,Sites:numberOfSites}" -o table
 
@@ -167,7 +153,230 @@ Cannot be output binding: _IoT Hub_, _Timer_
 Available by default ([others need to be installed as separate package](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-register)): _Timer_, _HTTP & webhooks_  
 Not supported on Consumption plan ([requires runtime-driven triggers](https://learn.microsoft.com/en-us/azure/azure-functions/functions-networking-options?tabs=azure-cli#premium-plan-with-virtual-network-triggers)): _RabbitMQ_, _Kafka_
 
-### Code samples
+### Triggers and Bindings Gist
+
+```cs
+// https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-http-webhook
+// Set Route to a string like "products/{id}" to create a custom URL for the function. This makes it accessible at https://<APP_NAME>.azurewebsites.net/api/<FUNCTION_NAME>/products/{id}
+[HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "blob/{name}")] HttpRequest req, string name;
+[HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequestMessage req; // return req.CreateResponse(HttpStatusCode.OK, string);
+
+// https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-storage-blob
+[BlobTrigger("container/{name}")] string myBlob, string name;
+[Blob("container/{name}", FileAccess.Read)] Stream myBlob;
+[Blob("container/{name}", FileAccess.Write)] Stream myBlob;
+
+// https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-cosmosdb-v2
+[CosmosDBTrigger(
+    databaseName: "database",
+    collectionName: "collection",
+    ConnectionStringSetting = "CosmosDBConnection", // Note: this refers to env var name, not an actual connection string
+    LeaseCollectionName = "leases")]IReadOnlyList<Document> input;
+[CosmosDB(databaseName:"myDb", collectionName:"collection", Id = "{id}", PartitionKey ="{partitionKey}")] dynamic document; // input
+[CosmosDB(databaseName:"myDb", collectionName:"collection", CreateIfNotExists =true)] out dynamic document; // output
+
+// https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-event-grid
+[EventGridTrigger]EventGridEvent ev; // ev.Data
+// No Input binding
+[return: EventGrid(TopicEndpointUri = "EventGridTopicUriAppSetting", TopicKeySetting = "EventGridTopicKeyAppSetting")] // return new EventGridEvent(...); or new CloudEvent(...),
+EventGrid(TopicEndpointUri = "EventGridTopicUriAppSetting", TopicKeySetting = "EventGridTopicKeyAppSetting") out eventGridEvent;
+[EventGrid(TopicEndpointUri = "EventGridTopicUriAppSetting", TopicKeySetting = "EventGridTopicKeyAppSetting")]IAsyncCollector<EventGridEvent> outputEvents; // (batch processing): outputEvents.AddAsync(myEvent)
+
+// https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-event-hubs
+[EventHubTrigger("hub", Connection = "EventHubConnectionAppSetting")] EventData[] events; // var messageBody = Encoding.UTF8.GetString(eventData.Body.Array, eventData.Body.Offset, eventData.Body.Count);
+// No Input binding
+[return: EventHub("outputEventHubMessage", Connection = "EventHubConnectionAppSetting")] // return string
+[EventHub("outputEventHubMessage", Connection = "EventHubConnectionAppSetting")] IAsyncCollector<string> outputEvents; // (batch processing): outputEvents.AddAsync(string)
+
+// https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-event-iot
+[IoTHubTrigger("messages/events", Connection = "IoTHubConnectionAppSetting")]EventData message; // Encoding.UTF8.GetString(message.Body.Array)
+
+// https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-storage-queue
+[QueueTrigger("queue", Connection = "StorageConnectionAppSetting")]string myQueueItem;
+// No Input binding
+[return: Queue("queue")] // return string
+// Alt: return a custom class with [QueueOutput("queue", Connection = "connection")] string[] property and Request property to response to both
+
+// https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-service-bus
+[ServiceBusTrigger("queue", Connection = "ServiceBusConnectionAppSetting")] string myQueueItem;
+// No Input binding
+[return: ServiceBus("queue", Connection = "ServiceBusConnectionAppSetting")] // return string
+
+
+// https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-timer?tabs=python-v2%2Cin-process%2Cnodejs-v4&pivots=programming-language-csharp
+// The 6-field format for cron jobs is `{second} {minute} {hour} {day} {month} {day-of-week}`. The 5-field format omits the `second` and starts with `{minute}`.
+// - Specific value: `5` (exactly the 5th minute)
+// - List: `5,10` (5th and 10th minute)
+// - Range: `9-17` (from 9 to 17)
+// - Step: `*/5` (every 5 units)
+// - Any value: `*` (every unit)
+// Examples: `*/5 * * * *`: Every 5 minutes, `0 9-17 * * MON-FRI`: 9 AM to 5 PM on weekdays.
+[TimerTrigger("0 */5 * * * *")] TimerInfo myTimer;
+// - `WEBSITE_TIME_ZONE` and `TZ` are not currently supported on the Linux Consumption plan.
+// - RunOnStartup is not recommended for production (messes up schedule). Schedule, RunOnStartup and UseMonitor can be set in local.settings.json > Values
+
+// https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-cache
+[RedisPubSubTrigger("redisConnectionString", "pubsubTest")] string message; // PubSub Not supported on Consumption Plan
+[RedisListTrigger("Redis", "listTest")] string entry;
+[RedisStreamTrigger("Redis", "streamTest")] string entry;
+```
+
+## Working with Azure Functions
+
+```sh
+# List the existing application settings
+az functionapp config appsettings list --name <FUNCTION_APP_NAME> --resource-group <RESOURCE_GROUP_NAME>
+
+# Add or update an application setting
+az functionapp config appsettings set --settings CUSTOM_FUNCTION_APP_SETTING=12345 --name <FUNCTION_APP_NAME> --resource-group <RESOURCE_GROUP_NAME>
+
+# Create a new function app (Consumption)
+az functionapp create --resource-group <MY_RESOURCE_GROUP> --name <NEW_CONSUMPTION_APP_NAME> --consumption-plan-location <REGION> --runtime dotnet --functions-version 3 --storage-account <STORAGE_NAME>
+
+# Get the default (host) key that can be used to access any HTTP triggered function in the function app
+subName='<SUBSCRIPTION_ID>'
+resGroup=AzureFunctionsContainers-rg
+appName=glengagtestdocker
+path=/subscriptions/$subName/resourceGroups/$resGroup/providers/Microsoft.Web/sites/$appName/host/default/listKeys?api-version=2018-11-01
+az rest --method POST --uri $path --query functionKeys.default --output tsv
+```
+
+## [Security](https://learn.microsoft.com/en-us/azure/azure-functions/security-concepts)
+
+### [Authorization level](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-http-webhook-trigger#http-auth)
+
+Indicates the kind of authorization key that's required to access the function endpoint, via `code` param: `https://<APP_NAME>.azurewebsites.net/api/<FUNCTION_NAME>?code=<API_KEY>`.
+
+- **Anonymous**: No API key is required.
+- **Function** (default): A function-specific or host-wide API key is required.
+- **Admin**: The master key is required.
+
+#### Access scopes
+
+- **Function** keys grant access only to the specific function they're defined under.
+- **Host** keys allow access to all functions within the function app.
+  - **master**. provides administrative access to the runtime REST APIs. This key can't be revoked.
+
+Each key is named, with a `default` key at both levels. If a function and a host key share a name, the function key takes precedence.
+
+#### [Working with access keys](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-http-webhook-trigger#obtaining-keys)
+
+Base URL: `https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/{scope}/{host-or-function-name}/{action}?api-version=2022-03-01`
+
+Scope can be `functions` or `host`. For slots add `/slots/{slot-name}/` before scope.
+
+List keys: `POST`, action: `listkeys`  
+Create or update keys: `PUT`, action: `keys/{keyName}`
+Delete or revoke keys: `DELETE`, action: `/keys/{keyName}`
+
+### [Client identities](https://learn.microsoft.com/en-us/azure/app-service/overview-managed-identity#rest-endpoint-reference)
+
+`ClaimsPrincipal identity = req.HttpContext.User;` available via `X-MS-CLIENT-PRINCIPAL` [header](https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-user-identities#access-user-claims-in-app-code).
+
+### CORS
+
+```sh
+# Add a domain to the allowed origins list
+az functionapp cors add --allowed-origins https://contoso.com --name <FUNCTION_APP_NAME> --resource-group <RESOURCE_GROUP_NAME>
+
+# List the current allowed origins
+az functionapp cors show
+```
+
+## [Monitoring](https://learn.microsoft.com/en-us/azure/azure-functions/functions-monitoring)
+
+Automatic collection of Performance Counters isn't supported when running on Linux.
+
+Application Insights are configured in [host.json](https://learn.microsoft.com/en-us/azure/azure-functions/functions-host-json#applicationinsights) (`logging.applicationInsights` and `aggregator`)
+
+### [Configure monitorung](https://learn.microsoft.com/en-us/azure/azure-functions/configure-monitoring)
+
+Enable SQL query:
+
+```json
+"logging": {
+    "applicationInsights": {
+        "enableDependencyTracking": true,
+        "dependencyTrackingOptions": {
+            "enableSqlCommandTextInstrumentation": true
+        }
+    }
+}
+```
+
+Turn on verbose logging from the scale controller to Application Insights:
+
+```sh
+az functionapp config appsettings set --settings SCALE_CONTROLLER_LOGGING_ENABLED=AppInsights:Verbose \
+--name <FUNCTION_APP_NAME> --resource-group <RESOURCE_GROUP_NAME>
+```
+
+Disable logging:
+
+```sh
+az functionapp config appsettings delete --setting-names SCALE_CONTROLLER_LOGGING_ENABLED \
+--name <FUNCTION_APP_NAME> --resource-group <RESOURCE_GROUP_NAME>
+```
+
+#### Categories
+
+Identify which part of the system or user code generated the log.
+
+- `Function.<YOUR_FUNCTION_NAME>`: Relates to dependency data, custom metrics and events, trace logs for function runs, and user-generated logs.
+- `Host.Aggregator`: Provides aggregated counts and averages of function invocations.
+- `Host.Results`: Records the success or failure of functions.
+- `Microsoft`: Reflects a .NET runtime component invoked by the host.
+- `Worker`: Logs generated by language worker processes for non-.NET languages.
+
+#### [Solutions with high volume of telemetry](https://learn.microsoft.com/en-us/azure/azure-functions/configure-monitoring?tabs=v2#solutions-with-high-volume-of-telemetry)
+
+```jsonc
+{
+  "version": "2.0",
+  "logging": {
+    "logLevel": {
+      "default": "Warning",
+      "Function": "Error",
+      // Be aware of the `flushTimeout` (in aggregator) delay if you set a different value than Information
+      "Host.Aggregator": "Error",
+      "Host.Results": "Information",
+      "Function.Function1": "Information",
+      "Function.Function1.User": "Error"
+    },
+    "applicationInsights": {
+      "samplingSettings": {
+        "isEnabled": true,
+        "maxTelemetryItemsPerSecond": 1,
+        "excludedTypes": "Exception"
+      }
+    }
+  }
+}
+```
+
+## [Custom Handlers](https://learn.microsoft.com/en-us/azure/azure-functions/functions-custom-handlers)
+
+Essentially, custom handlers are lightweight web servers that interact with the Azure Functions host. They can be implemented in any language that supports HTTP primitives.
+
+When an event occurs, the Azure Functions host forwards the request to the custom handler's web server, which executes the function and returns the output for further processing by the host.
+
+The custom handler web server needs to start within 60 seconds.
+
+In `host.json`, use the `customHandler` property to set the executable path and arguments (`customHandler.description.defaultExecutablePath`). In `local.settings.json`, set `FUNCTIONS_WORKER_RUNTIME` to "custom" for local development.
+
+## Triggers and Bindings full samples
+
+```cs
+[HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "blob/{name}")] HttpRequest req, string name;
+
+[Blob("container/{name}", FileAccess.Read)] Stream myBlob; // FileAccess.Write
+
+[CosmosDBTrigger(
+    databaseName: "database",
+    collectionName: "collection",
+    ConnectionStringSetting = "CosmosDBConnection", // Note: this refers to env var name, not an actual connection string
+    LeaseCollectionName = "leases")]IReadOnlyList<Document> input;
+```
 
 ```cs
 ////////////////////////////////////
@@ -457,16 +666,8 @@ public static string RunServiceBusOutputBinding(
 // Timer
 ////////////////////////////////////
 
-// - `WEBSITE_TIME_ZONE` and `TZ` are not currently supported on the Linux Consumption plan.
-// - RunOnStartup is not recommended for production. Schedule, RunOnStartup and UseMonitor can be set in local.settings.json > Values
-
 [FunctionName("TimerTriggerFunction")]
 public static void Run(
-    // The format with 6 fields is {second} {minute} {hour} {day} {month} {day-of-week}.
-    // The format with 5 fields is {minute} {hour} {day} {month} {day-of-week}, and it assumes that the seconds field is 0.
-    // Each field can have a specific value, a comma-separated list of values, a range of values, or a step value.
-    // The "*" character means any value, "/" is used to specify step values, and "-" is used for ranges.
-    // For example, "*/5 * * * *" means "every 5 minutes", and "0 9-17 * * MON-FRI" means "every hour from 9 AM to 5 PM on weekdays".
     [TimerTrigger("0 */5 * * * *")] TimerInfo myTimer, ILogger log)
 {
     log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
@@ -475,197 +676,7 @@ public static void Run(
 // No Input binding
 
 // No Output bindong
-
-////////////////////////////////////
-// TableStorage
-////////////////////////////////////
-
-// No Trigger
-
-[FunctionName("TableStorageInputBinding")]
-public static void RunTableStorageInputBinding(
-    [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "table/{partitionKey}/{rowKey}")] HttpRequest req, string partitionKey, string rowKey,
-    [Table("MyTable", "{partitionKey}", "{rowKey}")] MyTableEntity entity,
-    ILogger log)
-{
-    // Retrieves an entity from Azure Table Storage for further processing
-    log.LogInformation($"Table Entity: {entity.PartitionKey} - {entity.RowKey}");
-}
-
-[FunctionName("TableStorageInputBinding")]
-public static void RunTableStorageInputBinding(
-    [CosmosDBTrigger(
-        databaseName: "ToDoItems",
-        collectionName: "Items",
-        ConnectionStringSetting = "CosmosDBConnection", // Note: this refers to env var name, not an actual connection string
-        LeaseCollectionName = "leases")]
-    IReadOnlyList<Document> input,
-    [Table("MyTable", "{input[0].Id}", "{input[0].PartitionKey}")] MyTableEntity entity,
-    ILogger log)
-{
-    // Retrieves an entity from Azure Table Storage for further processing
-    log.LogInformation($"Table Entity: {entity.PartitionKey} - {entity.RowKey}");
-}
-
-// [CosmosDBTrigger(...)] IReadOnlyList<Document> input,
-// [Table("MyTable", "{input[0].Id}", "{input[0].PartitionKey}")] MyTableEntity entity
-
-[FunctionName("TableStorageOutputBinding")]
-[return: Table("MyTable")]
-public static MyTableEntity RunTableStorageOutputBinding(
-    [HttpTrigger(AuthorizationLevel.Function, "post", Route = "table/{partitionKey}/{rowKey}")] HttpRequest req, string partitionKey, string rowKey,
-    ILogger log)
-{
-    // Writes an entity to Azure Table Storage
-    string requestBody = new StreamReader(req.Body).ReadToEnd();
-    entity = new MyTableEntity { PartitionKey = partitionKey, RowKey = rowKey, Content = requestBody };
-    log.LogInformation($"Entity written: {partitionKey} - {rowKey}");
-    return entity
-}
 ```
-
-## Working with Azure Functions
-
-```sh
-# List the existing application settings
-az functionapp config appsettings list --name <FUNCTION_APP_NAME> --resource-group <RESOURCE_GROUP_NAME>
-
-# Add or update an application setting
-az functionapp config appsettings set --settings CUSTOM_FUNCTION_APP_SETTING=12345 --name <FUNCTION_APP_NAME> --resource-group <RESOURCE_GROUP_NAME>
-
-# Create a new function app (Consumption)
-az functionapp create --resource-group <MY_RESOURCE_GROUP> --name <NEW_CONSUMPTION_APP_NAME> --consumption-plan-location <REGION> --runtime dotnet --functions-version 3 --storage-account <STORAGE_NAME>
-
-# Get the default (host) key that can be used to access any HTTP triggered function in the function app
-subName='<SUBSCRIPTION_ID>'
-resGroup=AzureFunctionsContainers-rg
-appName=glengagtestdocker
-path=/subscriptions/$subName/resourceGroups/$resGroup/providers/Microsoft.Web/sites/$appName/host/default/listKeys?api-version=2018-11-01
-az rest --method POST --uri $path --query functionKeys.default --output tsv
-```
-
-## [Security](https://learn.microsoft.com/en-us/azure/azure-functions/security-concepts)
-
-### [Authorization level](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-http-webhook-trigger#http-auth)
-
-Indicates the kind of authorization key that's required to access the function endpoint, via `code` param: `https://<APP_NAME>.azurewebsites.net/api/<FUNCTION_NAME>?code=<API_KEY>`.
-
-- **Anonymous**: No API key is required.
-- **Function** (default): A function-specific or host-wide API key is required.
-- **Admin**: The master key is required.
-
-#### Access scopes
-
-- **Function** keys grant access only to the specific function they're defined under.
-- **Host** keys allow access to all functions within the function app.
-  - **master**. provides administrative access to the runtime REST APIs. This key can't be revoked.
-
-Each key is named, with a `default` key at both levels. If a function and a host key share a name, the function key takes precedence.
-
-#### [Working with access keys](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-http-webhook-trigger#obtaining-keys)
-
-Base URL: `https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/{scope}/{host-or-function-name}/{action}?api-version=2022-03-01`
-
-Scope can be `functions` or `host`. For slots add `/slots/{slot-name}/` before scope.
-
-List keys: `POST`, action: `listkeys`  
-Create or update keys: `PUT`, action: `keys/{keyName}`
-Delete or revoke keys: `DELETE`, action: `/keys/{keyName}`
-
-### [Client identities](https://learn.microsoft.com/en-us/azure/app-service/overview-managed-identity#rest-endpoint-reference)
-
-`ClaimsPrincipal identity = req.HttpContext.User;` available via `X-MS-CLIENT-PRINCIPAL` [header](https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-user-identities#access-user-claims-in-app-code).
-
-### CORS
-
-```sh
-# Add a domain to the allowed origins list
-az functionapp cors add --allowed-origins https://contoso.com --name <FUNCTION_APP_NAME> --resource-group <RESOURCE_GROUP_NAME>
-
-# List the current allowed origins
-az functionapp cors show
-```
-
-## [Monitoring](https://learn.microsoft.com/en-us/azure/azure-functions/functions-monitoring)
-
-Automatic collection of Performance Counters isn't supported when running on Linux.
-
-Application Insights are configured in [host.json](https://learn.microsoft.com/en-us/azure/azure-functions/functions-host-json#applicationinsights) (`logging.applicationInsights` and `aggregator`)
-
-### [Configure monitorung](https://learn.microsoft.com/en-us/azure/azure-functions/configure-monitoring)
-
-Enable SQL query:
-
-```json
-"logging": {
-    "applicationInsights": {
-        "enableDependencyTracking": true,
-        "dependencyTrackingOptions": {
-            "enableSqlCommandTextInstrumentation": true
-        }
-    }
-}
-```
-
-Turn on verbose logging from the scale controller to Application Insights:
-
-```sh
-az functionapp config appsettings set --settings SCALE_CONTROLLER_LOGGING_ENABLED=AppInsights:Verbose \
---name <FUNCTION_APP_NAME> --resource-group <RESOURCE_GROUP_NAME>
-```
-
-Disable logging:
-
-```sh
-az functionapp config appsettings delete --setting-names SCALE_CONTROLLER_LOGGING_ENABLED \
---name <FUNCTION_APP_NAME> --resource-group <RESOURCE_GROUP_NAME>
-```
-
-#### Categories
-
-Identify which part of the system or user code generated the log.
-
-- `Function.<YOUR_FUNCTION_NAME>`: Relates to dependency data, custom metrics and events, trace logs for function runs, and user-generated logs.
-- `Host.Aggregator`: Provides aggregated counts and averages of function invocations.
-- `Host.Results`: Records the success or failure of functions.
-- `Microsoft`: Reflects a .NET runtime component invoked by the host.
-- `Worker`: Logs generated by language worker processes for non-.NET languages.
-
-#### [Solutions with high volume of telemetry](https://learn.microsoft.com/en-us/azure/azure-functions/configure-monitoring?tabs=v2#solutions-with-high-volume-of-telemetry)
-
-```jsonc
-{
-  "version": "2.0",
-  "logging": {
-    "logLevel": {
-      "default": "Warning",
-      "Function": "Error",
-      // Be aware of the `flushTimeout` (in aggregator) delay if you set a different value than Information
-      "Host.Aggregator": "Error",
-      "Host.Results": "Information",
-      "Function.Function1": "Information",
-      "Function.Function1.User": "Error"
-    },
-    "applicationInsights": {
-      "samplingSettings": {
-        "isEnabled": true,
-        "maxTelemetryItemsPerSecond": 1,
-        "excludedTypes": "Exception"
-      }
-    }
-  }
-}
-```
-
-## [Custom Handlers](https://learn.microsoft.com/en-us/azure/azure-functions/functions-custom-handlers)
-
-Essentially, custom handlers are lightweight web servers that interact with the Azure Functions host. They can be implemented in any language that supports HTTP primitives.
-
-When an event occurs, the Azure Functions host forwards the request to the custom handler's web server, which executes the function and returns the output for further processing by the host.
-
-The custom handler web server needs to start within 60 seconds.
-
-In `host.json`, use the `customHandler` property to set the executable path and arguments (`customHandler.description.defaultExecutablePath`). In `local.settings.json`, set `FUNCTIONS_WORKER_RUNTIME` to "custom" for local development.
 
 ## CLI
 

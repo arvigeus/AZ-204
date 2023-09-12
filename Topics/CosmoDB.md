@@ -29,7 +29,7 @@ Note: Partition keys always start with `/` (ex: `/partitionkey`). Min length for
 
 ### [Time to live (TTL)](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/time-to-live)
 
-Automatically removes items after a set time (in seconds) based on last modification. TTL can be configured at the container or item level; item settings take precedence. Deletion uses spare RUs; if RUs are low, deletion lags but expired data isn't shown in queries. No container-level TTL means items won't auto-expire; a value of -1 has the same effect unless items have their own TTL. Use `DefaultTimeToLive` in `ContainerProperties` to set TTL in C#.
+Auto-deletes items after a set time (seconds) from last modification. Configurable at container or item level; item settings take precedence. Deletion consumes spare RUs; low RUs cause deletion delays but expired data is not shown in queries. No container-level TTL or a value of -1 prevents auto-expiration unless item-specific TTL exists. Use `DefaultTimeToLive` in `ContainerProperties` to set TTL in C#.
 
 ### Examples
 
@@ -63,13 +63,8 @@ Database database = await cosmosClient.CreateDatabaseIfNotExistsAsync("<database
 // Create a container
 Container container = await database.CreateContainerIfNotExistsAsync(id: "<container>", partitionKeyPath: "/mypartitionkey", throughput: number);
 
-// Create an item
-dynamic testItem = new
-{
-    id = "1",
-    mypartitionkey = "mypartitionvalue",
-    description = "mydescription"
-};
+// Create an item (note that mypartitionkey doesn't contain leading slash (/))
+dynamic testItem = new { id = "1", mypartitionkey = "mypartitionvalue", description = "mydescription" };
 await container.CreateItemAsync(testItem, new PartitionKey(testItem.mypartitionkey));
 
 // NOTE: This example is for another container
@@ -184,7 +179,21 @@ Using these APIs, you can emulate various database technologies, modeling real-w
 
 Azure Cosmos DB allows transactional execution of JavaScript in the form of stored procedures, triggers, and user-defined functions (UDFs). Each needs to be registered prior to calling. They are created and managed in Azure Portal.
 
-- **Stored procedures**: JavaScript functions registered per collection, capable of performing CRUD and query operations on any document in that collection. Procedures run within a bounded execution time and can handle transactions (pause and resume lengthy operations using a "continuation token" to manage the process until completion). All collection functions (ex: `collection.createDocument()`) return a `Boolean` value that represents whether that operation completes or not.
+```js
+// Gist
+var context = getContext(); // root for container and response
+
+var container = context.getCollection(); // for modifying container (collection)
+// container.createDocument(container.getSelfLink(), documentToCreate, callback);
+// container.queryDocuments(container.getSelfLink(), filterQueryString, updateMetadataCallback);
+// container.replaceDocument(metadataItem._self, metadataItem, callback);
+
+var response = context.getResponse(); // getting and setting current item
+// response.getBody();
+// request.setBody(itemToCreate);
+```
+
+- **Stored Procedures**: JavaScript functions registered to a collection (container), enabling CRUD and query tasks on its documents. They run within a time limit and support transactions via "continuation tokens". Functions like `collection.createDocument()` return a `Boolean` indicating operation success.
 
   ```js
   var helloWorldStoredProc = {
@@ -206,12 +215,12 @@ Azure Cosmos DB allows transactional execution of JavaScript in the form of stor
     // This stored procedure creates a new item in the Azure Cosmos container
     body: function createMyDocument(documentToCreate) {
       var context = getContext();
-      var collection = context.getCollection();
+      var container = context.getCollection();
 
       // Async 'createDocument' operation, depends on JavaScript callbacks
       // returns true if creation was successful
-      var accepted = collection.createDocument(
-        collection.getSelfLink(),
+      var accepted = container.createDocument(
+        container.getSelfLink(),
         documentToCreate,
         // Callback function with error and created document parameters
         function (err, documentCreated) {
@@ -240,10 +249,10 @@ Azure Cosmos DB allows transactional execution of JavaScript in the form of stor
   }
   ```
 
-- **Triggers**: Pretriggers and post-triggers operate before and after a database item modification, respectively. They aren't automatically executed, and must be registered and specified for each operation where execution is required. For instance, a pretrigger could validate properties of a new Cosmos item or add a timestamp, while a post-trigger might update metadata regarding a newly created item.
+- **Triggers**: Pretriggers and post-triggers operate before and after a database item modification, respectively. They aren't automatically executed, and must be registered and specified for each operation where execution is required.
 
-  - **Pre-triggers**: Can't have any input parameters. Validates properties of an item that is being created, modifies properties.
-  - **Post-triggers**: Runs as part of the same transaction for the underlying item itself. Modifies properties.
+  - **Pre-triggers**: Can't have any input parameters. Validates properties of an item that is being created, modifies properties (ex: add a timestamp of an item to be created).
+  - **Post-triggers**: Runs as part of the same transaction for the underlying item itself. Modifies properties (ex: update metadata of newly created item).
 
   ```js
   // Pretrigger
@@ -355,21 +364,19 @@ var iterator = container.GetItemQueryIterator<dynamic>("SELECT * FROM Incomes t 
 
 ## [Azure Cosmos DB Change Feed](https://docs.microsoft.com/en-us/azure/cosmos-db/change-feed)
 
-Enabled by default, the change feed in Azure Cosmos DB tracks container changes in chronological order. It only captures inserts and updates, not deletes. To handle deletions, add a "deleted" attribute set to "true" and specify a time-to-live (TTL) for automatic removal. Azure Functions utilizes the change feed processor internally.
+Enabled by default, tracking container changes chronologically (**order is guaranteed only per partition key**) but not deletions. For deletions, use a "deleted" attribute and set TTL. Azure Functions uses the change feed processor.
+
+Azure Functions utilizes the change feed processor internally.  
+Not compatible with Table and PostgreSQL databases.
 
 Interaction Models:
 
 - **Push Model**: Automatically sends updates to the client. ⭐.
 - **Pull Model**: Requires manual client requests for updates. Useful for specialized tasks like data migration or controlling processing speed.
 
-Limitations:
-
-- Order is guaranteed only within each logical partition key.
-- Not compatible with Table and PostgreSQL databases.
-
 ### Change feed processor
 
-The typical lifecycle of a host instance includes reading the change feed, sleeping if no changes are detected, sending changes to the delegate for processing, and updating the lease store with the latest processed point in time.
+Host instance lifecycle: Reads change feed, sleeps if no changes, sends changes to delegate for processing, and updates lease store with latest processed time.
 
 ```cs
 private static async Task<ChangeFeedProcessor> StartChangeFeedProcessorAsync(
@@ -515,7 +522,6 @@ SELECT VALUE COUNT(1) FROM models
 ## [Global Distribution](https://docs.microsoft.com/en-us/azure/cosmos-db/distribute-data-globally)
 
 - **Multi-region Writes** - Perform writes in all configured regions. This enhances write latency and availability.
-- **Consistency and Latency**
 - **Automatic Failover** - If an Azure region goes down, Cosmos DB can automatically failover to another region.
 - **Manual Failover** - For testing purposes, you can trigger a manual failover to see how your application behaves during regional failures.
 - **No downtime when adding or removing regions**

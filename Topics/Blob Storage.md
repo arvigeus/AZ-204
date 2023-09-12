@@ -560,7 +560,7 @@ Headers:
   - Shared key: `SharedKey [your_account]:[signature]`
   - AD: `Bearer [access_token]`
 
-SAS get param may be used instead of `Authorization` header.
+SAS GET param may be used instead of `Authorization` header.
 
 ```http
 GET https://<account>.blob.core.windows.net/?comp=list # list containers
