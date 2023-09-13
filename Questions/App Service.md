@@ -1426,7 +1426,7 @@ Question: Your organization has a web app deployed on Azure using the D1 App Ser
 - [x] Set up a scaling condition
 - [x] Switch the web app to the Standard App Service Plan
 - [ ] Upgrade the web app to the Premium App Service Plan
-- [x] Establish a scaling rule
+- [x] Create a scaling rule
 
 Answer: The D1 App Service Plan is a Shared Service Plan, which doesn't support autoscaling. Therefore, you would need to switch the web app to the Standard App Service Plan.
 
