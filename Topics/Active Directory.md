@@ -106,23 +106,21 @@ Enables secure access to various APIs, with a unified API across platforms.
 - Assists with application setup from configuration files.
 - Provides actionable exceptions, logging, and telemetry for troubleshooting.
 
-### Authentication flows
+### [Authentication flows](https://learn.microsoft.com/en-us/azure/active-directory/develop/msal-authentication-flows)
 
-| Flow               | Description                                                                   | Application Type |
-| ------------------ | ----------------------------------------------------------------------------- | ---------------- |
-| Authorization code | Native and web apps securely obtain tokens in the name of the user            | Public           |
-| Client credentials | Service applications run without user interaction                             | Confidential     |
-| On-behalf-of       | The application calls a service/web API, which in turn calls Microsoft Graph  | Both             |
-| Implicit           | Used in browser-based applications                                            | Public           |
-| Device code        | Enables sign-in to a device by using another device that has a browser        | Public           |
-| Integrated Windows | Windows computers silently acquire an access token when they're domain joined | Both             |
-| Interactive        | Mobile and desktop applications call Microsoft Graph in the name of a user    | Public           |
-| Username/password  | The application signs in a user by using their username and password          | Both             |
+| Flow               | Application Type | Use Case                          | Token Acquisition Method                    |
+| ------------------ | ---------------- | --------------------------------- | ------------------------------------------- |
+| Authorization code | Both             | SPA, Native, Web Apps             | Exchanges an authorization code for a token |
+| Client credentials | Confidential     | Daemon, Backend                   | App Secret/Certificate                      |
+| On-behalf-of       | Both             | Service-to-Service, Microservices | Uses an existing token to get another       |
+| Device code        | Public           | IoT, CLI                          | Polls the endpoint until user authenticates |
+| Implicit           | Public           | Legacy SPAs                       | Token in URI fragment                       |
+| Integrated Windows | Both             | Intranet Apps                     | Auto auth on domain / Azure AD-joined PCs   |
+| Interactive        | Public           | User Interactive Apps             | Requires user action                        |
+| Username/password  | Both             | Legacy, Testing                   | Direct with Credentials                     |
 
 - **Public client applications**: User-facing apps without the ability to securely store secrets. They interact with web APIs on the user's behalf.
-- **Confidential client applications**: Server-based apps that can securely handle secrets. Each instance maintains a unique configuration, including identifiers and secrets.
-
-The Integrated Windows authentication flow allows applications on domain or Azure AD joined computers to acquire a token silently.
+- **Confidential client applications**: Server-based apps and daemons that can securely handle secrets. Each instance maintains a unique configuration, including identifiers and secrets.
 
 ### Working with MSAL
 

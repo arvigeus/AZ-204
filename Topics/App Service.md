@@ -294,9 +294,11 @@ In JSON format.
 
 ## Security
 
-### Authentication
+### [Authentication](https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization)
 
-In Linux and containers the auth module runs in a separate container, isolated from application code.
+Enabling this feature will automatically redirect all requests to HTTPS. You can either restrict access to authenticated users or allow anonymous requests. Built-in token store for managing tokens.
+
+On Windows, middleware shares your app's IIS sandbox, but on Linux or in containers, it runs separately.
 
 #### [Service Identity](https://learn.microsoft.com/en-us/azure/app-service/overview-managed-identity)
 
@@ -309,7 +311,7 @@ Each deployment slot / app has it's own managed identity configuration.
 An app with a managed identity makes this endpoint available by defining two environment variables:
 
 - `IDENTITY_ENDPOINT` endpoint from which apps can request tokens.
-- `IDENTITY_HEADER` - used to help mitigate server-side request forgery (SSRF) attacks.
+- `IDENTITY_HEADER` - (uuid) used to help mitigate server-side request forgery (SSRF) attacks.
 
 Endpoint parameters:
 
@@ -325,11 +327,9 @@ GET {IDENTITY_ENDPOINT}?resource=https://vault.azure.net&api-version=2019-08-01&
 X-IDENTITY-HEADER: {IDENTITY_HEADER}
 ```
 
-#### [On-Behalf-Of (OBO)](https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization)
+##### Authentication flows
 
 OAuth enables apps to access resources via user permissions, bypassing the need for credentials. Azure App Service manages this through its authentication module, which handles sessions and tokens. It can authenticate requests and redirect unauthenticated users (login page or 401). Tokens are stored in a token store when enabled. Note: An Access Rule is required.
-
-##### Authentication flows
 
 - **Server-directed** (no SDK): handled by App Service, for browser apps
 - **Client-directed** (SDK): handled by the app, for non-browser apps
