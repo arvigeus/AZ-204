@@ -95,6 +95,7 @@ export default function Index() {
     setCheckedValues([]);
     setShowAnswer(false);
     setShowDropdown(false);
+    window.scrollTo(0, 0);
     return false;
   };
 
@@ -121,6 +122,9 @@ export default function Index() {
                   {data.topic}
                 </Link>
               </h2>
+              <h3 className="-mt-4 text-center">
+                <Link to={`/topics`}>Topics →</Link>
+              </h3>
               <input type="hidden" name="id" value={data.id} />
               <input type="hidden" name="answered" value={answered} />
               <input type="hidden" name="type" value={data.topic} />

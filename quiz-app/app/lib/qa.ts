@@ -52,6 +52,14 @@ export const getQAById = (id: string) => {
   return shuffleQA({ ...data[index], index });
 };
 
+export const getQuestionsByTopic = (topic: string): QAPair[] => {
+  let questions: QAPair[] = data.filter((item) => topic === item.topic);
+
+  if (questions.length === 0) return [];
+
+  return shuffleArray(questions);
+};
+
 const getRandomElement = <T>(array: T[]): T =>
   array[Math.floor(Math.random() * array.length)];
 
@@ -60,16 +68,21 @@ function shuffleQA(question: Question): Question {
 
   const answers = question.answerIndexes.map((i) => question.options[i]);
 
-  const arrayCopy = [...question.options];
+  const options = shuffleArray(question.options);
+  return {
+    ...question,
+    options,
+    answerIndexes: answers.map((i) => options.indexOf(i)),
+  };
+}
+
+function shuffleArray<T>(arr: T[]) {
+  const arrayCopy = [...arr];
   for (let i = arrayCopy.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [arrayCopy[i], arrayCopy[j]] = [arrayCopy[j], arrayCopy[i]];
   }
-  return {
-    ...question,
-    options: arrayCopy,
-    answerIndexes: answers.map((i) => arrayCopy.indexOf(i)),
-  };
+  return arrayCopy;
 }
 
 function convertToChances<T>(
