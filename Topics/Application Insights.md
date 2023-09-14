@@ -2,7 +2,7 @@
 
 Application Insights, an extension of Azure Monitor, is a comprehensive Application Performance Monitoring (APM) tool. It provides unique features that help monitor applications throughout their lifecycle, from development and testing to production.
 
-Note: Application Insights utomatically captures Session Id, so no need to manually capture it.
+Note: Application Insights automatically captures Session Id, so no need to manually capture it.
 
 | Feature                            | Description                                                                                                                                                    |
 | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
