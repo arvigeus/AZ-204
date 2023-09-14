@@ -1178,8 +1178,8 @@ Answer: Storage failover requires app restart or remounting of Azure Storage.
 
 Question: You want to mount an Azure Storage as a local share in App Service in a Linux container. Which of the following statements are true:
 
-- [x] Azure Files are mounted in read only mode.
-- [ ] Azure Files are mounted in read and write mode.
+- [ ] Azure Files are mounted in read only mode.
+- [x] Azure Files are mounted in read and write mode.
 - [x] Azure blobs are mounted in read only mode.
 - [ ] Azure blobs are mounted in read and write mode.
 - [x] The app may only have 5 mount points.
