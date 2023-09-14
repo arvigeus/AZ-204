@@ -16,7 +16,7 @@ export default function Index() {
           <h1 className="font-bold text-5xl text-center text-indigo-700">
             <Link to="/">AZ-204 Quiz</Link>
           </h1>
-          <div className="bg-white p-12 rounded-lg shadow-lg w-full mt-8">
+          <div className="bg-white p-8 rounded-lg shadow-lg w-full mt-6">
             <ul className="list-none p-0">
               {topics.map((topic: string, index: number) => (
                 <li key={index} className="mb-2">

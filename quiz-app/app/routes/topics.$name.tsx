@@ -57,7 +57,7 @@ export default function Topic() {
           <h1 className="font-bold text-5xl text-center text-indigo-700">
             <Link to="/">AZ-204 Quiz</Link>
           </h1>
-          <div className="bg-white p-12 rounded-lg shadow-lg w-full mt-8">
+          <div className="bg-white p-8 rounded-lg shadow-lg w-full mt-6">
             <Form method="post" onSubmit={handleSubmit}>
               <h2 className="mt-0 text-center">
                 <Link to={`/topics`}>← Back to Topics</Link>

@@ -115,21 +115,25 @@ export default function Index() {
           <h1 className="font-bold text-5xl text-center text-indigo-700">
             <Link to="/">AZ-204 Quiz</Link>
           </h1>
-          <div className="bg-white p-12 rounded-lg shadow-lg w-full mt-8">
+          <div className="bg-white p-8 rounded-lg shadow-lg w-full mt-6">
             <Form method="post" onSubmit={handleSubmit}>
               <h2 className="mt-0 text-center">
                 <Link to={`?topic=${encodeURIComponent(data.topic)}`}>
                   {data.topic}
+                </Link>{" "}
+                <Link
+                  to={`/topics`}
+                  title="More topics"
+                  className="float-right no-underline text-5xl"
+                >
+                  →
                 </Link>
               </h2>
-              <h3 className="-mt-4 text-center">
-                <Link to={`/topics`}>Topics →</Link>
-              </h3>
               <input type="hidden" name="id" value={data.id} />
               <input type="hidden" name="answered" value={answered} />
               <input type="hidden" name="type" value={data.topic} />
               <div className="text-2x">
-                <span className="font-bold">Question: </span>
+                <div className="font-bold -mb-4">Question: </div>
                 <RichMarkdown interactive children={data.question} />
               </div>
               {data.options && data.options.length > 0 && (
