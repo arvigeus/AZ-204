@@ -167,10 +167,10 @@ Question: You establish an API Management (APIM) gateway and incorporate an exis
 - [ ] `<rate-limit-by-key calls="1000" renewal-period="60" counter-key="@(context.Subscription.Id)" />`
 - [ ] `<rate-limit-by-key calls="1000" renewal-period="3600" />`
 - [ ] `<rate-limit-by-key calls="1000" renewal-period="60" />`
-- [x] `quota-by-key calls="1000" renewal-period="3600" counter-key="@(context.Subscription.Id)" />`
-- [ ] `quota-by-key calls="1000" renewal-period="60" counter-key="@(context.Subscription.Id)" />`
-- [ ] `quota-by-key calls="1000" renewal-period="3600" />`
-- [ ] `quota-by-key calls="1000" renewal-period="60" />`
+- [x] `<quota-by-key calls="1000" renewal-period="3600" counter-key="@(context.Subscription.Id)" />`
+- [ ] `<quota-by-key calls="1000" renewal-period="60" counter-key="@(context.Subscription.Id)" />`
+- [ ] `<quota-by-key calls="1000" renewal-period="3600" />`
+- [ ] `<quota-by-key calls="1000" renewal-period="60" />`
 
 Answer: `rate-limit-by-key` and `quota-by-key` can limit numbers of requests.
 
