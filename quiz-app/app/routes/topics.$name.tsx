@@ -51,8 +51,6 @@ export default function Topic() {
     return false;
   };
 
-  if (!question) return <div className="text-7xl">All done! 🎉</div>;
-
   return (
     <div className="antialiased text-gray-700 bg-gray-100 flex w-full h-screen justify-center pt-6">
       <div className="w-full max-w-3xl p-3 flex flex-col justify-between">
@@ -65,58 +63,63 @@ export default function Topic() {
               <h2 className="mt-0 text-center">
                 <Link to={`/topics`}>← Back to Topics</Link>
               </h2>
-              <input type="hidden" name="id" value={question.id} />
-              <input type="hidden" name="type" value={question.topic} />
-              <div className="text-2x">
-                <span className="font-bold">
-                  {params.name} ({index + 1} / {questions.length}):{" "}
-                </span>
-                <RichMarkdown interactive children={question.question} />
-              </div>
-              {question.options && question.options.length > 0 && (
-                <AnswerOptions
-                  name="answers"
-                  options={question.options}
-                  checkedValues={checkedValues}
-                  setCheckedValues={setCheckedValues}
-                  showAnswer={showAnswer}
-                  answerIndexes={question.answerIndexes}
-                  disabled={showAnswer}
-                />
-              )}
-              {question.answerIndexes && question.answerIndexes.length > 1 && (
-                <div className="italic text-gray-400 text-xs">
-                  Note: This question has more than one correct answer
-                </div>
-              )}
-              {(!question.options || !question.options.length) &&
-                !question.hasCode && <TextInput />}
+              {question ? (
+                <>
+                  <div className="text-2x">
+                    <span className="font-bold">
+                      {params.name} ({index + 1} / {questions.length}):{" "}
+                    </span>
+                    <RichMarkdown interactive children={question.question} />
+                  </div>
+                  {question.options && question.options.length > 0 && (
+                    <AnswerOptions
+                      name="answers"
+                      options={question.options}
+                      checkedValues={checkedValues}
+                      setCheckedValues={setCheckedValues}
+                      showAnswer={showAnswer}
+                      answerIndexes={question.answerIndexes}
+                      disabled={showAnswer}
+                    />
+                  )}
+                  {question.answerIndexes &&
+                    question.answerIndexes.length > 1 && (
+                      <div className="italic text-gray-400 text-xs">
+                        Note: This question has more than one correct answer
+                      </div>
+                    )}
+                  {(!question.options || !question.options.length) &&
+                    !question.hasCode && <TextInput />}
 
-              <div
-                className={clsx(
-                  "transition-[height] transition-[opacity] duration-500 ease-in-out mt-4 overflow-hidden",
-                  showAnswer ? "h-auto opacity-100" : "h-0 opacity-0"
-                )}
-              >
-                <div className="font-bold">Answer: </div>
-                <RichMarkdown children={question.answer} />
-              </div>
-              <div className="flex justify-between mt-12">
-                <Button
-                  type="button"
-                  onClick={() => setShowAnswer((ans) => !ans)}
-                  bgColor={buttonColor}
-                >
-                  {!showAnswer ? "Show" : "Hide"} Answer
-                </Button>
-                <Button
-                  bgColor={buttonColor}
-                  type="submit"
-                  onSubmit={handleSubmit}
-                >
-                  Next
-                </Button>
-              </div>
+                  <div
+                    className={clsx(
+                      "transition-[height] transition-[opacity] duration-500 ease-in-out mt-4 overflow-hidden",
+                      showAnswer ? "h-auto opacity-100" : "h-0 opacity-0"
+                    )}
+                  >
+                    <div className="font-bold">Answer: </div>
+                    <RichMarkdown children={question.answer} />
+                  </div>
+                  <div className="flex justify-between mt-12">
+                    <Button
+                      type="button"
+                      onClick={() => setShowAnswer((ans) => !ans)}
+                      bgColor={buttonColor}
+                    >
+                      {!showAnswer ? "Show" : "Hide"} Answer
+                    </Button>
+                    <Button
+                      bgColor={buttonColor}
+                      type="submit"
+                      onSubmit={handleSubmit}
+                    >
+                      Next
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <div className="text-7xl italic text-center">All done! 🎉</div>
+              )}
             </Form>
           </div>
           <small className="block text-center mt-2">
