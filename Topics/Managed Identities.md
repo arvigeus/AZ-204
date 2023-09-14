@@ -17,17 +17,15 @@ Manage access to Azure resources. To assign Azure roles, you must have `Microsof
 
 Read access to all resources: `*/read`
 
-## Using Managed Identity with an Azure Virtual Machine
+## Using Managed Identity with a Virtual Machine
 
-User-assigned identities need to be created first before they can be assigned to a VM. System-assigned identities are automatically created when the VM is set up.
-
-1. ARM gets a request to set up the managed identity on the VM.
-1. A service principal is made in the trusted Azure AD tenant.
-1. System-assigned directly configures the VM; user-assigned needs a request. Both update Azure Instance Metadata Service.
-1. The identity uses service principal info for Azure access. RBAC assigns roles; for Key Vault access, the code is granted access to the specific secret or key.
-1. Get a Token from the Metadata Service Endpoint within VM: `http://169.254.169.254/metadata/identity/oauth2/token`.
-1. Obtain a JWT Access Token from Azure AD using client ID and certificate.
-1. Send the JWT token to a service that supports Azure AD authentication.
+1. **Initiate Managed Identity**: Request to enable (sistem assigned) or create (user assigned) managed identity via ARM.
+1. **Create Service Principal**: ARM sets a service principal in the trusted Azure AD tenant for the managed identity.
+1. **Configure Identity**: ARM updates [IMDS](https://learn.microsoft.com/en-us/azure/virtual-machines/instance-metadata-service) (VM Specific) with the service principal client ID and certificate.
+1. **Assign Roles & Access**: Use service principal information to grant access to Azure resources via RBAC.
+1. **Request Token**: Code on Azure resource asks for a token from IMDS: `http://169.254.169.254/metadata/identity/oauth2/token`
+1. **Retrieve Token**: By using the configured client ID and certificate, Azure AD returns a JWT access token upon request.
+1. **Use Token**: Code uses the token to authenticate with Azure AD-supported services.
 
 ## Managing Azure Managed Identities
 
@@ -77,9 +75,10 @@ az role assignment create --assignee <PrincipalId> --role <RoleName> --scope <Sc
 
 [Deny assignments](https://docs.microsoft.com/en-us/azure/role-based-access-control/deny-assignments) **override role assignments** to block specific actions.
 
-Hierarchy for managing a resource (from least to highest permission levels):
+### Hierarchy for managing a resource (from least to highest permission levels)
 
-- User with access policy to resource
+- No role: Users or managed identities are granted only permissions they need, like read or write, without using a predefined role.
+- Resource `Reader`
 - Resource `Contributor`
 - Resource `Owner`
 - Resource `Administrator`
