@@ -1178,8 +1178,8 @@ Answer: Storage failover requires app restart or remounting of Azure Storage.
 
 Question: You want to mount an Azure Storage as a local share in App Service in a Linux container. Which of the following statements are true:
 
-- [x] Azure Files are mounted in read only mode.
-- [ ] Azure Files are mounted in read and write mode.
+- [ ] Azure Files are mounted in read only mode.
+- [x] Azure Files are mounted in read and write mode.
 - [x] Azure blobs are mounted in read only mode.
 - [ ] Azure blobs are mounted in read and write mode.
 - [x] The app may only have 5 mount points.
@@ -1420,13 +1420,13 @@ Answer: The "Always On" setting is required to enable Application Insights Profi
 
 ---
 
-Question: Your organization has a web app deployed on Azure using the D1 App Service Plan. You are tasked with setting up the infrastructure to automatically scale when CPU utilization hits 85%, while also keeping costs low. Which of the following actions should you take to meet these objectives? Select four options.
+Question: Your organization has a web app deployed on Azure using the D1 App Service Plan. You are tasked with setting up the infrastructure to automatically scale when CPU utilization hits 85%, while also keeping costs low. Which of the following actions should you take to meet these objectives?
 
-- [ ] Activate autoscaling for the Web App
-- [ ] Set up a scaling condition
+- [x] Activate autoscaling for the Web App
+- [x] Set up a scaling condition
 - [x] Switch the web app to the Standard App Service Plan
 - [ ] Upgrade the web app to the Premium App Service Plan
-- [ ] Establish a scaling rule
+- [x] Create a scaling rule
 
 Answer: The D1 App Service Plan is a Shared Service Plan, which doesn't support autoscaling. Therefore, you would need to switch the web app to the Standard App Service Plan.
 

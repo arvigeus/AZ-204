@@ -74,6 +74,13 @@ Horizontal scaling: Adding/removing virtual machines.
 
 [**Flapping**](https://learn.microsoft.com/en-us/azure/azure-monitor/autoscale/autoscale-flapping): a loop condition where a scale event triggers its opposite in a series of alternating events.
 
+Setting up a scaling rule:
+
+- Switch the web app to the Standard App Service Plan (for Autoscale you need Premium)
+- Activate autoscaling for the Web App
+- Create a scaling rule
+- Set up a scaling condition
+
 ## [Deployment slots](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots)
 
 Require Standard+.
