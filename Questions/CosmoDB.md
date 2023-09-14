@@ -377,6 +377,12 @@ FROM products p
 WHERE p.sku = "teapo-surfboard-72109"
 ```
 
+```jsonc
+[
+  // Result here
+]
+```
+
 Answer:
 
 ```json

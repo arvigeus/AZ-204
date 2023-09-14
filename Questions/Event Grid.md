@@ -152,7 +152,7 @@ Answer: It's a valid use case.
 
 Question: Fill in "XXX" and "YYY" for this Event Grid filter:
 
-```json
+```jsonc
 {
   "XXX": [
     {

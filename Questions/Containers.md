@@ -275,7 +275,7 @@ type: Microsoft.ContainerInstance/containerGroups
 
 You want to retrieve the value of the environment variable "SECRET" using the Azure CLI and execute the following command:
 
-```sh
+```bash
 az container show --resource-group myResourceGroup --name securetest --query "properties.containers[0].properties.environmentVariables[?name=='SECRET']"
 ```
 

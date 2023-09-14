@@ -60,7 +60,7 @@ const parseItem = (name: string, text: string, idCounter: number): QAPair[] => {
         switch (itemType) {
           case "question":
             currentQuestion.push(line);
-            if (/^```(cs|ps|Dockerfile)$/.test(line.trim()))
+            if (/^```(cs|ps|Dockerfile|jsonc)$/i.test(line.trim()))
               currentHasCode = true;
             break;
           case "answer":

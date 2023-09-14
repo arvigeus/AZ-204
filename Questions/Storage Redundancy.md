@@ -250,10 +250,7 @@ var blobClientOptions = new BlobClientOptions()
     // Take into consideration the number of retry attempts (5), delay between retries (1s), maximum waiting time (100s),
     // and the smart use of the secondary location.
     Retry = { /* Options */ }
-    Retry =
-    {
-        // Options here
-    }
+    // More options
 };
 
 var blobServiceClient = new BlobServiceClient(primaryAccountUri, new DefaultAzureCredential(), blobClientOptions);
