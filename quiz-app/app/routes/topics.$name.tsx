@@ -31,9 +31,10 @@ export default function Topic() {
   const [checkedValues, setCheckedValues] = useState<number[]>([]);
   const [showAnswer, setShowAnswer] = useState(false);
 
-  const question = questions[index];
+  const question = index < questions.length ? questions[index] : null;
 
   const isCorrectlyAnswered =
+    question &&
     question.answerIndexes &&
     question.answerIndexes.length > 0 &&
     question.answerIndexes.length == checkedValues.length &&
@@ -49,6 +50,8 @@ export default function Topic() {
     window.scrollTo(0, 0);
     return false;
   };
+
+  if (!question) return <div className="text-7xl">All done! 🎉</div>;
 
   return (
     <div className="antialiased text-gray-700 bg-gray-100 flex w-full h-screen justify-center pt-6">
