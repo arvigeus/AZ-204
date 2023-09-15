@@ -4,15 +4,15 @@ Application Insights, an extension of Azure Monitor, is a comprehensive Applicat
 
 Note: Application Insights automatically captures Session Id, so no need to manually capture it.
 
-| Feature                            | Description                                                                                                                                                    |
-| ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Live Metrics                       | Observe activity from your deployed application in real time with no effect on the host environment.                                                           |
-| Availability                       | Also known as “Synthetic Transaction Monitoring”, probe your application's external endpoint(s) to test the overall availability and responsiveness over time. |
-| GitHub or Azure DevOps integration | Create GitHub or Azure DevOps work items in the context of Application Insights data.                                                                          |
-| Usage                              | Understand which features are popular with users and how users interact and use your application.                                                              |
-| Smart Detection                    | Automatic failure and anomaly detection through proactive telemetry analysis.                                                                                  |
-| Application Map                    | A high-level top-down view of the application architecture and at-a-glance visual references to component health and responsiveness.                           |
-| Distributed Tracing                | Search and visualize an end-to-end flow of a given execution or transaction.                                                                                   |
+| Feature                                         | Description                                                                                                                          |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Live Metrics                                    | Real-time monitoring without affecting the host. For immediate insights during critical deployments.                                 |
+| Availability (Synthetic Transaction Monitoring) | Tests endpoints for availability and responsiveness. To ensure uptime and SLAs are met.                                              |
+| GitHub or Azure DevOps integration              | Create GitHub or Azure DevOps work items in the context of Application Insights data.                                                |
+| Usage                                           | Understand which features are popular with users and how users interact and use your application.                                    |
+| Smart Detection                                 | Automatic failure and anomaly detection through proactive telemetry analysis.                                                        |
+| Application Map                                 | A high-level top-down view of the application architecture and at-a-glance visual references to component health and responsiveness. |
+| Distributed Tracing                             | Search and visualize an end-to-end flow of a given execution or transaction.                                                         |
 
 Application Insights monitors various aspects of your application's performance and health. It collects Metrics and Telemetry data, including:
 
@@ -39,9 +39,9 @@ NOTE: `az monitor activity-log` _cannot_ display data from Application Insight t
 
 ## Metrics
 
-**Log-based metrics** are generated from stored events and offer thorough data analysis and diagnostics. They can be manually or automatically collected. While powerful, they can be hard to manage in high-volume apps and may require techniques like sampling and filtering, which can affect accuracy.
+**Log-based metrics**: Offers thorough data analysis and diagnostics. ⭐: you need complete set of events ❌: high-volume apps that require sampling / filtering.
 
-**Standard metrics** are **pre-aggregated** time-series data, offering ⚡ query, ideal for dashboards and real-time alerts. They can be pre-aggregated by the SDK or the backend for better accuracy, and are not affected by sampling, filtering, or SDK version.
+**Standard metrics** are time-series data **pre-aggregated** by either SDK (version doe not affect accuracy) or backend (better accuracy), optimized for fast queries. ⭐: dashboards and real-time alerts, use cases _requiring sampling or filtering_.
 
 You can toggle between these metrics types using the metrics explorer's namespace selector.
 
@@ -52,7 +52,7 @@ You can toggle between these metrics types using the metrics explorer's namespac
 Reduces data traffic and costs while keeping analysis accurate. Helps avoid data limits and makes diagnostics easier. High sampling rates (> 60%) can affect log-based accuracy. Pre-aggregated metrics in SDKs solve this issue, but too much filtering can miss alerts.
 
 - **Adaptive sampling**: On by default, adjusts data volume to stay within set limits. Used in Azure Functions.
-- **Fixed-rate sampling**: You set the rate to reduce data volume, useful for syncing client and server data, aiding investigations of related events.
+- **Fixed-rate sampling**: You set the rate manually. ⭐: syncing client and server data to investigations of related events.
 - **Ingestion sampling**: Discards some data at the service endpoint to stay within monthly limits. Doesn't reduce app traffic. Use if you hit monthly limits, or get too much data, or using older SDK.
 
 For web apps, to group custom events, use the same `OperationId` value.
