@@ -1,11 +1,13 @@
 # Study Plan
 
+- Check [Notes](./NOTES.md)
+
 1. Develop Azure compute solutions
 
-   - [Containers](./Topics/Containers.md)
-   - [App Service](./Topics/App%20Service.md)
-   - [Functions](./Topics/Functions.md)
    - [Compute Solutions](./Topics/Compute%20Solutions.md)
+     - [Containers](./Topics/Containers.md)
+     - [App Service](./Topics/App%20Service.md)
+     - [Functions](./Topics/Functions.md)
 
 1. Develop for Azure storage
 
@@ -30,13 +32,15 @@
 1. Connect to and consume Azure services and third-party services
 
    - [API management](./Topics/API%20Management.md)
-   - [Event Grid](./Topics/Event%20Grid.md)
-   - [Event Hub](./Topics/Events.md)
-   - [Service Bus](./Topics/Service%20Bus.md)
-   - [Queue Storage](./Topics/Queue%20Storage.md)
+   - [Events](./Topics/Events.md)
+     - [Event Grid](./Topics/Event%20Grid.md)
+     - [Event Hub](./Topics/Event%20Hub.md)
    - [Message Queues](./Topics/Message%20Queues.md)
+     - [Service Bus](./Topics/Service%20Bus.md)
+     - [Queue Storage](./Topics/Queue%20Storage.md)
 
 1. Hands on practice
 
-   - Go through all coding examples and replicate them
+   - Check [AZ CLI](./Topics/AZ%20CLI.md), [Azure Portal](./Topics/Azure%20Portal.md), [Resource Group](./Topics/Resource%20Group.md) from Topics
+   - Go through all coding examples and replicate them. Alt: [Github](https://github.com/MicrosoftLearning/AZ-204-DevelopingSolutionsforMicrosoftAzure)
    - Browse Azure Portal

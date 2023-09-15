@@ -154,7 +154,7 @@ Answer: `rate-limit-by-key` and `quota-by-key`, units in seconds and KB, `counte
 Question: An API is integrated into an Azure API Management (APIM) gateway and is utilized by client applications worldwide. You are tasked with granting access to 10 new operations exclusively to a select group of 200 beta developers around the world. How can you enable these developers to test the new operations using the existing API URL?
 
 - [ ] Implement a revision in Azure API Management.
-- [ ] mplement path-based versioning.
+- [ ] Implement path-based versioning.
 - [x] Implement header-based versioning.
 - [ ] Implement query string-based versioning.
 - [ ] Create separate gateways.
