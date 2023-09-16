@@ -2,116 +2,100 @@
 
 ## [Container Registry](https://learn.microsoft.com/en-us/azure/container-registry/)
 
-Format: `<registry>/<repository>/<image-or-artifact>:<tag>`
+Endpoint: `<registry>.azurecr.io/<repository>/<image-or-artifact>:<tag>`
 
-- `<registry>`: name of the Docker registry (for Azure, it would be something like myregistry.azurecr.io).
-- `<repository>`: name of the repository where your image is stored.
-- `<image-or-artifact>`: name of the image or artifact you want to pull.
-- `<tag>`: version tag of the image or artifact.
-
-Example: `myregistry.azurecr.io/myrepository/myapp:latest`
-
-### [Tiers](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-skus)
-
-All tiers support the same basic features, the main difference is image storage / throughput.
-
-- **Basic** - Lowest throughput. 10GB storage
-- **Standard** - For most production scenarios, 100GB storage
-- **Premium** - Highest amount of included storage (500GB) and concurrent operations, enabling high-volume scenarios (higher image throughput). Additional features: geo-replication (zone redundancy), customer-Managed Key, content trust for image tag signing, private link.
-
-**Throttling**: May happen if you exceed the registry's limits, causing temporary `HTTP 429` errors and requiring retry logic or reducing the request rate.
-
-Change tier: `az acr update --name myContainerRegistry --sku Premium`
-
-[**Zone Redundancy**](https://learn.microsoft.com/en-us/azure/container-registry/zone-redundancy) (requires _Premium_): Minimum of three separate zones in each enabled region. Enable with `--zone-redundancy enabled`. The environment must include a virtual network (VNET) with an available subnet.
-
-**Performance**: High numbers of repositories and tags can impact the performance. Periodically delete unused.
-
-### [Tasks](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-tasks-overview)
-
-Cloud-based container image building and automated OS/framework patching.
-
-- **Quick Task**: On-demand build and push of a single container image. Use the `az acr build` command to build and push a container image to ACR. (Think `docker build`, `docker push` in the cloud)
-- **Automatically Triggered Tasks**: Auto-builds triggered by source code updates, base image updates, or timers. Use the `az acr task create` command to configure a build task that triggers a container image build when code is committed or a pull request is made or updated in a Git repository.
-- **Multi-step Task**: Granular control over image building, testing, and patching workflows. These tasks are defined in a YAML file and can automate a sequence of operations.
-- **Automate OS/Framework Patching**: Auto-detection and build of application images based on updated base image.
-- [**Scheduled Tasks**](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-tasks-scheduled): Run container workloads or maintenance operations on a defined schedule. Example: `az acr task create --schedule "0 21 * * *"`
-
-Tasks primarily builds Linux OS and amd64 architecture images. Use the `--platform` tag to specify other OS or architectures:
+## [Working with Azure Container Registry](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-get-started-azure-cli)
 
 ```sh
-# Linux supports all architectures
-az acr build --registry MyRegistry --image MyImage:tag --platform Linux/arm .
-# Windows supports only AMD64
-az acr build --registry MyRegistry --image MyImage:tag --platform Windows/amd64 .
+# Login to manage resources
+az login
+
+# Create a resource group
+az group create --name $resourceGroupName --location eastus
+
+# Create Azure Container Registry
+## https://learn.microsoft.com/en-us/azure/container-registry/container-registry-skus
+##  --sku {Basic,Standard,Premium} # 10, 100, 500GB; 💎: Concurrent operations, High volumes (⚡), Customer-Managed Key, Content trust for image tag signing, Private link
+## Throttling: May happen if you exceed the registry's limits, causing temporary `HTTP 429` errors and requiring retry logic or reducing the request rate.
+##
+## [--default-action {Allow, Deny}] # 💎: Default action when no rules apply
+##
+## https://learn.microsoft.com/en-us/azure/container-registry/zone-redundancy
+## [--zone-redundancy {Disabled, Enabled}] # 💎: Min 3 separate zones in each enabled region. The environment must include a virtual network (VNET) with an available subnet.
+az acr create --resource-group $resourceGroupName --name $registryName --sku Standard # ⭐: Production
+# NOTE: High numbers of repositories and tags can impact the performance. Periodically delete unused.
+
+# ACR Login: https://learn.microsoft.com/en-us/azure/container-registry/container-registry-authentication
+## - Interactive: Individual AD login, Admin Account
+## - Unatended / Headless: AD Service Principal, Managed Identity for Azure Resources
+## Roles: https://learn.microsoft.com/en-us/azure/container-registry/container-registry-roles?tabs=azure-cli
+##
+## 1) Individual login with Azure AD: Interactive push/pull by developers, testers.
+## az login - provides the token. It has to be renewed every 3 hours
+az acr login --name "$registryName" # Token must be renewed every 3 hours.
+##
+## 2) AD Service Principal: Unattended push/pull in CI/CD pipelines
+### Create service principal
+#### Method 1: Short version that will setup and return appId and password in JSON format
+az ad sp create-for-rbac --name $ServicePrincipalName --role AcrPush,AcrPull,AcrDelete --scopes /subscriptions/$subscriptionId/resourceGroups/$resourceGroupName/providers/Microsoft.ContainerRegistry/registries/$registryName
+#### Method 2: Create a service principal and configure roles separately
+az ad sp create --id $ServicePrincipalName
+az role assignment create --assignee $appId --role AcrPush,AcrPull,AcrDelete --scope /subscriptions/$subscriptionId/resourceGroups/$resourceGroupName/providers/Microsoft.ContainerRegistry/registries/$registryName
+az ad sp credential reset --name $appId # for method 2 password is not explicitly created, so we need to create (reset) it
+#### Note: Password expires in 1 year.
+az acr login --name $registryName --username $appId --password $password
+##
+## 3) Managed identities
+az role assignment create --assignee $managedIdentityId --scope $registryName --role AcrPush,AcrPull,AcrDelete
+## Now container instances / apps must use that managed identity to access this ACR (pull or push images)
+##
+## 4) Admin User: ❌. Interactive push/pull by individual developers.
+### The admin account is provided with two passwords, both of which can be regenerated
+az acr update -n $registryName --admin-enabled true # this is disabled by default
+docker login $registryName.azurecr.io
+
+# Tasks: https://learn.microsoft.com/en-us/azure/container-registry/container-registry-tasks-overview
+## [--platform Linux {Linux, Windows}] # Linux supports all architectures (ex: Linux/arm), Windows: only amd64 (ex: Windows/amd64) - arch is optional
+##
+## - Quick task
+az acr build --registry $registryName --image $imageName:$tag . # docker build, docker push
+az acr run --registry $registryName --cmd '$registryName/$repository/$imageName:$tag' /dev/null # Run image (last param is source location, optional for non-image building tasks)
+##
+## - Automatically Triggered Task
+### [--<operation>-trigger-enabled true] # CI on commit or pull-request
+### [--schedule] # CRON schedule (⭐: OS/framework patching): https://learn.microsoft.com/en-us/azure/container-registry/container-registry-tasks-scheduled
+az acr task create --name ciTask --registry $registryName --image $imageName:{{.Run.ID}} --context https://github.com/myuser/myrepo.git --file Dockerfile --git-access-token $GIT_ACCESS_TOKEN
+az acr task create --name cmdTask --registry $registryName --cmd mcr.microsoft.com/hello-world --context /dev/null
+### az acr task run --name mytask --registry $registryName # manually run task
+##
+## - Multi-step Task: granular control (build, push, when, cmd defined as steps) - https://learn.microsoft.com/en-us/azure/container-registry/container-registry-tasks-reference-yaml
+### NOTE: --file is used for both multi-step task and Dockerfile
+az acr run --file multi-step.yaml https://github.com/Azure-Samples/acr-tasks.git
+az acr task create --file multi-step.yaml --name ciTask --registry $registryName --image $imageName:{{.Run.ID}} --context https://github.com/myuser/myrepo.git --git-access-token $GIT_ACCESS_TOKEN
 ```
 
-### [Working with Azure Container Registry](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-get-started-azure-cli)
-
-Pushes and run a Docker image
+Push and run a Docker image:
 
 ```sh
-# Create container registry
-# az group create --name myResourceGroup --location eastus
-az acr create --name mycontainerregistry --sku Basic --resource-group myResourceGroup
-
-# Login to container registry
-## Using Azure ID
-az acr login --name "<registry-name>"
-
-
-# Login using service principal
-ACR_REGISTRY_ID=$(az acr show --name $ACR_NAME --query "id" --output tsv)
-PASSWORD=$(az ad sp create-for-rbac --name $SERVICE_PRINCIPAL_NAME --scopes $ACR_REGISTRY_ID --role acrpull --query "password" --output tsv)
-SERVICE_PRINCIPAL_ID=$(az ad sp list --display-name $SERVICE_PRINCIPAL_NAME --query "[].appId" --output tsv)
-az role assignment create --assignee $SERVICE_PRINCIPAL_ID --scope $ACR_REGISTRY_ID --role acrpull # acrpush, or acrowner
-docker login myregistry.azurecr.io --username $SP_APP_ID --password $SP_PASSWD
-
-
 # Push image to registry
 ## Pull 'hello-world' image from Microsoft's Registry
 docker pull mcr.microsoft.com/hello-world
-## Tag the image (<login-server>/hello-world:v1)
-docker tag mcr.microsoft.com/hello-world <login-server>/hello-world:v1
-##. Push image
-docker push <login-server>/hello-world:v1
+## Tag the image
+docker tag mcr.microsoft.com/hello-world $registryName.azurecr.io/$repository/$imageName:$tag
+## Push image
+docker push $registryName.azurecr.io/$repository/$imageName:$tag
 
 # Run image from registry
-docker run <login-server>/hello-world:v1
-
-# List container images abd tags
-az acr repository list --name <registry-name> --output table
-az acr repository show-tags --name <registry-name> --repository hello-world --output table
+docker run $registryName.azurecr.io/$repository/$imageName:$tag
+# Alt: az acr run --registry $registryName --cmd '$registryName/$repository/$imageName:$tag' /dev/null
 ```
 
-Build and run a container image:
+List container images and tags:
 
 ```sh
-# Create a resource group
-az group create --name myResourceGroup --location eastus
-
-# Create Azure Container Registry
-az acr create --resource-group myResourceGroup --name myAcr --sku Basic --admin-enabled true
-
-# Log in to ACR
-az acr login --name myAcr
-
-# Build Docker image and push to ACR
-az acr build --registry myAcr --image myimage:latest .
-
-# Run the Docker image from ACR
-# Last parameter is the source location for the task. It's not needed when not building an image, so '/dev/null' is used.
-az acr run --registry myAcr --cmd '$Registry/myimage:latest' /dev/null
+az acr repository list --name $registryName --output table
+az acr repository show-tags --name $registryName --repository $repository --output table
 ```
-
-### [Authenticate with an Azure container registry](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-authentication)
-
-- **Individual AD Identity**: Interactive push/pull by developers, testers. Token must be renewed every 3 hours.
-- **AD Service Principal**: Unattended push/pull in CI/CD pipelines. Password expires in 1 year.
-- **Managed Identity for Azure Resources**: Unattended push/pull to Azure services.
-- **Admin User**: (disabled by default) Interactive push/pull by individual developers. Not recommended.
-
-Note: Unattended = headless.
 
 ## [Container Instances](https://learn.microsoft.com/en-us/azure/container-instances/)
 
