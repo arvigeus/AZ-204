@@ -15,7 +15,7 @@ az group create --name $resourceGroupName --location eastus
 
 # Create Azure Container Registry
 ## https://learn.microsoft.com/en-us/azure/container-registry/container-registry-skus
-##  --sku {Basic,Standard,Premium} # 10, 100, 500GB; 💎: Concurrent operations, High volumes (⚡), Customer-Managed Key, Content trust for image tag signing, Private link
+## --sku {Basic,Standard,Premium} # 10, 100, 500GB; 💎: Concurrent operations, High volumes (⚡), Customer-Managed Key, Content trust for image tag signing, Private link
 ## Throttling: May happen if you exceed the registry's limits, causing temporary `HTTP 429` errors and requiring retry logic or reducing the request rate.
 ##
 ## [--default-action {Allow, Deny}] # 💎: Default action when no rules apply
@@ -99,94 +99,136 @@ az acr repository show-tags --name $registryName --repository $repository --outp
 
 ## [Container Instances](https://learn.microsoft.com/en-us/azure/container-instances/)
 
-Enables the deployment of Docker containers without provisioning virtual machines.
+Enables the deployment of Docker containers (up to 15 GB) without provisioning virtual machines.
 
-Container Images can't be larger than 15 GB.
+NB: If a container group restarts, its IP might change. Avoid using hardcoded IP addresses. For a stable public IP, consider [using Application Gateway](https://learn.microsoft.com/en-us/azure/container-instances/container-instances-application-gateway).
 
-If a container group restarts, its IP might change. Avoid using hardcoded IP addresses. For a stable public IP, consider [using Application Gateway](https://learn.microsoft.com/en-us/azure/container-instances/container-instances-application-gateway).
+## Working with Azure Container Instances
 
 ```sh
-# Container from image
-az container create --name mycontainer --image mycontainerimage --resource-group myResourceGroup
+# Login to manage resources
+az login
 
-# Container from yaml file
-az container create --file mycontainer.yaml --resource-group myResourceGroup
+# Create a resource group
+az group create --name $resourceGroupName --location eastus
 
-# Create an Azure Container Instance with a public DNS name (must be unique)
-# Accessible from <dns-name-label>.<region>.azurecontainer.io
-az container create --dns-name-label mydnslabel --ip-address public --name mycontainer --image myImage --resource-group myResourceGroup
+# Deployment
+## From image - simple scenarios
+### Azure File share: https://learn.microsoft.com/en-us/azure/container-instances/container-instances-volume-azure-files
+### Can only be mounted to Linux containers running as root!
+### --os-type Linux
+### --azure-file-volume-account-name # Azure File Share requires existing storage account and account key
+### --azure-file-volume-account-key
+### --azure-file-volume-mount-path
+### --azure-file-volume-share-name
+### NOTE: No direct integration Blob Storage because it lacks SMB support
+###
+### Public DNS name (must be unique) - accessible from $dnsLabel.<region>.azurecontainer.io
+### --dns-name-label $dnsLabel
+### --ip-address public
+###
+### [--restart-policy {Always, Never, OnFailure}] # Default: Always. Never if you only want to run once. Status when stopped: Terminated
+###
+### Environment variables: https://learn.microsoft.com/en-us/azure/container-instances/container-instances-environment-variables
+#### NOTE: Format can be 'key'='value', key=value, 'key=value'
+### --environment-variables # ex: 'PUBLIC_ENV_VAR'='my-exposed-value'
+### --secure-environment-variables # ex: 'SECRET_ENV_VAR'='my-secret-value' - not visible in your container's properties
+###
+### Mount secret volumes: https://learn.microsoft.com/en-us/azure/container-instances/container-instances-volume-secret
+### --secrets mysecret1="My first secret FOO" mysecret2="My second secret BAR"
+### --secrets-mount-path /mnt/secrets
+### NOTE: This creates mysecret1 and mysecret2 files in /mnt/secrets with value the content of the secret
+az container create --name $containerName --image $imageName:$tag --resource-group $resourceGroupName
+## From YAML file - deployment includes only container instances
+### Same options as from simple deployment, but in a YAML file
+az container create --name $containerName --file deploy.yml --resource-group $resourceGroupName
+## ARM template - deploy additional Azure service resources (for example, an Azure Files share)
+### No example, but it's good to know this fact
 
 # Verify container is running
-az container show --resource-group az204-aci-rgb--name mycontainerbb --query "{FQDN:ipAddress.fqdn,ProvisioningState:provisioningState}" --out table
+az container show --name $containerName --resource-group $resourceGroupName --query "{FQDN:ipAddress.fqdn,ProvisioningState:provisioningState}" --out table
 ```
 
-[**Container Groups**](https://learn.microsoft.com/en-us/azure/container-instances/container-instances-container-groups) - the top-level resource. It consists of multiple containers scheduled on a single host machine, sharing lifecycle, resources, network (share an external IP, ports. DNS), and storage volumes (similar to Kubernetes pod). _Multi-container groups only support Linux containers_. _For Windows containers, Azure Container Instances allow only single-instance deployment_. If you create a container group with two instances, each requesting one CPU, then the container group is allocated two CPUs. Example: An application container and a logging or monitoring container. Multi-container groups are useful when you need to split one task into a few container images. For instance, having a container for a web app and another for fetching content, or a front-end and a back-end container.
+YAML deployment (`deploy.yml`) (see CLI example above for reference):
 
-**Restart policies**: `Always` (default), `Never`, `OnFailure`. When ACI stops a container with a restart policy of `Never` or `OnFailure`, its status is set to **Terminated**.  
-Example: `az container create --restart-policy OnFailure ...`.
-
-[**Environment variables**](https://learn.microsoft.com/en-us/azure/container-instances/container-instances-environment-variables): `az container create --environment-variables 'NumWords'='5' 'MinLength'='8' ...`
-
-- Via file (`az container create --file secure-env.yaml ...`):
-
-  ```yaml
-  # Define environment variables for the container
-  environmentVariables:
-    # Public environment variable
-    - name: "NOTSECRET"
-      value: "my-exposed-value"
-
-    # Secure environment variable, externally (Azure portal or Azure CLI) visible only by name
-    - name: "SECRET"
-      secureValue: "my-secret-value"
-  ```
-
-### Deployment
-
-- Resource Manager template: when you need to deploy additional Azure service resources (for example, an Azure Files share)
-- YAML file: when your deployment includes only container instances.
-
-### [Mount an Azure file share in Azure Container Instances](https://learn.microsoft.com/en-us/azure/container-instances/container-instances-volume-azure-files)
-
-Azure Files is accessible via Server Message Block (SMB) protocol.
-
-Azure Files shares can only be mounted to _Linux containers_ _running as root_, limited by the requirement of CIFS support.
-
-**Azure Container Instances does not support direct integration Blob Storage** because it lacks SMB support.
-
-Azure CLI:
-
-```sh
-# 1) Create the storage account
-
-# 2) Create a file share
-
-# 3) Deploy container and mount volume
-# To mount an Azure file share as a volume in Azure Container Instances, you need: Storage account name, Share name, and Storage account key.
-az container create \
-    --azure-file-volume-account-name $ACI_PERS_STORAGE_ACCOUNT_NAME \
-    --azure-file-volume-account-key $STORAGE_KEY \
-    --azure-file-volume-share-name $ACI_PERS_SHARE_NAME \
-    --azure-file-volume-mount-path /aci/logs/ \
-    # ...
-```
-
-Deploy container and mount volume:
-
-```yaml
-volumes:
-- name: filesharevolume
-    azureFile:
-    sharename: acishare
-    storageAccountName: <Storage account name>
-    storageAccountKey: <Storage account key>
+```yml
+apiVersion: "2019-12-01"
+location: eastus
+name: containerName
 properties:
+  # Container groups: https://learn.microsoft.com/en-us/azure/container-instances/container-instances-container-groups
+  # Containers use a single host machine, sharing lifecycle, resources, network (share an external IP, ports. DNS), and storage volumes
+  # For Windows containers, only single-instance deployment are allowed (NOTE: Here we use two!)
+  # The resources allocated for the host are sum of all resources requested (In this case: 2 CPUs and 2.5 GB RAM)
   containers:
+    - name: helloworld
       properties:
+        environmentVariables:
+          - name: "PUBLIC_ENV_VAR"
+            value: "my-exposed-value"
+
+          - name: "SECRET_ENV_VAR"
+            secureValue: "my-secret-value"
+        image: mcr.microsoft.com/hello-world
+        ports:
+          - port: 8088
+        resources:
+          requests:
+            cpu: 1.0
+            memoryInGB: 1
+        volumeMounts:
+        - mountPath: /mnt/secrets
+          name: secretvolume
+    - name: hellofiles
+      properties:
+        environmentVariables: []
+        image: mcr.microsoft.com/azuredocs/aci-hellofiles
+        ports:
+          - port: 80
+        resources:
+          requests:
+            cpu: 1.0
+            memoryInGB: 1.5
         volumeMounts:
           - mountPath: /aci/logs/
             name: filesharevolume
+  osType: Linux
+  restartPolicy: Always
+  ipAddress:
+    type: Public
+    ports:
+      - port: 80
+    dnsNameLabel: containerName
+  volumes:
+    - name: filesharevolume
+      azureFile:
+        sharename: acishare
+        storageAccountName: <Storage account name>
+        storageAccountKey: <Storage account key>
+  - name: secretvolume
+    secret:
+      # NB: The secret values must be Base64-encoded!
+      mysecret1: TXkgZmlyc3Qgc2VjcmV0IEZPTwo= # "My first secret FOO"
+      mysecret2: TXkgc2Vjb25kIHNlY3JldCBCQVIK # "My second secret BAR"
+tags: {}
+type: Microsoft.ContainerInstance/containerGroups
 ```
+
+### Note for Azure File Share
+
+**Azure Container Instances does not support direct integration Blob Storage** because it lacks SMB support.
+
+To use Azure File Share, you need to:
+
+- Create the storage account
+- Create a file share
+- From storage account, you need Storage account name, Share name, and Storage account key.
+
+### Container Instances Diagnostics and Logging
+
+`az container attach` Connects your local console to a container's output and error streams in **real time** (example: to debug startup issue).
+
+`az container logs` Displays logs (when no real time monitoring is needed)
 
 ## [Azure Container Apps](https://learn.microsoft.com/en-us/azure/container-apps/)
 
@@ -283,20 +325,6 @@ Defining secrets: `--secrets "queue-connection-string=<CONNECTION_STRING>"`
 Referencing Secrets in Environment Variables (`secretref:`): `--env-vars "QueueName=myqueue" "ConnectionString=secretref:queue-connection-string"`
 
 Mounting Secrets in a Volume (secret name is filename, secret value is content): `--secret-volume-mount "/mnt/secrets"`
-
-```yaml
-volumes:
-  - name: mysecrets
-    azureKeyVault:
-      secretName: my-secret
-      keyVaultName: my-keyvault
-properties:
-  containers:
-    properties:
-      volumeMounts:
-        - mountPath: /mnt/secrets/
-          name: mysecrets
-```
 
 ### [Logging](https://learn.microsoft.com/en-us/azure/container-apps/log-monitoring)
 

@@ -8,6 +8,10 @@
 
 If question requires to figure out the order of commands, look for hints in code: for example Step X is using a variable initialized in Step Y, it means the order is Y, X.
 
+## Case Studies
+
+Read the question first to understand what's being asked. Then, skim the case study to find relevant keywords or sections that answer the question. This approach helps you quickly locate the information you need while avoiding unnecessary details.
+
 ## Learn your craft
 
 You should be able to not only learn commands, but also explain them - what they do, what they require. Example: To mount an Azure File Share to an Azure Container Instance, you need the Storage Account Key.
@@ -31,3 +35,4 @@ Everything is encrypted at rest with 256-bit AES, and in-transit with TLS. You c
 - You need to use some sort of storage for something (app service web app, container)? Then you'll need storage account and storage account key.
 - `az ? deployment` or `az webapp` means you are using [App Service](./Topics/App%20Service.md) (needs App Service Account). `az containerapp` means you are using Container Apps. `az container` means Container Instance. May sound obvious, but I want to point that out.
 - `az acr create` creates registry, doesn't run anything. To run docker image use `az acr build` (quick task)
+- Changing SKU is scaling up/down operation. Autoscaling is scale in/out operation.

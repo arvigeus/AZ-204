@@ -290,6 +290,41 @@ Answer: The given YAML configuration demonstrates how to set a secure environmen
 
 ---
 
+Question: You have deployed a container using the following YAML configuration:
+
+```yaml
+apiVersion: 2018-10-01
+location: eastus
+name: securetest
+properties:
+  containers:
+    - name: mycontainer
+    properties:
+      image: mcr.microsoft.com/azuredocs/hello-world
+      ports:
+      - port: 80
+      resources:
+        requests:
+          cpu: 1.0
+          memoryInGB: 1.5
+  osType: ¯\_(ツ)_/¯
+  restartPolicy: Always
+tags: null
+type: Microsoft.ContainerInstance/containerGroups
+```
+
+What should you use for `osType`?
+
+- [ ] AMD64
+- [ ] Linux
+- [ ] Windows
+- [x] Both Linux and Windows will work
+- [ ] Neither option will work
+
+Answer: Since this is a single container instance, both Windows and Linux would work. Two or more is for multi-containers, thus Linux only.
+
+---
+
 Question: You have declared a connection string to a queue storage account in the `--secrets` parameter of a container app. Now you need to reference this secret in an environment variable when creating a new revision in your container app.
 
 Which of the following commands correctly references the secret `queue-connection-string` in an environment variable in the Azure CLI?
@@ -652,7 +687,8 @@ Answer: `Never` policy ensures that the containers in the container group will n
 Question: Which command will set environment variable `MinLength` to `8`?
 
 - [x] `az container create --environment-variables 'MinLength'='8'`
-- [ ] `az container create --environment-variables 'MinLength=8'`
+- [x] `az container create --environment-variables 'MinLength=8'`
+- [x] `az container create --environment-variables MinLength=8`
 - [ ] `az container create --environment-variables {'MinLength':8}`
 - [ ] `az container create --environment-variable-name 'MinLength' --environment-variable-value 8`
 
@@ -784,7 +820,7 @@ Answer: `az container attach` is used to attach the standard output and standard
 
 ---
 
-Question: You need to mount KeyVault in `/mnt/secrets`. Under which property in the YAML file `mountPath: /mnt/secrets/` will go?
+Question: You need to mount Azure Files in `/aci/logs/`. Under which property in the YAML file `mountPath: /mnt/secrets/` will go?
 
 - [ ] volumes
 - [x] volumesMounts
@@ -793,7 +829,7 @@ Answer: `volumesMounts` - Where to mount.
 
 ---
 
-Question: You need to mount KeyVault in `/mnt/secrets`. Under which property in the YAML file `azureKeyVault:` will go?
+Question: You need to mount Azure Files in `/aci/logs/`. Under which property in the YAML file `azureFile:` will go?
 
 - [x] volumes
 - [ ] volumesMounts
