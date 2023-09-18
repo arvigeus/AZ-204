@@ -112,8 +112,15 @@ az login
 # Create a resource group
 az group create --name $resourceGroupName --location eastus
 
+# (Optional)
+
 # Deployment
+##
+## NOTE: If using managed identities with ACR, you'll also need --asign-identity param
+## or az container identity assign --identities $identityName --resource-group $resourceGroupName --name $containerName
+##
 ## From image - simple scenarios
+###
 ### Azure File share: https://learn.microsoft.com/en-us/azure/container-instances/container-instances-volume-azure-files
 ### Can only be mounted to Linux containers running as root!
 ### --os-type Linux
@@ -137,11 +144,15 @@ az group create --name $resourceGroupName --location eastus
 ### Mount secret volumes: https://learn.microsoft.com/en-us/azure/container-instances/container-instances-volume-secret
 ### --secrets mysecret1="My first secret FOO" mysecret2="My second secret BAR"
 ### --secrets-mount-path /mnt/secrets
+### NB: Restricted to Linux containers
 ### NOTE: This creates mysecret1 and mysecret2 files in /mnt/secrets with value the content of the secret
+###
 az container create --name $containerName --image $imageName:$tag --resource-group $resourceGroupName
+##
 ## From YAML file - deployment includes only container instances
-### Same options as from simple deployment, but in a YAML file
+### Same options as from simple deployment, but in a YAML file. Includes container groups.
 az container create --name $containerName --file deploy.yml --resource-group $resourceGroupName
+##
 ## ARM template - deploy additional Azure service resources (for example, an Azure Files share)
 ### No example, but it's good to know this fact
 
@@ -171,14 +182,14 @@ properties:
             secureValue: "my-secret-value"
         image: mcr.microsoft.com/hello-world
         ports:
-          - port: 8088
+          - port: 443
         resources:
           requests:
             cpu: 1.0
             memoryInGB: 1
         volumeMounts:
-        - mountPath: /mnt/secrets
-          name: secretvolume
+          - mountPath: /mnt/secrets
+            name: secretvolume
     - name: hellofiles
       properties:
         environmentVariables: []
@@ -192,11 +203,12 @@ properties:
         volumeMounts:
           - mountPath: /aci/logs/
             name: filesharevolume
-  osType: Linux
+  osType: Linux # or Windows (for single containers)
   restartPolicy: Always
   ipAddress:
     type: Public
     ports:
+      - port: 443
       - port: 80
     dnsNameLabel: containerName
   volumes:
@@ -205,16 +217,16 @@ properties:
         sharename: acishare
         storageAccountName: <Storage account name>
         storageAccountKey: <Storage account key>
-  - name: secretvolume
-    secret:
-      # NB: The secret values must be Base64-encoded!
-      mysecret1: TXkgZmlyc3Qgc2VjcmV0IEZPTwo= # "My first secret FOO"
-      mysecret2: TXkgc2Vjb25kIHNlY3JldCBCQVIK # "My second secret BAR"
+    - name: secretvolume
+      secret:
+        # NB: The secret values must be Base64-encoded!
+        mysecret1: TXkgZmlyc3Qgc2VjcmV0IEZPTwo= # "My first secret FOO"
+        mysecret2: TXkgc2Vjb25kIHNlY3JldCBCQVIK # "My second secret BAR"
 tags: {}
 type: Microsoft.ContainerInstance/containerGroups
 ```
 
-### Note for Azure File Share
+### Note for Azure File Shares
 
 **Azure Container Instances does not support direct integration Blob Storage** because it lacks SMB support.
 
@@ -322,9 +334,11 @@ Secrets are scoped to an application (`az containerapp create`), outside of any 
 
 Defining secrets: `--secrets "queue-connection-string=<CONNECTION_STRING>"`
 
-Referencing Secrets in Environment Variables (`secretref:`): `--env-vars "QueueName=myqueue" "ConnectionString=secretref:queue-connection-string"`
+Secrets from Key Vault: `--secrets "queue-connection-string=keyvaultref:<KEY_VAULT_SECRET_URI>,identityref:<USER_ASSIGNED_IDENTITY_ID>"`
 
 Mounting Secrets in a Volume (secret name is filename, secret value is content): `--secret-volume-mount "/mnt/secrets"`
+
+Referencing Secrets in Environment Variables (`secretref:`): `--env-vars "QueueName=myqueue" "ConnectionString=secretref:queue-connection-string"`
 
 ### [Logging](https://learn.microsoft.com/en-us/azure/container-apps/log-monitoring)
 

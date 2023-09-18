@@ -69,8 +69,10 @@ Settings affect all apps in your App Service plan
 
 Horizontal scaling: Adding/removing virtual machines.
 
-**Scale out** (increase VM instances): If _any_ of the rules are met  
-**Scale in** (decrease VM instances): If _all_ rules are met
+- **Scale out** (increase VM instances): If _any_ of the rules are met
+- **Scale in** (decrease VM instances): If _all_ rules are met
+
+Vertical scaling: Scale up/down - when changing app service plan
 
 [**Flapping**](https://learn.microsoft.com/en-us/azure/azure-monitor/autoscale/autoscale-flapping): a loop condition where a scale event triggers its opposite in a series of alternating events.
 
