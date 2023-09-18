@@ -251,22 +251,23 @@ Fully managed (no need to manage other Azure infrastructure) environment. Common
 - Handling event-driven processing
 - Running microservices
 
-Cannot run privileged containers requiring _root_ access and strictly requires _Linux-based (linux/amd64)_ container images.
+Limitations:
+
+- Cannot run privileged containers (no root).
+- linux/amd64 container images are required.
+- State doesn't persist inside a container due to regular restarts. Use external caches for in-memory cache requirements.
 
 A webhook can be used to notify Azure Container Apps when a new image has been pushed to the ACR, triggering automatic deployment of the updated container.
 
-### [Auth](https://learn.microsoft.com/en-us/azure/container-apps/managed-identity)
+### [Auth](https://learn.microsoft.com/en-us/azure/container-apps/authentication)
 
-The platform's authentication and authorization middleware component runs as a _sidecar_ container on each application replica, screening all incoming HTTPS (_disable_ `allowInsecure` in ingress config) requests before they reach your application. [See more](./App%20Service%20Web%20Apps.md). It requires any identity provider and specified provider within app settings.
+The platform's authentication and authorization middleware component runs as a _sidecar_ container on each application replica, screening all incoming HTTPS (ensure `allowInsecure` is _disabled_ in ingress config) requests before they reach your application. [See more](./App%20Service%20Web%20Apps.md). It requires any identity provider and specified provider within app settings.
 
-Add a system-assigned identity: `az containerapp identity assign --name myApp --resource-group myResourceGroup --system-assigned`
+### [Managed identities](https://learn.microsoft.com/en-us/azure/container-apps/managed-identity)
 
-Add a user-assigned identity:
+Main topic: [Managed Identities](./Managed%20Identities.md)
 
-```sh
-# az identity create --resource-group <GROUP_NAME> --name <IDENTITY_NAME> --output json
-az containerapp identity assign --user-assigned <IDENTITY_RESOURCE_ID> --resource-group <GROUP_NAME> --name <APP_NAME>
-```
+Not supported in scaling rules.
 
 ### [Scaling](https://learn.microsoft.com/en-us/azure/container-apps/scale-app)
 
@@ -291,42 +292,39 @@ az containerapp create \
  --max-replicas 5 \
 
  #  HTTP Scaling Rule
- --scale-rule-name azure-http-rule \
+ --scale-rule-name http-rule-name \
  --scale-rule-type http \
  --scale-rule-http-concurrency 100
 
  # TCP Scaling Rule
- --scale-rule-name azure-tcp-rule \
+ --scale-rule-name tcp-rule-name \
  --scale-rule-type tcp \
  --scale-rule-tcp-concurrency 100
 
  # Custom Scaling rule
+ ## Note we use --secrets to define the connection string and reuse it by secret name in --scale-rule-auth
   --secrets "connection-string-secret=<SERVICE_BUS_CONNECTION_STRING>" \
- --scale-rule-name azure-servicebus-queue-rule \
- --scale-rule-type azure-servicebus \
- --scale-rule-metadata "queueName=my-queue" \
- "namespace=service-bus-namespace" \
- "messageCount=5" \
  --scale-rule-auth "connection=connection-string-secret"
+ --scale-rule-name servicebus-rule-name \
+ --scale-rule-type azure-servicebus \
+ --scale-rule-metadata "queueName=my-queue" "namespace=service-bus-namespace" "messageCount=5"
 ```
 
-Without a scale rule, the default (HTTP, 0-10) applies to your app. Create a rule or set minReplicas to 1+ if ingress is disabled. Without minReplicas or a custom rule, your app can scale to zero and won't start.
+Without a scale rule, the default (HTTP, 0-10 replicas) applies to your app. Create a rule or set minReplicas to 1+ if ingress is disabled. Without minReplicas or a custom rule, your app can scale to zero and won't start.
 
 ### [Revisions](https://learn.microsoft.com/en-us/azure/container-apps/revisions)
 
-Immutable snapshots of a container app version. The first revision is auto-created upon deployment. Up to 100 revisions can be stored for history. Multiple revisions can run at once, with HTTP traffic split among them.
+Immutable snapshots of a container app version. The first revision is auto-created upon deployment, new are created on revision scope changes. Up to 100 revisions can be stored for history. Multiple revisions can run at once, with HTTP traffic split among them.
 
-State doesn't persist inside a container due to regular restarts. Use external caches for in-memory cache requirements.
-
-In single revision mode, Container Apps prevents downtime during updates, keeping the old revision active until the new one is ready.  
-In multiple revision mode, you control revision activation and traffic distribution (via ingress), with traffic only switching to the latest revision when it's ready.
+- **Single revision mode**: keeps the old revision active until the new one is ready.
+- **Multiple revision mode**: you control revision lifecycle and traffic distribution (via ingress), with traffic only switching to the latest revision when it's ready.
 
 Revision Labels: direct traffic to specific revisions. A label provides a unique URL that you can use to route traffic to the revision that the label is assigned.
 
 Scopes:
 
-- Revision-scope changes via `az containerapp update` trigger a new revision when you deploy your app (trigger: changing [properties.template](https://learn.microsoft.com/en-us/azure/container-apps/azure-resource-manager-api-spec?tabs=arm-template#propertiestemplate)). The changes don't affect other revisions.
-- Application-scope changes are globally applied to all revisions. A new revision isn't created (trigger: changing [properties.configuration](https://learn.microsoft.com/en-us/azure/container-apps/azure-resource-manager-api-spec?tabs=arm-template#propertiesconfiguration))
+- Revision-scope changes via `az containerapp update` trigger a new revision when you deploy your app. Trigger: changing [properties.template](https://learn.microsoft.com/en-us/azure/container-apps/azure-resource-manager-api-spec?tabs=arm-template#propertiestemplate). Example: version suffix, container config, scaling rules. The changes don't affect other revisions.
+- Application-scope changes are globally applied to all revisions. A new revision isn't created Trigger: changing [properties.configuration](https://learn.microsoft.com/en-us/azure/container-apps/azure-resource-manager-api-spec?tabs=arm-template#propertiesconfiguration). Example: secrets, revision mode, ingress, credentials, DARP settings.
 
 ### [Secrets](https://learn.microsoft.com/en-us/azure/container-apps/manage-secrets?tabs=azure-cli)
 
@@ -334,7 +332,7 @@ Secrets are scoped to an application (`az containerapp create`), outside of any 
 
 Defining secrets: `--secrets "queue-connection-string=<CONNECTION_STRING>"`
 
-Secrets from Key Vault: `--secrets "queue-connection-string=keyvaultref:<KEY_VAULT_SECRET_URI>,identityref:<USER_ASSIGNED_IDENTITY_ID>"`
+Secrets from Key Vault: `--secrets "kv-connection-string=keyvaultref:<KEY_VAULT_SECRET_URI>,identityref:<USER_ASSIGNED_IDENTITY_ID>"`
 
 Mounting Secrets in a Volume (secret name is filename, secret value is content): `--secret-volume-mount "/mnt/secrets"`
 
@@ -385,7 +383,8 @@ function deploy_repo() {
     --location eastus \
     --environment prod \
     --context-path ./src \
-    --repo myuser/myrepo
+    --repo myuser/myrepo \
+    --ingress 'external'
 
   # Display the Fully Qualified Domain Name (FQDN) of the app after it's deployed. This is the URL you would use to access your application.
   az containerapp show --name MyAPI --resource-group MyResourceGroup --query properties.configuration.ingress.fqdn

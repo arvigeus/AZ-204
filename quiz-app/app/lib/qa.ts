@@ -1,7 +1,10 @@
 import type { QAPair } from "~/types/QAPair";
 
-import { data } from "~/db";
-export { data, topics } from "~/db";
+import { qa } from "~/db";
+
+const { data, topics } = qa;
+
+export { data, topics };
 
 type Question = QAPair & { index: number };
 

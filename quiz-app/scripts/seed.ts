@@ -3,13 +3,14 @@ import path from "path";
 import { createHash } from "crypto";
 
 import type { QAPair } from "~/types/QAPair";
+import type { KnowledgeItem } from "~/types/KnowledgeItem";
 
 type FileContent = {
   name: string;
   content: string;
 };
 
-const parseItem = (name: string, text: string, idCounter: number): QAPair[] => {
+const parseQuestionItems = (name: string, text: string): QAPair[] => {
   const lines = text.split("\n");
   const qaPairs: QAPair[] = [];
   let currentQuestion: string[] = [];
@@ -95,6 +96,45 @@ const parseItem = (name: string, text: string, idCounter: number): QAPair[] => {
   return qaPairs;
 };
 
+const parseKnowledgeItems = (text: string): KnowledgeItem[] => {
+  const lines = text.split("\n").slice(2); // Skip the first two lines (title)
+  const knowledgeItems: KnowledgeItem[] = [];
+
+  let currentQuestion: string[] = [];
+  let currentType: string | null = null;
+  let currentHint: string | null = null;
+
+  for (const line of lines) {
+    if (line.startsWith("---")) {
+      // End of a question
+      if (currentType && currentQuestion.length > 0) {
+        knowledgeItems.push({
+          question: currentQuestion.join("\n").trim(),
+          type: currentType,
+          hint: currentHint,
+        });
+      }
+      // Reset
+      currentQuestion = [];
+      currentType = null;
+      currentHint = null;
+    } else if (line.includes(":") && currentQuestion.length === 0) {
+      // Type and Question
+      const [type, question] = line.split(":", 2);
+      currentType = type.trim();
+      currentQuestion.push(question.trim());
+    } else if (line.startsWith("<!--") && line.endsWith("-->")) {
+      // Hint
+      currentHint = line.replace("<!--", "").replace("-->", "").trim();
+    } else if (currentQuestion.length > 0) {
+      // Continuation of a question
+      currentQuestion.push(line.trim());
+    }
+  }
+
+  return knowledgeItems;
+};
+
 const loadContents = async (directory: string): Promise<FileContent[]> => {
   const dirPath = path.join(__dirname, "..", "..", directory);
   console.log(`Loading questions from ${dirPath}`);
@@ -150,38 +190,72 @@ const loadContentFromGItHub = async (
   return items;
 };
 
-const parseFiles = (files: FileContent[]) => {
+const parseQuestionFiles = (files: FileContent[]) => {
   const topics = [];
   const data = [];
 
   for (const { name, content } of files) {
     topics.push(name);
-    const items = parseItem(name, content, data.length);
+    const items = parseQuestionItems(name, content);
     data.push(...items);
   }
 
   return { topics, data };
 };
 
-const saveData = async (topics: string[], data: any[]) => {
-  const dbPath = path.join(process.cwd(), "app", "db.ts");
-  const serializedTopics = JSON.stringify(topics, null, 2);
-  const serializedData = JSON.stringify(data, null, 2);
-  const content = `export const topics = ${serializedTopics};\n\nexport const data = ${serializedData};\n`;
+const parseKnowledgeFiles = (files: FileContent[]) => {
+  const topics = [];
+  const data = [];
 
-  await fs.writeFile(dbPath, content);
+  for (const { name, content } of files) {
+    topics.push(name);
+    const items = parseKnowledgeItems(content);
+    data.push(...items);
+  }
+
+  return { topics, data };
 };
 
-const init = async (directory: string): Promise<void> => {
-  const files = await (process.env.NODE_ENV !== "production"
-    ? loadContents(directory)
-    : loadContentFromGItHub(directory));
+const serialize = (item: any): string => JSON.stringify(item, null, 2);
 
-  const { topics, data } = parseFiles(files);
+const saveData = async (
+  qaTopics: string[],
+  qaData: QAPair[],
+  kcTopics: string[],
+  kcData: KnowledgeItem[],
+  location: string
+) => {
+  const content = `export const qa = {topics:${serialize(
+    qaTopics
+  )},data:${serialize(qaData)}}\n\nexport const kc = {topics:${serialize(
+    kcTopics
+  )},data:${serialize(kcData)}}`;
 
-  await saveData(topics, data);
+  await fs.writeFile(location, content);
 };
 
-init(path.join("Questions"))
+const loadFiles = async (dir: string): Promise<FileContent[]> =>
+  await (process.env.NODE_ENV !== "production"
+    ? loadContents(path.join(dir))
+    : loadContentFromGItHub(path.join(dir)));
+
+const init = async (): Promise<void> => {
+  const { topics: qaTopics, data: qaData } = parseQuestionFiles(
+    await loadFiles("Questions")
+  );
+  const { topics: kcTopics, data: kcData } = parseKnowledgeFiles(
+    await loadFiles("Knowledge Check")
+  );
+
+  await saveData(
+    qaTopics,
+    qaData,
+    kcTopics,
+    kcData,
+    path.join(process.cwd(), "app", "db.ts")
+  );
+};
+
+init()
   .then(() => console.log("Questions saved to database successfully"))
   .catch((err) => console.error(err));
