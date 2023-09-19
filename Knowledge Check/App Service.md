@@ -48,6 +48,10 @@ md: How to move an App Service Plan? What are the prerequisites and requirenment
 
 md: Describe different scaling methods. What plans do they require? How they behave? When to choose one over the other?
 
+- Manual
+- Autoscale
+- Automatic scale
+
 <!-- Manual: Basic+. Predictable one-off events; Autoscale: Standard+. Predictable periodic events or based on resource; Automatic scaling: PremiumV2+. Like Autoscale, but with pre-warmed instances. Use to avoid cold boots. -->
 
 ---
@@ -67,6 +71,18 @@ md: How to setup a scaling rule?
 md: What is "flapping"?
 
 <!-- a loop condition where a scale event triggers its opposite in a series of alternating events. -->
+
+---
+
+md: If you want to use `--is-linux`, what requirenments and limitations there are?
+
+<!-- Standard+ plan; persistent storage is on by default, mounted blob storage is read-only, auth middleware runs separately, only app and deployment logging -->
+
+---
+
+md: What are staging environments and what are the prerequisites to use them?
+
+<!-- Deployment slots. Standard+ plan -->
 
 ---
 
@@ -106,9 +122,9 @@ md: How App Settings works?
 
 ---
 
-md: What is "Always On"? When is needed?
+md: What is "Always On"? When is needed? What are prerequisites to enable it?
 
-<!-- Prevents app from sleeping after 20 mins of inactivity. Needed for Application Insights Profiler and avoiding cold boots. -->
+<!-- Prevents app from sleeping after 20 mins of inactivity. Needed for Application Insights Profiler and avoiding cold boots; Basic+ -->
 
 ---
 
@@ -286,7 +302,7 @@ md: Using certificates with Application Service: general specifics and when to u
 - App Service Certificate
 - Using Key Vault
 
-<!-- Accessible to all apps in the same resource group and region; Free Managed: does not support wildcart ASE, and exporting; AppService: can be exported; KeyVault: can be used for private (no automated reneval) or managed cert -->
+<!-- Accessible to all apps in the same resource group and region; Free Managed: Basic+, does not support wildcart ASE, and exporting; AppService: can be exported; KeyVault: can be used for private (no automated reneval) or managed cert -->
 
 ---
 
@@ -449,7 +465,7 @@ sh: How to create App Service Plan via AZ CLI for Linux?
 
 sh: How to create deployment slot in App Service and its prerequisites via AZ CLI?
 
-<!-- az group create; az appservice plan create --sku S1; az webapp create --name $webapp --plan $appServicePlan; az webapp deployment slot create --name $webapp--slot staging; az webapp --slot staging -->
+<!-- az group create; az appservice plan create --sku S1; az webapp create --name $webapp --plan $appServicePlan; az webapp deployment slot create --name $webapp --slot staging; az webapp --slot staging -->
 
 ---
 

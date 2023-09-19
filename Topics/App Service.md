@@ -554,7 +554,7 @@ staging_deployment() {
     az appservice plan update --name $appServicePlan --sku S1 --resource-group $resourceGroup
 
     echo "Creating a deployment slot"
-    az webapp deployment slot create --name $webapp--slot staging --resource-group $resourceGroup
+    az webapp deployment slot create --name $webapp --slot staging --resource-group $resourceGroup
 
     echo "Deploying to Staging Slot"
     az webapp deployment source config --name $webapp --resource-group $resourceGroup \
