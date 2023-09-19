@@ -7,7 +7,7 @@ TLDR;
 - Practice with [quiz app](https://az-204.vercel.app/) ([by topic](https://az-204.vercel.app/topics))
 - Practice in [Azure Sandbox Environment](https://github.com/Azure-Samples/azuresandbox)
 
-## [Study guide for Exam AZ-204: Developing Solutions for Microsoft Azure](https://learn.microsoft.com/en-us/certifications/resources/study-guides/az-204#skills-measured-as-of-april-28-2023)
+## [Study guide for Exam AZ-204: Developing Solutions for Microsoft Azure](https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/az-204#skills-measured-prior-to-august-21-2023)
 
 [AZ-204 Exam Updates for April 2023](https://www.youtube.com/watch?v=hzVy9RTl_iA)
 
