@@ -6,7 +6,6 @@ import { Form, Link, useLoaderData, useParams } from "@remix-run/react";
 import { useState } from "react";
 import clsx from "clsx";
 
-import App from "~/App";
 import { AnswerOptions } from "~/components/AnswerOptions";
 import { Button } from "~/components/Button";
 import { TextInput } from "~/components/Input";
@@ -48,73 +47,67 @@ export default function Topic() {
     setCheckedValues([]);
     setShowAnswer(false);
     setIndex((index) => index + 1);
-    window.scrollTo(0, 0);
+    // window.scrollTo(0, 0);
     return false;
   };
 
   return (
-    <App>
-      <Form method="post" onSubmit={handleSubmit}>
-        <h2 className="mt-0 text-center">
-          <Link to={`/topics`}>← Back to Topics</Link>
-        </h2>
-        {question ? (
-          <>
-            <div className="text-2x">
-              <span className="font-bold">
-                {params.name} ({index + 1} / {questions.length}):{" "}
-              </span>
-              <RichMarkdown interactive children={question.question} />
+    <Form method="post" onSubmit={handleSubmit}>
+      <h2 className="mt-0 text-center">
+        <Link to={`/topics`}>← Back to Topics</Link>
+      </h2>
+      {question ? (
+        <>
+          <div className="text-2x">
+            <span className="font-bold">
+              {params.name} ({index + 1} / {questions.length}):{" "}
+            </span>
+            <RichMarkdown interactive children={question.question} />
+          </div>
+          {question.options && question.options.length > 0 && (
+            <AnswerOptions
+              name="answers"
+              options={question.options}
+              checkedValues={checkedValues}
+              setCheckedValues={setCheckedValues}
+              showAnswer={showAnswer}
+              answerIndexes={question.answerIndexes}
+              disabled={showAnswer}
+            />
+          )}
+          {question.answerIndexes && question.answerIndexes.length > 1 && (
+            <div className="italic text-gray-400 text-xs">
+              Note: This question has more than one correct answer
             </div>
-            {question.options && question.options.length > 0 && (
-              <AnswerOptions
-                name="answers"
-                options={question.options}
-                checkedValues={checkedValues}
-                setCheckedValues={setCheckedValues}
-                showAnswer={showAnswer}
-                answerIndexes={question.answerIndexes}
-                disabled={showAnswer}
-              />
-            )}
-            {question.answerIndexes && question.answerIndexes.length > 1 && (
-              <div className="italic text-gray-400 text-xs">
-                Note: This question has more than one correct answer
-              </div>
-            )}
-            {(!question.options || !question.options.length) &&
-              !question.hasCode && <TextInput />}
+          )}
+          {(!question.options || !question.options.length) &&
+            !question.hasCode && <TextInput />}
 
-            <div
-              className={clsx(
-                "transition-[height] transition-[opacity] duration-500 ease-in-out mt-4 overflow-hidden",
-                showAnswer ? "h-auto opacity-100" : "h-0 opacity-0"
-              )}
+          <div
+            className={clsx(
+              "transition-[height] transition-[opacity] duration-500 ease-in-out mt-4 overflow-hidden",
+              showAnswer ? "h-auto opacity-100" : "h-0 opacity-0"
+            )}
+          >
+            <div className="font-bold">Answer: </div>
+            <RichMarkdown children={question.answer} />
+          </div>
+          <div className="flex justify-between mt-12">
+            <Button
+              type="button"
+              onClick={() => setShowAnswer((ans) => !ans)}
+              bgColor={buttonColor}
             >
-              <div className="font-bold">Answer: </div>
-              <RichMarkdown children={question.answer} />
-            </div>
-            <div className="flex justify-between mt-12">
-              <Button
-                type="button"
-                onClick={() => setShowAnswer((ans) => !ans)}
-                bgColor={buttonColor}
-              >
-                {!showAnswer ? "Show" : "Hide"} Answer
-              </Button>
-              <Button
-                bgColor={buttonColor}
-                type="submit"
-                onSubmit={handleSubmit}
-              >
-                Next
-              </Button>
-            </div>
-          </>
-        ) : (
-          <div className="text-7xl italic text-center">All done! 🎉</div>
-        )}
-      </Form>
-    </App>
+              {!showAnswer ? "Show" : "Hide"} Answer
+            </Button>
+            <Button bgColor={buttonColor} type="submit" onSubmit={handleSubmit}>
+              Next
+            </Button>
+          </div>
+        </>
+      ) : (
+        <div className="text-7xl italic text-center">All done! 🎉</div>
+      )}
+    </Form>
   );
 }

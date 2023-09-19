@@ -21,6 +21,8 @@
 - Dedicated Azure Virtual Networks: Isolated+
 - Maximum scale-out: Isolated+
 
+The roles that handle incoming HTTP or HTTPS requests are called _front ends_. The roles that host the customer workload are called _workers_.
+
 ### Tiers
 
 - **Shared compute**: **Free** (F1) and **Shared** (D1) tiers run apps on the same Azure VM with other customer apps, sharing resources and limited CPU quotas. ⭐: _development_ and _testing_ only. Each app is charged for _CPU quota_.
@@ -89,6 +91,9 @@ Require Standard+.
 
 [Best practices](https://learn.microsoft.com/en-us/azure/app-service/deploy-best-practices): Deploy to staging, then swap slots to warm up instances and eliminate downtime.
 
+- **Swapped**: Settings that define the application's _behavior_. Includes connection strings, authentication settings, public certificates, path mappings, CDN, hybrid connections.
+- **Not Swapped**: Settings that define the application's _environment and security_. They are less about the application itself and more about how it interacts with the external world. Examples: Private certificates, managed identities, publishing endpoints, diagnostic logs settings, CORS.
+
 | Settings that are swapped                      | Settings that aren't swapped                            |
 | ---------------------------------------------- | ------------------------------------------------------- |
 | General settings: framework, arch, web sockets | Publishing endpoints                                    |
@@ -105,6 +110,8 @@ Require Standard+.
 |                                                | Settings that end with the suffix `\_EXTENSION_VERSION` |
 
 To enable settings swapping, add `WEBSITE_OVERRIDE_PRESERVE_DEFAULT_STICKY_SLOT_SETTINGS` as an app setting in every slot and set it to 0 or false. All settings are either swappable or not. Managed identities are never swapped.
+
+Note: **Hybrid Connections**: Lets your Azure App talk to your local server securely without changing firewall settings.
 
 ### [Custom deployment](https://github.com/projectkudu/kudu/wiki/Customizing-deployments)
 
@@ -317,7 +324,7 @@ Each deployment slot / app has it's own managed identity configuration.
 
 ##### REST endpoint reference
 
-An app with a managed identity makes this endpoint available by defining two environment variables:
+An app with a managed identity defines two environment variables to make an endpoint available. This endpoint can be used to request tokens for accessing other Azure services
 
 - `IDENTITY_ENDPOINT` endpoint from which apps can request tokens.
 - `IDENTITY_HEADER` - (uuid) used to help mitigate server-side request forgery (SSRF) attacks.
@@ -405,25 +412,23 @@ Requires Basic+ plan; set from `Configuration > General Settings`.
 
 TLS termination is handled by frontend load balancer. When enabling client certificates (`az webapp update --set clientCertEnabled=true ...`), `X-ARR-ClientCert` header is added. Accessing client certificate: `HttpRequest.ClientCertificate`:
 
+For NodeJs, client certificate is accessed through request header: `req.get('X-ARR-ClientCert');`
+
 ```cs
-// Configure the application to client certificate forwarded the frontend load balancer
+// Forward the client certificate from the frontend load balancer
 services.AddCertificateForwarding(options => { options.CertificateHeader = "X-ARR-ClientCert"; });
 
-// Add certificate authentication so when authorization is performed the user will be created from the certificate
+// Adds certificate-based authentication to the application.
 services.AddAuthentication(CertificateAuthenticationDefaults.AuthenticationScheme).AddCertificate();
 ```
 
-For NodeJs, client certificate is accessed through request header: `req.get('X-ARR-ClientCert');`
-
-### CORS
+### [CORS](https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-rest-api)
 
 For apps: `az webapp cors add --allowed-origins $website ...`
 
 For storage: `az storage cors add --services blob --methods GET POST --origins $website --allowed-headers '*' --exposed-headers '*' --max-age 200 ...`
 
-To enable the sending of credentials like cookies or authentication tokens in your app, the browser may require the `ACCESS-CONTROL-ALLOW-CREDENTIALS` header in the response: `az resource update --set properties.cors.supportCredentials=true --namespace Microsoft.Web --resource-type config --parent sites/$appName ...`
-
-The roles that handle incoming HTTP or HTTPS requests are called _front ends_. The roles that host the customer workload are called _workers_.
+_To enable the sending of credentials like cookies or authentication tokens in your app_, the browser may require the `ACCESS-CONTROL-ALLOW-CREDENTIALS` header in the response: `az resource update --set properties.cors.supportCredentials=true --namespace Microsoft.Web --resource-type config --parent sites/$appName ...`
 
 ## Networking
 
@@ -434,14 +439,14 @@ The roles that handle incoming HTTP or HTTPS requests are called _front ends_. T
 
 - [**Networking Features**](https://learn.microsoft.com/en-us/azure/app-service/networking-features): Manage both incoming (inbound) and outgoing (outbound) network traffic.
 
-  | Feature                                      | Type     | Use Cases                                                                           |
-  | -------------------------------------------- | -------- | ----------------------------------------------------------------------------------- |
-  | App-assigned address                         | Inbound  | Support IP-based SSL for your app; Support a dedicated inbound address for your app |
-  | Access restrictions                          | Inbound  | Restrict access to your app from a set of well-defined IP addresses                 |
-  | Service endpoints/Private endpoints          | Inbound  | Restrict access to your Azure Service Resources to only your virtual network        |
-  | Hybrid Connections                           | Outbound | Access an on-premises system or service securely                                    |
-  | Gateway-required virtual network integration | Outbound | Access Azure or on-premises resources via ExpressRoute or VPN                       |
-  | Virtual network integration                  | Outbound | Access Azure network resources                                                      |
+  | Feature                                      | Type     | Use Cases                                                                                 |
+  | -------------------------------------------- | -------- | ----------------------------------------------------------------------------------------- |
+  | App-assigned address                         | Inbound  | Support IP-based SSL for your app; Support a dedicated inbound address for your app       |
+  | Access restrictions                          | Inbound  | Restrict access to your app from a set of well-defined IP addresses                       |
+  | Service endpoints/Private endpoints          | Inbound  | Restrict access to your Azure Service Resources to only your virtual network              |
+  | Hybrid Connections                           | Outbound | Access an on-premises system or service securely (from Azure to On-Premises)              |
+  | Gateway-required virtual network integration | Outbound | Access Azure or on-premises resources via ExpressRoute or VPN (two way Azure-On-Premises) |
+  | Virtual network integration                  | Outbound | Access Azure network resources                                                            |
 
 - **Default Networking Behavior**: Free and Shared plans use multi-tenant workers, meaning your application shares resources with others. Plans from Basic and above use dedicated workers, meaning your application gets its own resources. If you have a Standard App Service plan, all the apps in that plan run on the same worker.
 
@@ -461,9 +466,9 @@ The roles that handle incoming HTTP or HTTPS requests are called _front ends_. T
 | Deployment logging      | Windows, Linux | App Service file system                            | Logs for when you publish content to an app.                                                                                       |
 
 The _App Service file system_ option is for temporary debugging purposes, and turns itself off in 12 hours.  
-_The Blob_ option is for long-term logging, includes additional information. Only available for .Net application.
+_The Blob_ option is for long-term logging, includes additional information. .Net apps only.
 
-`az webapp log config --application-logging {azureblobstorage, filesystem, off} --name MyWebapp --resource-group MyResourceGroup`
+`az webapp log config --application-logging {azureblobstorage, filesystem, off} --name MyWebapp --resource-group $resourceGroup`
 
 Accessing log files:
 
@@ -487,7 +492,7 @@ CLI: `az webapp log tail ...`
 az webapp log tail --provider http --name $app --resource-group $resourceGroup
 
 # Stream errors
-az webapp log tail --filter Error --name $app --resource-group $resourceGroup
+az webapp log tail --filter Error --name $app --resource-group $resourceGroup # filter by word Error
 az webapp log tail --only-show-errors --name $app --resource-group $resourceGroup
 ```
 
@@ -502,7 +507,7 @@ az monitor metrics list --resource $app_service_plan_resource_id --metric "Perce
 ```
 
 CPU Time is valuable for apps on Free or Shared plans, where quotas are set by app's CPU minutes usage.  
-The CPU percentage is valuable for apps on Basic, Standard, and Premium plans, providing insights into usage across scalable instances.
+The CPU percentage is valuable for apps on Basic+, providing insights into usage across scalable instances.
 
 ### [Health Checks](https://learn.microsoft.com/en-us/azure/app-service/monitor-instances-health-check?tabs=dotnet)
 
@@ -510,7 +515,7 @@ Health Check pings the specified path every minute. If an instance fails to resp
 
 For private endpoints check if `x-ms-auth-internal-token` request header equals the hashed value of `WEBSITE_AUTH_ENCRYPTION_KEY` environment variable. You should first use features such as IP restrictions, client certificates, or a Virtual Network to restrict application access.
 
-Configure path: `az webapp config set --health-check-path <Path> --resource-group <ResourceGroup> --name <AppName>`
+Configure path: `az webapp config set --health-check-path <Path> --resource-group $resourceGroup --name $webApp`
 
 ### [Application Insights Profiler](https://learn.microsoft.com/en-us/azure/azure-monitor/profiler/profiler)
 
@@ -566,7 +571,7 @@ staging_deployment() {
 docker_deployment() {
     # (Optional) Use managed identity: https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container?tabs=debian&pivots=container-linux#change-the-docker-image-of-a-custom-container
     ## Enable the system-assigned managed identity for the web app
-    az webapp identity assign --query principalId --output tsv --name $webapp --resource-group $resourceGroup
+    az webapp identity assign --name $webapp --resource-group $resourceGroup
     ## Grant the managed identity permission to access the container registry
     az role assignment create --assignee $principalId --scope $registry_resource_id --role "AcrPull"
     ## Configure your app to use the system managed identity to pull from Azure Container Registry
@@ -581,6 +586,10 @@ docker_deployment() {
       --docker-registry-server-url <private-repo-url> \
       --docker-registry-server-user <username> \
       --docker-registry-server-password <password>
+
+    # NOTE: Another version of it, using
+    # az webapp create --deployment-container-image-name <registry-name>.azurecr.io/$image:$tag
+    # https://learn.microsoft.com/en-us/azure/app-service/tutorial-custom-container
 }
 
 # https://learn.microsoft.com/en-us/azure/app-service/tutorial-multi-container-app
@@ -606,7 +615,7 @@ compose_deployment() {
 zip_archive() {
   az webapp deploy --src-path "path/to/zip" --name $webapp --resource-group $resourceGroup
   # Zip from url
-  # az webapp deploy --src-url "https://storagesample.blob.core.windows.net/sample-container/myapp.zip?sv=2021-10-01&sb&sig=slk22f3UrS823n4kSh8Skjpa7Naj4CG3 --name $webapp --resource-group $resourceGroup
+  # az webapp deploy --src-url "https://storagesample.blob.core.windows.net/sample-container/myapp.zip?sv=2021-10-01&sb&sig=slk22f3UrS823n4kSh8Skjpa7Naj4CG3" --name $webapp --resource-group $resourceGroup
 
   # (Optional) Enable build automation
   # az webapp config appsettings set --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true --name $webapp --resource-group $resourceGroup
