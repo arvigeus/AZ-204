@@ -3,7 +3,6 @@ import type { V2_MetaFunction as MetaFunction } from "@remix-run/node";
 
 import { topics } from "~/lib/qa";
 
-import App from "~/App";
 import { InputStyle } from "~/components/Input";
 
 export const meta: MetaFunction = () => {
@@ -12,16 +11,14 @@ export const meta: MetaFunction = () => {
 
 export default function Index() {
   return (
-    <App>
-      <ul className="list-none p-0">
-        {topics.map((topic: string, index: number) => (
-          <li key={index} className="mb-2">
-            <Link className={InputStyle} to={`/topics/${topic}`}>
-              {topic}{" "}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </App>
+    <ul className="list-none p-0">
+      {topics.map((topic: string, index: number) => (
+        <li key={index} className="mb-2">
+          <Link className={InputStyle} to={`/topics/${topic}`}>
+            {topic}{" "}
+          </Link>
+        </li>
+      ))}
+    </ul>
   );
 }
