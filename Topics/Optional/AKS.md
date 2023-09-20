@@ -72,7 +72,7 @@ spec:
 
 ## Working with AKS
 
-```ps
+```sh
 # Register providers if they're not registered
 az provider register --namespace Microsoft.OperationsManagement
 az provider register --namespace Microsoft.OperationalInsights

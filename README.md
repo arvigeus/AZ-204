@@ -123,6 +123,12 @@ TLDR;
    - [Azure Service Bus](https://docs.microsoft.com/en-us/azure/service-bus-messaging/)
    - [Azure Queue Storage](https://docs.microsoft.com/en-us/azure/storage/queues/)
 
+## API Documentation
+
+- [AZ CLI](https://learn.microsoft.com/en-us/cli/azure/reference-index?view=azure-cli-latest)
+- [.Net](https://learn.microsoft.com/en-us/dotnet/api/)
+- [Powershell](https://learn.microsoft.com/en-us/cli/azure/reference-index?view=azure-cli-latest)
+
 ## Exam preparation
 
 - [Practice Assessments for Microsoft Certifications](https://learn.microsoft.com/en-us/certifications/exams/az-204/practice/assessment?assessment-type=practice&assessmentId=35)

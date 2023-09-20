@@ -114,7 +114,7 @@ var certificate = await client.GetCertificateAsync(certificateName);
 - Enable logging and alerts.
 - Enable **soft-delete** and **purge protection** to keep secrets for 7-90 days and prevent forced deletion. Charges apply for HSM-keys in the last 30 days of use. Operations are disabled on deleted objects, and no charges apply.
 
-  ```ps
+  ```sh
   az keyvault update --name <YourKeyVaultName> --enable-soft-delete true
   az keyvault update --name <YourKeyVaultName> --enable-purge-protection true
   ```

@@ -91,7 +91,7 @@ Clustering support (Premium+): Automatically split dataset among multiple nodes 
 
 Create cache:
 
-```ps
+```sh
 # Azure CLI command to create Azure Cache for Redis
 
 # Using az redis create command to create a Redis cache instance

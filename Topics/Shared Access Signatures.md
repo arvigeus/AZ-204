@@ -163,7 +163,7 @@ var blobServiceClientAccountSAS = new BlobServiceClient(
     new Uri($"{blobServiceURI}?{sasToken}"));
     ```
 
-```ps
+```sh
 # Assign the necessary permissions to the user
 az role assignment create \
  --role "Storage Blob Data Contributor" \

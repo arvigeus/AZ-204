@@ -173,13 +173,13 @@ Not supported on Consumption plan ([requires runtime-driven triggers](https://le
     ConnectionStringSetting = "CosmosDBConnection", // Note: this refers to env var name, not an actual connection string
     LeaseCollectionName = "leases")]IReadOnlyList<Document> input;
 [CosmosDB(databaseName:"myDb", collectionName:"collection", Id = "{id}", PartitionKey ="{partitionKey}")] dynamic document; // input
-[CosmosDB(databaseName:"myDb", collectionName:"collection", CreateIfNotExists =true)] out dynamic document; // output
+[CosmosDB(databaseName:"myDb", collectionName:"collection", CreateIfNotExists = true)] out dynamic document; // output
 
 // https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-event-grid
 [EventGridTrigger]EventGridEvent ev; // ev.Data
 // No Input binding
-[return: EventGrid(TopicEndpointUri = "EventGridTopicUriAppSetting", TopicKeySetting = "EventGridTopicKeyAppSetting")] // return new EventGridEvent(...); or new CloudEvent(...),
-EventGrid(TopicEndpointUri = "EventGridTopicUriAppSetting", TopicKeySetting = "EventGridTopicKeyAppSetting") out eventGridEvent;
+[return: EventGrid(TopicEndpointUri = "EventGridTopicUriAppSetting", TopicKeySetting = "EventGridTopicKeyAppSetting")] // return new EventGridEvent(...); or new CloudEvent(...)
+[EventGrid(TopicEndpointUri = "EventGridTopicUriAppSetting", TopicKeySetting = "EventGridTopicKeyAppSetting")] out eventGridEvent;
 [EventGrid(TopicEndpointUri = "EventGridTopicUriAppSetting", TopicKeySetting = "EventGridTopicKeyAppSetting")]IAsyncCollector<EventGridEvent> outputEvents; // (batch processing): outputEvents.AddAsync(myEvent)
 
 // https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-event-hubs
@@ -225,10 +225,10 @@ EventGrid(TopicEndpointUri = "EventGridTopicUriAppSetting", TopicKeySetting = "E
 
 ```sh
 # List the existing application settings
-az functionapp config appsettings list --name <FUNCTION_APP_NAME> --resource-group <RESOURCE_GROUP_NAME>
+az functionapp config appsettings list --name $name --resource-group <RESOURCE_GROUP_NAME>
 
 # Add or update an application setting
-az functionapp config appsettings set --settings CUSTOM_FUNCTION_APP_SETTING=12345 --name <FUNCTION_APP_NAME> --resource-group <RESOURCE_GROUP_NAME>
+az functionapp config appsettings set --settings CUSTOM_FUNCTION_APP_SETTING=12345 --name $name --resource-group <RESOURCE_GROUP_NAME>
 
 # Create a new function app (Consumption)
 az functionapp create --resource-group <MY_RESOURCE_GROUP> --name <NEW_CONSUMPTION_APP_NAME> --consumption-plan-location <REGION> --runtime dotnet --functions-version 3 --storage-account <STORAGE_NAME>
@@ -277,7 +277,7 @@ Delete or revoke keys: `DELETE`, action: `/keys/{keyName}`
 
 ```sh
 # Add a domain to the allowed origins list
-az functionapp cors add --allowed-origins https://contoso.com --name <FUNCTION_APP_NAME> --resource-group <RESOURCE_GROUP_NAME>
+az functionapp cors add --allowed-origins https://contoso.com --name $name --resource-group $resourceGroup
 
 # List the current allowed origins
 az functionapp cors show
@@ -308,14 +308,14 @@ Turn on verbose logging from the scale controller to Application Insights:
 
 ```sh
 az functionapp config appsettings set --settings SCALE_CONTROLLER_LOGGING_ENABLED=AppInsights:Verbose \
---name <FUNCTION_APP_NAME> --resource-group <RESOURCE_GROUP_NAME>
+--name $name --resource-group $resourceGroup
 ```
 
 Disable logging:
 
 ```sh
 az functionapp config appsettings delete --setting-names SCALE_CONTROLLER_LOGGING_ENABLED \
---name <FUNCTION_APP_NAME> --resource-group <RESOURCE_GROUP_NAME>
+--name $name --resource-group $resourceGroup
 ```
 
 #### Categories

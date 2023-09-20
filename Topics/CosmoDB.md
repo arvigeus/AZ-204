@@ -35,7 +35,7 @@ Auto-deletes items after a set time (seconds) from last modification. Configurab
 
 [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/cosmosdb?view=azure-cli-latest):
 
-```ps
+```sh
 # Create a Cosmos DB account
 az cosmosdb create --name $account --kind GlobalDocumentDB ...
 
@@ -105,7 +105,7 @@ Azure Cosmos DB provides a balanced approach to consistency, availability, and l
 - **Consistent prefix** - Readers might be a bit behind, but they always see things in order. Good for situations where sequence matters, like following a chain of events.
 - **Eventual** - Readers might see things out of order (non-consistent) or slightly old, but it eventually catches up. ⭐: when speed and availability are more important than immediate consistency, like a social media like counter. Lowest latency and highest availability.
 
-```ps
+```sh
 # Get the default consistency level
 az cosmosdb show --name $database--query defaultConsistencyLevel ...
 

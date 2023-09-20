@@ -105,7 +105,7 @@ BlobSignedIdentifier identifier = new BlobSignedIdentifier
 blobContainer.SetAccessPolicy(permissions: new BlobSignedIdentifier[] { identifier });
 ```
 
-```ps
+```sh
 az storage container policy create \
     --name <stored access policy identifier> \
     --container-name <container name> \

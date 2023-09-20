@@ -4,6 +4,14 @@
 
 [How to take a Microsoft Exam](https://github.com/mscerts/hub/blob/main/The%20Ultimate%20Certification%20Guide/6.%20How%20to%20take%20Microsoft%20exams.md)
 
+## Open book shortcuts
+
+From Microsoft Learn main URL, type these for quick access:
+
+- `cli` then select Reference on bottom left for AZ CLI
+- `dotnet/api/`: C#
+- `powershell/module`: Powershell
+
 ## Breadcrumb trail
 
 If question requires to figure out the order of commands, look for hints in code: for example Step X is using a variable initialized in Step Y, it means the order is Y, X.
