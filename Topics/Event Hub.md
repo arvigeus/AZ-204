@@ -42,7 +42,7 @@ If you need to archive events beyond the allowed retention period, you can have 
 
 ### [Event Hubs Capture](https://learn.microsoft.com/en-us/azure/event-hubs/event-hubs-capture-overview)
 
-Allows automatic capturing of streaming data into Azure Blob storage or Azure Data Lake Storage. It can process real-time and batch-based pipelines on the same stream. You can specify the time or size interval for capturing, and it scales automatically with throughput units.
+Allows automatic capturing of streaming data into **Azure Blob storage** or **Azure Data Lake Storage**. It can process real-time and batch-based pipelines on the same stream. You can specify the time or size interval for capturing, and it scales automatically with throughput units.
 
 It is a durable buffer for telemetry ingress (similar to a distributed log) with a partitioned consumer model. Captured data is written in Apache Avro format.
 
@@ -176,23 +176,24 @@ var storageConnectionString = "DefaultEndpointsProtocol=https;AccountName=exampl
 var blobContainerName = "example-container";
 var consumerGroup = EventHubConsumerClient.DefaultConsumerGroupName;
 
-// Inspect Event Hubs
-await using (var producer = new EventHubProducerClient(eventHubsConnectionString, eventHubName))
+// Application Groups: You can connect via SAS or Azure AD (just pass credential to EventHubProducerClient), allowing you to use access policies, throttling, etc.
+await using (var producerClient = new EventHubProducerClient(eventHubsConnectionString, eventHubName))
 {
-    string[] partitionIds = await producer.GetPartitionIdsAsync(); // Query partition IDs
-}
+    string[] partitionIds = await producerClient.GetPartitionIdsAsync(); // Query partition IDs
 
-// Publish events to Event Hubs
-await using (var producer = new EventHubProducerClient(eventHubsConnectionString, eventHubName))
-{
-    using EventDataBatch eventBatch = await producer.CreateBatchAsync();
-    eventBatch.TryAdd(new EventData(new BinaryData("First event")));
-    eventBatch.TryAdd(new EventData(new BinaryData("Second event")));
+    // Publish events to Event Hubs
 
-    await producer.SendAsync(eventBatch); // Send events
+    // Create a batch of events
+    using EventDataBatch eventBatch = await producerClient.CreateBatchAsync();
+    // Add events to the batch. An event is represented by a collection of bytes and metadata.
+    eventBatch.TryAdd(new EventData(Encoding.UTF8.GetBytes("First event")));
+    eventBatch.TryAdd(new EventData(Encoding.UTF8.GetBytes("Second event")));
+    // Use the producer client to send the batch of events to the event hub
+    await producerClient.SendAsync(eventBatch);
 
+    // Send single event
     var eventData = new EventData(Encoding.UTF8.GetBytes("Message body")); // Works with BinaryData and string too
-    await producer.SendAsync(eventData);
+    await producerClient.SendAsync(eventData);
 }
 
 // Using buffer
@@ -211,19 +212,28 @@ await using (var consumer = new EventHubConsumerClient(consumerGroup, eventHubsC
 }
 
 // Read events from an Event Hubs partition
+// The events will be returned in the order they were added to that partition
 await using (var consumer = new EventHubConsumerClient(consumerGroup, eventHubsConnectionString, eventHubName))
 {
     EventPosition startingPosition = EventPosition.Earliest;
     string partitionId = (await consumer.GetPartitionIdsAsync()).First();
 
     using var cancellationSource = new CancellationTokenSource(TimeSpan.FromSeconds(45));
-    await foreach (PartitionEvent receivedEvent in consumer.ReadEventsFromPartitionAsync(partitionId, startingPosition, cancellationSource.Token)) {} // Wait for events in partition
+    await foreach (PartitionEvent receivedEvent in consumer.ReadEventsFromPartitionAsync(partitionId, startingPosition, cancellationSource.Token)) // Wait for events in partition
+    {
+        string readFromPartition = partitionEvent.Partition.PartitionId;
+        byte[] eventBody = partitionEvent.Data.EventBody.ToArray();
+    }
 }
 
 // Process events using Event Processor client
+// NOTE: You need Blob Storage for checkpointing
 var storageClient = new BlobContainerClient(storageConnectionString, blobContainerName);
 var processor = new EventProcessorClient(storageClient, consumerGroup, eventHubsConnectionString, eventHubName);
-Task processEventHandler(ProcessEventArgs eventArgs) => Task.CompletedTask;
+Task processEventHandler(ProcessEventArgs eventArgs) => {
+    // Checkpointing: Update checkpoint in the blob storage so that you can resume from this point if the processor restarts
+    await eventArgs.UpdateCheckpointAsync();
+};
 Task processErrorHandler(ProcessErrorEventArgs eventArgs) => Task.CompletedTask;
 
 processor.ProcessEventAsync += processEventHandler;
@@ -241,9 +251,40 @@ try { await processor.StopProcessingAsync(); } finally
 ### CLI
 
 ```sh
+# Create a resource group
+az group create --name $resourceGroup --location eastus
+
+# Create an Event Hubs namespace
+# Throughput units are specified here
+az eventhubs namespace create --name $eventHubNamespace --sku Standard --location eastus --resource-group $resourceGroup
+
 # Get the connection string for a namespace
-az eventhubs namespace authorization-rule keys list --resource-group MyResourceGroupName --namespace-name MyNamespaceName --name RootManageSharedAccessKey
+az eventhubs namespace authorization-rule keys list --namespace-name $eventHubNamespace --name RootManageSharedAccessKey --resource-group $resourceGroup
+
+# Create an Event Hub inside the namespace
+# Partition count and retention days are specified here
+az eventhubs eventhub create --name $eventHub --namespace-name $eventHubNamespace --partition-count 2 --message-retention 1 --resource-group $resourceGroup
 
 # Get the connection string for a specific event hub within a namespace
-az eventhubs eventhub authorization-rule keys list --resource-group MyResourceGroupName --namespace-name MyNamespaceName --eventhub-name MyEventHubName --name MyAuthRuleName
+az eventhubs eventhub authorization-rule keys list --namespace-name $eventHubNamespace --eventhub-name $eventHubName --name MyAuthRuleName --resource-group $resourceGroup
+
+# Create a Consumer Group (Consumer Groups)
+az eventhubs eventhub consumer-group create --eventhub-name $eventHub --name MyConsumerGroup --namespace-name $eventHubNamespace --resource-group $resourceGroup
+
+# Send an event to the Event Hub (Event Hubs Producer)
+# Note: This is a simplified example. For production, you'd typically use an SDK to send events.
+az eventhubs eventhub send --name $eventHub --namespace-name $eventHubNamespace --partition-key "key1" --message "Hello, Event Hub" --resource-group $resourceGroup
+
+# Capture Event Data (Event Hubs Capture)
+# Enable capture and specify the storage account and container
+az eventhubs eventhub update --name $eventHub --namespace-name $eventHubNamespace --enable-capture True --storage-account sasurl --blob-container containerName --resource-group $resourceGroup
+
+# Scale the throughput units (Throughput Units)
+az eventhubs namespace update --name $eventHubNamespace --sku Standard --capacity 2 --resource-group $resourceGroup
+
+# Get Event Hub details (Partitions, Consumer Groups)
+az eventhubs eventhub show --name $eventHub --namespace-name $eventHubNamespace --resource-group $resourceGroup
+
+# Delete the Event Hub Namespace (this will delete the Event Hub and Consumer Groups within it)
+az eventhubs namespace delete --name $eventHubNamespace --resource-group $resourceGroup
 ```

@@ -63,6 +63,8 @@ Database database = await cosmosClient.CreateDatabaseIfNotExistsAsync("<database
 // Create a container
 Container container = await database.CreateContainerIfNotExistsAsync(id: "<container>", partitionKeyPath: "/mypartitionkey", throughput: number);
 
+ItemResponse<dynamic> response = await container.ReadItemAsync<dynamic>(id, new PartitionKey(partitionKey));
+
 // Create an item (note that mypartitionkey doesn't contain leading slash (/))
 dynamic testItem = new { id = "1", mypartitionkey = "mypartitionvalue", description = "mydescription" };
 await container.CreateItemAsync(testItem, new PartitionKey(testItem.mypartitionkey));
