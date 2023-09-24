@@ -22,10 +22,15 @@
    - [App Configuration](./Topics/App%20Configuration.md)
    - [Graph](./Topics/Graph.md)
    - [SAS](./Topics/Shared%20Access%20Signatures.md)
+     - User Delegation SAS
+     - Service SAS
+     - Account SAS
+     - Stored Access Policies
 
 1. Monitor, troubleshoot, and optimize Azure solutions
 
    - [Application Insights](./Topics/Application%20Insights.md)
+     - Instrumentation: auto vs manual
    - [Cache for Redis](./Topics/Cache%20for%20Redis.md)
    - [Content Delivery Network](./Topics/Content%20Delivery%20Network.md)
 

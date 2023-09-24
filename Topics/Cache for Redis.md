@@ -65,7 +65,7 @@ Eviction Policies:
 - **Basic**: A single VM running an OSS Redis cache. It is suitable for development/test and noncritical workloads, but it lacks a service-level agreement (SLA).
 - **Standard**: This tier involves two VMs in a replicated configuration for the OSS Redis cache.
 - **Premium**: Offering high performance, Premium caches use more powerful VMs than Basic or Standard caches. They provide higher throughput, lower latency, better availability, and additional features.
-- **Enterprise**: These high-performance caches are powered by Redis Labs' Redis Enterprise software. They support Redis modules like RediSearch, RedisBloom, and RedisTimeSeries, and offer even greater availability than the Premium tier.
+- **Enterprise**: These high-performance caches are powered by Redis Labs' Redis Enterprise software. They **support Redis modules** like RediSearch, RedisBloom, and RedisTimeSeries, and offer even greater availability than the Premium tier.
 - **Enterprise Flash**: This tier provides cost-effective large caches powered by Redis Labs' Redis Enterprise software. It extends Redis data storage to nonvolatile memory on a VM, which is cheaper than DRAM, reducing the overall per-GB memory cost.
 
 Clustering support (Premium+): Automatically split dataset among multiple nodes (shards), 10 shards max.

@@ -4,6 +4,8 @@
 
 Endpoint: `<registry>.azurecr.io/<repository>/<image-or-artifact>:<tag>`
 
+`<repository>` is also known as `<namepsace>`. It allows sharing a single registry across multiple groups within your organization. Can be multiple levels deep.
+
 ## [Working with Azure Container Registry](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-get-started-azure-cli)
 
 ```sh
@@ -100,6 +102,8 @@ az acr repository show-tags --name $registryName --repository $repository --outp
 ## [Container Instances](https://learn.microsoft.com/en-us/azure/container-instances/)
 
 Enables the deployment of Docker containers (up to 15 GB) without provisioning virtual machines.
+
+**Does not support scaling! Use Container Apps for that!**
 
 NB: If a container group restarts, its IP might change. Avoid using hardcoded IP addresses. For a stable public IP, consider [using Application Gateway](https://learn.microsoft.com/en-us/azure/container-instances/container-instances-application-gateway).
 

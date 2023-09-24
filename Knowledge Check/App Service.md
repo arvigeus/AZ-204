@@ -274,7 +274,7 @@ md: How managed identities are handled in deployment slots?
 
 md: How to request tokens for accessing other Azure services?
 
-<!-- Define IDENTITY_ENDPOINT and IDENTITY_HEADER env vars; GET {IDENTITY_ENDPOINT}?resource=<resource-url> with client_id param if using user managed identity, using X-IDENTITY-HEADER header -->
+<!-- Define IDENTITY_ENDPOINT and IDENTITY_HEADER env vars; GET {IDENTITY_ENDPOINT}?resource=<resource-url> with client_id param if using user assigned identity, using X-IDENTITY-HEADER header -->
 
 ---
 

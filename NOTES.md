@@ -12,6 +12,16 @@ From Microsoft Learn main URL, type these for quick access:
 - `dotnet/api/`: C#
 - `powershell/module`: Powershell
 
+## General (applicable to many modules)
+
+- Soft-delete is considered best practice in terms of security, but it also increases cost. If question asks to minimize costs, choose the option that disables or doesn't enable soft-delete.
+
+## Trick questions
+
+- Same command with update and create: if question is "You have X", then choose "update".
+- The question may require something cheap and easy, but then sneakily insert a condition that disqualifies the cheapest option. Example: cheap no-hassle auto renewed certificates - usually you can go with the free option, but if it requires to be used for multiple apps, then free is not applicable.
+- `C#` is not the same as `C# script`! Threat it like it's some weird cousin of JS.
+
 ## Breadcrumb trail
 
 If question requires to figure out the order of commands, look for hints in code: for example Step X is using a variable initialized in Step Y, it means the order is Y, X.

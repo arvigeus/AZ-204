@@ -139,6 +139,7 @@ App Service passes app settings to the container using the `--env` flag to set t
 App Settings and Connection Strings are set at app startup and **trigger a restart when changed**. They override settings in `Web.config` or `appsettings.json`.
 
 - **Always On**: Keeps app loaded; off by default and app unloads after 20 mins of inactivity. Needed for Application Insights Profiler.
+- **ARR affinity**: In a multi-instance deployment, ensure that the client is routed to the same instance for the life of the session.
 
 ### App Settings
 
@@ -162,6 +163,13 @@ string myParentSettingValue = Configuration["MyParentSetting/MySubSetting"]; // 
 
 // Load: az webapp config appsettings set --resource-group $resourceGroup --name $appName --settings @settings.json
 ```
+
+### [Source app settings from key vault](https://learn.microsoft.com/en-us/azure/app-service/app-service-key-vault-references?tabs=azure-cli#source-app-settings-from-key-vault)
+
+Prerequisites: Grant your app access to a key vault to a managed identity
+
+- `@Microsoft.KeyVault(SecretUri=https://myvault.vault.azure.net/secrets/mysecret/)`
+- `@Microsoft.KeyVault(VaultName=myvault;SecretName=mysecret)`
 
 ### Connection strings
 
@@ -400,11 +408,13 @@ public static ClaimsPrincipal Parse(HttpRequest req)
 
 A certificate is accessible to all apps in the same resource group and region combination.
 
-- **Free Managed Certificate**: Auto renewed every 6 months, no wildcard certificates or private DNS, can't be exported, not supported in ASE.
+- **Free Managed Certificate**: Auto renewed every 6 months, no wildcard certificates or private DNS, can't be exported (**cannot be used in other apps**), not supported in ASE.
 - **App Service Certificate**: A private certificate that is managed by Azure. Automated certificate management, renewal and export options.
 - **Using Key Vault**: Store private certificates (same requerenments) in Key Vault. Automatic renewal, except for non-integrated certificates (`az keyvault certificate create ...`, default policy: `az keyvault certificate get-default-policy`)
 - **Uploading a Private Certificate**: Requires a password-protected PFX file encrypted with triple DES, with 2048-bit private key and all intermediate/root certificates in the chain.
 - **Uploading a Public Certificate**: For accessing remote resources.
+
+[Make certificate accessible](https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-certificate-in-code): `az webapp config appsettings set --settings WEBSITE_LOAD_CERTIFICATES=<comma-separated-certificate-thumbprints>`, then use `X509Store.Certificates.Find(X509FindType.FindByThumbprint, "certificate-thumbprint", true)` to load it.
 
 #### [TLS mutual authentication](https://learn.microsoft.com/en-us/azure/app-service/app-service-web-configure-tls-mutual-auth?tabs=azurecli)
 
@@ -549,6 +559,7 @@ github_deployment() {
 }
 
 # https://learn.microsoft.com/en-us/azure/app-service/scripts/cli-deploy-staging-environment
+# Use it to avoid locking files
 staging_deployment() {
     # Deployment slots require Standard tier, default is Basic (B1)
     az appservice plan update --name $appServicePlan --sku S1 --resource-group $resourceGroup

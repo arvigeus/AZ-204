@@ -86,7 +86,7 @@ Each version of the blob has a unique tag, called an `ETag` that allows to only 
 
 - **Block blobs**: Store text and binary data in individual blocks, with a capacity of up to 190.7 TiB. `PUT <url>?comp=block&blockid=id`
 
-- [**Append Blobs**](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-append): ⭐: append operations (ex: logging data from virtual machines). `PUT <url>?comp=appendblock`
+- [**Append Blobs**](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-append): ⭐: append operations (ex: logging data from virtual machines). `PUT <url>?comp=appendblock`. `Add` permission is only applicable to this type of blob.
 
   ```cs
   AppendBlobClient appendBlobClient = containerClient.GetAppendBlobClient(logBlobName);
@@ -157,10 +157,11 @@ type RelesType = {
       type: "Lifecycle";
       definition: {
         actions: {
+          // NOTE: Delete is the only action available for all blob types; snapshots cannot auto set to hot
           version?: RuleAction;
-          baseBlob?: RuleAction;
+          /* blobBlock */ baseBlob?: RuleAction;
           snapshopt?: Omit<RuleAction, "enableAutoTierToHotFromCool">;
-          appendBlob?: { delete: ActionRunCondition };
+          appendBlob?: { delete: ActionRunCondition }; // only one lifecycle policy
         };
         filters?: {
           blobTypes: Array<"appendBlob" | "blockBlob">;
@@ -203,6 +204,16 @@ If you define more than one action on the same blob, lifecycle management applie
 ❌: partial updates
 
 Access time tracking: when is enabled (`az storage account blob-service-properties update --enable-last-access-tracking true`), a lifecycle management policy can include an action based on the time that the blob was last accessed with a read (tracks only the first in the past 24 hours) or write operation. 💲
+
+## Transient error handling (retry strategy)
+
+```cs
+var options = new BlobClientOptions();
+options.Retry.MaxRetries = 10;
+opions.Retry.Delay = TimeSpan.FromSeconds(20);
+options.Retry.RetryMode = RetryMode.Fixed; // Exponential to increase delay every time request fails
+var client = new BlobClient(new Uri("..."), options);
+```
 
 ## Data Protection
 

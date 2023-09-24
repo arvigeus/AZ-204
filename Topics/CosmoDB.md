@@ -380,29 +380,33 @@ Interaction Models:
 
 Host instance lifecycle: Reads change feed, sleeps if no changes, sends changes to delegate for processing, and updates lease store with latest processed time.
 
+- Monitored container: has the data from which the change feed is generated. Inserts and updates are reflected in the change feed.
+- Lease container: acts as a state storage and coordinate the processing of change feed across multiple workers. It can be in the same or different account as the monitored container.
+- Delegate componet can be used to implement custom logic to process the changes that the change feed reads.
+- Compute Instance: Hosts change feed processor to listen for changes. Can be a VM, Kubernetes pod, Azure App Service instance, or a physical machine.
+
 ```cs
 private static async Task<ChangeFeedProcessor> StartChangeFeedProcessorAsync(
     CosmosClient cosmosClient,
     IConfiguration configuration)
 {
     string databaseName = configuration["SourceDatabaseName"];
-    /////////////////////////////////////////////////////////////////////////////////////////////
-    // Monitored Container: Houses data. Inserts and updates are reflected in the change feed. //
-    /////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////
+    // Monitored Container //
+    /////////////////////////
     string sourceContainerName = configuration["SourceContainerName"];
-    /////////////////////////////////////////////////////////////////////////////////////////////////
-    // Lease Container: Serves as state storage and manages change feed processing across workers. //
-    // It can be in the same or different account as the monitored container.                      //
-    /////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////
+    // Lease Container //
+    //////////////////////
     string leaseContainerName = configuration["LeasesContainerName"];
 
     Container leaseContainer = cosmosClient.GetContainer(databaseName, leaseContainerName);
     // When implementing the change feed processor, the monitored container is always the point of entry
     ChangeFeedProcessor changeFeedProcessor = cosmosClient.GetContainer(databaseName, sourceContainerName)
         .GetChangeFeedProcessorBuilder<ToDoItem>(processorName: "changeFeedSample", onChangesDelegate: HandleChangesAsync)
-            // Compute Instance: Hosts change feed processor to listen for changes.
-            // Can be a VM, Kubernetes pod, Azure App Service instance, or a physical machine,
-            // identified by a unique instance name.
+            //////////////////////
+            // Compute Instance //
+            //////////////////////
             .WithInstanceName("consoleHost")
             .WithLeaseContainer(leaseContainer)
             .Build();

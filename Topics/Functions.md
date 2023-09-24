@@ -73,13 +73,14 @@ az functionapp plan list --resource-group <MY_RESOURCE_GROUP> --query "[?sku.fam
 - `functionTimeout`: Default: 5 min for Consumption, 30 for rest.
 - `logging.applicationInsights`
 - `aggregator` - Specifies how many function invocations are aggregated when calculating metrics for Application Insights.
+- `extensions.http.dynamicThrottlesEnabled`: Enabled by default for Consumption only. Throttles on high resource usage.
 - `extensions.blobsmaxDegreeOfParallelism`: concurrent invocations allowed for all blob-triggered functions (min: 1, default: 8)
 - `extensions.cosmosDB.connectionMode`: _Gateway_ (default) or _Direct_. _Gateway_ is preferable for _Consumption_ plan due to connections limit. _Direct_ has better performance.
 - `extensions.cosmosDB.userAgentSuffix`: Appends the given string to all service requests from the trigger or binding, enhancing tracking in Azure Monitor by function app and User Agent filtering.
 
 ### [function.json](https://github.com/Azure/azure-functions-host/wiki/function.json)
 
-Auto generated for compiled languages.
+Auto generated for compiled languages. or scripting languages, like `C# Script`, you must provide the config file yourself.
 
 - For triggers, the direction is always `in`
 - Input and output bindings use `in` and `out`, or `inout` in some cases.
@@ -203,14 +204,15 @@ Not supported on Consumption plan ([requires runtime-driven triggers](https://le
 [return: ServiceBus("queue", Connection = "ServiceBusConnectionAppSetting")] // return string
 
 
-// https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-timer?tabs=python-v2%2Cin-process%2Cnodejs-v4&pivots=programming-language-csharp
+// https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-timer
 // The 6-field format for cron jobs is `{second} {minute} {hour} {day} {month} {day-of-week}`. The 5-field format omits the `second` and starts with `{minute}`.
 // - Specific value: `5` (exactly the 5th minute)
 // - List: `5,10` (5th and 10th minute)
 // - Range: `9-17` (from 9 to 17)
 // - Step: `*/5` (every 5 units)
 // - Any value: `*` (every unit)
-// Examples: `*/5 * * * *`: Every 5 minutes, `0 9-17 * * MON-FRI`: 9 AM to 5 PM on weekdays.
+// NOTE: Day of week: MON is 1, Sunday is 0 or 7; Day and Month start from 1
+// Examples: `*/5 * * * *`: Every 5 minutes,; `0 9-17 * * MON-FRI`: 9 AM to 5 PM on weekdays.
 [TimerTrigger("0 */5 * * * *")] TimerInfo myTimer;
 // - `WEBSITE_TIME_ZONE` and `TZ` are not currently supported on the Linux Consumption plan.
 // - RunOnStartup is not recommended for production (messes up schedule). Schedule, RunOnStartup and UseMonitor can be set in local.settings.json > Values

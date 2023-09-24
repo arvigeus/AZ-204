@@ -8,7 +8,7 @@ Note: You should prefer Azure AD
 
 ## Types of SAS
 
-1. [**User Delegation SAS**](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-user-delegation-sas-create-dotnet): This method uses Azure Active Directory (Azure AD) credentials to create a SAS. It's a secure way to grant limited access to your Azure Storage resources without sharing your account key. It's recommended when you want to provide fine-grained access control to clients who are authenticated with Azure AD.
+1. [**User Delegation SAS**](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-user-delegation-sas-create-dotnet): This method uses Azure Active Directory (Azure AD) credentials to create a SAS. It's a secure way to grant limited access to your Azure Storage resources without sharing your account key. It's recommended when you want to provide fine-grained access control to clients who are authenticated with Azure AD. The account _must have_ `generateUserDelegationKey` permisison, or `Contributor` role.
 
 1. [**Service SAS**](https://learn.microsoft.com/en-us/azure/storage/blobs/sas-service-create-dotnet): This method uses your storage account key to create a SAS. It's a straightforward way to grant limited access to your Azure Storage resources. However, it's less secure than the User Delegation SAS because it involves sharing your account key. It's typically used when you want to provide access to clients who are not authenticated with Azure AD.
 
@@ -53,7 +53,9 @@ Note: All 2-letter parameters are required, except `si` (Access Policy)
 - Only grant the access that's required.
 - Create a middle-tier service to manage users and their access to storage when there's an unacceptable risk of using a SAS.
 
-## Stored Access Policies
+## [Stored Access Policies](https://learn.microsoft.com/en-us/rest/api/storageservices/define-stored-access-policy)
+
+Allow you to group SAS and set additional constraints like start time, expiry time, and permissions. Work on **container** level.
 
 Use `SetAccessPolicy` on `BlobContainer` to apply an array containing a single `BlobSignedIdentifier` that has a configured `BlobAccessPolicy` for the `AccessPolicy` property.
 
@@ -83,6 +85,8 @@ az storage container policy create \
 ```
 
 To cancel (revoke) a policy, you can either delete it, rename it, or set its expiration time to a past date.
+
+To remove all access policies from the resource, call the `Set ACL` operation with an empty request body.
 
 ## Working with SAS
 

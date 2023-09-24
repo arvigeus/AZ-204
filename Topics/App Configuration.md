@@ -9,7 +9,7 @@ You can import and export configuration between Azure App Configuration and sepa
 Azure App Configuration manages configuration data using key-value pairs.
 
 - **Keys**: Unique, _case-sensitive_ identifiers for values. They can include any unicode character except `*`, `,`, and `\` (reserved can be escaped with '\'). Use delimiters like `/` or `:` for hierarchical organization. Azure treats _keys as a whole_ and doesn't enforce any structure. Example: `AppName:Service1:ApiEndpoint`
-- **Labels**: Differentiate keys for various environments or versions. Default label is `null`. Labels can also be used _to version key values_ (versioning is not supported natively). Example: `Key = AppName:DbEndpoint & Label = Test`
+- **Labels**: Group keys by criteria, ex: environments or versions (which is _not supported natively_). Default label is `null`. Example: `Key = AppName:DbEndpoint & Label = Test`. Key prefixes are alternative way of grouping (labeling).
 - **Values**: Unicode strings optionally associated with a user-defined content type for additional metadata.
 
 ### Configuration and Querying

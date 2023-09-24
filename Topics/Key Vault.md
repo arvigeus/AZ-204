@@ -32,6 +32,18 @@ Get secret version: `GET {vaultBaseUrl}/secrets/{secret-name}/{secret-version}?a
 
 ## [Security](https://learn.microsoft.com/en-us/azure/key-vault/general/security-features)
 
+## Key operations
+
+Rotating secrets:
+
+- `az keyvault key rotate`: manual rotation.
+- `az keyvault key rotation-policy`: automated rotation (ex: time).
+
+Removing keys:
+
+- `az keyvault key delete`: put key in soft delete state (if enabled, or simply removes it)
+- `az keyvault key purge`: permanently removes soft deleted key (**only**)
+
 ### Access Model
 
 - **Management plane**: for managing the Key Vault itself
@@ -112,7 +124,7 @@ var certificate = await client.GetCertificateAsync(certificateName);
 - Restrict vault access to authorized applications and users. (`az keyvault set-policy --name <YourKeyVaultName> --object-id <PrincipalObjectId> --secret-permissions get list`)
 - Regularly backup your vault. (`az keyvault key backup --vault-name <YourKeyVaultName> --name <KeyName> --file <BackupFileName>`)
 - Enable logging and alerts.
-- Enable **soft-delete** and **purge protection** to keep secrets for 7-90 days and prevent forced deletion. Charges apply for HSM-keys in the last 30 days of use. Operations are disabled on deleted objects, and no charges apply.
+- Enable **soft-delete** and **purge protection** to keep secrets for 7-90 days and prevent forced deletion. Charges apply for HSM-keys in the last 30 days of use. Operations are disabled on deleted objects, and no charges apply. (NOTE: _soft-delete_ increased security, but also _increases storage cost_!)
 
   ```sh
   az keyvault update --name <YourKeyVaultName> --enable-soft-delete true

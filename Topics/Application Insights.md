@@ -156,9 +156,10 @@ To write to event log use, `ILogger` or a class inheriting `EventSource`.
 - [Impact](https://learn.microsoft.com/en-us/azure/azure-monitor/app/usage-impact): Helps you understand how different factors like load times and user properties influence conversion rates in various parts of your app.
 - [Retention](https://learn.microsoft.com/en-us/azure/azure-monitor/app/usage-retention): Helps you understand how many users come back to your app and how often they engage with specific tasks or goals. For example, if you have a game site, you can see how many users return after winning or losing a game.
 
-## Monitor an app
+## [Monitor an app (Instrumentation)](https://learn.microsoft.com/en-us/azure/azure-monitor/app/opentelemetry-overview?tabs=aspnetcore)
 
-Use Auto-Instrumentation or SDK. Auto-Instrumentation is better as it needs no coding and lowers future update hassles. It also supports `OpenCensus` for tracking metrics across services and technologies like Redis and MongoDB.
+- **Auto instrumentation**: Telemetry collection through configuration without modifying the application's code. Supports `OpenCensus` for tracking metrics across services and technologies like Redis and MongoDB.
+- **Manual Instrumentation**: Coding against the Application Insights or **OpenTelemetry** API. Supports **Azure AD** and **Complex Tracing** (collect data that is not available in Application Insights)
 
 ## [Availability test](https://learn.microsoft.com/en-us/azure/azure-monitor/app/troubleshoot-availability)
 
@@ -188,6 +189,7 @@ appsettings.json:
 
 ```jsonc
 "ApplicationInsights": {
+  // Needed to send telemetry data to Application Insights
   "InstrumentationKey": "instrumentation-key"
 }
 ```
