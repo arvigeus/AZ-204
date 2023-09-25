@@ -2,6 +2,7 @@ import type { QAPair } from "~/types/QAPair";
 
 import { data } from "~/db";
 export { topics } from "~/db";
+export { data };
 
 type Question = QAPair & { index: number };
 
