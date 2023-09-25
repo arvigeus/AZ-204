@@ -267,6 +267,7 @@
      - CosmoDB trigger and bindings
      - Event Grid trigger and output bindings
      - Event Hub trigger and output bindings
+     - Service Bus trigger and output binding
      - Queue trigger and output bindings
      - Timer trigger (CRON quirks)
    - Connection string formats
