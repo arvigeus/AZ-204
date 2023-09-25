@@ -378,6 +378,48 @@ private static async Task DemoContainerPropertiesAndMetadataAsync(BlobContainerC
 }
 ```
 
+### [Set and retrieve properties and metadata for blob resources by using REST](https://learn.microsoft.com/en-us/rest/api/storageservices/setting-and-retrieving-properties-and-metadata-for-blob-resources)
+
+Endpoint templates:
+
+- Container: `https://<storage-account>.blob.core.windows.net/<container>?restype=container`
+- Blob: `https://<storage-account>.blob.core.windows.net/<container>/<blob>?comp=metadata`
+
+Retrieving metadata: `GET` or `HEAD` (example: `GET https://<storage-account>.blob.core.windows.net/<container>/<blob>?comp=metadata`)  
+Setting metadata: `PUT` (example: `PUT https://myaccount.blob.core.windows.net/mycontainer?comp=metadata?restype=container`)
+
+The format for the header is: `x-ms-meta-name:string-value`.
+
+If two or more metadata headers with the same name are submitted for a resource, the Blob service returns status code `400 (Bad Request)`.
+
+The total size of all metadata pairs can be up to 8KB in size.
+
+Partial updates are not supported: setting metadata on a resource overwrites any existing metadata values for that resource.
+
+### Standard Properties for Containers and Blobs
+
+`ETag` and `Last-Modified` are common for containers and blobs.
+
+For HTTP names start with `x-ms-meta`.
+
+Containers:
+
+- ETag (`x-ms-meta-etag`)
+- Last-Modified (`x-ms-meta-last-modified`)
+
+Blobs:
+
+- ETag (`x-ms-meta-etag`)
+- Last-Modified (`x-ms-meta-last-modified`)
+- Content-Length (`x-ms-meta-content-length`)
+- Content-Type (`x-ms-meta-content-type`)
+- Content-MD5 (`x-ms-meta-content-md5`)
+- Content-Encoding (`x-ms-meta-content-encoding`)
+- Content-Language (`x-ms-meta-content-language`)
+- Cache-Control (`x-ms-meta-cache-control`)
+- Origin (`x-ms-meta-origin`)
+- Range (`x-ms-meta-range`)
+
 ### Access conditions
 
 ```cs
@@ -415,46 +457,6 @@ az storage blob <operation>
     # SQL clause to check tags
     [--tags-condition]
 ```
-
-### [Set and retrieve properties and metadata for blob resources by using REST](https://learn.microsoft.com/en-us/rest/api/storageservices/setting-and-retrieving-properties-and-metadata-for-blob-resources)
-
-Endpoint templates:
-
-- Container: `https://<storage-account>.blob.core.windows.net/<container>?restype=container`
-- Blob: `https://<storage-account>.blob.core.windows.net/<container>/<blob>?comp=metadata`
-
-Retrieving metadata: `GET` or `HEAD` (example: `GET https://<storage-account>.blob.core.windows.net/<container>/<blob>?comp=metadata`)  
-Setting metadata: `PUT` (example: `PUT https://myaccount.blob.core.windows.net/mycontainer?comp=metadata?restype=container`)
-
-The format for the header is: `x-ms-meta-name:string-value`.
-
-If two or more metadata headers with the same name are submitted for a resource, the Blob service returns status code `400 (Bad Request)`.
-
-The total size of all metadata pairs can be up to 8KB in size.
-
-Partial updates are not supported: setting metadata on a resource overwrites any existing metadata values for that resource.
-
-### Standard HTTP Properties for Containers and Blobs
-
-`ETag` and `Last-Modified` are common for containers and blobs.
-
-Containers:
-
-- ETag (`x-ms-meta-etag`)
-- Last-Modified (`x-ms-meta-last-modified`)
-
-Blobs:
-
-- ETag (`x-ms-meta-etag`)
-- Last-Modified (`x-ms-meta-last-modified`)
-- Content-Length (`x-ms-meta-content-length`)
-- Content-Type (`x-ms-meta-content-type`)
-- Content-MD5 (`x-ms-meta-content-md5`)
-- Content-Encoding (`x-ms-meta-content-encoding`)
-- Content-Language (`x-ms-meta-content-language`)
-- Cache-Control (`x-ms-meta-cache-control`)
-- Origin (`x-ms-meta-origin`)
-- Range (`x-ms-meta-range`)
 
 ## [Authorization](https://learn.microsoft.com/en-us/azure/storage/common/authorize-data-access)
 

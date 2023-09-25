@@ -291,3 +291,78 @@
 1. Custom Handlers
    - Prerequisites
    - Limits
+
+## Blob Storage
+
+1. Storage Account
+   - SKU
+     - Tiers
+       - Standard
+       - Premium
+     - Redundancy
+   - Changing SKU
+   - Failover: specifics and alternatives
+   - Storage type
+     - BlobStorage
+     - BlockBlobStorage
+     - FileStorage
+     - StorageV1
+     - StorageV2
+   - Hierarchical namespaces: specifics, requirenments and limitations
+1. Containers
+   - Public access
+1. Blob
+   - Types - when to use each?
+     - Block
+     - Append
+     - Page
+   - Using blobs with C#
+   - Access tiers - when to use each, limitations?
+     - Hot
+     - Cool
+     - Archive - specifics. Accessing data
+   - What happens when changing tiers? Pitfalls?
+   - Lifecycle policies
+     - Supported containers
+     - Specifics when working with Lifecycle policies
+     - Which actions are available for each storage type?
+     - Filters
+       - blobType
+       - prefixMatch
+       - blobIndexMatch
+     - What happens when there are multiple policies for a single blob?
+     - Access time tracking - what is used for and what requires it
+   - Transient error handling
+   - Data protection: snapshots vs versions
+     - Creation
+     - Immutability
+     - Deletion
+     - Soft delete impact
+     - C#
+   - Leasing
+     - How to access leased blob and what happens whan you don't do it?
+     - Leasing blob via C#
+     - Leasing blob via HTTP
+   - Encryption
+     - Keys:
+       - Microsoft
+       - Customer Managed
+       - Customer Provided
+     - Storage Account encryption
+       - Infrastructure
+       - Using Key Vault
+     - Encryption scope
+       - Pitfalls
+     - Client Side Encryption
+   - Properties and Metadata
+     - Type of properties: System and User defined
+     - Working with C#
+     - Working with HTTP
+     - Standard properties for containers and blobs
+   - Access conditions: C# and CLI
+     - Resources not modified since last fetched
+     - Resources matching etag
+     - Resources modified before
+     - Resources with lease
+     - Selecting resources by tag - specifics
+     - Using access conditions in C# / CLI

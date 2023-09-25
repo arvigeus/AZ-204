@@ -4,7 +4,7 @@
 
 Endpoint: `<registry>.azurecr.io/<repository>/<image-or-artifact>:<tag>`
 
-`<repository>` is also known as `<namepsace>`. It allows sharing a single registry across multiple groups within your organization. Can be multiple levels deep.
+`<repository>` is also known as `<namepsace>`. It allows sharing a single registry across multiple groups within your organization. Can be multiple levels deep. Optional.
 
 ## [Working with Azure Container Registry](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-get-started-azure-cli)
 
