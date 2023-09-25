@@ -249,6 +249,7 @@
      - Dedicated
    - Features per tier: timeout, pre-warmed instances
    - When to choose each - scenarios, predictable costs
+   - Scale controller
 1. Storage considerations
 1. Configuration
    - host.json
@@ -268,6 +269,7 @@
      - Event Hub trigger and output bindings
      - Queue trigger and output bindings
      - Timer trigger (CRON quirks)
+   - Connection string formats
 1. Security
    - Authorization level
      - Annonymous
@@ -283,7 +285,7 @@
    - Get client identity: from req and header
    - CORS
 1. Monitoring
-   - Limitations
+   - Limitations (Linux)
    - Configure and use Application Insights
    - Verbose logging
    - Identify which part of the system or user code generated the log
