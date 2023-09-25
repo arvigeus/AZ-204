@@ -138,7 +138,7 @@
      - Shared compute: Free shared
      - Dedicated compute: Basic, Standard, Premium
      - Isolated
-   - Billing
+   - Billing. Pitfalls.
    - Features by tiers: Single/Multi tenant / Dedicated workers, Always on, Free Managed Certificates, Manual Scaling, Autoscale, Automatic Scaling, Staging environments, Linux, Log audits
    - When to isolate?
 1. Moving service plans
@@ -212,7 +212,7 @@
    - Outbound addresses
 1. Diagnostics
    - Types: Application, Web Server, Detailed Error Msgs, Failed request tracking, Deployment logging
-   - Location: App Service File System, Blob Option
+   - Location: App Service File System, Blob Option. Limitations.
    - Linux vs Windows
    - AllMetrics
    - Stream logs
