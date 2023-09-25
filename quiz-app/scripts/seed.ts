@@ -3,7 +3,6 @@ import path from "path";
 import { createHash } from "crypto";
 
 import type { QAPair } from "~/types/QAPair";
-import type { KnowledgeItem } from "~/types/KnowledgeItem";
 
 type FileContent = {
   name: string;
@@ -96,45 +95,6 @@ const parseQuestionItems = (name: string, text: string): QAPair[] => {
   return qaPairs;
 };
 
-const parseKnowledgeItems = (text: string): KnowledgeItem[] => {
-  const lines = text.split("\n").slice(2); // Skip the first two lines (title)
-  const knowledgeItems: KnowledgeItem[] = [];
-
-  let currentQuestion: string[] = [];
-  let currentType: string | null = null;
-  let currentHint: string | null = null;
-
-  for (const line of lines) {
-    if (line.startsWith("---")) {
-      // End of a question
-      if (currentType && currentQuestion.length > 0) {
-        knowledgeItems.push({
-          question: currentQuestion.join("\n").trim(),
-          type: currentType,
-          hint: currentHint,
-        });
-      }
-      // Reset
-      currentQuestion = [];
-      currentType = null;
-      currentHint = null;
-    } else if (line.includes(":") && currentQuestion.length === 0) {
-      // Type and Question
-      const [type, question] = line.split(":", 2);
-      currentType = type.trim();
-      currentQuestion.push(question.trim());
-    } else if (line.startsWith("<!--") && line.endsWith("-->")) {
-      // Hint
-      currentHint = line.replace("<!--", "").replace("-->", "").trim();
-    } else if (currentQuestion.length > 0) {
-      // Continuation of a question
-      currentQuestion.push(line.trim());
-    }
-  }
-
-  return knowledgeItems;
-};
-
 const loadContents = async (directory: string): Promise<FileContent[]> => {
   const dirPath = path.join(__dirname, "..", "..", directory);
   console.log(`Loading questions from ${dirPath}`);
@@ -203,33 +163,12 @@ const parseQuestionFiles = (files: FileContent[]) => {
   return { topics, data };
 };
 
-const parseKnowledgeFiles = (files: FileContent[]) => {
-  const topics = [];
-  const data = [];
-
-  for (const { name, content } of files) {
-    topics.push(name);
-    const items = parseKnowledgeItems(content);
-    data.push(...items);
-  }
-
-  return { topics, data };
-};
-
 const serialize = (item: any): string => JSON.stringify(item, null, 2);
 
-const saveData = async (
-  qaTopics: string[],
-  qaData: QAPair[],
-  kcTopics: string[],
-  kcData: KnowledgeItem[],
-  location: string
-) => {
-  const content = `export const qa = {topics:${serialize(
-    qaTopics
-  )},data:${serialize(qaData)}}\n\nexport const kc = {topics:${serialize(
-    kcTopics
-  )},data:${serialize(kcData)}}`;
+const saveData = async (topics: string[], data: QAPair[], location: string) => {
+  const content = `export const topics = ${serialize(
+    topics
+  )};\n\nexport const data = ${serialize(data)};\n`;
 
   await fs.writeFile(location, content);
 };
@@ -243,17 +182,8 @@ const init = async (): Promise<void> => {
   const { topics: qaTopics, data: qaData } = parseQuestionFiles(
     await loadFiles("Questions")
   );
-  const { topics: kcTopics, data: kcData } = parseKnowledgeFiles(
-    await loadFiles("Knowledge Check")
-  );
 
-  await saveData(
-    qaTopics,
-    qaData,
-    kcTopics,
-    kcData,
-    path.join(process.cwd(), "app", "db.ts")
-  );
+  await saveData(qaTopics, qaData, path.join(process.cwd(), "app", "db.ts"));
 };
 
 init()

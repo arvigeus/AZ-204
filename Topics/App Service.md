@@ -458,6 +458,8 @@ _To enable the sending of credentials like cookies or authentication tokens in y
   | Gateway-required virtual network integration | Outbound | Access Azure or on-premises resources via ExpressRoute or VPN (two way Azure-On-Premises) |
   | Virtual network integration                  | Outbound | Access Azure network resources                                                            |
 
+  Hybrid Connections: from Azure to On-Premises; Gateway: two way Azure-On-Premises.
+
 - **Default Networking Behavior**: Free and Shared plans use multi-tenant workers, meaning your application shares resources with others. Plans from Basic and above use dedicated workers, meaning your application gets its own resources. If you have a Standard App Service plan, all the apps in that plan run on the same worker.
 
 - **Outbound Addresses**: When your application needs to make a call to an external service, it uses an outbound IP address. This address is shared among all applications running on the same type of worker VM.

@@ -46,14 +46,14 @@ az functionapp plan create
 # az functionapp plan create -g MyResourceGroup -n MyPlan --min-instances 1 --max-burst 10 --sku EP1
 
 # Get a list of all Consumption plans in your resource group
-az functionapp plan list --resource-group <MY_RESOURCE_GROUP> --query "[?sku.family=='Y'].{PlanName:name,Sites:numberOfSites}" -o table
+az functionapp plan list --resource-group $resourceGroup --query "[?sku.family=='Y'].{PlanName:name,Sites:numberOfSites}" -o table
 
 # Get your hosting plan type
 appServicePlanId=$(az functionapp show --name $functionApp --resource-group $resourceGroup --query appServicePlanId --output tsv)
 az appservice plan list --query "[?id=='$appServicePlanId'].sku.tier" --output tsv
 
 # Get a list of all Premium plans in your resource group
-az functionapp plan list --resource-group <MY_RESOURCE_GROUP> --query "[?sku.family=='EP'].{PlanName:name,Sites:numberOfSites}" -o table
+az functionapp plan list --resource-group $resourceGroup --query "[?sku.family=='EP'].{PlanName:name,Sites:numberOfSites}" -o table
 ```
 
 ## [Storage Considerations](https://learn.microsoft.com/en-us/azure/azure-functions/storage-considerations?tabs=azure-cli)
@@ -227,13 +227,13 @@ Not supported on Consumption plan ([requires runtime-driven triggers](https://le
 
 ```sh
 # List the existing application settings
-az functionapp config appsettings list --name $name --resource-group <RESOURCE_GROUP_NAME>
+az functionapp config appsettings list --name $name --resource-group $resourceGroup
 
 # Add or update an application setting
-az functionapp config appsettings set --settings CUSTOM_FUNCTION_APP_SETTING=12345 --name $name --resource-group <RESOURCE_GROUP_NAME>
+az functionapp config appsettings set --settings CUSTOM_FUNCTION_APP_SETTING=12345 --name $name --resource-group $resourceGroup
 
 # Create a new function app (Consumption)
-az functionapp create --resource-group <MY_RESOURCE_GROUP> --name <NEW_CONSUMPTION_APP_NAME> --consumption-plan-location <REGION> --runtime dotnet --functions-version 3 --storage-account <STORAGE_NAME>
+az functionapp create --resource-group $resourceGroup --name $consumptionFunctionName --consumption-plan-location $regionName --runtime dotnet --functions-version 3 --storage-account $storageName
 
 # Get the default (host) key that can be used to access any HTTP triggered function in the function app
 subName='<SUBSCRIPTION_ID>'
