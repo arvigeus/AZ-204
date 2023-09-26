@@ -27,7 +27,7 @@ Read access to all resources: `*/read`
 1. **Retrieve Token**: By using the configured client ID and certificate, Azure AD returns a JWT access token upon request.
 1. **Use Token**: Code uses the token to authenticate with Azure AD-supported services.
 
-## Managing Azure Managed Identities
+## Managing Identities
 
 1. **System-assigned Identity**
 

@@ -40,7 +40,7 @@ In the form of key-value pairs. The payload is always an opaque _binary block_ w
 
 The AMQP protocol serializes objects into an AMQP object, retrievable by the receiver using `GetBody<T>()`. Objects are serialized into an AMQP graph of `ArrayList` and `IDictionary<string,object>`.
 
-Each message has two sets of properties: _system-defined broker properties_, and _user-defined properties_. Broker properties, like `To`, `ReplyTo`, `ReplyToSessionId`, `MessageId`, `CorrelationId`, and `SessionId`, aid in message routing, including simple request/reply, multicast request/reply, multiplexing, and multiplexed request/reply.
+Each message has two sets of properties: _system-defined broker properties_, and _user-defined properties_.
 
 ### Message Routing and Correlation
 

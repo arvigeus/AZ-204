@@ -92,22 +92,13 @@ Clustering support (Premium+): Automatically split dataset among multiple nodes 
 Create cache:
 
 ```sh
-# Azure CLI command to create Azure Cache for Redis
-
-# Using az redis create command to create a Redis cache instance
-# --name specifies the name of the Redis cache, which must be globally unique
-# --location specifies the Azure region where you want to create the cache
-# --sku specifies the pricing tier and size of the Redis cache
-# --shard-count specifies the number of shards to be used for clustering. Only available for Premium and Enterprise tiers
-# Replace <name>, <location>, <sku>, <vm-size>, and <shard-count> with your specific values
-
-az redis create \
-    --name <name> \ # must be globally unique
-    --location <location> \
-    --sku <sku> \ # pricing tier
-    --vm-size <vm-size> \ # depends on the chosen tier
-    --shard-count <shard-count> \ # specifies the number of shards to be used for clustering (Premium and Enterprise only). Max: 10
-    --resource-group <resource-group>
+az redis create
+    --name $name # must be globally unique
+    --location $location # region where you want to create the cache
+    --sku <sku> # pricing tier
+    --vm-size <vm-size> # depends on the chosen tier
+    --shard-count <shard-count> # number of shards to be used for clustering (Premium and Enterprise only). Max: 10
+    --resource-group $resourceGroup
 ```
 
 Redis Commands:

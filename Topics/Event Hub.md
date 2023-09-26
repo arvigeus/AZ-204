@@ -16,9 +16,7 @@
 
 ![Image showing the event processing flow.](https://learn.microsoft.com/en-us/training/wwl-azure/azure-event-hubs/media/event-hubs-stream-processing.png)
 
-## Publishing event
-
-AMQP vs. HTTPS:
+## AMQP vs. HTTPS
 
 - **Initialization**: AMQP requires a persistent bidirectional socket plus TLS or SSL/TLS, resulting in _higher initial network costs_. HTTPS has extra TLS overhead for each request.
 - **Performance**: AMQP offers _higher throughput and lower latency_ for frequent publishers. HTTPS can be slower due to the extra overhead.
@@ -78,11 +76,12 @@ Designing large systems:
 - **Resume After Failures**: If a reader fails, others take over from where it left off.
 - **Consume Events**: There must be code to process the data, like combining it and saving it for the webpage.
 
-## Event Processor
+## [Event Processor](https://learn.microsoft.com/en-us/azure/event-hubs/event-hubs-event-processor-host)
 
 - **Receiving Messages**: Create an event processor to handle specific partition events. Include retry logic to process every message at least once, and use two consumer groups for storage and routing needs.
 - **Checkpointing**: The event processor marks the last processed event within a partition, allowing for resiliency. If an event processor disconnects, another can resume at the last checkpoint, and it's possible to return to older data by specifying a lower offset.
 - **Thread Safety**: Functions processing events are called sequentially for each partition. Events from different partitions can be processed concurrently, and shared states across partitions must be synchronized.
+- **Lease management**: `EventProcessorHost` auto-balances leased Event Hub partitions across instances for event processing. It attempts to renew expiring leases; if unsuccessful, it triggers CloseAsync for cleanup. Control lease behavior using `PartitionManagerOptions` before registering your `IEventProcessor`.
 
 Minimize processing and be cautious with poisoned messages. Utilize proper retry logic and understand checkpointing to improve efficiency and resilience.
 
@@ -100,72 +99,6 @@ They serve as "commit logs" for organizing sequences of events, with **new event
 - [Azure Event Hubs Data Sender](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#azure-event-hubs-data-sender): _send access_ to Event Hubs resources.
 - [Azure Event Hubs Data Receiver](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#azure-event-hubs-data-receiver): _receiving access_ to Event Hubs resources.
 
-### Authorize Access with Managed Identities
-
-```cs
-EventHubProducerClient producerClient = new EventHubProducerClient(
-    fullyQualifiedNamespace: "<<Your-Namespace>>",
-    eventHubName: "<<EventHub-Name>>",
-    new DefaultAzureCredential());
-
-await producerClient.SendAsync(new EventData(Encoding.UTF8.GetBytes("Message body")));
-```
-
-### Authorize Access with Microsoft Identity Platform
-
-```cs
-var tokenProvider = TokenProvider.CreateAzureActiveDirectoryTokenProvider(
-    async (audience, authority, state) =>
-    {
-        var authContext = new AuthenticationContext(authority);
-        var clientCredential = new ClientCredential("<<Your-ClientId>>", "<<Your-ClientSecret>>");
-        var result = await authContext.AcquireTokenAsync(audience, clientCredential);
-        return result.AccessToken;
-    });
-
-var client = new EventHubClient("<<Your-Namespace>>", "<<EventHub-Name>>", tokenProvider);
-```
-
-### Authorize with Shared Access Signatures
-
-Clients are assigned unique tokens, signed with a shared key, to send to specific publishers. Shared tokens allow multiple clients to use the same publisher, and tokens are valid until expiration.
-
-Consumers require manage rights or listen privileges at namespace, event hub instance, or topic levels, and data is consumed through consumer groups. SAS policy scope is defined at the entity, not consumer level.
-
-```cs
-// Define Shared Access Signature (SAS) details
-string sasKeyName = "KeyName";
-string sasKeyValue = "KeyValue";
-string eventHubNamespace = "<<Your-Namespace>>";
-string eventHubName = "<<EventHub-Name>>";
-string consumerGroup = "<<Consumer-Group>>";
-
-// Create a SAS Token Provider for authorization
-var sasTokenProvider = TokenProvider.CreateSharedAccessSignatureTokenProvider(sasKeyName, sasKeyValue);
-
-// Create an Event Hub Client for sending messages using the SAS Token Provider
-var producerClient = new EventHubClient(eventHubNamespace, eventHubName, sasTokenProvider);
-
-// Create a SAS Token for consumption
-var sasTokenCredential = new SharedAccessSignatureCredential(
-    new SharedAccessSignature(
-        eventHubNamespace,
-        eventHubName,
-        sasKeyName,
-        sasKeyValue,
-        TimeSpan.FromHours(4)));
-
-// Create an Event Hub Consumer Client using the SAS Token
-var consumerClient = new EventHubConsumerClient(
-    consumerGroup,
-    eventHubNamespace,
-    eventHubName,
-    new EventHubConsumerClientOptions
-    {
-        TokenCredential = sasTokenCredential
-    });
-```
-
 ## [Working with Event Hubs](https://learn.microsoft.com/en-us/azure/event-hubs/event-hubs-dotnet-standard-getstarted-send)
 
 ```cs
@@ -175,6 +108,8 @@ var eventHubName = "example-event-hub";
 var storageConnectionString = "DefaultEndpointsProtocol=https;AccountName=exampleaccount;AccountKey=examplekey;EndpointSuffix=core.windows.net";
 var blobContainerName = "example-container";
 var consumerGroup = EventHubConsumerClient.DefaultConsumerGroupName;
+
+// Alt to connection string: ClientSecretCredential, DefaultAzureCredential with fullyQualifiedNamespace
 
 // Application Groups: You can connect via SAS or Azure AD (just pass credential to EventHubProducerClient), allowing you to use access policies, throttling, etc.
 await using (var producerClient = new EventHubProducerClient(eventHubsConnectionString, eventHubName))

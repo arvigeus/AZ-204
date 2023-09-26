@@ -86,7 +86,7 @@ client_id=6731de76-14a6-49ae-97bc-6eba6914391e
 
 When Conditional Access licenses expire, policies stay active but can't be updated.
 
-Apps don't need to be changed, unless they need silent or indirect services access, or on-behalf-of flow .
+Apps don't need to be changed, unless they need silent or indirect services access, or on-behalf-of flow.
 
 ## Other Azure AD features
 

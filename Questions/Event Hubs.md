@@ -49,19 +49,19 @@ Answer: Prefer using `byte[]` with `EventData`.
 
 Question: Which class allows you to send messages in Event Hub?
 
-- [x] `EventHubClient`
+- [x] `EventHubProducerClient`
 - [ ] `EventHubConsumerClient`
 - [ ] `EventHubSender`
 - [ ] `EventHub`
 
-Answer: `EventHubClient`
+Answer: `EventHubProducerClient`
 
 ---
 
 Question: In a distributed temperature monitoring system, various sensors are sending data to an Event Hub. You need to guarantee that the temperature readings from all sensors are processed in the exact sequence they were sent. How can you achieve this?
 
 - [x] Use a common partition key for all sensors.
-- [ ] Utilize the same EventHubClient instance across all sensors.
+- [ ] Utilize the same EventHubProducerClient instance across all sensors.
 - [ ] Switch to Premium tier
 - [ ] Implement a buffering mechanism within the Event Hub.
 

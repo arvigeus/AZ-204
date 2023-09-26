@@ -6,7 +6,7 @@ How it works: When a user requests a file using a special URL (ex: `<endpoint na
 
 Requirenments: To use Azure CDN, you need to set up a CDN profile containing CDN endpoints, each with its own content delivery and access settings. You can have multiple profiles for different domains or applications. Pricing is based on the profile level.
 
-[Limitsations](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#azure-cdn-limits): the number of profiles (up to 25), endpoints per profile (up to 10), and custom domains per endpoint (up to 25) in each Azure subscription.
+[Limitations](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#azure-cdn-limits): the number of profiles (up to 25), endpoints per profile (up to 10), and custom domains per endpoint (up to 25) in each Azure subscription.
 
 Azure CDN offers features like _dynamic site acceleration_, _caching rules_, _HTTPS custom domain support_, _diagnostics logs_, _file compression_, and _geo-filtering_.
 

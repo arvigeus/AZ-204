@@ -289,6 +289,12 @@ az functionapp cors show
 
 Automatic collection of Performance Counters isn't supported when running on Linux.
 
+## [Enable Application Insights](https://learn.microsoft.com/en-us/azure/azure-functions/configure-monitoring?tabs=v2#enable-application-insights-integration)
+
+Enabled by default for new functions (created in the same or nearest region to your function app), but it may have to be manually enabled for old functions.
+
+To send data, you need the key named `APPINSIGHTS_INSTRUMENTATIONKEY`. `ILogger` is used (not `TelemetryClient`!).
+
 Application Insights are configured in [host.json](https://learn.microsoft.com/en-us/azure/azure-functions/functions-host-json#applicationinsights) (`logging.applicationInsights` and `aggregator`)
 
 ### [Configure monitorung](https://learn.microsoft.com/en-us/azure/azure-functions/configure-monitoring)

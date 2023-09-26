@@ -72,12 +72,6 @@ builder.UseSampling(10.0); // percentage
 builder.Use((next) => new AnotherProcessor(next));
 ```
 
-## [Enable Application Insights for a Function App](https://learn.microsoft.com/en-us/azure/azure-functions/configure-monitoring?tabs=v2#enable-application-insights-integration)
-
-Enabled by default for new functions (created in the same or nearest region to your function app), but it may have to be manually enabled for old functions.
-
-To send data, you need the key named `APPINSIGHTS_INSTRUMENTATIONKEY`. `ILogger` is used (not `TelemetryClient`!).
-
 ## [Custom events and metrics](https://learn.microsoft.com/en-us/azure/azure-monitor/app/api-custom-events-metrics#getmetric)
 
 Use [`GetMetric()`](https://learn.microsoft.com/en-us/azure/azure-monitor/app/get-metric) instead of `TrackMetric()`. `GetMetric()` handles pre-aggregation, reducing costs and performance issues associated with raw telemetry. It avoids sampling, ensuring reliable alerts. Tracking metrics at a granular level can lead to increased costs, network traffic, and throttling risks. `GetMetric()` solves these concerns by sending summarized data every minute.

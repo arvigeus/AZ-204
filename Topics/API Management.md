@@ -23,7 +23,7 @@ Products bundle APIs for developers. They have a title, description, and usage t
 Groups control product visibility to developers. API Management has three unchangeable system groups:
 
 - **Administrators**: Manage service instances, APIs, operations, and products. Azure subscription admins are in this group.
-- **Developers**: Authenticated portal users building applications with your APIs. They have portal access and use API operations.
+- **Developers**: Authenticated portal users can build apps using your APIs. They access the Developer portal to use API operations and can be created by admins, invited, or self-registered. They belong to multiple groups and can subscribe to group-visible products.
 - **Guests**: Unauthenticated portal users with potential read-only access, such as viewing APIs but not calling them.
 
 Apart from system groups, admins can form custom groups or use external groups from related Azure Active Directory tenants.
@@ -34,10 +34,6 @@ API gateways, such as Azure's API Management gateway, manage communication betwe
 
 - **Managed** gateways are default components deployed in Azure for each API Management instance. They handle all API traffic, regardless of where the APIs are hosted.
 - **Self-hosted** gateways are optional, containerized versions of managed gateways. They are suited for hybrid and multicloud environments, allowing management of on-premises APIs and APIs across multiple clouds from a single Azure API Management service.
-
-## Developers
-
-Developers are user accounts in an API Management service. They can be created by admins, invited, or sign up via the Developer portal. They belong to one or more groups and can subscribe to products visible to these groups.
 
 ## [Policies overview](https://learn.microsoft.com/en-us/azure/api-management/api-management-howto-policies)
 
@@ -86,7 +82,7 @@ Add a named value: `Dashboard > API Management Services > service > Named values
 - Secret: Literal string or policy expression that is encrypted by API Management
 - [Key vault](https://learn.microsoft.com/en-us/azure/api-management/api-management-howto-properties): Identifier of a secret stored in an Azure key vault. After update in the key vault, a named value in API Management is updated within 4 hours. Requires managed identity. Configure either a _key vault access policy_ or _Azure RBAC access_ for an API Management managed identity. Key Vault Firewall requires _system-assigned managed identity_.
 
-Add secret:
+Add a secret:
 
 ```sh
 az apim nv create --resource-group apim-hello-word-resource-group \
@@ -95,6 +91,24 @@ az apim nv create --resource-group apim-hello-word-resource-group \
 ```
 
 To use a named value in a policy, place its display name inside a double pair of braces like `{{ContosoHeader}}`. If the value is an expression, it will be evaluated. If the value is the name of another named value - not.
+
+### Policy Expressions
+
+Can be used as attribute values or text values in any of the API Management policies. They can be a single C# statement enclosed in `@(expression)` or a multi-statement C# code block, enclosed in `@{expression}`, that returns a value.
+
+Example `set-body`:
+
+```xml
+<set-body>
+  @{
+    var response = context.Response.Body.As<JObject>();
+    foreach (var key in new [] {"minutely", "hourly", "daily", "flags"}) {
+    response.Property (key).Remove ();
+    }
+  return response.ToString();
+  }
+</set-body>
+```
 
 ### [Throttling](https://learn.microsoft.com/en-us/azure/api-management/api-management-sample-flexible-throttling)
 
@@ -186,7 +200,7 @@ When you want to add some information from external system to the current respon
 
 ## API Security
 
-### [Vis Azure AD](https://learn.microsoft.com/en-us/azure/api-management/api-management-howto-protect-backend-with-aad)
+### [Via Azure AD](https://learn.microsoft.com/en-us/azure/api-management/api-management-howto-protect-backend-with-aad)
 
 1. Register an application in Azure AD to represent the API
 1. Configure a JWT validation policy to pre-authorize requests (`validate-jwt`)
@@ -316,23 +330,7 @@ az apim create --name MyAPIMInstance --resource-group MyResourceGroup --location
 New-AzApiManagement -ResourceGroupName RESOURCE_GROUP -Name NAME -Location LOCATION -Organization ORGANIZATION -AdminEmail ADMIN_EMAIL [-Sku SKU_NAME] [-Tags TAGS]
 ```
 
-## [Policies](https://learn.microsoft.com/en-us/azure/api-management/api-management-policies)
-
-**Policy Expressions**: Can be used as attribute values or text values in any of the API Management policies. They can be a single C# statement enclosed in `@(expression)` or a multi-statement C# code block, enclosed in `@{expression}`, that returns a value.
-
-Example `set-body`:
-
-```xml
-<set-body>
-  @{
-    var response = context.Response.Body.As<JObject>();
-    foreach (var key in new [] {"minutely", "hourly", "daily", "flags"}) {
-    response.Property (key).Remove ();
-    }
-  return response.ToString();
-  }
-</set-body>
-```
+## [Policies reference](https://learn.microsoft.com/en-us/azure/api-management/api-management-policies)
 
 | Name                                  | Example                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | Notes                                                                                                                                                                                                                                                                                                                                 | Sections                    |
 | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
