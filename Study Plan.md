@@ -1,6 +1,7 @@
 # Study Plan
 
 - Check [Notes](./NOTES.md)
+- Go through [Synopsis](./Synopsis.md) to check if you get all the concepts there
 
 1. Develop Azure compute solutions
 

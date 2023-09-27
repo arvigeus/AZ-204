@@ -5,7 +5,6 @@ TLDR;
 - Read the [disclaimer](https://github.com/arvigeus/AZ-204#disclaimer)
 - Go through [Topics](/Topics/) (check [Study Plan](./Study%20Plan.md) for a suggested order)
 - Practice with [quiz app](https://az-204.vercel.app/) ([by topic](https://az-204.vercel.app/topics))
-- Practice in [Azure Sandbox Environment](https://github.com/Azure-Samples/azuresandbox)
 
 ## [Study guide for Exam AZ-204: Developing Solutions for Microsoft Azure](https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/az-204#skills-measured-prior-to-august-21-2023)
 
@@ -148,7 +147,7 @@ TLDR;
   - [Monitor, troubleshoot, and optimize Azure solutions](https://learn.microsoft.com/en-us/shows/exam-readiness-zone/preparing-for-az-204-monitor-troubleshoot-and-optimize-azure-solutions-segment-4-of-5)
   - [Connect to and consume Azure services and third-party services](https://learn.microsoft.com/en-us/shows/exam-readiness-zone/preparing-for-az-204-connect-to-and-consume-azure-services-and-third-party-services-segment-5-of-5)
 - [/Topics](/Topics/)
-- [Azure Sandbox Environment](https://github.com/Azure-Samples/azuresandbox)
+- [Azure Sandbox Environment](https://github.com/Azure-Samples/azuresandbox) (costs $$$)
 - [\[OFFICIAL\] Microsoft Azure Developer Associate (AZ-204) Professional Certificate (Coursera)](https://www.coursera.org/professional-certificates/azure-developer-associate)
 - [AZ-204: Developing Solutions for Microsoft Azure (Alan Rodrigues)](https://www.youtube.com/watch?v=wWBW6ojr-Nw&list=PLLc2nQDXYMHpekgrToMrDpVtFtvmRSqVt)
 - [Azure Developer Associate (AZ-204) — Full Course Pass the Exam! (freeCodeCamp.org)](https://www.youtube.com/watch?v=jZx8PMQjobk&t=832s&pp=ygUGYXotMjA0)
