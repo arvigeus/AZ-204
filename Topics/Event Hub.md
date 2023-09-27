@@ -63,7 +63,7 @@ Azure Storage account as a destination: Needs write permissions on blobs and con
 
 Azure Event Hubs supports compacting event log to retain the latest events of a given event key. With compacted event hubs/Kafka topic, you can use key-based retention rather than using the coarser-grained time-based retention.
 
-## Scaling to throughput units
+## [Scaling to throughput units](https://learn.microsoft.com/en-us/azure/event-hubs/event-hubs-quotas)
 
 Traffic is managed by throughput units. One unit permits 1 MB or 1000 events per second incoming (ingress), and twice that outgoing (egress). Standard hubs support 1-20 units (you can buy more). Exceeding your units limit will be throttled. Event Hubs Capture directly copies data and bypasses outgoing limits.
 
@@ -91,7 +91,7 @@ An application group is a collection of client applications that connect to an E
 
 ## Partitions
 
-They serve as "commit logs" for organizing sequences of events, with **new events added in the order they were received**. They enhance raw IO throughput by allowing multiple parallel logs and streamline processing by assigning clear ownership, thus efficiently handling large volumes of events. The number of partitions, set within an allowed tier range at creation, influences throughput but not cost, and cannot be changed later. While increasing partitions can boost throughput, it may complicate processing. Balancing scaling units and partitions, with a guideline of 1 MB/s per partition, is recommended for optimal scale. The key directs events to specific partition, allowing related events to be grouped together by attributes like unique identity or geography.
+They serve as "commit logs" for organizing sequences of events, with **new events added in the order they were received**. 4 by default. They enhance raw IO throughput by allowing multiple parallel logs and streamline processing by assigning clear ownership, thus efficiently handling large volumes of events. The number of partitions, set within an allowed tier range at creation, influences throughput but not cost, and cannot be changed later. While increasing partitions can boost throughput, it may complicate processing. Balancing scaling units and partitions, with a guideline of 1 MB/s per partition, is recommended for optimal scale. The key directs events to specific partition, allowing related events to be grouped together by attributes like unique identity or geography.
 
 ## Control access to events
 

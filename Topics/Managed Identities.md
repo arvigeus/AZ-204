@@ -15,7 +15,9 @@ Enable Azure App Services-based apps to access other services without handling c
 
 Manage access to Azure resources. To assign Azure roles, you must have `Microsoft.Authorization/roleAssignments/write` permissions, such as `User Access Administrator` or `Owner`.
 
-Read access to all resources: `*/read`
+Read access to all resources: `*/read`.
+
+The inheritance order for scope is Management group, Subscription, Resource group, Resource. When assigning access, follow the rule of least previlege. Note: Double check if you are granting permissions for resource or resource group!
 
 ## Using Managed Identity with a Virtual Machine
 

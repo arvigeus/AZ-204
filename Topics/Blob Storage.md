@@ -540,6 +540,7 @@ BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(c
 // BlobContainerClient containerClient = new BlobContainerClient(new Uri($"https://{accountName}.blob.core.windows.net/{containerName}"), credential, clientOptions);
 
 BlobClient blobClient = containerClient.GetBlobClient(fileName);
+// Getting a blob reference does not make any calls to Azure Storage, it simply creates an object locally that can work with a stored blob.
 
 await blobClient.UploadAsync(localFilePath, true);
 
@@ -639,3 +640,13 @@ To enable HTTPS, you'll have to use Azure CDN
 - Get the host name of your storage endpoint: Copy value of `Settings > Endpoints > Static website` (**without** `https://`)
 - Create a CNAME record
 - Register your custom domain with Azure: `az storage account update --custom-domain <custom-domain-name> --use-subdomain false ...` (or `storage account > Networking >  Custom domain > Domain name`)
+
+## [Network Access Rules](https://learn.microsoft.com/en-us/azure/storage/common/storage-network-security?tabs=azure-portal)
+
+By default, Azure Storage Accounts accept connections from clients on any network.
+
+Steps to Change the Default Network Access Rule:
+
+- Disable All Public Network Access
+- Enable Access from Selected Networks
+- Apply Network Rules

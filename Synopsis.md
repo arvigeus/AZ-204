@@ -157,6 +157,7 @@
    - CLI
 1. Deployment slots
    - Prerequisites
+   - What is shared among slots and what is not?
    - Best practices
    - Swapping settings
    - Custom deployments
@@ -271,6 +272,7 @@
      - Queue trigger and output bindings
      - Timer trigger (CRON quirks)
    - Connection string formats
+   - Selecting files, events, etc
 1. Security
    - Authorization level
      - Annonymous
@@ -400,16 +402,19 @@
      - Steps (2)
    - AzCopy
      - Permissions and authentication
-   - Static website hosting
-     - Prerequisites
-     - Specifics: containers, permissions, best practices, endpoint, default pages
-     - Quirks
-     - Limitations (3) and mitigation
-     - Mapping a custom domain to a static website URL (3)
-   1. Concepts
-      - HTTP query params and how to use them together
-      - `comp=`: `block`, `appendblock`, `page`, `lease`, `metadata`, `list`
-      - `restype=`: `container`
+1. Static website hosting
+   - Prerequisites
+   - Specifics: containers, permissions, best practices, endpoint, default pages
+   - Quirks
+   - Limitations (3) and mitigation
+   - Mapping a custom domain to a static website URL (3)
+1. Networking
+   - Default network rule
+   - Steps to Change the Default Network Access Rule (3)
+1. Concepts
+   - HTTP query params and how to use them together
+   - `comp=`: `block`, `appendblock`, `page`, `lease`, `metadata`, `list`
+   - `restype=`: `container`
 
 ## CosmoDB
 
@@ -484,7 +489,9 @@
 
 ## Managed identities
 
-1. RBAC - what's mandatory
+1. RBAC
+   - what's mandatory
+   - inheritance order
 1. Types: life cycle, sharing, use cases
    - System
    - User
@@ -1001,6 +1008,7 @@
    - Event Hubs Consumer
    - Partition
      - How they work
+     - Default number of partitions?
      - How number of partitions affect processing
      - Event ordering
    - Consumer Group

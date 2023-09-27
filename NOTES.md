@@ -16,6 +16,10 @@ From Microsoft Learn main URL, type these for quick access:
 
 - Soft-delete is considered best practice in terms of security, but it also increases cost. If question asks to minimize costs, choose the option that disables or doesn't enable soft-delete.
 
+## DOUBLE!! TRIPLE!!! QUADRUPLE!!!! check each question
+
+Answer my seem obvious or familiar, but the question might be a trick one. For example talking about C# **script** instead of _C#_, or resource **group** instead of _resource_.
+
 ## Trick questions
 
 - Same command with update and create: if question is "You have X", then choose "update".
@@ -46,6 +50,10 @@ All questions you have doubts on, **mark them for review** as you can't go back 
 
 Everything is encrypted at rest with 256-bit AES, and in-transit with TLS. You can use your own encryption - provided by Azure (they manage it), or third party (you manage it).
 
+## RBAC permission scopes
+
+Double check in the question if you are asked to grant permissions for resource or resource group! In other words: `Resource` scope is not always the right answer!
+
 ## Random thoughts
 
 - Dashes are not allowed in account names. Probably because MS uses them to differentiate between primary `<account>.<url>` and secondary `<account>-secondary.<url>`.
@@ -54,3 +62,4 @@ Everything is encrypted at rest with 256-bit AES, and in-transit with TLS. You c
 - `az ? deployment` or `az webapp` means you are using [App Service](./Topics/App%20Service.md) (needs App Service Account). `az containerapp` means you are using Container Apps. `az container` means Container Instance. May sound obvious, but I want to point that out.
 - `az acr create` creates registry, doesn't run anything. To run docker image use `az acr build` (quick task)
 - Changing SKU is scaling up/down operation. Autoscaling is scale in/out operation.
+- A storage account connection string contains all the information needed to connect to Blob storage, most importantly the account name and the account key.

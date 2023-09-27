@@ -89,6 +89,8 @@ Setting up a scaling rule:
 
 Require Standard+.
 
+All of the slots for a web app share the same deployment plan and virtual machines. They have different host names.
+
 [Best practices](https://learn.microsoft.com/en-us/azure/app-service/deploy-best-practices): Deploy to staging, then swap slots to warm up instances and eliminate downtime.
 
 - **Swapped**: Settings that define the application's _behavior_. Includes connection strings, authentication settings, public certificates, path mappings, CDN, hybrid connections.
