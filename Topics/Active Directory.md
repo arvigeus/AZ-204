@@ -57,6 +57,9 @@ The app specifies required permissions using the `scope` query parameter, which 
 
 `az ad app permission add --id {appId} --api {apiID} --api-permissions {permissionId}={Scope,Role}`
 
+- Scope: Defines **what the application is allowed to do** on behalf of a user.
+- Role: Defines more privileged **operations that the application can perform**, often without a user
+
 ### [Consent](https://learn.microsoft.com/en-us/azure/active-directory/manage-apps/user-admin-consent-overview)
 
 - **Static user consent**: Requires all permissions to be specified in the Azure portal during app registration. Users or admins are prompted for consent if not previously granted. Issues: requires long lists of permissions and knowing all resources in advance.

@@ -63,3 +63,4 @@ Double check in the question if you are asked to grant permissions for resource 
 - `az acr create` creates registry, doesn't run anything. To run docker image use `az acr build` (quick task)
 - Changing SKU is scaling up/down operation. Autoscaling is scale in/out operation.
 - A storage account connection string contains all the information needed to connect to Blob storage, most importantly the account name and the account key.
+- Acquiring: Authorization Code: `GET /oauth2/authorize`; Access Token: `POST /oauth2/token`

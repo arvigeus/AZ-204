@@ -291,6 +291,7 @@
    - Limitations (Linux)
    - Configure and use Application Insights
      - Prerequisites
+     - Type of sampling used
    - Logging
      - Verbose logging
    - Identify which part of the system or user code generated the log
@@ -525,6 +526,7 @@
 ## Azure AD
 
 1. Differences with RBAC?
+   - Scope
 1. App registration
    - Howto
    - Objects
@@ -548,6 +550,7 @@
          - Incremental (Dynamic)
          - Admin
        - Requesting individual user consent
+     - Difference between scope and permission
    - Conditional Access
      - Prerequisites
      - Specifics
@@ -733,7 +736,7 @@
      - What method should be used and why?
      - C#
        - GetMetric
-       - TrackMetric
+       - TrackMetric; Considerations
        - TrackEvent
        - TrackPageView
        - TrackException

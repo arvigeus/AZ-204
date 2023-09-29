@@ -4,9 +4,8 @@ Provides a unified programmability model that you can use to access data in Micr
 
 - Endpoint: `https://graph.microsoft.com`. Can manage user and device identity, access, compliance, security, and help protect organizations from data leakage or loss.
 
-- [Microsoft Graph connectors](https://learn.microsoft.com/en-us/microsoftsearch/connectors-overview) work in the incoming direction, **delivering data external to the Microsoft cloud into Microsoft Graph services and applications**, to enhance Microsoft 365 experiences such as Microsoft Search. Connectors exist for many commonly used data sources such as Box, Google Drive, Jira, and Salesforce.
-
-- [Microsoft Graph Data Connect](https://learn.microsoft.com/en-us/graph/data-connect-concept-overview) provides a set of tools to streamline secure and scalable delivery of **Microsoft Graph data to popular Azure data stores**. The cached data serves as data sources for Azure development tools that you can use to build intelligent applications.
+- [Microsoft Graph connectors](https://learn.microsoft.com/en-us/microsoftsearch/connectors-overview): delivering **data external to the Microsoft cloud into Microsoft Graph services and applications** (Box, Google Drive, Jira, and Salesforce).
+- [Microsoft Graph Data Connect](https://learn.microsoft.com/en-us/graph/data-connect-concept-overview): delivering **Microsoft Graph data to popular Azure data stores**.
 
 ## Resources
 
