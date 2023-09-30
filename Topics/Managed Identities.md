@@ -35,25 +35,25 @@ The inheritance order for scope is Management group, Subscription, Resource grou
 
    ```sh
    # Creating a resource (like a VM or any other service that supports it) with a system-assigned identity
-   az <service> create --resource-group myGroup --name myResource --assign-identity '[system]'
+   az <service> create --resource-group $resourceGroup --name myResource --assign-identity '[system]'
 
    # Assigning a system-assigned identity to an existing resource
-   az <service> identity assign --resource-group myGroup --name myResource --identities '[system]'
+   az <service> identity assign --resource-group $resourceGroup --name myResource --identities '[system]'
    ```
 
 1. **User-assigned Identity**
 
    ```sh
    # First, create the identity
-   az identity create --resource-group myGroup --name identityName
+   az identity create --resource-group $resourceGroup --name identityName
 
    # Creating a resource (like a VM or any other service that supports it) with a user-assigned identity
-   az <service> create --assign-identity $identityName --resource-group $rgName --name $resourceName
-   #az <service> create --assign-identity '/subscriptions/<SubId>/resourcegroups/myGroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myIdentity' --resource-group $rgName --name $resourceName
+   az <service> create --assign-identity $identityName --resource-group $resourceGroup --name $resourceName
+   #az <service> create --assign-identity '/subscriptions/<SubId>/resourcegroups/$resourceGroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myIdentity' --resource-group $resourceGroup --name $resourceName
 
    # Assigning a user-assigned identity to an existing resource
-   az <service> identity assign --identities $identityName --resource-group $rgName --name $resourceName
-   # az <service> identity assign --identities '/subscriptions/<SubId>/resourcegroups/myGroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myIdentity' --resource-group myGroup --name $resourceName
+   az <service> identity assign --identities $identityName --resource-group $resourceGroup --name $resourceName
+   # az <service> identity assign --identities '/subscriptions/<SubId>/resourcegroups/$resourceGroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myIdentity' --resource-group $resourceGroup --name $resourceName
    ```
 
 Both system-assigned and user-assigned managed identities can be assigned specific Azure roles, allowing them to perform certain actions on specific Azure resources. These roles are part of Azure's Role-Based Access Control ([RBAC](https://docs.microsoft.com/en-us/azure/role-based-access-control/overview)) system, which provides fine-grained access management to Azure resources.

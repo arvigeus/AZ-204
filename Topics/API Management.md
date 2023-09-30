@@ -85,7 +85,7 @@ Add a named value: `Dashboard > API Management Services > service > Named values
 Add a secret:
 
 ```sh
-az apim nv create --resource-group apim-hello-word-resource-group \
+az apim nv create --resource-group $resourceGroup \
     --display-name "named_value_01" --named-value-id named_value_01 \
     --secret true --service-name apim-hello-world --value test
 ```
@@ -305,11 +305,11 @@ _Header-based versioning_ if the _URL has to stay the same_. Revisions and other
 Creating separate gateways or web APIs would force users to access a different endpoint. A separate gateway provides complete isolation.
 
 ```sh
-az apim api release create --resource-group apim-hello-word-resource-group \
+az apim api release create --resource-group $resourceGroup \
     --api-id demo-conference-api --api-revision 2 --service-name apim-hello-world \
     --notes 'Testing revisions. Added new "test" operation.'
 
-az group deployment create --resource-group <resourceGroupName> --template-file ./apis.json --parameters apiRevision="20191206" apiVersion="v1" serviceName=<serviceName> apiVersionSetName=<versionSetName> apiName=<apiName> apiDisplayName=<displayName>
+az group deployment create --resource-group $resourceGroup --template-file ./apis.json --parameters apiRevision="20191206" apiVersion="v1" serviceName=<serviceName> apiVersionSetName=<versionSetName> apiName=<apiName> apiDisplayName=<displayName>
 ```
 
 ## [Integrating backend API with APIM](https://learn.microsoft.com/en-us/azure/api-management/import-and-publish)
@@ -325,7 +325,7 @@ Azure API Management emits metrics every minute, providing near real-time visibi
 Create new APIM:
 
 ```sh
-az apim create --name MyAPIMInstance --resource-group MyResourceGroup --location eastus --publisher-name "My Publisher" --publisher-email publisher@example.com --sku-name Developer
+az apim create --name MyAPIMInstance --resource-group $resourceGroup --location eastus --publisher-name "My Publisher" --publisher-email publisher@example.com --sku-name Developer
 # or
 New-AzApiManagement -ResourceGroupName RESOURCE_GROUP -Name NAME -Location LOCATION -Organization ORGANIZATION -AdminEmail ADMIN_EMAIL [-Sku SKU_NAME] [-Tags TAGS]
 ```

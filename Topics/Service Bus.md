@@ -196,19 +196,19 @@ Task ErrorHandler(ProcessErrorEventArgs args)
 ```
 
 ```sh
-az servicebus namespace create --name mynamespace --resource-group myresourcegroup --location eastus
-az servicebus queue create --name myqueue --namespace-name mynamespace --resource-group myresourcegroup
+az servicebus namespace create --name mynamespace --resource-group $resourceGroup --location eastus
+az servicebus queue create --name myqueue --namespace-name mynamespace --resource-group $resourceGroup
 
-az servicebus queue list --namespace-name mynamespace --resource-group myresourcegroup
+az servicebus queue list --namespace-name mynamespace --resource-group $resourceGroup
 
-az servicebus namespace authorization-rule keys list --name RootManageSharedAccessKey --namespace-name mynamespace --resource-group myresourcegroup --query primaryConnectionString
+az servicebus namespace authorization-rule keys list --name RootManageSharedAccessKey --namespace-name mynamespace --resource-group $resourceGroup --query primaryConnectionString
 
 # Send, Peek, Delete - You would use an SDK or other tooling
 
-az servicebus queue delete --name myqueue --namespace-name mynamespace --resource-group myresourcegroup
-az servicebus namespace delete --name mynamespace --resource-group myresourcegroup
+az servicebus queue delete --name myqueue --namespace-name mynamespace --resource-group $resourceGroup
+az servicebus namespace delete --name mynamespace --resource-group $resourceGroup
 ```
 
 ```ps
-New-AzServiceBusNamespace -ResourceGroupName myResourceGroup -Name myNamespace -SkuName Premium -Location northeurope -IdentityType UserAssigned
+New-AzServiceBusNamespace -ResourceGroupName $resourceGroup -Name myNamespace -SkuName Premium -Location northeurope -IdentityType UserAssigned
 ```

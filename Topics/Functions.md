@@ -43,7 +43,7 @@ az functionapp plan create
     [--min-instances]
     [--tags]
     [--zone-redundant] # Cannot be changed after plan creation. Minimum instance count is 3.
-# az functionapp plan create -g MyResourceGroup -n MyPlan --min-instances 1 --max-burst 10 --sku EP1
+# az functionapp plan create -g $resourceGroup -n MyPlan --min-instances 1 --max-burst 10 --sku EP1
 
 # Get a list of all Consumption plans in your resource group
 az functionapp plan list --resource-group $resourceGroup --query "[?sku.family=='Y'].{PlanName:name,Sites:numberOfSites}" -o table
@@ -109,7 +109,7 @@ Auto generated for compiled languages. or scripting languages, like `C# Script`,
 
 ### Configuration via CLI
 
-Setting properties: `az resource update --resource-type Microsoft.Web/sites -g <RESOURCE_GROUP> -n <FUNCTION_APP-NAME>/config/web --set properties.XXX`, where `XXX` is the name of the property.
+Setting properties: `az resource update --resource-type Microsoft.Web/sites -g $resourceGroup -n <FUNCTION_APP-NAME>/config/web --set properties.XXX`, where `XXX` is the name of the property.
 
 - `functionAppScaleLimit`: 0 or null for unrestricted, or a valid value between 1 and the app maximum (200 for Consumption, 100 for premium).
 
@@ -690,11 +690,11 @@ public static void Run(
 
 | Command                                                                                                                                     | Brief Explanation                        | Example                                                                                                            |
 | ------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| [az functionapp plan create](https://learn.microsoft.com/en-us/cli/azure/functionapp/plan?view=azure-cli-latest#az-functionapp-plan-create) | Create an Azure Function App plan.       | `az functionapp plan create --name MyPlan --resource-group MyResourceGroup --sku Y1 --is-linux`                    |
+| [az functionapp plan create](https://learn.microsoft.com/en-us/cli/azure/functionapp/plan?view=azure-cli-latest#az-functionapp-plan-create) | Create an Azure Function App plan.       | `az functionapp plan create --name MyPlan --resource-group $resourceGroup --sku Y1 --is-linux`                     |
 | [az functionapp plan update](https://learn.microsoft.com/en-us/cli/azure/functionapp/plan?view=azure-cli-latest#az-functionapp-plan-update) | Update a Function App plan.              | `az functionapp plan update --name MyPlan --sku Y2`                                                                |
-| [az functionapp plan list](https://learn.microsoft.com/en-us/cli/azure/functionapp/plan?view=azure-cli-latest#az-functionapp-plan-list)     | List function app plans.                 | `az functionapp plan list --resource-group MyResourceGroup`                                                        |
-| [az appservice plan list](https://learn.microsoft.com/en-us/cli/azure/appservice/plan?view=azure-cli-latest#az-appservice-plan-list)        | List app service plans.                  | `az appservice plan list --resource-group MyResourceGroup`                                                         |
-| [az functionapp show](https://learn.microsoft.com/en-us/cli/azure/functionapp?view=azure-cli-latest#az-functionapp-show)                    | Show the details of a function app.      | `az functionapp show --name MyFunctionApp --resource-group MyResourceGroup`                                        |
+| [az functionapp plan list](https://learn.microsoft.com/en-us/cli/azure/functionapp/plan?view=azure-cli-latest#az-functionapp-plan-list)     | List function app plans.                 | `az functionapp plan list --resource-group $resourceGroup`                                                         |
+| [az appservice plan list](https://learn.microsoft.com/en-us/cli/azure/appservice/plan?view=azure-cli-latest#az-appservice-plan-list)        | List app service plans.                  | `az appservice plan list --resource-group $resourceGroup`                                                          |
+| [az functionapp show](https://learn.microsoft.com/en-us/cli/azure/functionapp?view=azure-cli-latest#az-functionapp-show)                    | Show the details of a function app.      | `az functionapp show --name MyFunctionApp --resource-group $resourceGroup`                                         |
 | [az functionapp create](https://learn.microsoft.com/en-us/cli/azure/functionapp?view=azure-cli-latest#az-functionapp-create)                | Create a function app.                   | `az functionapp create --name MyFunctionApp --storage-account mystorageaccount --consumption-plan-location eastus` |
 | [az functionapp config appsettings](https://learn.microsoft.com/en-us/cli/azure/functionapp/config/appsettings?view=azure-cli-latest)       | Manage function app settings.            | `az functionapp config appsettings set --name MyFunctionApp --settings KEY=VALUE`                                  |
 | [az functionapp cors add](https://learn.microsoft.com/en-us/cli/azure/functionapp/cors?view=azure-cli-latest#az-functionapp-cors-add)       | Add allowed origins to function app.     | `az functionapp cors add --name MyFunctionApp --allowed-origins 'https://example.com'`                             |

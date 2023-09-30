@@ -60,7 +60,7 @@ if (queueClient.Exists())
 ```
 
 ```sh
-az storage account create --name mystorageaccount --resource-group myresourcegroup --location eastus --sku Standard_LRS
+az storage account create --name mystorageaccount --resource-group $resourceGroup --location eastus --sku Standard_LRS
 az storage queue create --name myqueue --account-name mystorageaccount
 az storage queue list --account-name mystorageaccount --output table
 az storage message put --queue-name myqueue --account-name mystorageaccount --content "Hello, World!"

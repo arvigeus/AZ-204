@@ -142,7 +142,7 @@ An event is dropped if either of the limits of the retry policy is reached.
 
 ```sh
 az eventgrid event-subscription create \
-  -g gridResourceGroup \
+  -g $resourceGroup \
   --topic-name <topic_name> \
   --name <event_subscription_name> \
   --endpoint <endpoint_URL> \
@@ -273,16 +273,16 @@ Limitations:
 mySiteURL="https://${mySiteName}.azurewebsites.net"
 
 # Create a resource group
-az group create --name az204-evgrid-rg --location $myLocation
+az group create --name $resourceGroup --location $myLocation
 
 # Create a custom topic
 az eventgrid topic create --name $myTopicName \
     --location $myLocation \
-    --resource-group az204-evgrid-rg
+    --resource-group $resourceGroup
 
 # Create a message endpoint
 az deployment group create \
-    --resource-group az204-evgrid-rg \
+    --resource-group $resourceGroup \
     --template-uri "https://raw.githubusercontent.com/Azure-Samples/azure-event-grid-viewer/main/azuredeploy.json" \
     --parameters siteName=$mySiteName hostingPlanName=viewerhost
 
@@ -290,13 +290,13 @@ az deployment group create \
 endpoint="${mySiteURL}/api/updates"
 subId=$(az account show --subscription "" | jq -r '.id')
 az eventgrid event-subscription create \
-    --source-resource-id "/subscriptions/$subId/resourceGroups/az204-evgrid-rg/providers/Microsoft.EventGrid/topics/$myTopicName" \
+    --source-resource-id "/subscriptions/$subId/resourceGroups/$resourceGroup/providers/Microsoft.EventGrid/topics/$myTopicName" \
     --name az204ViewerSub \
     --endpoint $endpoint
 
 # Send an event to the custom topic
-topicEndpoint=$(az eventgrid topic show --name $myTopicName -g az204-evgrid-rg --query "endpoint" --output tsv)
-key=$(az eventgrid topic key list --name $myTopicName -g az204-evgrid-rg --query "key1" --output tsv)
+topicEndpoint=$(az eventgrid topic show --name $myTopicName -g $resourceGroup --query "endpoint" --output tsv)
+key=$(az eventgrid topic key list --name $myTopicName -g $resourceGroup --query "key1" --output tsv)
 event='[ {"id": "'"$RANDOM"'", "eventType": "recordInserted", "subject": "myapp/vehicles/motorcycles", "eventTime": "'`date +%Y-%m-%dT%H:%M:%S%z`'", "data":{ "make": "Contoso", "model": "Monster"},"dataVersion": "1.0"} ]'
 curl -X POST -H "aeg-sas-key: $key" -d "$event" $topicEndpoint
 ```
@@ -310,18 +310,18 @@ resourceGroupName="<Resource_Group_Name>"
 namespaceName="<Namespace_Name>"
 eventHubName="<Event_Hub_Name>"
 
-az eventgrid topic create --name $topicName --location $location --resource-group $resourceGroupName
+az eventgrid topic create --name $topicName --location $location --resource-group $resourceGroup
 
-# az eventgrid topic show --name $topicName --resource-group $resourceGroupName --query "{endpoint:endpoint, primaryKey:primaryKey}" --output json
+# az eventgrid topic show --name $topicName --resource-group $resourceGroup --query "{endpoint:endpoint, primaryKey:primaryKey}" --output json
 
 # Create a namespace
-az eventhubs namespace create --name $namespaceName --location $location --resource-group $resourceGroupName
+az eventhubs namespace create --name $namespaceName --location $location --resource-group $resourceGroup
 
 # Create an event hub
-az eventhubs eventhub create --name $eventHubName --namespace-name $namespaceName --resource-group $resourceGroupName
+az eventhubs eventhub create --name $eventHubName --namespace-name $namespaceName --resource-group $resourceGroup
 
-topicId=$(az eventgrid topic show --name $topicName --resource-group $resourceGroupName --query "id" --output tsv)
-hubId=$(az eventhubs eventhub show --name $eventHubName --namespace-name $namespaceName --resource-group $resourceGroupName --query "id" --output tsv)
+topicId=$(az eventgrid topic show --name $topicName --resource-group $resourceGroup --query "id" --output tsv)
+hubId=$(az eventhubs eventhub show --name $eventHubName --namespace-name $namespaceName --resource-group $resourceGroup --query "id" --output tsv)
 
 # Link the Event Grid Topic to the Event Hub
 az eventgrid event-subscription create \

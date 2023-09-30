@@ -144,7 +144,7 @@ Changing a blob's tier leaves its last modified time untouched. If a lifecycle p
 ```sh
 az storage account management-policy create \
     #--account-name "<storage-account>" \
-    #--resource-group "<resource-group>"
+    #--resource-group $resourceGroup
     --policy @policy.json \
 ```
 

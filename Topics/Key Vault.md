@@ -10,7 +10,7 @@ Endpoint: `https://vault.azure.net`
 - Automates certificate tasks.
 - Integrates with other Azure services for disk and database encryption.
 
-`az keyvault create --name <YourKeyVaultName> --resource-group <YourResourceGroupName> --location <YourLocation>`
+`az keyvault create --name <YourKeyVaultName> --resource-group $resourceGroup --location <YourLocation>`
 
 Set secret: `az keyvault secret set --vault-name $myKeyVault --name "ExamplePassword" --value "hVFkk965BuUv"`
 

@@ -197,5 +197,5 @@ az storage blob generate-sas \
 # Revoke all user delegation keys for the storage account
 az storage account revoke-delegation-keys \
  --name <storage-account> \
- --resource-group <resource-group>
+ --resource-group $resourceGroup
 ````

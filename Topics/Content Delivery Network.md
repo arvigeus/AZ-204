@@ -33,7 +33,7 @@ az cdn endpoint purge \
     --content-paths '/css/*' '/js/app.js' \
     --name ContosoEndpoint \
     --profile-name DemoProfile \
-    --resource-group ExampleGroup
+    --resource-group $resourceGroup
 ```
 
 ### [Caching Rules](https://learn.microsoft.com/en-us/azure/cdn/cdn-caching-rules)
@@ -83,7 +83,7 @@ az cdn endpoint purge \
     --content-paths '/css/*' '/js/app.js' \
     --name ContosoEndpoint \
     --profile-name DemoProfile \
-    --resource-group ExampleGroup
+    --resource-group $resourceGroup
 ```
 
 ### Preload assets
@@ -93,7 +93,7 @@ az cdn endpoint load \
     --content-paths '/img/*' '/js/module.js' \
     --name ContosoEndpoint \
     --profile-name DemoProfile \
-    --resource-group ExampleGroup
+    --resource-group $resourceGroup
 ```
 
 ## [Compression (Front Door)](https://learn.microsoft.com/en-us/azure/frontdoor/standard-premium/how-to-compression)
