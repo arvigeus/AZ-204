@@ -35,8 +35,6 @@ Here are various methods to start monitoring and analyzing your app's performanc
 - **Mobile app analysis**: Use Visual Studio App Center to study mobile app usage.
 - **Availability tests**: Regularly ping your website from our servers to test availability.
 
-NOTE: `az monitor activity-log` _cannot_ display data from Application Insight telemetry!
-
 ## Metrics
 
 **Log-based metrics**: Offers thorough data analysis and diagnostics. ⭐: you need complete set of events ❌: high-volume apps that require sampling / filtering.
@@ -74,7 +72,7 @@ builder.Use((next) => new AnotherProcessor(next));
 
 ## [Custom events and metrics](https://learn.microsoft.com/en-us/azure/azure-monitor/app/api-custom-events-metrics#getmetric)
 
-Use [`GetMetric()`](https://learn.microsoft.com/en-us/azure/azure-monitor/app/get-metric) instead of `TrackMetric()`. `GetMetric()` handles pre-aggregation, reducing costs and performance issues associated with raw telemetry. It avoids sampling, ensuring reliable alerts. Tracking metrics at a granular level can lead to increased costs, network traffic, and throttling risks. `GetMetric()` solves these concerns by sending summarized data every minute.
+Use [`GetMetric()`](https://learn.microsoft.com/en-us/azure/azure-monitor/app/get-metric) instead of `TrackMetric()`. `GetMetric()` handles **pre-aggregation**, reducing costs and performance issues associated with raw telemetry. It avoids sampling, ensuring reliable alerts. Tracking metrics at a granular level can lead to increased costs, network traffic, and throttling risks. `GetMetric()` solves these concerns by sending summarized data every minute.
 
 ```cs
 // Set properties such as UserId and DeviceId to identify the machine.
@@ -161,7 +159,7 @@ Up to 100 tests per Application Insights resource.
 
 - [URL ping test (classic)](https://learn.microsoft.com/en-us/azure/azure-monitor/app/monitor-web-app-availability): Check endpoint response and measure performance. Customize success criteria with advanced features like parsing dependent requests and retries. It relies on public internet DNS; ensure public domain name servers resolve all test domain names. Use custom **TrackAvailability** tests otherwise.
 - [Standard test (Preview)](https://learn.microsoft.com/en-us/azure/azure-monitor/app/availability-standard-tests): Similar to URL ping, this single request test covers SSL certificate validity, proactive lifetime check, HTTP request verb (`GET`, `HEAD`, or `POST`), custom headers, and associated data.
-- [Custom TrackAvailability test](https://learn.microsoft.com/en-us/azure/azure-monitor/app/availability-azure-functions): Custom TrackAvailability test: For custom application availability tests, employ the [TrackAvailability()](https://learn.microsoft.com/en-us/dotnet/api/microsoft.applicationinsights.telemetryclient.trackavailability) method to send results to Application Insights. Ideal for `multi-request` or `authentication` test scenarios. (Note: Multi-step test are the legacy version, depricated in 2019)
+- [Custom TrackAvailability test](https://learn.microsoft.com/en-us/azure/azure-monitor/app/availability-azure-functions): Custom TrackAvailability test: For custom application availability tests, employ the [TrackAvailability()](https://learn.microsoft.com/en-us/dotnet/api/microsoft.applicationinsights.telemetryclient.trackavailability) method to send results to Application Insights. Ideal for `multi-request` or `authentication` test scenarios. (Note: Multi-step test are the legacy version; To create multi-step tests, use Visual Studio)
 
 Example: Create an alert that will notify you via email if the web app becomes unresponsive:
 
@@ -190,7 +188,14 @@ appsettings.json:
 
 Trust local certificates: `dotnet dev-certs https --trust`
 
-## [Azure Monitor Activity Log](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/activity-log)
+## Azure Monitor
+
+- Azure Monitor: Infrastructure and multi-resource monitoring, including hybrid and multi-cloud environments.
+- Application Insights: Application-level monitoring (application performance management - APM), especially for web apps and services.
+
+Application Insights data can also be viewed in Azure Monitor for a centralized experience.
+
+### [Activity Log](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/activity-log)
 
 Records subscription-level events, such as modifications to resources or starting a virtual machine.
 
@@ -199,6 +204,8 @@ Records subscription-level events, such as modifications to resources or startin
 - **Log Analytics workspace**: Utilize log queries for deep insights (_Kusto queries_) and complex alerting. By default events are retained for 90 days, but you can create a diagnostic setting for longer retention.
 - **Azure Storage account**: For audit, static analysis, or backup. Less expensive, and logs can be kept there indefinitely.
 - **Azure Event Hubs**: Stream data to external systems such as third-party SIEMs and other Log Analytics solutions.
+
+NOTE: `az monitor activity-log` _cannot_ display data from Application Insight telemetry!
 
 ## Configuring
 

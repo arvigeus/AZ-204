@@ -90,6 +90,16 @@ To remove all access policies from the resource, call the `Set ACL` operation wi
 
 ## Working with SAS
 
+Gist:
+
+- Service SAS and Account SAS use `StorageSharedKeyCredential`; User delegation SAS use `DefaultAzureCredential` or similar AzureAD
+- Service SAS and User delegation SAS use `BlobSasBuilder`; Account SAS uses `AccountSasBuilder`
+- Set permissions: `BlobSasPermissions` for user and service; `AccountSasPermissions` for account
+- Obtaining URI:
+  - User delegation SAS: Use key generated from `BlobServiceClient.GetUserDelegationKeyAsync` as first param of `BlobSasBuilder.ToSasQueryParameters(key, accountName)`; pass it to `BlobUriBuilder(BlobClient.Uri).Sas`
+  - Service SAS: `BlobClient.GenerateSasUri(BlobSasBuilder)`
+  - Account SAS: `BlobSasBuilder.ToSasQueryParameters(sharedKeyCredential)` and construct Uri from it at root level (`https://{accountName}.blob.core.windows.net?{sasToken}`)
+
 ```cs
 // Using StorageSharedKeyCredential with account name and key directly for authentication.
 // This key has full permissions to all operations on all resources in your storage account.
@@ -99,8 +109,8 @@ var credential = new StorageSharedKeyCredential("<account-name>", "<account-key>
 // Using DefaultAzureCredential with Azure AD. More secure, but doesn't work for Service SAS.
 // TokenCredential credential = new DefaultAzureCredential();
 
-var service = new BlobServiceClient(new Uri("<account-url>"), credential);
-var blobClient = service.GetBlobContainerClient("<container-name>").GetBlobClient("<blob-name>");
+var serviceClient = new BlobServiceClient(new Uri("<account-url>"), credential);
+var blobClient = serviceClient.GetBlobContainerClient("<container-name>").GetBlobClient("<blob-name>");
 
 // Create a SAS token for the blob resource that's also valid for 1 day
 BlobSasBuilder sasBuilder = new BlobSasBuilder()
@@ -109,9 +119,9 @@ BlobSasBuilder sasBuilder = new BlobSasBuilder()
     BlobName = blobClient.Name,
     Resource = "b", // HINT: in case of missing BlobName property, then Resource = "c"
     StartsOn = DateTimeOffset.UtcNow,
-    ExpiresOn = DateTimeOffset.UtcNow.AddDays(1),
-    Permissions = BlobSasPermissions.Read | BlobSasPermissions.Write
+    ExpiresOn = DateTimeOffset.UtcNow.AddDays(1)
 };
+sasBuilder.SetPermissions(BlobSasPermissions.Read | BlobSasPermissions.Write);
 
 ////////////////////////////////////////////////////
 // User Delegation SAS
@@ -119,20 +129,13 @@ BlobSasBuilder sasBuilder = new BlobSasBuilder()
 
 // Request the user delegation key
 // UserDelegationKey is used to sign the SAS token and has its own validity (can be used for multiple SAS)
-UserDelegationKey userDelegationKey = await blobServiceClient.GetUserDelegationKeyAsync(
+UserDelegationKey userDelegationKey = await serviceClient.GetUserDelegationKeyAsync(
     DateTimeOffset.UtcNow,
     DateTimeOffset.UtcNow.AddDays(1));
+var userSas = sasBuilder.ToSasQueryParameters(userDelegationKey, serviceClient.AccountName);
 // Add the SAS token to the blob URI
-BlobUriBuilder uriBuilder = new BlobUriBuilder(blobClient.Uri)
-{
-    // Specify the user delegation key
-    Sas = sasBuilder.ToSasQueryParameters(
-        userDelegationKey,
-        blobClient
-            .GetParentBlobContainerClient()
-            .GetParentBlobServiceClient().AccountName)
-};
-var blobClientSASUserDelegation = new BlobClient(uriBuilderUserDelegation.ToUri());
+BlobUriBuilder uriBuilder = new BlobUriBuilder(blobClient.Uri) { Sas = userSas };
+var blobClientSASUserDelegation = new BlobClient(uriBuilder.ToUri());
 
 ////////////////////////////////////////////////////
 // Service SAS

@@ -72,6 +72,12 @@ Routing is managed interally, but applications can also use user properties for 
 | Geo-disaster recovery      | Continues data processing in a different region or datacenter during downtime.                                         |
 | Security                   | Supports standard AMQP 1.0 and HTTP/REST protocols.                                                                    |
 
+## [Messege expiration (TTL)](https://learn.microsoft.com/en-us/azure/service-bus-messaging/message-expiration)
+
+- **Setting TTL**: Message-level TTL **cannot be higher than topic's (queue) TTL**. If not set, queue's TTL is used.
+- **Message Lock**: When a message is locked, its expiration is halted. Expiration resumes if the lock expires or the message is abandoned.
+- **Dead-Letter Queue**: Expired messages can be moved to a dead-letter queue for further inspection.
+
 ## [Scheduled messages](https://learn.microsoft.com/en-us/azure/service-bus-messaging/message-sequencing#scheduled-messages)
 
 To schedule messages, you have two options:

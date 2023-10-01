@@ -212,7 +212,12 @@
    - Default networking behavior
    - Outbound addresses
 1. Diagnostics
-   - Types: Application, Web Server, Detailed Error Msgs, Failed request tracking, Deployment logging
+   - Types (and when to use which):
+     - Application
+     - Web Server
+     - Detailed Error Msgs
+     - Failed request tracking
+     - Deployment logging
    - Location: App Service File System, Blob Option. Limitations.
    - Linux vs Windows
    - AllMetrics
@@ -248,7 +253,7 @@
      - Consumption
      - Premium
      - Dedicated
-   - Features per tier: timeout, pre-warmed instances
+   - Features per tier: timeout, pre-warmed instances, serverless pricing, event-based scaling
    - When to choose each - scenarios, predictable costs
    - Scale controller
 1. Storage considerations
@@ -265,6 +270,7 @@
    - Types (and return types)
      - HTTP trigger
      - Blob trigger and bindings
+       - Filtering
      - CosmoDB trigger and bindings
      - Event Grid trigger and output bindings
      - Event Hub trigger and output bindings
@@ -349,6 +355,7 @@
      - C#
    - Leasing
      - How to access leased blob and what happens whan you don't do it?
+     - How to work with a blob/container that have been already leased? (C# class name, HTTP)
      - Leasing blob via C#
      - Leasing blob via HTTP
    - Encryption
@@ -706,7 +713,6 @@
 
 1. Quirks
    - Session Id
-   - az monitor
 1. Features
    - Live Metrics
    - Availability (Synthetic Transaction Monitoring)
@@ -714,6 +720,7 @@
        - URL ping test (classic)
        - Standard test (Preview)
        - Custom TrackAvailability test
+         - Multi-step test (what is required?)
      - Create an alert that will notify you via email if the web app becomes unresponsive
    - GitHub or Azure DevOps integration
    - Usage
@@ -734,7 +741,7 @@
    - Custom events and metrics
      - Grouping custom events in sampling
      - What method should be used and why?
-     - C#
+     - C# (what should be used for pre-aggregation?)
        - GetMetric
        - TrackMetric; Considerations
        - TrackEvent
@@ -774,11 +781,14 @@
    - Auto
    - Manual
 1. Monitor a local web API
-1. Azure Monitor Activity Log
-   - Diagnostic Settings
-     - Log Analytics workspace
-     - Azure Storage account
-     - Azure Event Hubs
+1. Azure Monitor
+   - Difference between Application Insights and Azure Monitor
+   - Activity Log
+     - Quirk about CLI
+     - Diagnostic Settings
+       - Log Analytics workspace
+       - Azure Storage account
+       - Azure Event Hubs
 
 ## Cache for Redis
 
@@ -1036,6 +1046,7 @@
 1. Log Compaction
    - Retention types
 1. Scaling to throughput units
+   - How to balance load
    - Limits
      - Size
      - Max Requests
@@ -1103,6 +1114,10 @@
    - Autodelete on idle
    - Duplicate detection
    - Geo-disaster recovery
+1. Message expiration
+   - TTL per message and per topic (queue)
+   - Message Lock
+   - Dead lettering
 1. Scheduled delivery
    - regular API (ScheduledEnqueueTimeUtc)
    - schedule API (SequenceNumber)

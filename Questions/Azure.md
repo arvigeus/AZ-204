@@ -66,3 +66,12 @@ Question: What is the level of awesomeness of the services part of the AZ-204 ex
 Answer: This is my F-U to Microsoft for providing insufficient, ad-like information in the Learning Path, while also making the exam needlessly hard. Thanks.
 
 ---
+
+Question: You need to configure an application performance management (APM) service to collect and monitor the application log data. Which Azure service should you configure?
+
+- [ ] Azure Monitor
+- [ ] Log Analytics
+- [x] Application Insights
+- [ ] Azure Advisor
+
+Answer: Application Insights is a feature of Azure Monitor that provides extensible application performance management (APM) and monitoring for live web applications. Azure Monitor helps you maximize the availability and performance of applications and services.

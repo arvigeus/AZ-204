@@ -438,7 +438,9 @@ static async Task HandleChangesAsync(
 }
 ```
 
-## [Querying data](https://cosmosdb.github.io/labs/dotnet/labs/03-querying_in_azure_cosmosdb.html)
+## [Querying data](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/query/)
+
+[More](https://cosmosdb.github.io/labs/dotnet/labs/03-querying_in_azure_cosmosdb.html)
 
 - Data in Azure Cosmos DB is stored as JSON documents. This means you can query nested properties and arrays directly.
 - Queries in Azure Cosmos DB are case sensitive.
@@ -456,6 +458,7 @@ SELECT
   } AS phoneInfo
 FROM c
 JOIN p IN c.phones
+JOIN (SELECT VALUE t FROM t IN p.tags WHERE t.name IN ("winter", "fall"))
 WHERE c.age > 21 AND ARRAY_CONTAINS(c.tags, 'student') AND STARTSWITH(p.number, '123')
 ORDER BY c.age DESC
 OFFSET 10 LIMIT 20

@@ -252,6 +252,14 @@ var lease = leaseClient.Acquire(TimeSpan.FromSeconds(15));
 // leaseClient.Change(newLeaseId); // change the ID of an existing lease
 // leaseClient.Release();
 // leaseClient.Break(); // end the lease, but ensure that another client can't acquire a new lease until the current lease period has expired
+
+// proposedLeaseId can now be passed as option in order to work with the blob
+BlobUploadOptions uploadOptions = new BlobUploadOptions { Conditions = new BlobRequestConditions { LeaseId = proposedLeaseId } };
+using (var stream = new MemoryStream(Encoding.UTF8.GetBytes("New content")));
+await blobClient.UploadAsync(stream, uploadOptions);
+
+BlobRequestConditions conditions = new BlobRequestConditions { LeaseId = proposedLeaseId };
+await blobClient.SetMetadataAsync(newMetadata, conditions);
 ```
 
 ```http
@@ -264,6 +272,13 @@ x-ms-lease-duration: -1 # In seconds. -1 is infinite
 x-ms-proposed-lease-id: 1f812371-a41d-49e6-b123-f4b542e851c5
 x-ms-date: <date>
 ...
+
+# Working with leased blob
+PUT https://myaccount.blob.core.windows.net/mycontainer/myblob?comp=metadata
+
+Request Headers:
+x-ms-meta-name:string-value
+x-ms-lease-id:[lease_id]
 ```
 
 ## Encryption

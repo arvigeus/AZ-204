@@ -25,6 +25,7 @@ Answer my seem obvious or familiar, but the question might be a trick one. For e
 - Same command with update and create: if question is "You have X", then choose "update".
 - The question may require something cheap and easy, but then sneakily insert a condition that disqualifies the cheapest option. Example: cheap no-hassle auto renewed certificates - usually you can go with the free option, but if it requires to be used for multiple apps, then free is not applicable.
 - `C#` is not the same as `C# script`! Threat it like it's some weird cousin of JS.
+- Sending message to topic: if you have to send a message to topic, but you are unable because of settings or permissions, create a new topic in a different namespace, with the same name. The idea is only the topic name has to match.
 
 ## Breadcrumb trail
 
@@ -64,3 +65,5 @@ Double check in the question if you are asked to grant permissions for resource 
 - Changing SKU is scaling up/down operation. Autoscaling is scale in/out operation.
 - A storage account connection string contains all the information needed to connect to Blob storage, most importantly the account name and the account key.
 - Acquiring: Authorization Code: `GET /oauth2/authorize`; Access Token: `POST /oauth2/token`
+- Setting blob information longer than 2000 chars: `PUT` request to metadata. **ALL** blob oerations are either `PUT` or `GET`.
+- Contributor is the minimum role to create managed identities? Not sure here, but saw this on a practice question. Maybe choose Admin (unless it's Admin Login or whatever)
