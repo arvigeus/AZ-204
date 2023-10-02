@@ -41,6 +41,7 @@
 1. Limitations - when not to use (2)
 1. Quirks
    - IP Address
+1. How to make public
 1. Using ACR
 1. Azure Storage
    - Storage type limitations
@@ -54,8 +55,10 @@
    - CLI and YAML
 1. Secret volumes
    - Characteristics
+     - How to store in YAML?
    - Limitations
    - CLI and YAML
+1. Enable public accss (2)
 1. Deployment - when to use each and CLI examples
    - Image
    - YAML file
@@ -95,8 +98,8 @@
      - Multiple revisions
    - Labels
    - Scopes
-     - Application
-     - Revision
+     - Revision (3)
+     - Application (5)
 1. Secrets
    - What happens when a secret is created/updated?
    - Plain Secret values
@@ -142,7 +145,7 @@
    - Features by tiers: Single/Multi tenant / Dedicated workers, Always on, Free Managed Certificates, Manual Scaling, Autoscale, Automatic Scaling, Staging environments, Linux, Log audits
    - When to isolate?
 1. Moving service plans
-   - Limitations
+   - Limitations (4)
    - Methods
 1. Scaling
    - Prerequisites
@@ -154,6 +157,7 @@
      - Vertical
    - Flapping
    - How to set up a scaling rule?
+     - Prerequisites
    - CLI
 1. Deployment slots
    - Prerequisites
@@ -209,6 +213,7 @@
      - Single tenant
      - Multi tenant
      - Hybrid Connections vs Gateway
+   - Ingress
    - Default networking behavior
    - Outbound addresses
 1. Diagnostics
@@ -233,7 +238,7 @@
        - Data
      - CPU metrics quirks
      - CLI get metrics
-   - Helth chekcs
+   - Health checks
      - Behavior
      - Accessing private HC endpoints
    - Application Insights - requirenments

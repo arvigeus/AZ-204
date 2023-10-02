@@ -66,4 +66,6 @@ Double check in the question if you are asked to grant permissions for resource 
 - A storage account connection string contains all the information needed to connect to Blob storage, most importantly the account name and the account key.
 - Acquiring: Authorization Code: `GET /oauth2/authorize`; Access Token: `POST /oauth2/token`
 - Setting blob information longer than 2000 chars: `PUT` request to metadata. **ALL** blob oerations are either `PUT` or `GET`.
+- Read an Azure Cosmos DB change feed by using a reactive model: Azure Functions with an Azure Cosmos DB trigger, Change feed pull model.
+- Changing secrets does not restart Container Apps.
 - Contributor is the minimum role to create managed identities? Not sure here, but saw this on a practice question. Maybe choose Admin (unless it's Admin Login or whatever)

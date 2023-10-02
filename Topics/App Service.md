@@ -462,6 +462,8 @@ _To enable the sending of credentials like cookies or authentication tokens in y
 
   Hybrid Connections: from Azure to On-Premises; Gateway: two way Azure-On-Premises.
 
+**Ingress** - manages external access to the services running in a container. It allows you to define how external traffic should be routed to the services within your containerized application. Set "external" to allow public traffic. Ingress configurations typically specify rules for directing HTTP and HTTPS traffic to specific services based on factors like the request path or host header.
+
 - **Default Networking Behavior**: Free and Shared plans use multi-tenant workers, meaning your application shares resources with others. Plans from Basic and above use dedicated workers, meaning your application gets its own resources. If you have a Standard App Service plan, all the apps in that plan run on the same worker.
 
 - **Outbound Addresses**: When your application needs to make a call to an external service, it uses an outbound IP address. This address is shared among all applications running on the same type of worker VM.
