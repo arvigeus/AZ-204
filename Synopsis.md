@@ -481,6 +481,7 @@
    - Registering and executing
 1. Change feed
    - Specifics
+     - Order guarantee?
    - Interaction modes: Push, Pull
    - Change feed processor
      - Monitored container
@@ -492,6 +493,8 @@
    - Gateway
 1. Best practices (8)
 1. Conflict resolution
+   - Automatic (who wins?)
+   - Custom
 1. DB Backup & Restore
    - Continous
    - Periodic

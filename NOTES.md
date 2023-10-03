@@ -57,6 +57,7 @@ Double check in the question if you are asked to grant permissions for resource 
 
 ## Random thoughts
 
+- Winners: First - Event Hub Capture; Last - CosmoDB automatic conflic resolution;
 - Dashes are not allowed in account names. Probably because MS uses them to differentiate between primary `<account>.<url>` and secondary `<account>-secondary.<url>`.
 - Bet on Azure Portal if a question asks "What is the easiest way to achive X?" or "From where you can manage Y?" (except for automations). Not always true, but at least it's something.
 - You need to use some sort of storage for something (app service web app, container)? Then you'll need storage account and storage account key.
