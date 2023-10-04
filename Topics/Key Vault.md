@@ -158,12 +158,12 @@ az keyvault update --name "<keyvault-id>" --resource-group $resourceGroup --enab
 az keyvault key create --name "myKEK" --vault-name "<keyvault-id>" --kty RSA --size 4096
 
 # Enable disk encryption:
-## Linux
+## Optionally use KEK by name
 az vm encryption enable -g $resourceGroup --name "myVM" --disk-encryption-keyvault "<keyvault-id>" --key-encryption-key "myKEK"
-## Windows
+## Optionally use KEK by url
 ## Obtain <kek-url>
-az keyvault key show --vault-name "<keyvault-id>" --name "myKEK" --query "key.kid"
-az vm encryption enable -g $resourceGroup --name "MyVM" --disk-encryption-keyvault "<keyvault-id>" --key-encryption-key-url <kek-url> --volume-type All
+## az keyvault key show --vault-name "<keyvault-id>" --name "myKEK" --query "key.kid"
+## az vm encryption enable -g $resourceGroup --name "MyVM" --disk-encryption-keyvault "<keyvault-id>" --key-encryption-key-url <kek-url> --volume-type All
 ```
 
 ## [Logging](https://learn.microsoft.com/en-us/azure/key-vault/key-vault-insights-overview)
