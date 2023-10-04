@@ -470,7 +470,7 @@ OFFSET 10 LIMIT 20
 - You can only join within a single container. You can't join data across different containers.
 - Aggregation functions are not supported.
 
-Queries that have an `ORDER BY` clause with two or more properties require a composite index:
+Queries that have an `ORDER BY` clause with two or more properties require a [composite index](https://learn.microsoft.com/en-us/azure/cosmos-db/index-policy):
 
 ```json
 {

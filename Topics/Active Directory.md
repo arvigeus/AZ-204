@@ -188,6 +188,13 @@ Console.WriteLine($"Token: {result.AccessToken}");
 
 An Azure AD application manifest configures an app's identity and attributes, facilitating OAuth authorization and user consent. It serves as a mechanism for updating the application object in the Microsoft identity platform.
 
+- `signInAudience`:
+
+  - `AzureADMyOrg` - Users with a Microsoft work or school account in my organization's Microsoft Entra tenant (for example, single tenant)
+  - `AzureADMultipleOrgs` - Users with a Microsoft work or school account in any organization's Microsoft Entra tenant (for example, multi-tenant)
+  - `AzureADandPersonalMicrosoftAccount` - Users with a personal Microsoft account, or a work or school account in any organization's Microsoft Entra tenant
+  - `PersonalMicrosoftAccount` - Personal accounts that are used to sign in to services like Xbox and Skype.
+
 - `groupMembershipClaims`: (_Tenant-specific_) Groups claim issued in access token that the app expects. Groups persist even after the associated app is removed.
 
   - "None"

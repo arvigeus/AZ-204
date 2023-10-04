@@ -69,4 +69,5 @@ Double check in the question if you are asked to grant permissions for resource 
 - Setting blob information longer than 2000 chars: `PUT` request to metadata. **ALL** blob oerations are either `PUT` or `GET`.
 - Read an Azure Cosmos DB change feed by using a reactive model: Azure Functions with an Azure Cosmos DB trigger, Change feed pull model.
 - Changing secrets does not restart Container Apps.
+- Mandatory headers for Graph: `request-id`; during throttling: `Retry-After`; for long running operations: `Location`.
 - Contributor is the minimum role to create managed identities? Not sure here, but saw this on a practice question. Maybe choose Admin (unless it's Admin Login or whatever)

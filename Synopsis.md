@@ -339,7 +339,7 @@
    - Access tiers - when to use each, limitations?
      - Hot
      - Cool
-     - Archive - specifics. Accessing data
+     - Archive - specifics. Accessing data (2)
    - What happens when changing tiers? Pitfalls?
    - Lifecycle policies
      - Supported containers
@@ -411,7 +411,8 @@
        - Upload file, create container
        - Operations: list containers, create container, list blobs, upload, download
    - Object replication
-     - Prerequisites
+     - Prerequisites (3)
+     - What is not supported? (3)
      - Steps (2)
    - AzCopy
      - Permissions and authentication
@@ -440,6 +441,7 @@
    - CLI
    - C#
    - Querying data
+     - What is compositeIndex?
 1. Consistency levels (which is default?)
    - Levels
      - Strong
@@ -480,8 +482,9 @@
    - UDF
    - Registering and executing
 1. Change feed
-   - Specifics
-     - Order guarantee?
+   - Delete hack
+   - Session consistency
+   - Order guarantee
    - Interaction modes: Push, Pull
    - Change feed processor
      - Monitored container
@@ -670,7 +673,7 @@
 1. Scopes
 1. Headers
    - Mandatory: request-id
-   - Optional: Retry-After, Location
+   - Optional: Retry-After, Location - when used?
    - Evolvable enumerations
 1. Query by using REST
    - Metadata
@@ -681,6 +684,7 @@
    - Request body
    - Filtering
    - Selecting fields
+   - Top results
 1. Examples
    - My profile
    - My files

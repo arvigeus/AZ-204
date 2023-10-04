@@ -171,6 +171,7 @@ type RelesType = {
           prefixMatch?: string[];
           // Each rule can define up to 10 blob index tag conditions.
           // example, if you want to match all blobs with `Project = Contoso``: `{"name": "Project","op": "==","value": "Contoso"}``
+          // https://learn.microsoft.com/en-us/azure/storage/blobs/storage-manage-find-blobs?tabs=azure-portal
           blobIndexMatch?: Record<string, string>;
         };
       };
