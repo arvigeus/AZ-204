@@ -723,39 +723,28 @@
 
 ## Application Insights
 
-1. Quirks
-   - Session Id
+1. What you need to know about Session Id?
 1. Features
-   - Live Metrics
+   - Live Metrics - for critical deployments
    - Availability (Synthetic Transaction Monitoring)
      - Tests
        - URL ping test (classic)
        - Standard test (Preview)
        - Custom TrackAvailability test
+         - How to collect stats?
          - Multi-step test (what is required?)
      - Create an alert that will notify you via email if the web app becomes unresponsive
-   - GitHub or Azure DevOps integration
-   - Usage
-   - Smart Detection
-   - Application Map
-     - Troubleshoot app performance
-   - Distributed Tracing
+   - Smart Detection - proactive prevention of problems through telemetry
+   - Application Map - Top-down view of app architecture with health indicators.
+     - Troubleshoot app performance (components)
+   - Distributed Tracing (end to end flow)
 1. Collected metrics
-   - Request rates, response times, and failure rates
-   - Dependency rates, response times, and failure rates
-   - Exceptions
-   - Page views and load performance
-   - AJAX calls
-   - User and session counts
-   - Performance counters
-   - Host diagnostics
-   - Diagnostic trace logs
+   - ...
    - Custom events and metrics
-     - Grouping custom events in sampling
-     - What method should be used and why?
-     - C# (what should be used for pre-aggregation?)
+     - GetMetric() vs TrackMetric()? What should be used for pre-aggregation?
+     - C#
        - GetMetric
-       - TrackMetric; Considerations
+       - TrackMetric
        - TrackEvent
        - TrackPageView
        - TrackException
@@ -763,7 +752,7 @@
        - TrackTrace
        - Flush
 1. Metrics
-   - Types
+   - Types (pre-aggregated vs not)
      - Log based
      - Standard
    - Sampling
@@ -771,33 +760,29 @@
        - Adaptive
        - Fixed-rate
        - Ingestion
+     - OperationId - used for what?
      - Configuring sampling
-1. Monitoring and analyzing your app's performance
-   - Run time
-   - Development time
-   - Web page instrumentation
-   - Mobile app analysis
-   - Availability tests
+1. Monitoring and analyzing your app's performance: Run time, Development time (using App Insights in code), Web page instrumentation, Mobile app analysis, Availability tests
 1. Event log - How to write there?
 1. Usage analysis
    - Analysis tools
-     - User
-     - Session
-     - Event
+     - User - how are counted?
+     - Session - how are counted?
+     - Event - what is measured?
    - Funnels
    - User flows
    - Cohorts
    - Impact
    - Retention
-1. Instrumentation
+1. Instrumentation; OpenTelemetry
    - Auto
    - Manual
-1. Monitor a local web API
+1. Monitor a local web API - how to configure in Startup.cs, appsettings.json?
 1. Azure Monitor
    - Difference between Application Insights and Azure Monitor
    - Activity Log
-     - Quirk about CLI
-     - Diagnostic Settings
+     - What does az monitor activity-log measures?
+     - Diagnostic Settings - where data is sent and use cases for it?
        - Log Analytics workspace
        - Azure Storage account
        - Azure Event Hubs
@@ -810,27 +795,21 @@
    - Content cache
    - Session store
    - Job and message queuing
-   - Distributed transactions
    - Distributed transactions. Example
 1. Caching
-   - Comparison (7)
+   - Comparison: Accessibility, Speed, Scalability, Consistency, Use Cases
      - Private
      - Shared
    - Cache expiration
-1. Tiers
-   - Basic
-   - Standard
-   - Premium
-   - Enterprise
-   - Enterprise Flash
-1. Tier features
+     - Eviction policies: LIFO, FIFO, Explicit
+1. Features by tiers
    - Shards
    - Geo replication
    - Modules
 1. Session State Providers
    - In Memory
    - SQL Server
-   - Distributed In Memory
+   - Distributed In Memory (best of both worlds - self advertising for Azure Cache for Redis)
 1. Working with Redis
    - CLI
    - Redis commands
@@ -849,37 +828,28 @@
    - allkeys-random
    - volatile-random
    - volatile-ttl
-1. Data persistence
-   - Methods
+1. Data persistence -
+   - Methods (full snapshots vs log operations)
      - RDB
      - AOF
-   - Quirks
+   - Quirks: Only for original cache
 
 ## Content Delivery Network
 
 1. How it works?
-   - Limitations
-   - Features
 1. Caching
    - DSA
    - Cache-directive headers and validators
    - TTL
      - Optimizations
-       - Generalized web delivery
-       - Large file
-       - Media streaming
+       - Generalized web delivery - 7d
+       - Large file - 1d
+       - Media streaming - 1y
    - File Version Management
      - Purging
    - Rules
-     - Standard tier
-       - Global caching rules
-       - Custom caching rules
-       - Query string caching
-     - Query string rules:
-       - Ignore
-       - Bypass caching
-       - Cache every unique URL
-     - Propagation times: Akamai and Verizon
+     - Standard tier Caching rules: Global, Custom, Query string caching (ignore, bypass, every unique URL)
+     - Propagation times: Akamai (fast) and Verizon
    - Behavior settings (and expiry rules)
      - Bypass cache
      - Override
@@ -889,18 +859,18 @@
    - Preload assets
 1. Azure Front Door
    - Caching
-   - Compression (5)
+   - Compression requirenments (specific MIME type; gzip and brotli, 1KB to 8MB, only when caching is enabled)
    - Geo-filtering
-     - Standard vs Vezizon and Akamai
+     - Standard vs Vezizon and Akamai - allowance or blocking (site wide vs granular)
 1. Tier features
    - Standard Verison
-   - Standard Versizon and Premium
-   - Standard Microsoft
+   - Standard Versizon and Premium (Bring your own certificate, Asset pre-loading)
+   - Standard Microsoft (Brotli compression)
 1. Working with CDN
    - C#
    - CLI
 1. Concepts
-   - POP
+   - POP (First request to origin with query, caches asset. Later requests ignore query until TTL ends)
 
 ## API management
 

@@ -4,15 +4,15 @@ Application Insights, an extension of Azure Monitor, is a comprehensive Applicat
 
 Note: Application Insights automatically captures Session Id, so no need to manually capture it.
 
-| Feature                                         | Description                                                                                                                          |
-| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| Live Metrics                                    | Real-time monitoring without affecting the host. For immediate insights during critical deployments.                                 |
-| Availability (Synthetic Transaction Monitoring) | Tests endpoints for availability and responsiveness. To ensure uptime and SLAs are met.                                              |
-| GitHub or Azure DevOps integration              | Create GitHub or Azure DevOps work items in the context of Application Insights data.                                                |
-| Usage                                           | Understand which features are popular with users and how users interact and use your application.                                    |
-| Smart Detection                                 | Automatic failure and anomaly detection through proactive telemetry analysis.                                                        |
-| Application Map                                 | A high-level top-down view of the application architecture and at-a-glance visual references to component health and responsiveness. |
-| Distributed Tracing                             | Search and visualize an end-to-end flow of a given execution or transaction.                                                         |
+| Feature                                         | Description                                                                                          |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Live Metrics                                    | Real-time monitoring without affecting the host. For immediate insights during critical deployments. |
+| Availability (Synthetic Transaction Monitoring) | Tests endpoints for availability and responsiveness. To ensure uptime and SLAs are met.              |
+| GitHub or Azure DevOps integration              | Create GitHub or Azure DevOps work items in the context of Application Insights data.                |
+| Usage                                           | Tracks popular features and user interactions.                                                       |
+| Smart Detection                                 | Automatic failure and anomaly detection through proactive telemetry analysis.                        |
+| Application Map                                 | Top-down view of app architecture with health indicators.                                            |
+| Distributed Tracing                             | Search and visualize an end-to-end flow of a given execution or transaction.                         |
 
 Application Insights monitors various aspects of your application's performance and health. It collects Metrics and Telemetry data, including:
 
@@ -159,7 +159,7 @@ Up to 100 tests per Application Insights resource.
 
 - [URL ping test (classic)](https://learn.microsoft.com/en-us/azure/azure-monitor/app/monitor-web-app-availability): Check endpoint response and measure performance. Customize success criteria with advanced features like parsing dependent requests and retries. It relies on public internet DNS; ensure public domain name servers resolve all test domain names. Use custom **TrackAvailability** tests otherwise.
 - [Standard test (Preview)](https://learn.microsoft.com/en-us/azure/azure-monitor/app/availability-standard-tests): Similar to URL ping, this single request test covers SSL certificate validity, proactive lifetime check, HTTP request verb (`GET`, `HEAD`, or `POST`), custom headers, and associated data.
-- [Custom TrackAvailability test](https://learn.microsoft.com/en-us/azure/azure-monitor/app/availability-azure-functions): Custom TrackAvailability test: For custom application availability tests, employ the [TrackAvailability()](https://learn.microsoft.com/en-us/dotnet/api/microsoft.applicationinsights.telemetryclient.trackavailability) method to send results to Application Insights. Ideal for `multi-request` or `authentication` test scenarios. (Note: Multi-step test are the legacy version; To create multi-step tests, use Visual Studio)
+- [Custom TrackAvailability test](https://learn.microsoft.com/en-us/azure/azure-monitor/app/availability-azure-functions): Use [TrackAvailability()](https://learn.microsoft.com/en-us/dotnet/api/microsoft.applicationinsights.telemetryclient.trackavailability) method to send results to Application Insights. Ideal for `multi-request` or `authentication` test scenarios. (Note: Multi-step test are the legacy version; To create multi-step tests, use Visual Studio)
 
 Example: Create an alert that will notify you via email if the web app becomes unresponsive:
 
@@ -167,7 +167,7 @@ Example: Create an alert that will notify you via email if the web app becomes u
 
 ## [Troubleshoot app performance by using Application Map](https://learn.microsoft.com/en-us/azure/azure-monitor/app/app-map?tabs=net)
 
-Application Map is an Azure tool that helps you find issues and understand your app's structure. It labels each part of your app as a "component" for easy performance review. Unlike external dependencies like SQL or Event Hubs, components can run on various servers and appear individually or as roles under one key (always visible, regardless of setup). The app map displays your entire app, updating component counts as needed. Clicking on a component provides performance and failure data. You can also customize how components are displayed by changing their "cloud role name."
+Application Map: find issues and understand app's structure. It labels each part as a "component". Components can run on various servers and appear individually or as roles under one key. The whole app is displayed. Components provide performance and failure data. Rename by changing "cloud role name".
 
 ## Monitor a local web API by using Application Insights
 
