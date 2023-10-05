@@ -837,6 +837,7 @@
 ## Content Delivery Network
 
 1. How it works?
+1. Versioning
 1. Caching
    - Dynamic site acceleration (DSA) - for resources that change often
    - Cache-directive headers and validators
