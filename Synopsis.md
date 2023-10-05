@@ -838,7 +838,7 @@
 
 1. How it works?
 1. Caching
-   - DSA
+   - Dynamic site acceleration (DSA) - for resources that change often
    - Cache-directive headers and validators
    - TTL
      - Optimizations
