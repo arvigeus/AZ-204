@@ -131,7 +131,7 @@ Also supports SAS and Managed Identities
 
 - **Broadcast Pattern**: Every subscription gets a copy of each message.
 - **Partitioning Pattern**: Distributes messages across subscriptions in a mutually exclusive manner.
-- **Routing Pattern**: Distributes messages predictably but not exclusively.
+- **Routing Pattern**: When you need to route messages based on their content or some attributes.
 
 ## [Azure Service Bus for .NET](https://learn.microsoft.com/en-us/dotnet/api/overview/azure/service-bus)
 

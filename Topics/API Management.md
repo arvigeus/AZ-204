@@ -123,6 +123,10 @@ When quota is exceeded, a `403 Forbidden` status is returned.
 
 Azure APIM has built-in support for HTTP response caching using the resource URL as the key. You can modify the key using request headers with the vary-by properties.
 
+- Get from cache (`cache-lookup`): inbound
+- Store to cache (`cache-store`): outbound
+- Others are mixed
+
 #### Examples
 
 ##### Cache by header

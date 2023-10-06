@@ -1000,14 +1000,15 @@
 
 1. Key Concepts
    - Event Hubs Client
-   - Event Hubs Producer
+   - Event Hubs Producer (source of telemetry)
    - Event Hubs Consumer
    - Partition
-     - How they work
+     - Where data is stored
      - Default number of partitions?
-     - How number of partitions affect processing
+     - How number of partitions affect processing: processing speed vs throughput
+     - In what format the messages are stored?
      - Event ordering
-   - Consumer Group
+   - Consumer Group (Allows multiple applications to read the event stream independently)
    - Event Receivers
    - Throughput Units (processing units)
 1. AMQP vs. HTTPS: initialization and performance
@@ -1061,14 +1062,13 @@
 
 1. Overview
    - Queue
-   - Load-leveling
+   - Load-leveling (ensures average load)
    - Decoupling
-   - Receive modes
+   - Receive modes -lock based
      - Receive and delete
      - Peek lock
-   - Topics
+   - Topics (1:n)
    - Subscriptions
-   - Rules and actions - filter actions
 1. Tiers - Standard, Premium
    - Throughput
    - Latency / Performance
@@ -1080,9 +1080,7 @@
    - Topics
 1. Payload and serialization
    - AMQP
-   - Properties
-     - system-defined broker
-     - user-defined
+   - Properties: system-defined broker, user-defined
 1. Message Routing and Correlation
    - Properties for routing
    - Routing patterns
@@ -1099,18 +1097,17 @@
    - Geo-disaster recovery
 1. Message expiration
    - TTL per message and per topic (queue)
-   - Message Lock
-   - Dead lettering
+   - What happens when message is locked?
+   - Dead lettering - move after expire for further inspection
 1. Scheduled delivery
    - regular API (ScheduledEnqueueTimeUtc)
    - schedule API (SequenceNumber)
 1. Security
    -Roles: Owner, Sender, Receiver
-   - Security protocols
-     - SAS
-     - RBAC
-     - Managed identities
-1. Best practices (4)
+   - Security protocols: SAS, RBAC, Managed identities
+1. Best practices:
+   - Senders/receivers ratio
+   - Batching: throughput vs latency
 1. Filters
    - SQL Filters (SqlRuleFilter)
    - Boolean Filters (TrueRuleFilter, FalseRuleFilter)
@@ -1118,14 +1115,15 @@
 1. Actions
    - What are they used for? Example?
 1. Usage Patterns
-   - Broadcast Pattern
-   - Partitioning Pattern
-   - Routing Pattern
+   - Broadcast Pattern (copy to all)
+   - Partitioning Pattern (fair distribution)
+   - Routing Pattern (based on properties)
 1. Autoforwarding
-1. Parallel Stream Processing - how?
+1. Parallel Stream Processing - based on which property?
+1. For what session ID is used?
 1. Message sessions - ordering?
 1. Batching - characteristics and when to use/not use
-1. Message deferral
+1. Message deferral (delay / set aside)
 1. C#
 1. CLI
 

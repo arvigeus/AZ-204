@@ -58,6 +58,7 @@ Double check in the question if you are asked to grant permissions for resource 
 ## Random thoughts
 
 - Winners: First - Event Hub Capture; Last - CosmoDB automatic conflic resolution;
+- Message queues: storage - simple, lease-based, small messages (64KB), big capacity; service bus: feature rich, lock-based, big messages, small storage (80GB)
 - Dashes are not allowed in account names. Probably because MS uses them to differentiate between primary `<account>.<url>` and secondary `<account>-secondary.<url>`.
 - Bet on Azure Portal if a question asks "What is the easiest way to achive X?" or "From where you can manage Y?" (except for automations). Not always true, but at least it's something.
 - You need to use some sort of storage for something (app service web app, container)? Then you'll need storage account and storage account key.
@@ -70,4 +71,6 @@ Double check in the question if you are asked to grant permissions for resource 
 - Read an Azure Cosmos DB change feed by using a reactive model: Azure Functions with an Azure Cosmos DB trigger, Change feed pull model.
 - Changing secrets does not restart Container Apps.
 - Mandatory headers for Graph: `request-id`; during throttling: `Retry-After`; for long running operations: `Location`.
+- Both Event Hub and Service Bus support AMQP
+- Avro: Event Hub capturing; Grid has Cloud/Event schema
 - Contributor is the minimum role to create managed identities? Not sure here, but saw this on a practice question. Maybe choose Admin (unless it's Admin Login or whatever)
