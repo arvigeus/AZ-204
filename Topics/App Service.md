@@ -256,6 +256,10 @@ Add custom script processors to handle requests for specific file extensions.
 
 This works for both Windows and Linux apps.
 
+### [Local Cache](https://learn.microsoft.com/en-us/azure/app-service/overview-local-cache)
+
+Not supported for function apps or containerized App Service apps. To enable: `WEBSITE_LOCAL_CACHE_OPTION = Always`
+
 ## [Persistence](https://learn.microsoft.com/en-us/azure/app-service/configure-custom-container?tabs=debian&pivots=container-linux#use-persistent-shared-storage)
 
 When persistent storage is _on_ (⏺️ for Linux containers), the `/home` directory allows file persistence and sharing. All writes to `/home` are accessible by all instances, but existing files overwrite /home's contents on start.

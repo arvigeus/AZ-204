@@ -671,6 +671,7 @@
 
 1. Resources
 1. Scopes
+1. Which service principal should you use to grant permissions for App Service web app in a multi-tenant application? (application)
 1. Headers
    - Mandatory: request-id
    - Optional: Retry-After, Location - when used?
@@ -899,7 +900,8 @@
    - Managed
    - Self Hosted (tier?)
 1. Policies
-   - Scopes: global, product, specific API, API operation
+   - Scopes: global, product, specific API, API operation;
+     - Which to use to avoid approval for multiple APIs (but not all)?
    - Types: inbound, backend, outbound
    - Units
    - Named values
@@ -1050,7 +1052,7 @@
    - Owner
    - Sender
    - Receiver
-1. C#
+1. C#: Which one is for load balancing? Explain the others as well
    - EventHubProducerClient
    - EventHubBufferedProducerClient
    - EventHubConsumerClient

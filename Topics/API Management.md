@@ -37,7 +37,13 @@ API gateways, such as Azure's API Management gateway, manage communication betwe
 
 ## [Policies overview](https://learn.microsoft.com/en-us/azure/api-management/api-management-howto-policies)
 
-A set of statements executed sequentially on an API's request or response. They can be applied at different scopes: _global_ (all APIs, appliedd together with other scopes), a _product_, a _specific API_, or an _API operation_. Policies can modify the API's behavior.
+A set of statements executed sequentially on an API's request or response. They can be applied at different scopes:
+
+- **Global Scope**: Apply organization-wide policies that affect every API and operation. Ideal for enforcing security measures like IP filtering or logging across all APIs.
+- **Workspace Scope**: Target APIs within a specific workspace. Best for internal organization, separating APIs based on teams or departments.
+- **Product Scope**: Group multiple APIs under a single product to simplify the subscription process. Best for external organization, grouping APIs based on functionality or business logic.
+- **API Scope**: Apply policies that affect all operations within a specific API. Useful for API-specific transformations or validations.
+- **Operation Scope**: Fine-grained control over individual API operations. Ideal for operation-specific validations or transformations.
 
 ### Types of policies
 

@@ -104,7 +104,7 @@ Azure Cosmos DB provides a balanced approach to consistency, availability, and l
 - **Strong** - Every reader sees the latest data right away, but it may be slower (higher latency) and less available. ⭐: serious stuff like bank transactions where accuracy is vital. Clients will never receive a partial write.
 - **Bounded staleness** - Readers may see slightly old data, but there's a limit on how old (determined by number of operations K or the time interval T for staleness - in single-region accounts, the minimum values are 10 write operations or 5 seconds, while in multi-region accounts, they are 100,000 write operations or 300 seconds). Good for things like game leaderboards where a small delay is okay.
 - **Session** (⏺️, can be configured) - Within a single user's session, the data is always up-to-date. Great for scenarios like a personal shopping cart on a website.
-- **Consistent prefix** - Readers might be a bit behind, but they always see things in order. Good for situations where sequence matters, like following a chain of events.
+- **Consistent prefix** - Readers might be a bit behind, but they always see things in order. Update operations made as a batch within a transaction are always visible together. Good for situations where sequence matters, like following a chain of events.
 - **Eventual** - Readers might see things out of order (non-consistent) or slightly old, but it eventually catches up. ⭐: when speed and availability are more important than immediate consistency, like a social media like counter. Lowest latency and highest availability.
 
 ```sh

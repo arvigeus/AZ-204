@@ -643,7 +643,7 @@ Lifecycle management doesn't affect system containers such as the `$logs` or `$w
 
 ### Limitations
 
-- If you want to configure headers, Azure Content Delivery Network (Azure CDN) is required.
+- If you want to configure headers, or use custom HTTPS domain, Azure Content Delivery Network (Azure CDN) is required.
 - AuthN and AuthZ are not supported.
 - CORS is not supported with static website.
 
@@ -651,11 +651,19 @@ Use [Azure Static Web Apps](https://azure.microsoft.com/services/app-service/sta
 
 ### [Mapping a custom domain to a static website URL](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-custom-domain-name?tabs=azure-portal)
 
-To enable HTTPS, you'll have to use Azure CDN
+NOTE: You need to add `index.html` and `error.html` to the `$web` container first
+
+### HTTP Only
 
 - Get the host name of your storage endpoint: Copy value of `Settings > Endpoints > Static website` (**without** `https://`)
 - Create a CNAME record
-- Register your custom domain with Azure: `az storage account update --custom-domain <custom-domain-name> --use-subdomain false ...` (or `storage account > Networking >  Custom domain > Domain name`)
+- Register your custom domain with Azure via either:
+  - `az storage account update --custom-domain <custom-domain-name> --use-subdomain false ...`
+  - Add the custom domain under networking in the Azure Storage account (`storage account > Networking >  Custom domain > Domain name`).
+
+### HTTPS (and/or headers)
+
+- Integrate the static website with Azure Content Delivery Network (CDN)
 
 ## [Network Access Rules](https://learn.microsoft.com/en-us/azure/storage/common/storage-network-security?tabs=azure-portal)
 

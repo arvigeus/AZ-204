@@ -59,6 +59,8 @@ Double check in the question if you are asked to grant permissions for resource 
 
 - Winners: First - Event Hub Capture; Last - CosmoDB automatic conflic resolution;
 - Message queues: storage - simple, lease-based, small messages (64KB), big capacity; service bus: feature rich, lock-based, big messages, small storage (80GB)
+- To use the custom key stored in KeyVault, the identity assigned to AppConfig needs to have `GET`, `WRAP`, and `UNWRAP` permissions to the custom key
+- Consistent Prefix: update operations made as a batch within a transaction are always visible together
 - Dashes are not allowed in account names. Probably because MS uses them to differentiate between primary `<account>.<url>` and secondary `<account>-secondary.<url>`.
 - Bet on Azure Portal if a question asks "What is the easiest way to achive X?" or "From where you can manage Y?" (except for automations). Not always true, but at least it's something.
 - You need to use some sort of storage for something (app service web app, container)? Then you'll need storage account and storage account key.
@@ -70,6 +72,12 @@ Double check in the question if you are asked to grant permissions for resource 
 - Setting blob information longer than 2000 chars: `PUT` request to metadata. **ALL** blob oerations are either `PUT` or `GET`.
 - Read an Azure Cosmos DB change feed by using a reactive model: Azure Functions with an Azure Cosmos DB trigger, Change feed pull model.
 - Changing secrets does not restart Container Apps.
+- Grant App Service web app permission to access the Microsoft Graph API in multi-tenant application: use `application` service principal.
+- API Management: If you don't want to require approval for every API, the least scope is either Product (based on functionality) or Workspace (based on teams)
+- In production, the version must be pinned: Prefer `{major}.{minor}.{patch}` or `{major}.{minor}`, instead of `{major}` or `latest`.
+- Azure App Service Local Cache: `WEBSITE_LOCAL_CACHE_OPTION = Always`
+- Microsoft Defender for Cloud: Min: Basic plan; Custom Domains: Premium
+- Static website custom domain: HTTP: Add the custom domain under networking in the Azure Storage account; HTTPS: Use Azure CDN
 - Mandatory headers for Graph: `request-id`; during throttling: `Retry-After`; for long running operations: `Location`.
 - Both Event Hub and Service Bus support AMQP
 - Avro: Event Hub capturing; Grid has Cloud/Event schema

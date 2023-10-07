@@ -27,6 +27,8 @@ All applications _must [register with Azure AD](<(https://learn.microsoft.com/en
   - **Managed Identity**: Automatically created when enabled. It grants access but is not directly modifiable.
   - **Legacy**: For apps created before modern registration methods, restricted to the tenant where created.
 
+Example: The application service principal is used to grant permissions for App Service web app in a multi-tenant application to access the Microsoft Graph API.
+
 Changes to your application object also affect its service principals in the home tenant only. Deleting the application also deletes its home tenant service principal, but restoring that application object won't recover its service principals.
 
 List service principals associated with an app: `az ad sp list --filter "appId eq '{AppId}'"`
