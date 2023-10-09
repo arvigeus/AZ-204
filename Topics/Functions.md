@@ -34,8 +34,6 @@ Limitations:
 | [ASE (App Service Environment)](https://learn.microsoft.com/en-us/azure/app-service/environment/intro) | Predictable + Flat                                             | Maximum isolation and control                                                 | - Fully isolated environment<br>- High scale                                   | - Flat monthly rate<br>- Additional cost per vCPU                                                        |
 | [Kubernetes](https://learn.microsoft.com/en-us/azure/azure-functions/functions-kubernetes-keda)        | Cluster-Based Costs                                            | Customizable, isolated environment                                            | - Runs on Kubernetes<br>- Highly customizable                                  | - Requires Kubernetes expertise<br>- Variable costs based on cluster                                     |
 
-This table should offer a more streamlined and organized view of the different Azure Functions hosting plans, their pricing models, ideal use-cases, key features, and limitations.
-
 The _scale controller_ adjusts resources based on event rates and trigger types. It uses heuristics for each trigger type (for Queue storage trigger, it scales based on the queue length and the age of the oldest queue message). The number of host instances can be scaled to zero when no functions are running (_cold start_).
 
 ```sh
