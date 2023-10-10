@@ -80,14 +80,6 @@ Designing large systems:
 
 - **Receiving Messages**: Create an event processor to handle specific partition events. Include retry logic to process every message at least once, and use two consumer groups for storage and routing needs.
 - **Checkpointing**: The event processor marks the last processed event within a partition, allowing for resiliency. If an event processor disconnects, another can resume at the last checkpoint, and it's possible to return to older data by specifying a lower offset.
-- **Thread Safety**: Functions processing events are called sequentially for each partition. Events from different partitions can be processed concurrently, and shared states across partitions must be synchronized.
-- **Lease management**: `EventProcessorHost` auto-balances leased Event Hub partitions across instances for event processing. It attempts to renew expiring leases; if unsuccessful, it triggers CloseAsync for cleanup. Control lease behavior using `PartitionManagerOptions` before registering your `IEventProcessor`.
-
-Minimize processing and be cautious with poisoned messages. Utilize proper retry logic and understand checkpointing to improve efficiency and resilience.
-
-## Application Groups
-
-An application group is a collection of client applications that connect to an Event Hubs namespace sharing a unique identifying condition such as the security context - shared access policy or Azure Active Directory (Azure AD) application ID. Azure Event Hubs enables you to define resource access policies such as throttling policies for a given application group and controls event streaming (publishing or consuming) between client applications and Event Hubs.
 
 ## Partitions
 
@@ -125,10 +117,6 @@ await using (var producerClient = new EventHubProducerClient(eventHubsConnection
     eventBatch.TryAdd(new EventData(Encoding.UTF8.GetBytes("Second event")));
     // Use the producer client to send the batch of events to the event hub
     await producerClient.SendAsync(eventBatch);
-
-    // Send single event
-    var eventData = new EventData(Encoding.UTF8.GetBytes("Message body")); // Works with BinaryData and string too
-    await producerClient.SendAsync(eventData);
 }
 
 // Using buffer
@@ -205,10 +193,6 @@ az eventhubs eventhub authorization-rule keys list --namespace-name $eventHubNam
 
 # Create a Consumer Group (Consumer Groups)
 az eventhubs eventhub consumer-group create --eventhub-name $eventHub --name MyConsumerGroup --namespace-name $eventHubNamespace --resource-group $resourceGroup
-
-# Send an event to the Event Hub (Event Hubs Producer)
-# Note: This is a simplified example. For production, you'd typically use an SDK to send events.
-az eventhubs eventhub send --name $eventHub --namespace-name $eventHubNamespace --partition-key "key1" --message "Hello, Event Hub" --resource-group $resourceGroup
 
 # Capture Event Data (Event Hubs Capture)
 # Enable capture and specify the storage account and container

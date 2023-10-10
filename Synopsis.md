@@ -952,7 +952,9 @@
      - System
      - Custom
    - Event subscriptions
-   - Event handlers
+   - Event handlers - events are retried until?
+     - Webhooks: 200OK
+     - Azure Storage Queue: successful processed
 1. Schemas
    - Event schemas
      - Mandatory fields
@@ -982,9 +984,9 @@
    - Subscription Contributor
    - Contributor
    - Data Sender
-1. Webhooks
-   - Validation
-     - Endpoint validation
+1. Endpoint validation
+   - validationCode (sync)
+   - validationUrl (async)
 1. Filtering
    - Subject
    - Event types
@@ -1045,8 +1047,6 @@
 1. Event Processor
    - Receiving Messages
    - Checkpointing
-   - Thread Safety
-   - Lease management
 1. Application Groups
 1. Roles
    - Owner

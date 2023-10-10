@@ -65,7 +65,6 @@ Routing is managed interally, but applications can also use user properties for 
 | Message deferral           | Defers message retrieval until a later time, message remains set aside.                                                |
 | Batching                   | Delays sending a message for a certain period.                                                                         |
 | Transactions               | Groups operations into an execution scope for a single messaging entity.                                               |
-| Filtering and actions      | Enables subscribers to define received messages using subscription rules.                                              |
 | Autodelete on idle         | Automatically deletes a queue after a specified idle interval. Minimum duration is 5 minutes.                          |
 | Duplicate detection        | Resends same message or discards any duplicate copies in case of send operation doubt.                                 |
 | Security protocols         | Supports protocols like SAS, RBAC, and Managed identities for Azure.                                                   |
@@ -149,18 +148,15 @@ ServiceBusClient GetClient()
     var serviceBusEndpoint = new Uri($"sb://{serviceBusNamespace}.servicebus.windows.net/");
 
     // SAS
-    return new ServiceBusClient(serviceBusEndpoint, new ServiceBusClientOptions
-    {
-        Credential = new AzureNamedKeyCredential(sharedAccessKeyName, sharedAccessKey)
-    });
+    return new ServiceBusClient(serviceBusEndpoint, new AzureNamedKeyCredential(sharedAccessKeyName, sharedAccessKey));
 
     // Managed identity
     return new ServiceBusClient(serviceBusEndpoint, new DefaultAzureCredential());
 }
 
-using (var client = GetClient())
+await using (var client = GetClient())
 {
-    using (sender = client.CreateSender(queueName))
+    await using (sender = client.CreateSender(queueName))
     using (ServiceBusMessageBatch messageBatch = await sender.CreateMessageBatchAsync())
     {
         for (int i = 1; i <= 3; i++)
@@ -172,7 +168,7 @@ using (var client = GetClient())
         sender.SendMessagesAsync(new ServiceBusMessage($"Messages complete"));
     }
 
-    using (processor = client.CreateProcessor(queueName, new ServiceBusProcessorOptions()))
+    using (var processor = client.CreateProcessor(queueName, new ServiceBusProcessorOptions()))
     {
         processor.ProcessMessageAsync += MessageHandler;
         processor.ProcessErrorAsync += ErrorHandler;

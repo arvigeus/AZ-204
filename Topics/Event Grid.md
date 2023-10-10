@@ -8,7 +8,7 @@ Azure Event Grid is a serverless broker that facilitates application integration
 - **Event sources** - Where the event took place. Each source is related to one or more event types, such as Azure Storage for blob creation, IoT Hub for device created events. Event sources send events to Event Grid.
 - **Topics** - The endpoint where publishers send events. Topics are used for related events, and subscribers choose which to subscribe to. **System topics** are built-in and , while **custom topics** are application and third-party specific. You don't see system topics in your Azure subscription, but you can subscribe to them.
 - **Event subscriptions** - The endpoint or mechanism to route events, sometimes to multiple handlers. Subscriptions filter incoming events by type or subject pattern and can be set with an expiration for temporary needs (_no need of cleanup_).
-- **Event handlers** - Receives and processes events. Handlers can be Azure services or custom webhooks. Event Grid ensures event delivery based on handler type. Webhooks are retried until 200 - OK, and Azure Storage Queue retries until successful processing.
+- **Event handlers** - Receives and processes events. Handlers can be Azure services or custom webhooks. Event Grid ensures event delivery based on handler type.
 
 ## Schemas
 
@@ -128,10 +128,10 @@ Event subscriptions support custom headers for delivered events. _Up to 10 heade
 
 Event Grid handles errors during event delivery by deciding based on the error type whether to retry, dead-letter (only if enabled), or drop the event. Timeout is 30 sec, then event is rescheduled for retry (exponentially). Retries may be skipped or delayed (up to several hours) for consistently unhealthy endpoints (**delayed delivery**). If the endpoint responds within 3 minutes, Event Grid tries to remove the event from the retry queue. Because of this, duplicates may occur.
 
-| Endpoint Type   | Error Codes with no retries (immediate dead-lettering)                                        |
-| --------------- | --------------------------------------------------------------------------------------------- |
-| Azure Resources | 400 Bad Request, 413 Request Entity Too Large, 403 Forbidden                                  |
-| Webhook         | 400 Bad Request, 413 Request Entity Too Large, 403 Forbidden, 404 Not Found, 401 Unauthorized |
+| Endpoint Type   | Success               | Error Codes with no retries (immediate dead-lettering)                                        |
+| --------------- | --------------------- | --------------------------------------------------------------------------------------------- |
+| Azure Resources | 200 OK                | 400 Bad Request, 413 Request Entity Too Large, 403 Forbidden                                  |
+| Webhook         | Successful processing | 400 Bad Request, 413 Request Entity Too Large, 403 Forbidden, 404 Not Found, 401 Unauthorized |
 
 #### Retry policy
 
@@ -202,7 +202,7 @@ To subscribe to event handlers (except WebHooks), you need **Microsoft.EventGrid
 | System     | Resource publishing the event                         | `/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/{resource-provider}/{resource-type}/{resource-name}` |
 | Custom     | Event grid topic                                      | `/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/Microsoft.EventGrid/topics/{topic-name}`             |
 
-## Webhooks
+## [Webhooks](https://learn.microsoft.com/en-us/azure/event-grid/webhook-event-delivery)
 
 When a new event is ready, Event Grid service POSTs an HTTP request to the configured endpoint with the event in the request body.
 
@@ -225,39 +225,48 @@ Note: Self-signed certificates are not supported for validation; a signed certif
 
 ## [Filtering](https://learn.microsoft.com/en-us/azure/event-grid/event-filtering)
 
+### Using ARM
+
 ```json
-"filter": {
-  "subjectBeginsWith": "/blobServices/default/containers/mycontainer/log",
-  "subjectEndsWith": ".jpg"
+{
+  "filter": {
+    "subjectBeginsWith": "/blobServices/default/containers/mycontainer/log",
+    "subjectEndsWith": ".jpg"
+  }
 }
 ```
 
 ```json
-"filter": {
-  "includedEventTypes": [
-    "Microsoft.Resources.ResourceWriteFailure",
-    "Microsoft.Resources.ResourceWriteSuccess"
-  ]
+{
+  "filter": {
+    "includedEventTypes": [
+      "Microsoft.Resources.ResourceWriteFailure",
+      "Microsoft.Resources.ResourceWriteSuccess"
+    ]
+  }
 }
 ```
 
-### Advanced
+#### Advanced
 
 ```jsonc
-"filter": {
-  // enableAdvancedFilteringOnArrays: true // Allow array keys
-  "advancedFilters": [ // AND operation
-    {
-      "operatorType": "NumberGreaterThanOrEquals",
-      "key": "Data.Key1", // The field in the event data that you're using for filtering (number, boolean, string)
-      "value": 5
-    },
-    {
-      "operatorType": "StringContains",
-      "key": "Subject",
-      "values": ["container1", "container2"] // OR operation
-    }
-  ]
+{
+  "filter": {
+    // enableAdvancedFilteringOnArrays: true // Allow array keys
+    "advancedFilters": [
+      // AND operation
+      {
+        "operatorType": "NumberGreaterThanOrEquals",
+        "key": "Data.Key1", // The field in the event data that you're using for filtering (number, boolean, string)
+        "value": 5
+      },
+      {
+        "operatorType": "StringContains",
+        "key": "Subject",
+        "values": ["container1", "container2"] // OR operation
+      }
+    ]
+  }
 }
 ```
 
@@ -266,6 +275,18 @@ Limitations:
 - 25 advanced filters and 25 filter values across all the filters per Event Grid subscription
 - 512 characters per string value
 - No support for escape characters in keys
+
+### Using CLI
+
+```sh
+az eventgrid event-subscription create
+  --name "<Subscription_Name>"
+  --source-resource-id "<Event_Grid_Topic_Resource_Id>"
+  --endpoint "<Azure_Function_URL>"
+  --endpoint-type azurefunction
+  --subject-begins-with "/A/B"
+  --subject-ends-with ".jpg"
+```
 
 ## [Route custom events to web endpoint](https://learn.microsoft.com/en-us/azure/event-grid/custom-event-quickstart-portal)
 
@@ -304,12 +325,6 @@ curl -X POST -H "aeg-sas-key: $key" -d "$event" $topicEndpoint
 ## [Configure Azure Event Grid service to send events to an Azure Event Hub instance](https://learn.microsoft.com/en-us/azure/event-grid/custom-event-to-eventhub)
 
 ```sh
-topicName="<Topic_Name>"
-location="<Location>"
-resourceGroupName="<Resource_Group_Name>"
-namespaceName="<Namespace_Name>"
-eventHubName="<Event_Hub_Name>"
-
 az eventgrid topic create --name $topicName --location $location --resource-group $resourceGroup
 
 # az eventgrid topic show --name $topicName --resource-group $resourceGroup --query "{endpoint:endpoint, primaryKey:primaryKey}" --output json
@@ -342,8 +357,7 @@ Create an Event Grid subscription: `Azure portal > Resource groups > PubSubEvent
 ```cs
 Uri endpoint = new Uri(topicEndpoint);
 
-// Key credential used to authenticate to an Azure Service.
-// It provides the ability to update the key without creating a new client.
+// topicKey is the key for your Event Grid topic, which you can find in the Azure Portal
 var credential = new AzureKeyCredential(topicKey);
 
 var client = new EventGridPublisherClient(endpoint, credential);
