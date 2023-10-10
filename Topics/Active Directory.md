@@ -13,6 +13,14 @@ Implements [OAuth 2.0](https://learn.microsoft.com/en-us/azure/active-directory/
 | **Access Via** | Azure Portal, MS 365 Admin, Graph, PowerShell                       | Azure Portal, CLI, PowerShell, ARM templates, REST API                                       |
 | **Pricing**    | Free, P1, P2 (Monthly charged)                                      | Free (With Azure subscription)                                                               |
 
+## Use case: App Service web app accessing Microsoft Graph API (or other service)
+
+- For multi-tenant applications, an _application service principal_ is utilized to grant permissions. This enables the app to access Microsoft Graph API resources across multiple tenants without relying on a specific user identity.
+- For single-tenant scenarios where the app only needs to access resources within a specific tenant, a _Managed Identity_ could be more appropriate.
+- When the app needs to perform actions specific to an individual user (_on behalf of the user_), delegated permissions are used, requiring user authentication and consent.
+- If the permissions required by the application can change dynamically based on runtime conditions, leveraging _Azure AD roles and policies_ would be more suitable.
+- For short-lived operations that don't require persistent permissions, _token-based or key-based temporary access methods_ could be more fitting.
+
 ## Application Registration
 
 All applications _must [register with Azure AD](<(https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-provider-aad?tabs=workforce-tenant)>)_ to delegate identity and access management: `Portal > app > 'Authentication' > 'Add identity provider' > set provider to Microsoft > 'Add'`. This creates an application object and a globally unique ID (app/client ID).
@@ -26,8 +34,6 @@ All applications _must [register with Azure AD](<(https://learn.microsoft.com/en
   - **Application**: Created when an app gains resource access permissions.
   - **Managed Identity**: Automatically created when enabled. It grants access but is not directly modifiable.
   - **Legacy**: For apps created before modern registration methods, restricted to the tenant where created.
-
-Example: The application service principal is used to grant permissions for App Service web app in a multi-tenant application to access the Microsoft Graph API.
 
 Changes to your application object also affect its service principals in the home tenant only. Deleting the application also deletes its home tenant service principal, but restoring that application object won't recover its service principals.
 
