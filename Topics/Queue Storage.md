@@ -22,20 +22,19 @@ string connectionString = ConfigurationManager.AppSettings["StorageConnectionStr
 QueueClient queueClient = new QueueClient(connectionString, queueName);
 
 // Create the queue if it doesn't already exist
-queueClient.CreateIfNotExists();
+await queueClient.CreateIfNotExistsAsync();
 
-if (queueClient.Exists())
+if (await queueClient.ExistsAsync())
 {
-    // Insert a message into a queue
-    queueClient.SendMessage(new Message(Encoding.UTF8.GetBytes(message)));
+    await queueClient.SendMessageAsync("message");
 
     // Peek at the next message
     // If you don't pass a value for the `maxMessages` parameter, the default is to peek at one message.
-    PeekedMessage[] peekedMessage = queueClient.PeekMessages();
+    PeekedMessage[] peekedMessage = await queueClient.PeekMessagesAsync();
 
     // Change the contents of a message in-place
     // This code saves the work state and grants the client an extra minute to continue their message (default is 30 sec).
-    QueueMessage[] message = queueClient.ReceiveMessages();
+    QueueMessage[] message = await queueClient.ReceiveMessagesAsync();
     // PopReceipt must be provided when performing operations to the message
     // in order to prove that the client has the right to do so when locked
     queueClient.UpdateMessage(message[0].MessageId,
@@ -45,17 +44,17 @@ if (queueClient.Exists())
         );
 
     // Dequeue the next message
-    QueueMessage[] retrievedMessage = queueClient.ReceiveMessages();
+    QueueMessage[] retrievedMessage = await queueClient.ReceiveMessagesAsync();
     Console.WriteLine($"Dequeued message: '{retrievedMessage[0].Body}'");
-    queueClient.DeleteMessage(retrievedMessage[0].MessageId, retrievedMessage[0].PopReceipt);
+    await queueClient.DeleteMessageAsync(retrievedMessage[0].MessageId, retrievedMessage[0].PopReceipt);
 
     // Get the queue length
-    QueueProperties properties = queueClient.GetProperties();
+    QueueProperties properties = await queueClient.GetPropertiesAsync();
     int cachedMessagesCount = properties.ApproximateMessagesCount; // >= of actual messages count
     Console.WriteLine($"Number of messages in queue: {cachedMessagesCount}");
 
     // Delete the queue
-    queueClient.Delete();
+    await queueClient.DeleteAsync();
 }
 ```
 

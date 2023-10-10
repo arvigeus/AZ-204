@@ -177,10 +177,11 @@ Not supported on Consumption plan ([requires runtime-driven triggers](https://le
 
 // https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-cosmosdb-v2
 [CosmosDBTrigger(
-    databaseName: "database",
-    collectionName: "collection",
-    ConnectionStringSetting = "CosmosDBConnection", // Note: this refers to env var name, not an actual connection string
-    LeaseCollectionName = "leases")]IReadOnlyList<Document> input;
+            databaseName: "databaseName",
+            containerName: "containerName",
+            Connection = "CosmosDBConnectionSetting",
+            LeaseContainerName = "leases",
+            CreateLeaseContainerIfNotExists = true)]IReadOnlyList<ToDoItem> input;
 [CosmosDB(databaseName:"myDb", collectionName:"collection", Id = "{id}", PartitionKey ="{partitionKey}")] dynamic document; // input
 [CosmosDB(databaseName:"myDb", collectionName:"collection", CreateIfNotExists = true)] out dynamic document; // output
 
@@ -204,7 +205,6 @@ Not supported on Consumption plan ([requires runtime-driven triggers](https://le
 [QueueTrigger("queue", Connection = "StorageConnectionAppSetting")]string myQueueItem;
 // No Input binding
 [return: Queue("queue")] // return string
-// Alt: return a custom class with [QueueOutput("queue", Connection = "connection")] string[] property and Request property to response to both
 
 // https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-service-bus
 [ServiceBusTrigger("queue", Connection = "ServiceBusConnectionAppSetting")] string myQueueItem;
@@ -444,7 +444,7 @@ public static void RunCosmos([CosmosDBTrigger(
     databaseName: "database",
     collectionName: "collection",
     ConnectionStringSetting = "CosmosDBConnection", // Note: this refers to env var name, not an actual connection string
-    LeaseCollectionName = "leases")]IReadOnlyList<Document> input, ILogger log)
+    LeaseCollectionName = "leases")]IReadOnlyList<MyObj> input, ILogger log)
 {
     if (input != null && input.Count > 0)
     {
@@ -496,7 +496,7 @@ public static async Task<EventGridEvent> RunEventGridOutputBinding(
 {
     // Sends an event to Event Grid Topic
     string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-    var eventGridEvent = new EventGridEvent(Guid.NewGuid().ToString(), subject, requestBody, "MyEventType", DateTime.UtcNow, "1.0");
+    var eventGridEvent = new EventGridEvent(subject: "IncomingRequest", eventType: "IncomingRequest", dataVersion: "1.0", data: requestBody);
     log.LogInformation($"Event sent: {subject}");
     return eventGridEvent;
 }
@@ -511,7 +511,7 @@ public static async void RunEventGridOutputBinding(
 {
     // Sends an event to Event Grid Topic
     string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-    eventGridEvent = new EventGridEvent(Guid.NewGuid().ToString(), subject, requestBody, "MyEventType", DateTime.UtcNow, "1.0");
+    eventGridEvent = new EventGridEvent(subject: "IncomingRequest", eventType: "IncomingRequest", dataVersion: "1.0", data: requestBody);
     log.LogInformation($"Event sent: {subject}");
 }
 
@@ -524,7 +524,7 @@ public static async Task RunEventGridOutputBinding(
 {
     // Sends an event to Event Grid Topic
     string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-    var myEvent = new EventGridEvent(Guid.NewGuid().ToString(), subject, requestBody, "MyEventType", DateTime.UtcNow, "1.0");
+    var myEvent = new EventGridEvent(subject: "IncomingRequest", eventType: "IncomingRequest", dataVersion: "1.0", data: requestBody);
     await outputEvents.AddAsync(myEvent);
     log.LogInformation($"Event sent: {subject}");
 }
@@ -626,33 +626,14 @@ public static string RunQueueStorageOutputBinding(
     return message;
 }
 
-// Alt: Write to a storage queue and an HTTP success message.
-public class MultiResponse
+[FunctionName(nameof(AddMessages))]
+public static void AddMessages(
+[HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
+[Queue("outqueue"), StorageAccount("AzureWebJobsStorage")] ICollector<string> msg,
+ILogger log)
 {
-    [QueueOutput("queue",Connection = "AzureWebJobsStorage")]
-    public string[] Messages { get; set; }
-    public HttpResponseData HttpResponse { get; set; }
-}
-[Function("HttpExample")]
-public static MultiResponse Run(
-    [HttpTrigger(AuthorizationLevel.Function, "post", Route = "queue/{message}")] HttpRequestData req,
-    string message,
-    FunctionContext executionContext)
-{
-    var logger = executionContext.GetLogger("HttpExample");
-    logger.LogInformation("C# HTTP trigger function processed a request.");
-
-    var response = req.CreateResponse(HttpStatusCode.OK);
-    response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
-    response.WriteString(message);
-
-    // Return a response to both HTTP trigger and storage output binding.
-    return new MultiResponse()
-    {
-        // Write a single message.
-        Messages = new string[] { message },
-        HttpResponse = response
-    };
+    msg.Add("First");
+    msg.Add("Second");
 }
 
 ////////////////////////////////////
