@@ -77,7 +77,7 @@ Sure, here's the table based on the provided information:
 
 ```cs
 var authority = "https://login.microsoftonline.com/" + tenantId;
-var scopes = { "https://graph.microsoft.com/.default" };
+var scopes = new []{ "https://graph.microsoft.com/.default" };
 
 var app = ConfidentialClientApplicationBuilder.Create(clientId)
     .WithAuthority(authority)
@@ -143,27 +143,30 @@ var credential = new DeviceCodeCredential(deviceOptions);
 
 var graphClient = new GraphServiceClient(credential, scopes);
 
-var user = await graphClient.Me
-    .Request()
-    .GetAsync();
+var user = await graphClient.Me.GetAsync();
 
 var messages = await graphClient.Me.Messages
-    .Request()
-    .Select(m => new {
-        m.Subject,
-        m.Sender
-    })
-    .Filter("<filter condition>")
-    .OrderBy("receivedDateTime")
-    .GetAsync();
+.GetAsync(requestConfig =>
+{
+    requestConfig.QueryParameters.Select =
+        new string[] { "subject", "sender" };
+    requestConfig.QueryParameters.Filter =
+        "subject eq 'Hello world'";
 
-var message = await graphClient.Me.Messages[messageId]
-    .Request()
-    .DeleteAsync();
+    requestConfig.Headers.Add(
+        "Prefer", @"outlook.timezone=""Pacific Standard Time""");
+});
+
+var message = await graphClient.Me.Messages[messageId].GetAsync();
 
 var newCalendar = await graphClient.Me.Calendars
-    .Request()
-    .AddAsync(new Calendar() { /* ... */});
+    .PostAsync(new Calendar { Name = "Volunteer" }); // new
+
+await graphClient.Teams["teamId"]
+    .PatchAsync(new Team { }); // update
+
+await graphClient.Me.Messages[messageId]
+    .DeleteAsync();
 ```
 
 ## Token acquisition flow

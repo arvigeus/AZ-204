@@ -212,7 +212,6 @@ Access time tracking: when is enabled (`az storage account blob-service-properti
 var options = new BlobClientOptions();
 options.Retry.MaxRetries = 10;
 opions.Retry.Delay = TimeSpan.FromSeconds(20);
-options.Retry.RetryMode = RetryMode.Fixed; // Exponential to increase delay every time request fails
 var client = new BlobClient(new Uri("..."), options);
 ```
 
@@ -230,7 +229,6 @@ var client = new BlobClient(new Uri("..."), options);
 
 ```cs
 BlobSnapshotInfo snapshotInfo = await blobClient.CreateSnapshotAsync();
-Uri snapshotUri = snapshotInfo.SnapshotUri;
 // If you attempt to delete a blob that has snapshots, the operation will fail unless you explicitly specify that you also want to delete the snapshots
 await blobClient.DeleteIfExistsAsync(DeleteSnapshotsOption.IncludeSnapshots);
 ```
@@ -377,21 +375,14 @@ If two or more metadata headers with the same name are submitted for a resource,
 Example:
 
 ```csharp
-private static async Task DemoContainerPropertiesAndMetadataAsync(BlobContainerClient container)
-{
-    try
-    {
-        // Fetch some container properties and write out their values.
-        var properties = await container.GetPropertiesAsync();
-        Console.WriteLine($"Properties for container {container.Uri}");
-        Console.WriteLine($"Public access level: {properties.Value.PublicAccess}");
-        Console.WriteLine($"Last modified time in UTC: {properties.Value.LastModified}");
+// Fetch some container properties and write out their values.
+var properties = await container.GetPropertiesAsync();
+Console.WriteLine($"Properties for container {container.Uri}");
+Console.WriteLine($"Public access level: {properties.Value.PublicAccess}");
+Console.WriteLine($"Last modified time in UTC: {properties.Value.LastModified}");
 
-        var metadata = new Dictionary<string, string>() { { "docType", "textDocuments" }, { "category", "guidance" } };
-        var containerInfo = await container.SetMetadataAsync(metadata); // ETag, LastModified
-    }
-    catch (RequestFailedException e) {}
-}
+var metadata = new Dictionary<string, string>() { { "docType", "textDocuments" }, { "category", "guidance" } };
+var containerInfo = await container.SetMetadataAsync(metadata); // ETag, LastModified
 ```
 
 ### [Set and retrieve properties and metadata for blob resources by using REST](https://learn.microsoft.com/en-us/rest/api/storageservices/setting-and-retrieving-properties-and-metadata-for-blob-resources)
