@@ -16,18 +16,6 @@ Set secret: `az keyvault secret set --vault-name $myKeyVault --name "ExamplePass
 
 Retrieve secret (in _JSON_ format): `az keyvault secret show --name "ExamplePassword" --vault-name $myKeyVault` (`value` property contains the secret value)
 
-```cs
-var client = new KeyClient(vaultUri: new Uri(vaultUrl), credential: new DefaultAzureCredential());
-KeyVaultSecret secret = await client.GetSecretAsync("<YourSecretName>");
-string secretValue = secret.Value;
-KeyVaultKey key = (await client.GetKeyAsync("<YourSecretName>")).Value; // returns key with additional metadata
-
-// The CryptographyClient allows for cryptographic operations (encrypting and decrypting data, signing and verifying signatures, wrapping and unwrapping keys, etc.), using a key stored in Azure Key Vault.
-CryptographyClient  cryptoClient = client.GetCryptographyClient(key.Name, key.Properties.Version);
-EncryptResult encryptResult = cryptoClient.Encrypt(EncryptionAlgorithm.RsaOaep, Encoding.UTF8.GetBytes(plaintext));
-DecryptResult decryptResult = cryptoClient.Decrypt(EncryptionAlgorithm.RsaOaep, encryptResult.Ciphertext);
-```
-
 Get secret version: `GET {vaultBaseUrl}/secrets/{secret-name}/{secret-version}?api-version=7.4`
 
 ## [Security](https://learn.microsoft.com/en-us/azure/key-vault/general/security-features)
@@ -193,6 +181,22 @@ public static async Task<IActionResult> Run(
 
     return new OkResult();
 }
+```
+
+## Working with KeyVault
+
+```cs
+// Fetching a secret
+var secretClient = new SecretClient(vaultUri: new Uri(vaultUrl), credential: new DefaultAzureCredential());
+KeyVaultSecret secret = await secretClient.GetSecretAsync("YourSecretName");
+
+var keyClient = new KeyClient(vaultUri: new Uri(vaultUrl), credential: new DefaultAzureCredential());
+// Creating a new key
+KeyVaultKey key = await keyClient.GetKeyAsync("YourKeyName");
+// Encrypting and decrypting data using the key via CryptographyClient
+CryptographyClient cryptoClient = keyClient.GetCryptographyClient(key.Name, key.Properties.Version);
+EncryptResult encryptResult = cryptoClient.Encrypt(EncryptionAlgorithm.RsaOaep, Encoding.UTF8.GetBytes(plaintext));
+DecryptResult decryptResult = cryptoClient.Decrypt(EncryptionAlgorithm.RsaOaep, encryptResult.Ciphertext);
 ```
 
 ## CLI
