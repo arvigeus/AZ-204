@@ -19,12 +19,13 @@ A strategy to load data into a cache from a data store on demand, improving perf
 Example:
 
 ```csharp
-public async Task<MyEntity> GetMyEntityAsync(int id)
+async Task<MyEntity> GetMyEntityAsync(int id)
 {
     var key = $"MyEntity:{id}";
+    var Connection = ConnectionMultiplexer.Connect("your-redis-connection-string");
     var cache = Connection.GetDatabase();
     var json = await cache.StringGetAsync(key);
-    var value = string.IsNullOrWhiteSpace(json) ? default(MyEntity) : JsonConvert.DeserializeObject<MyEntity>(json);
+    var value = string.IsNullOrWhiteSpace(json) ? default : JsonConvert.DeserializeObject<MyEntity>(json);
     if (value == null) // Cache miss
     {
         value = ...; // Retrieve from data store
@@ -216,11 +217,11 @@ db.StringSet(key, value);
 ### Executing commands
 
 ```cs
-RedisResult result = db.Execute("ping"); // PONG
+RedisResult result = cache.Execute("ping"); // PONG
 ```
 
 ```cs
-RedisResult result = await db.ExecuteAsync("client", "list"); // This would output all the connected clients
+RedisResult result = await cache.ExecuteAsync("client", "list"); // This would output all the connected clients
 // Type = BulkString
 // Result = id=9469 addr=16.183.122.154:54961 fd=18 name=DESKTOP-AAAAAA age=0 idle=0 flags=N db=0 sub=1 psub=0 multi=-1 qbuf=0 qbuf-free=0 obl=0 oll=0 omem=0 ow=0 owmem=0 events=r cmd=subscribe numops=5
 // id=9470 addr=16.183.122.155:54967 fd=13 name=DESKTOP-BBBBBB age=0 idle=0 flags=N db=0 sub=0 psub=0 multi=-1 qbuf=0 qbuf-free=32768 obl=0 oll=0 omem=0 ow=0 owmem=0 events=r cmd=client numops=17
