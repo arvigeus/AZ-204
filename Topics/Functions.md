@@ -26,13 +26,13 @@ Limitations:
 
 ### Azure Functions Hosting Plans Comparison
 
-| Hosting Plan                                                                                           | Pricing Model                                                  | Ideal For                                                                     | Key Features                                                                   | Limitations                                                                                              |
-| ------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------- | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
-| [Consumption](https://learn.microsoft.com/en-us/azure/azure-functions/consumption-plan)                | Serverless<br>Pay only for the time your functions are running | Variable or unpredictable workloads                                           | - Pay-per-use<br>- Auto-scaling<br>- Max instances: 100 (Linux), 200 (Windows) | - No Docker support<br>- 5-10 min timeout<br>- No VNET Integration<br>- May scale to zero (_cold start_) |
-| [Premium](https://learn.microsoft.com/en-us/azure/azure-functions/functions-premium-plan)              | Hybrid<br>Mix of predictable and variable costs                | Production apps requiring robust scaling (no cold start) and VNET Integration | - Pre-warmed instances<br>- More powerful hardware<br>- VNET Integration       | - Must keep one instance warm<br>- Higher cost                                                           |
-| [Dedicated](https://learn.microsoft.com/en-us/azure/azure-functions/dedicated-plan)                    | Predictable                                                    | Long-running tasks and full control over environment                          | - Fixed monthly cost<br>- Manual/Auto-scaling (10-20 instances)                | - Higher cost if not continuously running<br>- Manual scaling required                                   |
-| [ASE (App Service Environment)](https://learn.microsoft.com/en-us/azure/app-service/environment/intro) | Predictable + Flat                                             | Maximum isolation and control                                                 | - Fully isolated environment<br>- High scale                                   | - Flat monthly rate<br>- Additional cost per vCPU                                                        |
-| [Kubernetes](https://learn.microsoft.com/en-us/azure/azure-functions/functions-kubernetes-keda)        | Cluster-Based Costs                                            | Customizable, isolated environment                                            | - Runs on Kubernetes<br>- Highly customizable                                  | - Requires Kubernetes expertise<br>- Variable costs based on cluster                                     |
+| Hosting Plan                                                                                           | Pricing Model                                                  | Ideal For                                                                       | Key Features                                                                   | Limitations                                                                                              |
+| ------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| [Consumption](https://learn.microsoft.com/en-us/azure/azure-functions/consumption-plan)                | Serverless<br>Pay only for the time your functions are running | Variable or unpredictable workloads                                             | - Pay-per-use<br>- Auto-scaling<br>- Max instances: 100 (Linux), 200 (Windows) | - No Docker support<br>- 5-10 min timeout<br>- No VNET Integration<br>- May scale to zero (_cold start_) |
+| [Premium](https://learn.microsoft.com/en-us/azure/azure-functions/functions-premium-plan)              | Hybrid<br>Mix of predictable and variable costs                | Production apps requiring robust scaling (_no cold start_) and VNET Integration | - Pre-warmed instances<br>- More powerful hardware<br>- VNET Integration       | - Must keep one instance warm<br>- Higher cost                                                           |
+| [Dedicated](https://learn.microsoft.com/en-us/azure/azure-functions/dedicated-plan)                    | Predictable                                                    | Long-running tasks and full control over environment                            | - Fixed monthly cost<br>- Manual/Auto-scaling (10-20 instances)                | - Higher cost if not continuously running<br>- Manual scaling required                                   |
+| [ASE (App Service Environment)](https://learn.microsoft.com/en-us/azure/app-service/environment/intro) | Predictable + Flat                                             | Maximum isolation and control                                                   | - Fully isolated environment<br>- High scale                                   | - Flat monthly rate<br>- Additional cost per vCPU                                                        |
+| [Kubernetes](https://learn.microsoft.com/en-us/azure/azure-functions/functions-kubernetes-keda)        | Cluster-Based Costs                                            | Customizable, isolated environment                                              | - Runs on Kubernetes<br>- Highly customizable                                  | - Requires Kubernetes expertise<br>- Variable costs based on cluster                                     |
 
 The _scale controller_ adjusts resources based on event rates and trigger types. It uses heuristics for each trigger type (for Queue storage trigger, it scales based on the queue length and the age of the oldest queue message). The number of host instances can be scaled to zero when no functions are running (_cold start_).
 
@@ -308,13 +308,15 @@ Application Insights are configured in [host.json](https://learn.microsoft.com/e
 Enable SQL query:
 
 ```json
-"logging": {
+{
+  "logging": {
     "applicationInsights": {
-        "enableDependencyTracking": true,
-        "dependencyTrackingOptions": {
-            "enableSqlCommandTextInstrumentation": true
-        }
+      "enableDependencyTracking": true,
+      "dependencyTrackingOptions": {
+        "enableSqlCommandTextInstrumentation": true
+      }
     }
+  }
 }
 ```
 

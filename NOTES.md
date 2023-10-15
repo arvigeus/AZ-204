@@ -76,6 +76,7 @@ Double check in the question if you are asked to grant permissions for resource 
 - API Management: If you don't want to require approval for every API, the least scope is either Product (based on functionality) or Workspace (based on teams)
 - In production, the version must be pinned: Prefer `{major}.{minor}.{patch}` or `{major}.{minor}`, instead of `{major}` or `latest`.
 - Azure App Service Local Cache: `WEBSITE_LOCAL_CACHE_OPTION = Always`
+- Azure Functions hosting plans: **Consumption**: serverless pricing, **Dedicated**: App Service, **App Service Environment (ASE)**: Isolation
 - Microsoft Defender for Cloud: Min: Basic plan; Custom Domains: Premium
 - Static website custom domain: HTTP: Add the custom domain under networking in the Azure Storage account; HTTPS: Use Azure CDN
 - Mandatory headers for Graph: `request-id`; during throttling: `Retry-After`; for long running operations: `Location`.

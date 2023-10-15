@@ -55,7 +55,7 @@ Note: If client expects response in certain format (example: XML), check questio
 
 ### Policy Configuration
 
-`<base />`: execute the default policies that are defined at other scopes (e.g., the Product or Global scope).
+`<base />`: execute the default policies that are defined at other scopes (e.g., the Product or Global scope). Provides the ability to enforce policy evaluation order.
 
 ```xml
 <policies>

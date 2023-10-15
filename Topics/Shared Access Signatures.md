@@ -177,6 +177,11 @@ az role assignment create \
  --assignee <email> \
  --scope "/subscriptions/<subscription>/resourceGroups/<resource-group>/providers/Microsoft.Storage/storageAccounts/<storage-account>"
 
+# Account Level SAS: --account-name and --account-key
+# Service Level SAS: --resource-types + same as above
+# User Level SAS: --auth-mode login
+# (applicable for Stored Access Policies as well)
+
 # Generate a user delegation SAS for a container
 az storage container generate-sas \
  --account-name <storage-account> \
