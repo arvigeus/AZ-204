@@ -39,7 +39,7 @@ Here are various methods to start monitoring and analyzing your app's performanc
 
 **Log-based metrics**: Offers thorough data analysis and diagnostics. ⭐: you need complete set of events ❌: high-volume apps that require sampling / filtering.
 
-**Standard metrics** are time-series data **pre-aggregated** by either SDK (version doe not affect accuracy) or backend (better accuracy), optimized for fast queries. ⭐: dashboards and real-time alerts, use cases _requiring sampling or filtering_.
+**Standard metrics** are time-series data **pre-aggregated** by either SDK (version does not affect accuracy) or backend (better accuracy), optimized for fast queries. ⭐: dashboards and real-time alerts, use cases _requiring sampling or filtering_.
 
 You can toggle between these metrics types using the metrics explorer's namespace selector.
 
@@ -75,18 +75,20 @@ builder.Use((next) => new AnotherProcessor(next));
 Use [`GetMetric()`](https://learn.microsoft.com/en-us/azure/azure-monitor/app/get-metric) instead of `TrackMetric()`. `GetMetric()` handles **pre-aggregation**, reducing costs and performance issues associated with raw telemetry. It avoids sampling, ensuring reliable alerts. Tracking metrics at a granular level can lead to increased costs, network traffic, and throttling risks. `GetMetric()` solves these concerns by sending summarized data every minute.
 
 ```cs
+TelemetryConfiguration configuration = TelemetryConfiguration.CreateDefault();
+configuration.InstrumentationKey = "your-instrumentation-key-here";
+var telemetry = new TelemetryClient(configuration);
+
 // Set properties such as UserId and DeviceId to identify the machine.
 // This information is attached to all events that the instance sends.
-TelemetryClient.Context.User.Id = "...";
-TelemetryClient.Context.Device.Id = "...";
-
-var telemetry = new TelemetryClient();
-
-// GetMetric: capture locally pre-aggregated metrics for .NET and .NET Core applications
+telemetry.Context.User.Id = "...";
+telemetry.Context.Device.Id = "...";
 
 // Monitors usage patterns and sends data to Custom Events for search.
 // It names events and includes string properties and numeric metrics.
 telemetry.TrackEvent("WinGame");
+
+// GetMetric: capture locally pre-aggregated metrics for .NET and .NET Core applications
 
 // TrackMetric: not the preferred method for sending metrics, but can be used if you're implementing your own pre-aggregation logic
 var sample = new MetricTelemetry();
@@ -113,7 +115,7 @@ catch (Exception ex)
     telemetry.TrackException(ex);
 
     // Log exceptions to a diagnostic trace listener (Trace.aspx).
-    Trace.Error(ex.Message);
+    Trace.TraceError(ex.Message);
 }
 finally
 {
@@ -126,21 +128,19 @@ finally
 // Lets you send longer data such as POST information.
 telemetry.TrackTrace("Some message", SeverityLevel.Warning);
 
+// Event log: use ILogger or a class inheriting EventSource.
+
 // Send data immediately, rather than waiting for the next fixed-interval sending
 telemetry.Flush();
 ```
-
-## Event log
-
-To write to event log use, `ILogger` or a class inheriting `EventSource`.
 
 ## [Usage analysis](https://learn.microsoft.com/en-us/azure/azure-monitor/app/usage-overview)
 
 - [User, session, and event analysis](https://learn.microsoft.com/en-us/azure/azure-monitor/app/usage-segmentation)
 
-  - **Users tool**: Counts how many people used the app and its features. If a person uses different browsers or machines, they're counted as more than one user.
-  - **Sessions tool**: Tracks how many user activity sessions included certain pages and features. A session resets after 30 minutes of inactivity or 24 hours of continuous use.
-  - **Events tool**: Measures how often pages and features are used. Page views are counted when loaded, and custom events represent specific occurrences like button clicks or task completions.
+  - **Users tool**: Counts unique app users per browser/machine.
+  - **Sessions tool**: Tracks feature usage per session; resets after 30min inactivity or 24hr use.
+  - **Events tool**: Measures page views and custom events like clicks.
 
 - [Funnels](https://learn.microsoft.com/en-us/azure/azure-monitor/app/usage-funnels): For linear, step-by-step processes. Track how users move through different stages of your web application, for example how many users go from the home page to creating a ticket. Use funnels to identify where users may stop or leave your app, helping you understand its effective areas and where improvements are needed.
 - [User Flows](https://learn.microsoft.com/en-us/azure/azure-monitor/app/usage-flows): For understanding complex, branching user behavior. Helps you analyze how users navigate between pages and features of your web app. It can answer questions like where users go after visiting a page, where they leave your site, or if they repeat the same action many times.

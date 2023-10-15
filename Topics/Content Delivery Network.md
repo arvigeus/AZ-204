@@ -109,7 +109,7 @@ Geo-filtering allows for the control of content access by country/region codes. 
 public static void ManageCdnEndpoint(string subscriptionId, TokenCredentials authResult, string resourceGroupName, string profileName, string endpointName, string resourceLocation)
 {
     // Create CDN client
-    CdnManagementClient cdn = new CdnManagementClient(new TokenCredentials(authResult.AccessToken)) { SubscriptionId = subscriptionId };
+    CdnManagementClient cdn = new CdnManagementClient(authResult) { SubscriptionId = subscriptionId };
 
     // List all the CDN profiles in this resource group
     var profileList = cdn.Profiles.ListByResourceGroup(resourceGroupName);
@@ -121,18 +121,18 @@ public static void ManageCdnEndpoint(string subscriptionId, TokenCredentials aut
     }
 
     // Create a new CDN profile (check if not exist first!)
-    var profileParms = new ProfileCreateParameters() { Location = resourceLocation, Sku = new Sku(SkuName.StandardVerizon) };
-    cdn.Profiles.Create(profileName, profileParms, resourceGroupName);
+    var profileParms = new Profile() { Location = resourceLocation, Sku = new Sku(SkuName.StandardVerizon) };
+    cdn.Profiles.Create(resourceGroupName, profileName, profileParms);
 
     // Create a new CDN endpoint (check if not exist first!)
-    var endpointParms = new EndpointCreateParameters()
+    var endpoint = new Endpoint()
     {
         Origins = new List<DeepCreatedOrigin>() { new DeepCreatedOrigin("Contoso", "www.contoso.com") },
         IsHttpAllowed = true,
         IsHttpsAllowed = true,
         Location = resourceLocation
     };
-    cdn.Endpoints.Create(endpointName, endpointParms, profileName, resourceGroupName);
+    cdn.Endpoints.BeginCreateWithHttpMessagesAsync(resourceGroupName, profileName, endpointName, endpoint);
 
     // Purge content from the endpoint
     cdn.Endpoints.PurgeContent(resourceGroupName, profileName, endpointName, new List<string>() { "/*" });
