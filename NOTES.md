@@ -87,4 +87,5 @@ Double check in the question if you are asked to grant permissions for resource 
 - Message ordering: ServiceBus: per session; EventHub: per partition;
 - `EventProcessorClient`: Balance the load, checkpointing, handles multiple partitions (distributed ownership)
 - `EventHubConsumerClient`: read data from specific consumer group
+- Hierarchy: EventGrid: Topic -> Subscription; EventHub: Namespace -> Event Hub -> Consumer Group -> EventData; Service Bus: Namespace -> Queue -> ServiceBusMessage; Queue Storage: Storage Account -> Queue -> Message
 - Contributor is the minimum role to create managed identities? Not sure here, but saw this on a practice question. Maybe choose Admin (unless it's Admin Login or whatever)

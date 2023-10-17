@@ -387,28 +387,14 @@ Host instance lifecycle: Reads change feed, sleeps if no changes, sends changes 
 - Compute Instance: Hosts change feed processor to listen for changes. Can be a VM, Kubernetes pod, Azure App Service instance, or a physical machine.
 
 ```cs
-private static async Task<ChangeFeedProcessor> StartChangeFeedProcessorAsync(
-    CosmosClient cosmosClient,
-    IConfiguration configuration)
+private static async Task<ChangeFeedProcessor> StartChangeFeedProcessorAsync(CosmosClient cosmosClient)
 {
-    string databaseName = configuration["SourceDatabaseName"];
-    /////////////////////////
-    // Monitored Container //
-    /////////////////////////
-    string sourceContainerName = configuration["SourceContainerName"];
-    //////////////////////
-    // Lease Container //
-    //////////////////////
-    string leaseContainerName = configuration["LeasesContainerName"];
+    Container monitoredContainer = cosmosClient.GetContainer("databaseName", "monitoredContainerName");
+    Container leaseContainer = cosmosClient.GetContainer("databaseName", "leaseContainerName");
 
-    Container leaseContainer = cosmosClient.GetContainer(databaseName, leaseContainerName);
-    // When implementing the change feed processor, the monitored container is always the point of entry
-    ChangeFeedProcessor changeFeedProcessor = cosmosClient.GetContainer(databaseName, sourceContainerName)
-        .GetChangeFeedProcessorBuilder<ToDoItem>(processorName: "changeFeedSample", onChangesDelegate: HandleChangesAsync)
-            //////////////////////
-            // Compute Instance //
-            //////////////////////
-            .WithInstanceName("consoleHost")
+    ChangeFeedProcessor changeFeedProcessor = monitoredContainer
+        .GetChangeFeedProcessorBuilder<ToDoItem>(processorName: "changeFeedSample", onChangesDelegate: DelagateHandleChangesAsync)
+            .WithInstanceName("consoleHost") // Compute Instance
             .WithLeaseContainer(leaseContainer)
             .Build();
 
@@ -433,7 +419,7 @@ static async Task HandleChangesAsync(
 
     foreach (ToDoItem item in changes)
     {
-        Console.WriteLine($"Detected operation for item with id {item.id}, created at {item.creationTime}.");
+        Console.WriteLine($"Detected operation for item with id {item.id}.");
         await Task.Delay(10);
     }
 }
