@@ -108,7 +108,7 @@ var certificate = await client.GetCertificateAsync(certificateName);
 
 ## Best Practices
 
-- Use a separate vault for each application and environment.
+- Use a separate vault for each application and environment (production, test, staging).
 - Restrict vault access to authorized applications and users. (`az keyvault set-policy --name <YourKeyVaultName> --object-id <PrincipalObjectId> --secret-permissions get list`)
 - Regularly backup your vault. (`az keyvault key backup --vault-name <YourKeyVaultName> --name <KeyName> --file <BackupFileName>`)
 - Enable logging and alerts.

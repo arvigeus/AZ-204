@@ -72,6 +72,7 @@ Double check in the question if you are asked to grant permissions for resource 
 - Setting blob information longer than 2000 chars: `PUT` request to metadata. **ALL** blob oerations are either `PUT` or `GET`.
 - Read an Azure Cosmos DB change feed by using a reactive model: Azure Functions with an Azure Cosmos DB trigger, Change feed pull model.
 - Changing secrets does not restart Container Apps.
+- App Service metrics: At App Service Plan level, not per individual app (`$webAppId`) or resource group (`$resourceGroupId`)
 - Grant App Service web app permission to access the Microsoft Graph API in multi-tenant application: use `application` service principal.
 - API Management: If you don't want to require approval for every API, the least scope is either Product (based on functionality) or Workspace (based on teams)
 - In production, the version must be pinned: Prefer `{major}.{minor}.{patch}` or `{major}.{minor}`, instead of `{major}` or `latest`.
@@ -81,4 +82,8 @@ Double check in the question if you are asked to grant permissions for resource 
 - Mandatory headers for Graph: `request-id`; during throttling: `Retry-After`; for long running operations: `Location`.
 - Both Event Hub and Service Bus support AMQP
 - Avro: Event Hub capturing; Grid has Cloud/Event schema
+- Consuming messages: EventHub: retained for period; ServiceBus: deleted; Queue storage: hidden;
+- Message ordering: ServiceBus: per session; EventHub: per partition;
+- `EventProcessorClient`: Balance the load, checkpointing, handles multiple partitions (distributed ownership)
+- `EventHubConsumerClient`: read data from specific consumer group
 - Contributor is the minimum role to create managed identities? Not sure here, but saw this on a practice question. Maybe choose Admin (unless it's Admin Login or whatever)
