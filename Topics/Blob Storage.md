@@ -165,7 +165,7 @@ type RelesType = {
         };
         filters?: {
           blobTypes: Array<"appendBlob" | "blockBlob">;
-          // Up to 10 case-sensitive prefixes. A prefix string must start with a container name.
+          // A prefix string must start with a container name.
           // To match the container or blob name exactly, include the trailing forward slash ('/'), e.g., 'sample-container/' or 'sample-container/blob1/'
           // To match the container or blob name pattern (wildcard), omit the trailing forward slash, e.g., 'sample-container' or 'sample-container/blob1'
           prefixMatch?: string[];

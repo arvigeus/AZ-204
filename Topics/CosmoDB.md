@@ -46,7 +46,7 @@ az cosmosdb sql database create --account-name $account --name $database
 az cosmosdb sql container create --account-name $account --database-name $database --name $container --partition-key-path "/mypartitionkey"
 
 # Create an item
-az cosmosdb sql container create --account-name $account --database-name $database --container-name $container --value "{\"id\": \"1\", \"mypartitionkey\": \"mypartitionvalue\", \"description\": \"mydescription\"}"
+az cosmosdb sql container item create --account-name $account --database-name $database --container-name $container --value "{\"id\": \"1\", \"mypartitionkey\": \"mypartitionvalue\", \"description\": \"mydescription\"}"
 ```
 
 [Azure Cosmos DB .NET SDK](https://learn.microsoft.com/en-us/dotnet/api/microsoft.azure.cosmos?view=azure-dotnet):
@@ -87,7 +87,8 @@ FeedIterator<SalesOrder> rs = container.GetItemQueryIterator<SalesOrder>(
     // {
     //     PartitionKey = new PartitionKey("Account1"),
     //     MaxItemCount = 1
-    // });
+    // }
+);
 while (rs.HasMoreResults)
 {
     Model next = await iterator.ReadNextAsync();

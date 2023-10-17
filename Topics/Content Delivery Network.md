@@ -24,18 +24,6 @@ Content is cached based on the `Time to Live` (TTL), which is determined by the 
 - Large file optimizations: 1 day
 - Media streaming optimizations: one year
 
-### File Version Management
-
-To ensure users receive the latest version of a file, include a version string in the URL or purge cached content. Purging can be performed on an endpoint basis, by specifying a file, or using wildcards. Below is an example of purging assets:
-
-```sh
-az cdn endpoint purge \
-    --content-paths '/css/*' '/js/app.js' \
-    --name ContosoEndpoint \
-    --profile-name DemoProfile \
-    --resource-group $resourceGroup
-```
-
 ### [Caching Rules](https://learn.microsoft.com/en-us/azure/cdn/cdn-caching-rules)
 
 Caching rules provide configuration options for your content at the endpoint level. The options vary depending on the selected tier.

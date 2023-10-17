@@ -11,6 +11,8 @@ Enable Azure App Services-based apps to access other services without handling c
 | Sharing across Azure resources | Can’t be shared.<br>It can only be associated with a single Azure resource.                                                                                            | Can be shared.<br>The same user-assigned managed identity can be associated (shared) with more than one Azure resource.                                                                                                                                                                                                                                           |
 | Common use cases               | Workloads contained within a single Azure resource.<br>Workloads needing independent identities.<br>For example, an application that runs on a single virtual machine. | Workloads that run on multiple resources and can share a single identity.<br>Workloads needing pre-authorization to a secure resource, as part of a provisioning flow.<br>Workloads where resources are recycled frequently, but permissions should stay consistent.<br>For example, a workload where multiple virtual machines need to access the same resource. |
 
+**If you have multi-tenant setup, use Application Service Principal!**
+
 ## [Role-based access control (Azure RBAC)](https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal#assign-a-user-as-an-administrator-of-a-subscription)
 
 Manage access to Azure resources. To assign Azure roles, you must have `Microsoft.Authorization/roleAssignments/write` permissions, such as `User Access Administrator` or `Owner`.

@@ -483,7 +483,7 @@ sh: How to create .Net web app using AZ CLI?
 
 sh: How to enable web app to use image from ACR using user managed identity in AZ CLI?
 
-<!-- create identity; role assign AcrPull; az  webapp config set --generic-configurations '{"acrUserManagedIdentityID": "$principalId"}' -->
+<!-- create identity; role assign AcrPull; az webapp config set --generic-configurations '{"acrUserManagedIdentityID": "$principalId"}' -->
 
 ---
 

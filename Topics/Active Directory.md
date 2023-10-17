@@ -51,6 +51,9 @@ List service principals associated with an app: `az ad sp list --filter "appId e
 
 To [protect an API in Azure API Management](https://learn.microsoft.com/en-us/azure/api-management/api-management-howto-protect-backend-with-aad), register both the backend API and web app, configure permissions to allow the web app to call the backend API (`az ad app permission add --id <WebApp-Application-Id> --api <Backend-API-Application-Id> --api-permissions <Permission-Id>=Scope`), and enable OAuth 2.0 user authorization along with adding the `validate-jwt` policy for token validation.
 
+- `<Permission-Id>=Scope`: Delegated permissions
+- `<Permission-Id>=Role`: Application permissions
+
 ## [Permissions (Scopes)](https://learn.microsoft.com/en-us/azure/active-directory/develop/permissions-consent-overview)
 
 The app specifies required permissions using the `scope` query parameter, which defines the resource type. If unspecified, the default resource is Microsoft Graph. For instance, `scope=User.Read` is the same as `https://graph.microsoft.com/User.Read`.

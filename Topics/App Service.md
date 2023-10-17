@@ -166,12 +166,14 @@ string myParentSettingValue = Configuration["MyParentSetting/MySubSetting"]; // 
 // Load: az webapp config appsettings set --resource-group $resourceGroup --name $appName --settings @settings.json
 ```
 
-### [Source app settings from key vault](https://learn.microsoft.com/en-us/azure/app-service/app-service-key-vault-references?tabs=azure-cli#source-app-settings-from-key-vault)
+### [Source app settings](https://learn.microsoft.com/en-us/azure/app-service/app-service-key-vault-references?tabs=azure-cli#source-app-settings-from-key-vault)
 
-Prerequisites: Grant your app access to a key vault to a managed identity
+Key vault: Prerequisites: Grant your app access to a key vault to a managed identity
 
 - `@Microsoft.KeyVault(SecretUri=https://myvault.vault.azure.net/secrets/mysecret/)`
 - `@Microsoft.KeyVault(VaultName=myvault;SecretName=mysecret)`
+
+App Configuration: `@Microsoft.AppConfiguration(Endpoint=https://myAppConfigStore.azconfig.io; Key=myAppConfigKey; Label=myKeysLabel)`
 
 ### Connection strings
 
@@ -299,7 +301,7 @@ Check: `az webapp config storage-account list ...`
 1. Create App Service plan: `az appservice plan create --location $location`
 1. Create web app: `az webapp create --runtime "DOTNET|6.0"`
 1. (optinal) Use managed identity for ACR:
-   - Assign managed identity to thr web app
+   - Assign managed identity to the web app
    - Assign `AcrPull` role: `az role assignment create --assignee $principalId --scope $registry_resource_id --role "AcrPull"`
    - Set generic config to `{acrUseManagedIdentityCreds:true}` for system identity and `{acrUserManagedIdentityID:id}` for user identity: `az webapp config set --generic-configurations '<json>'`
 1. (optional) Create deployment slot (staging) (Standard+): `az webapp deployment slot create`
@@ -598,7 +600,7 @@ docker_deployment() {
     ## Configure your app to use the system managed identity to pull from Azure Container Registry
     az webapp config set --generic-configurations '{"acrUseManagedIdentityCreds": true}' --name $webapp --resource-group $resourceGroup
     ## (OR) Set the user-assigned managed identity ID for your app
-    az  webapp config set --generic-configurations '{"acrUserManagedIdentityID": "$principalId"}' --name $webapp --resource-group $resourceGroup
+    az webapp config set --generic-configurations '{"acrUserManagedIdentityID": "$principalId"}' --name $webapp --resource-group $resourceGroup
 
     echo "Deploying from DockerHub" # Custom container
     az webapp config container set --name $webapp --resource-group $resourceGroup \
