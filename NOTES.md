@@ -57,35 +57,113 @@ Double check in the question if you are asked to grant permissions for resource 
 
 ## Random thoughts
 
-- Winners: First - Event Hub Capture; Last - CosmoDB automatic conflic resolution;
-- Message queues: storage - simple, lease-based, small messages (64KB), big capacity; service bus: feature rich, lock-based, big messages, small storage (80GB)
-- To use the custom key stored in KeyVault, the identity assigned to AppConfig needs to have `GET`, `WRAP`, and `UNWRAP` permissions to the custom key
+### Apps
+
+- `az ? deployment` or `az webapp` means you are using [App Service](./Topics/App%20Service.md) (needs App Service Account). `az containerapp` means you are using Container Apps. `az container` means Container Instance. May sound obvious, but I want to point that out.
+- Changing secrets does not restart Container Apps.
+- App Service metrics: At App Service Plan level, not per individual app (`$webAppId`) or resource group (`$resourceGroupId`)
+- Azure App Service Local Cache: `WEBSITE_LOCAL_CACHE_OPTION = Always`
+- `az acr create` creates registry, doesn't run anything. To run docker image use `az acr build` (quick task)
+- Microsoft Defender for Cloud: Min: Basic plan; Custom Domains: Premium
+- Private Health checks: `x-ms-auth-internal-token` request header must equals the hashed value of `WEBSITE_AUTH_ENCRYPTION_KEY`
+- `az webapp log tail`
+- Container Instance mount: `--azure-file-volume` acc name, key, mount path, share name. Root linux, Azure Files
+- The secret values must be Base64-encoded!
+- Mount storage for App Service: Azure Blobs (read-only for Linux); Avoid regenerating access key.
+
+### Functions
+
+- Azure Functions hosting plans: **Consumption**: serverless pricing, **Dedicated**: App Service, **App Service Environment (ASE)**: Isolation
+- Functions: POST to get keys; PUT to update
+
+### Security
+
+- Acquiring: Authorization Code: `GET /oauth2/authorize`; Access Token: `POST /oauth2/token`
+- Contributor is the minimum role to create managed identities? Not sure here, but saw this on a practice question. Maybe choose Admin (unless it's Admin Login or whatever)
+- Grant App Service web app permission to access the Microsoft Graph API in multi-tenant application: use `application` service principal.
+- You'll need to provide the ClientID and Secret when you're setting up an application to authenticate against Azure AD
+- When registering, you need to setup identity provider (ex. Microsoft) and then click "Add"
+- `az ad app permission add --id <WebApp-Application-Id> --api <Backend-API-Application-Id> --api-permissions <Scope-Permission-UUID>=Scope`
+- Changes to your application object also affect its service principals in the home tenant only.
+- Deleting the application also deletes its home tenant service principal (no restore service principal)
+
+### SAS
+
+- Use HTTPS, monitor and logs, min access and time
+- Generate SAS: `--account-name`; Service & Account `--account-key`; Service: `--resource-types`; User: `--auth-mode login`
+
+### Storage
+
+- A storage account connection string contains all the information needed to connect to Blob storage, most importantly the account name and the account key.
+- Setting blob information longer than 2000 chars: `PUT` request to metadata. **ALL** blob oerations are either `PUT` or `GET`.
+- Static website custom domain: HTTP: Add the custom domain under networking in the Azure Storage account; HTTPS: Use Azure CDN
+- restype=container, comp=block, comp=appendblock, comp=page, comp=lease, comp=metadata, comp=list
+- Delegation Scope: Use `user_impersonation`; Resource ID: Use `https://storage.azure.com/`
+- StorageSharedKeyCredential, ClientSecretCredential (AD through app registration), DefaultAzureCredential
+- Append: only delete policy
+
+### CosmoDB
+
+- Hierarchy: Account -> Databese (consistency) -> Container (partition key) -> Item
 - Consistent Prefix: update operations made as a batch within a transaction are always visible together
+- Change feed: Order only per partition; For deletions, use a "deleted" attribute and set TTL.
+- Read an Azure Cosmos DB change feed by using a reactive model: Azure Functions with an Azure Cosmos DB trigger, Change feed pull model.
+- Cosmo: Best use latest SDK and single CosmoClient.
+- Stored procedures: get context; getResponse() or getCollection(); response.getBody() or container.createDocument();
+
+### Caching
+
+- Cache aside: when a cache doesn't provide native read-through and write-through operations, or when resource demand is unpredictable
+- To ensure users receive the latest version of a file, include a version string
+
+### KeyVault
+
+- To use the custom key stored in KeyVault, the identity assigned to AppConfig needs to have `GET`, `WRAP`, and `UNWRAP` permissions to the custom key
+- Use a separate vault for each application and environment (production, test, staging).
+- Backup, restrict access, logging and alerts (`... Events > Event Grid Subscriptions > + Event Subscription`), del protection
+
+### Graph
+
+- Mandatory headers for Graph: `request-id`; during throttling: `Retry-After`; for long running operations: `Location`.
+- Metadata: `https://graph.microsoft.com/v1.0/$metadata`
+- My photo: `https://graph.microsoft.com/v1.0/me/photo/$value`
+- My photo metadata: `https://graph.microsoft.com/v1.0/me/photo/`
+- Filter: `?filter=<name> eq '<value>'`
+- Limit: `?top=5`
+
+### Insights
+
+- Log-based metrics: thorough, complete sets of events.
+- Standard: pre-aggregated, use backend for better accuracy. For real time, sampling/filtering
+- Activity Log: subscription-level events. Log to _Log Analytics_, Storage, EventHub
+- `TrackAvailability` for custom track availability tests
+- `telemetry.GetMetric("metricId");` pre-aggregation; lowers cost; no sampling
+
+### Api management
+
+- If you don't want to require approval for every API, the least scope is either Product (based on functionality) or Workspace (based on teams)
+- `{{<name-value>}}` and `@{<code>}`
+
+### Messaging
+
+- EventGrid: Messages as array, 1MB max total, charged per 64KB
+- EventGrid" Subject is mandatory, Topic is not; CloudEvent doesn't have Topic, and Subject is optional
+- Message ordering: ServiceBus: per session; EventHub: per partition;
+- Hierarchy: EventGrid: Topic -> Subscription; EventHub: Namespace -> Event Hub -> Consumer Group -> EventData; Service Bus: Namespace -> Queue -> ServiceBusMessage; Queue Storage: Storage Account -> Queue -> Message
+- Message queues: storage - simple, lease-based, small messages (64KB), big capacity; service bus: feature rich, lock-based, big messages, small storage (80GB)
+- Consuming messages: EventHub: retained for period; ServiceBus: deleted/locked; Queue storage: hidden;
+- ServiceBus premium: 100MB, predictable pricing (serverless for Standard);
+- Queue storage: progress tracking; `message.PopReceipt` to update
+- Both Event Hub and Service Bus support AMQP
+- Avro: Event Hub capturing; Grid has Cloud/Event schema
+- `EventProcessorClient`: Balance the load with multiple instances, checkpointing, handles multiple partitions (distributed ownership)
+- `EventHubConsumerClient`: read data from specific consumer group
+
+### Misc
+
+- Winners: First - Event Hub Capture; Last - CosmoDB automatic conflic resolution;
 - Dashes are not allowed in account names. Probably because MS uses them to differentiate between primary `<account>.<url>` and secondary `<account>-secondary.<url>`.
 - Bet on Azure Portal if a question asks "What is the easiest way to achive X?" or "From where you can manage Y?" (except for automations). Not always true, but at least it's something.
 - You need to use some sort of storage for something (app service web app, container)? Then you'll need storage account and storage account key.
-- `az ? deployment` or `az webapp` means you are using [App Service](./Topics/App%20Service.md) (needs App Service Account). `az containerapp` means you are using Container Apps. `az container` means Container Instance. May sound obvious, but I want to point that out.
-- `az acr create` creates registry, doesn't run anything. To run docker image use `az acr build` (quick task)
 - Changing SKU is scaling up/down operation. Autoscaling is scale in/out operation.
-- A storage account connection string contains all the information needed to connect to Blob storage, most importantly the account name and the account key.
-- Acquiring: Authorization Code: `GET /oauth2/authorize`; Access Token: `POST /oauth2/token`
-- Setting blob information longer than 2000 chars: `PUT` request to metadata. **ALL** blob oerations are either `PUT` or `GET`.
-- Read an Azure Cosmos DB change feed by using a reactive model: Azure Functions with an Azure Cosmos DB trigger, Change feed pull model.
-- Changing secrets does not restart Container Apps.
-- App Service metrics: At App Service Plan level, not per individual app (`$webAppId`) or resource group (`$resourceGroupId`)
-- Grant App Service web app permission to access the Microsoft Graph API in multi-tenant application: use `application` service principal.
-- API Management: If you don't want to require approval for every API, the least scope is either Product (based on functionality) or Workspace (based on teams)
 - In production, the version must be pinned: Prefer `{major}.{minor}.{patch}` or `{major}.{minor}`, instead of `{major}` or `latest`.
-- Azure App Service Local Cache: `WEBSITE_LOCAL_CACHE_OPTION = Always`
-- Azure Functions hosting plans: **Consumption**: serverless pricing, **Dedicated**: App Service, **App Service Environment (ASE)**: Isolation
-- Microsoft Defender for Cloud: Min: Basic plan; Custom Domains: Premium
-- Static website custom domain: HTTP: Add the custom domain under networking in the Azure Storage account; HTTPS: Use Azure CDN
-- Mandatory headers for Graph: `request-id`; during throttling: `Retry-After`; for long running operations: `Location`.
-- Both Event Hub and Service Bus support AMQP
-- Avro: Event Hub capturing; Grid has Cloud/Event schema
-- Consuming messages: EventHub: retained for period; ServiceBus: deleted; Queue storage: hidden;
-- Message ordering: ServiceBus: per session; EventHub: per partition;
-- `EventProcessorClient`: Balance the load, checkpointing, handles multiple partitions (distributed ownership)
-- `EventHubConsumerClient`: read data from specific consumer group
-- Hierarchy: EventGrid: Topic -> Subscription; EventHub: Namespace -> Event Hub -> Consumer Group -> EventData; Service Bus: Namespace -> Queue -> ServiceBusMessage; Queue Storage: Storage Account -> Queue -> Message
-- Contributor is the minimum role to create managed identities? Not sure here, but saw this on a practice question. Maybe choose Admin (unless it's Admin Login or whatever)
