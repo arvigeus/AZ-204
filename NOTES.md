@@ -86,6 +86,9 @@ Double check in the question if you are asked to grant permissions for resource 
 - `az ad app permission add --id <WebApp-Application-Id> --api <Backend-API-Application-Id> --api-permissions <Scope-Permission-UUID>=Scope`
 - Changes to your application object also affect its service principals in the home tenant only.
 - Deleting the application also deletes its home tenant service principal (no restore service principal)
+- `IPublicClientApplication app = PublicClientApplicationBuilder.Create("your_client_id");  AuthenticationResult result = await app.AcquireTokenInteractive(scopes).ExecuteAsync();`
+- `IConfidentialClientApplication app = ConfidentialClientApplicationBuilder.Create("your_client_id").WithClientSecret("your_client_secret"); AuthenticationResult result = await app.AcquireTokenForClient(scopes).ExecuteAsync();`
+- Other `app.AcquireTokenXXX()` as well.
 
 ### SAS
 
@@ -114,6 +117,7 @@ Double check in the question if you are asked to grant permissions for resource 
 ### Caching
 
 - Cache aside: when a cache doesn't provide native read-through and write-through operations, or when resource demand is unpredictable
+- `using var redis = ConnectionMultiplexer.Connect("your-redis-connection-string"); var cache = redis.GetDatabase();`
 - To ensure users receive the latest version of a file, include a version string
 
 ### KeyVault
@@ -121,6 +125,7 @@ Double check in the question if you are asked to grant permissions for resource 
 - To use the custom key stored in KeyVault, the identity assigned to AppConfig needs to have `GET`, `WRAP`, and `UNWRAP` permissions to the custom key
 - Use a separate vault for each application and environment (production, test, staging).
 - Backup, restrict access, logging and alerts (`... Events > Event Grid Subscriptions > + Event Subscription`), del protection
+- Encryption: from `KeyClient`
 
 ### Graph
 
@@ -130,6 +135,8 @@ Double check in the question if you are asked to grant permissions for resource 
 - My photo metadata: `https://graph.microsoft.com/v1.0/me/photo/`
 - Filter: `?filter=<name> eq '<value>'`
 - Limit: `?top=5`
+- Connectors: deliver external to Graph
+- Data Connect: deliver to other Azure Services
 
 ### Insights
 
@@ -147,17 +154,25 @@ Double check in the question if you are asked to grant permissions for resource 
 ### Messaging
 
 - EventGrid: Messages as array, 1MB max total, charged per 64KB
-- EventGrid" Subject is mandatory, Topic is not; CloudEvent doesn't have Topic, and Subject is optional
+- EventGrid: Subject is mandatory, Topic is not; CloudEvent doesn't have Topic, and Subject is optional
 - Message ordering: ServiceBus: per session; EventHub: per partition;
-- Hierarchy: EventGrid: Topic -> Subscription; EventHub: Namespace -> Event Hub -> Consumer Group -> EventData; Service Bus: Namespace -> Queue -> ServiceBusMessage; Queue Storage: Storage Account -> Queue -> Message
+- Hierarchy
+  - EventGrid: Topic -> Subscription -> EventGridEvent / CloudEvent
+  - EventHub: Namespace -> Event Hub -> Consumer Group -> EventData;
+  - Service Bus: Namespace -> Queue -> ServiceBusMessage;
+  - Queue Storage: Storage Account -> Queue -> Message
 - Message queues: storage - simple, lease-based, small messages (64KB), big capacity; service bus: feature rich, lock-based, big messages, small storage (80GB)
 - Consuming messages: EventHub: retained for period; ServiceBus: deleted/locked; Queue storage: hidden;
 - ServiceBus premium: 100MB, predictable pricing (serverless for Standard);
-- Queue storage: progress tracking; `message.PopReceipt` to update
+- Queue storage: progress tracking; `message.PopReceipt` to update when using `ReceiveMessagesAsync()` - leasing
 - Both Event Hub and Service Bus support AMQP
 - Avro: Event Hub capturing; Grid has Cloud/Event schema
-- `EventProcessorClient`: Balance the load with multiple instances, checkpointing, handles multiple partitions (distributed ownership)
-- `EventHubConsumerClient`: read data from specific consumer group
+- `EventProcessorClient`: Balance the load with multiple instances, checkpointing (requires storage accouny), handles multiple partitions (distributed ownership)
+- `EventHubConsumerClient`: read data from specific consumer group; requires partition key (`EventProcessorClient` does not)
+- `EventProcessorClient` and `EventHubConsumerClient`: both read, both need a consumer group, connection string (`$"Endpoint=sb://{serviceBusEndpoint};SharedAccessKeyName=KeyName;SharedAccessKey=AccessKey"`) and event hub name.
+- Dead Lettering: For EventGrid and Service bus, specify storage endpoint.
+- Service Bus routing: Multiplexing uses SessionId, Simple and Multicast: MessageId
+- `var client = new ServiceBusClient(connectionString)`; then `client.CreateSender(queueName) / client.CreateReceiver(queueName) / client.CreateProcessor(queueName)` - processor to manually complete messages
 
 ### Misc
 
