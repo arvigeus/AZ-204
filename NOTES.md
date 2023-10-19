@@ -145,6 +145,8 @@ Double check in the question if you are asked to grant permissions for resource 
 - Activity Log: subscription-level events. Log to _Log Analytics_, Storage, EventHub
 - `TrackAvailability` for custom track availability tests
 - `telemetry.GetMetric("metricId");` pre-aggregation; lowers cost; no sampling
+- For web apps, to group custom events, use the same `OperationId` value.
+- Application Insights automatically captures Session Id.
 
 ### Api management
 
