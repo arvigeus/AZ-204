@@ -147,6 +147,7 @@ TLDR;
   - [Monitor, troubleshoot, and optimize Azure solutions](https://learn.microsoft.com/en-us/shows/exam-readiness-zone/preparing-for-az-204-monitor-troubleshoot-and-optimize-azure-solutions-segment-4-of-5)
   - [Connect to and consume Azure services and third-party services](https://learn.microsoft.com/en-us/shows/exam-readiness-zone/preparing-for-az-204-connect-to-and-consume-azure-services-and-third-party-services-segment-5-of-5)
 - [/Topics](/Topics/)
+- [Microsoft Applied Skills](https://learn.microsoft.com/en-us/credentials/browse/?credential_types=applied%20skills) (some of the skills listed could help you understand certain topics better)
 - [Azure Sandbox Environment](https://github.com/Azure-Samples/azuresandbox) (costs $$$)
 - [\[OFFICIAL\] Microsoft Azure Developer Associate (AZ-204) Professional Certificate (Coursera)](https://www.coursera.org/professional-certificates/azure-developer-associate)
 - [AZ-204: Developing Solutions for Microsoft Azure (Alan Rodrigues)](https://www.youtube.com/watch?v=wWBW6ojr-Nw&list=PLLc2nQDXYMHpekgrToMrDpVtFtvmRSqVt)
