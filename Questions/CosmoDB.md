@@ -204,7 +204,7 @@ Question: What is the main characteristic of Azure Cosmos DB containers regardin
 - [ ] Containers only support JSON schema.
 - [ ] Containers do not support any schema.
 
-Answer: ontainers in Azure Cosmos DB are schema-agnostic, meaning items within a container can have arbitrary schemas or different entities so long as they share the same partition key.
+Answer: Containers in Azure Cosmos DB are schema-agnostic, meaning items within a container can have arbitrary schemas or different entities so long as they share the same partition key.
 
 ---
 
