@@ -1,9 +1,9 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-import type { ReactMarkdownOptions } from "react-markdown/lib/react-markdown";
+import type { Options } from "react-markdown";
 
-export type MarkdownOptions = Omit<ReactMarkdownOptions, "remarkPlugins">;
+export type MarkdownOptions = Omit<Options, "remarkPlugins">;
 
 export const Markdown = (options: MarkdownOptions) => (
   <ReactMarkdown remarkPlugins={[remarkGfm]} {...options} />

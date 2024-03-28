@@ -1,13 +1,13 @@
 import { Markdown } from "~/components/Markdown";
 import clsx from "clsx";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { ghcolors } from "react-syntax-highlighter/dist/esm/styles/prism";
+import ghcolors from "~/lib/ghcolors";
 
 import {
   CodeEditor,
   isLanguageEditSupported,
   isLanguageSupported,
-} from "~/components/CodeEditor";
+} from "~/components/CodeEditor.client";
 
 interface RichMarkdownProps {
   interactive?: boolean;
@@ -28,10 +28,10 @@ export const RichMarkdown = ({ interactive, children }: RichMarkdownProps) => (
           </pre>
         );
       },
-      code({ node, inline, className, children, ...props }) {
+      code({ node, className, children, ...props }) {
         const match = /language-(\w+)/.exec(className || "");
 
-        if (inline || !match)
+        if (!match)
           return (
             <code {...props} className={className}>
               {children}
@@ -58,10 +58,10 @@ export const RichMarkdown = ({ interactive, children }: RichMarkdownProps) => (
 
         return (
           <SyntaxHighlighter
-            {...props}
             children={code}
             style={ghcolors}
             language={language}
+            wrapLongLines
             codeTagProps={{
               className: "text-sm",
             }}

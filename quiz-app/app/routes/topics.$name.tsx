@@ -1,7 +1,4 @@
-import type {
-  V2_MetaFunction as MetaFunction,
-  LoaderArgs,
-} from "@remix-run/node";
+import type { MetaFunction, LoaderFunctionArgs } from "@remix-run/node";
 import { Form, Link, useLoaderData, useParams } from "@remix-run/react";
 import { useState } from "react";
 import clsx from "clsx";
@@ -12,7 +9,7 @@ import { TextInput } from "~/components/Input";
 import { RichMarkdown } from "~/components/RichMarkdown";
 import { getQuestionsByTopic } from "~/lib/qa";
 
-export let loader = async ({ params }: LoaderArgs) => {
+export const loader = async ({ params }: LoaderFunctionArgs) => {
   return getQuestionsByTopic(params.name || "");
 };
 

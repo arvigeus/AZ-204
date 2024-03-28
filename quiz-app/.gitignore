@@ -9,5 +9,9 @@ node_modules
 /public/build
 /api/index.js
 /api/index.js.map
+/api/metafile.css.json
+/api/metafile.js.json
+/api/metafile.server.json
+/api/version.txt
 
 app/db.ts

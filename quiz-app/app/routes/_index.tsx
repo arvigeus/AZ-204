@@ -6,11 +6,8 @@ import {
   Link,
 } from "@remix-run/react";
 import { json } from "@remix-run/node";
-import type { ActionArgs } from "@remix-run/node";
-import type {
-  V2_MetaFunction as MetaFunction,
-  LoaderArgs,
-} from "@remix-run/node";
+import type { ActionFunctionArgs } from "@remix-run/node";
+import type { MetaFunction, LoaderFunctionArgs } from "@remix-run/node";
 import { useState, useMemo, useEffect, useRef } from "react";
 import clsx from "clsx";
 
@@ -25,7 +22,7 @@ export const meta: MetaFunction = () => {
   return [{ title: "Developing Solutions for Microsoft Azure: Quiz" }];
 };
 
-export let loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const url = new URL(request.url);
   const topic = url.searchParams.get("topic");
 
@@ -42,7 +39,7 @@ export let loader = async ({ request }: LoaderArgs) => {
   return { data, topic };
 };
 
-export let action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const payload = await request.formData();
   const topic = payload.get("topic");
   // const id = payload.get("id");
@@ -69,8 +66,8 @@ export default function Index() {
   const data = actionData || loaderData.data;
 
   useEffect(() => {
-    let currentURL = new URL(window.location.href);
-    let searchParams = new URLSearchParams(currentURL.search);
+    const currentURL = new URL(window.location.href);
+    const searchParams = new URLSearchParams(currentURL.search);
 
     searchParams.delete("index");
     searchParams.set("id", data.id);

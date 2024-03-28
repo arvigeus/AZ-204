@@ -1,26 +1,62 @@
+// @ts-check
 import fs from "fs/promises";
 import path from "path";
 import { createHash } from "crypto";
+import { fileURLToPath } from "url";
 
-import type { QAPair } from "~/types/QAPair";
+/**
+ * @typedef {Object} FileContent
+ * @property {string} name
+ * @property {string} content
+ */
 
-type FileContent = {
-  name: string;
-  content: string;
-};
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-const parseQuestionItems = (name: string, text: string): QAPair[] => {
+/**
+ * @typedef {Object} QAPair
+ * @property {string} id - Unique identifier for the QA pair.
+ * @property {string} question - The question text.
+ * @property {boolean} hasCode - Flag indicating if the question contains code.
+ * @property {string[]} options - Array of options for the question.
+ * @property {number[]} answerIndexes - Array of indexes indicating the correct answers.
+ * @property {string} answer - The answer text.
+ * @property {string} topic - The topic related to the question.
+ */
+
+/**
+ * @typedef {Object} DirDataItem
+ * @property {string} name - The name of the item.
+ * @property {string} path - The path of the item.
+ * @property {"file" | "dir"} type - The type of the item, file or directory.
+ */
+
+/**
+ * Parses a text string containing Q&A items and returns an array of QAPair objects.
+ * @param {string} name - The name of the Q&A items.
+ * @param {string} text - The text string containing the Q&A items.
+ * @returns {QAPair[]} An array of QAPair objects.
+ */
+const parseQuestionItems = (name, text) => {
   const lines = text.split("\n");
-  const qaPairs: QAPair[] = [];
-  let currentQuestion: string[] = [];
-  let currentOptions: string[] = [];
-  let currentAnswer: string[] = [];
+  /** @type {QAPair[]} */
+  const qaPairs = [];
+  /** @type {string[]} */
+  let currentQuestion = [];
+  /** @type {string[]} */
+  let currentOptions = [];
+  /** @type {string[]} */
+  let currentAnswer = [];
+  /** @type {number[]} */
   let currentAnswerIndex = [];
+  /** @type {boolean} */
   let currentHasCode = false;
 
+  /** @type {RegExp} */
   const optionRegex = /^\s*- \[(?:x|\s)\]\s/;
 
-  let itemType: "question" | "option" | "answer" | null = null;
+  /** @type {("question" | "option" | "answer" | null)} */
+  let itemType = null;
 
   for (const line of lines) {
     if (line.startsWith("Question:")) {
@@ -95,7 +131,13 @@ const parseQuestionItems = (name: string, text: string): QAPair[] => {
   return qaPairs;
 };
 
-const loadContents = async (directory: string): Promise<FileContent[]> => {
+/**
+ * Loads the content of all markdown files in a given directory.
+ * @async
+ * @param {string} directory - The directory to load the markdown files from.
+ * @returns {Promise<FileContent[]>} An array of FileContent objects.
+ */
+const loadContents = async (directory) => {
   const dirPath = path.join(__dirname, "..", "..", directory);
   console.log(`Loading questions from ${dirPath}`);
   const fileNames = await fs.readdir(dirPath);
@@ -113,9 +155,13 @@ const loadContents = async (directory: string): Promise<FileContent[]> => {
   return await Promise.all(filePromises);
 };
 
-const loadContentFromGItHub = async (
-  directory: string
-): Promise<FileContent[]> => {
+/**
+ * Loads content from a GitHub repository.
+ * @async
+ * @param {string} directory - The repository directory to load the content from.
+ * @returns {Promise<FileContent[]>} An array of FileContent objects.
+ */
+const loadContentFromGItHub = async (directory) => {
   const githubAPIUrl = "https://api.github.com/repos";
   const repo = "arvigeus/AZ-204";
 
@@ -123,19 +169,22 @@ const loadContentFromGItHub = async (
   console.log(`Loading questions from ${repoDir}`);
 
   const dirResponse = await fetch(repoDir);
-  const dirData = (await dirResponse.json()) as {
-    name: string;
-    path: string;
-    type: "file" | "dir";
-  }[];
+  /**
+   * @type {DirDataItem[]}
+   * An array of directory data items.
+   */
+  const dirData = await dirResponse.json();
   const files = dirData.filter(
     (item) =>
       item.type === "file" &&
       item.name.toLowerCase() !== "readme.md" &&
       item.name.endsWith(".md")
   );
-
-  const items: FileContent[] = [];
+  /**
+   * @type {FileContent[]}
+   * An array of directory data items.
+   */
+  const items = [];
 
   for (const file of files) {
     const url = `${githubAPIUrl}/${repo}/contents/${file.path}`;
@@ -150,7 +199,12 @@ const loadContentFromGItHub = async (
   return items;
 };
 
-const parseQuestionFiles = (files: FileContent[]) => {
+/**
+ * Parses an array of files containing Q&A items, extracting topics and data.
+ * @param {FileContent[]} files - The files to be parsed.
+ * @returns {Object} An object containing topics and data.
+ */
+const parseQuestionFiles = (files) => {
   const topics = [];
   const data = [];
 
@@ -163,9 +217,22 @@ const parseQuestionFiles = (files: FileContent[]) => {
   return { topics, data };
 };
 
-const serialize = (item: any): string => JSON.stringify(item, null, 2);
+/**
+ * Serializes an item to a JSON string.
+ * @param {any} item - The item to serialize.
+ * @returns {string} The serialized string.
+ */
+const serialize = (item) => JSON.stringify(item, null, 2);
 
-const saveData = async (topics: string[], data: QAPair[], location: string) => {
+/**
+ * Saves the provided topics and data to a file at the specified location.
+ * @async
+ * @param {string[]} topics - An array of topic names.
+ * @param {QAPair[]} data - An array of QAPair items.
+ * @param {string} location - The file location to save the data to.
+ * @returns {Promise<void>}
+ */
+const saveData = async (topics, data, location) => {
   const content = `export const topics = ${serialize(
     topics
   )};\n\nexport const data = ${serialize(data)};\n`;
@@ -173,12 +240,23 @@ const saveData = async (topics: string[], data: QAPair[], location: string) => {
   await fs.writeFile(location, content);
 };
 
-const loadFiles = async (dir: string): Promise<FileContent[]> =>
+/**
+ * Loads files either from the disk or from GitHub depending on the NODE_ENV.
+ * @async
+ * @param {string} dir - The directory containing the files to load.
+ * @returns {Promise<FileContent[]>} An array of FileContent objects.
+ */
+const loadFiles = async (dir) =>
   await (process.env.NODE_ENV !== "production"
     ? loadContents(path.join(dir))
     : loadContentFromGItHub(path.join(dir)));
 
-const init = async (): Promise<void> => {
+/**
+ * Main function to initialize the process of loading, parsing, and saving Q&A pairs.
+ * @async
+ * @returns {Promise<void>}
+ */
+const init = async () => {
   const { topics: qaTopics, data: qaData } = parseQuestionFiles(
     await loadFiles("Questions")
   );
