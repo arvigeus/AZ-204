@@ -6,14 +6,7 @@ import { langs } from "@uiw/codemirror-extensions-langs";
 import { InputStyle } from "~/components/Input";
 import { useMemo } from "react";
 
-export type SupportedEditLanguage = "cs" | "ps" | "docker" | "jsonc";
-
-export type SupportedLanguage =
-  | "csharp"
-  | "powershell"
-  | "Dockerfile"
-  | "json"
-  | SupportedEditLanguage;
+import type { SupportedLanguage } from "~/lib/languageServer";
 
 type CodeEditorProps = Omit<
   ReactCodeMirrorProps,
@@ -21,27 +14,6 @@ type CodeEditorProps = Omit<
 > & {
   lang: SupportedLanguage;
 };
-
-export function isLanguageEditSupported(
-  lang: string
-): lang is SupportedEditLanguage {
-  return ["cs", "ps", "docker", "jsonc"].includes(lang.toLowerCase());
-}
-
-export function isLanguageSupported(
-  lang: string
-): lang is SupportedEditLanguage {
-  return [
-    "csharp",
-    "cs",
-    "powershell",
-    "ps",
-    "dockerfile",
-    "docker",
-    "json",
-  ].includes(lang.toLowerCase());
-}
-
 export const CodeEditor = ({ lang, ...props }: CodeEditorProps) => {
   const languate = useMemo(() => {
     switch (lang) {

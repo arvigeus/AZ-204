@@ -1,5 +1,5 @@
 // TODO: cannot import react-syntax-highlighter/dist/esm/styles/prism/ghcolors
-export default {
+const ghcolors: { [key: string]: React.CSSProperties } = {
   'code[class*="language-"]': {
     color: "#393A34",
     fontFamily:
@@ -94,7 +94,7 @@ export default {
     fontStyle: "italic",
   },
   namespace: {
-    Opacity: ".7",
+    opacity: ".7",
   },
   string: {
     color: "#e3116c",
@@ -179,3 +179,5 @@ export default {
     fontStyle: "italic",
   },
 };
+
+export default ghcolors;
