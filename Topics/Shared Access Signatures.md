@@ -4,13 +4,13 @@ A Shared Access Signature (SAS) is a URI that grants restricted access rights to
 
 Use a SAS for secure, temporary access to your storage account, especially when users need to read/write their own data or for copying data within Azure Storage.
 
-Note: You should prefer Azure AD
+Note: You should prefer Entra ID
 
 ## Types of SAS
 
-1. [**User Delegation SAS**](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-user-delegation-sas-create-dotnet): This method uses Azure Active Directory (Azure AD) credentials to create a SAS. It's a secure way to grant limited access to your Azure Storage resources without sharing your account key. It's recommended when you want to provide fine-grained access control to clients who are authenticated with Azure AD. The account _must have_ `generateUserDelegationKey` permisison, or `Contributor` role.
+1. [**User Delegation SAS**](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-user-delegation-sas-create-dotnet): This method uses Microsoft Entra ID credentials to create a SAS. It's a secure way to grant limited access to your Azure Storage resources without sharing your account key. It's recommended when you want to provide fine-grained access control to clients who are authenticated with Entra ID. The account _must have_ `generateUserDelegationKey` permisison, or `Contributor` role.
 
-1. [**Service SAS**](https://learn.microsoft.com/en-us/azure/storage/blobs/sas-service-create-dotnet): This method uses your storage account key to create a SAS. It's a straightforward way to grant limited access to your Azure Storage resources. However, it's less secure than the User Delegation SAS because it involves sharing your account key. It's typically used when you want to provide access to clients who are not authenticated with Azure AD.
+1. [**Service SAS**](https://learn.microsoft.com/en-us/azure/storage/blobs/sas-service-create-dotnet): This method uses your storage account key to create a SAS. It's a straightforward way to grant limited access to your Azure Storage resources. However, it's less secure than the User Delegation SAS because it involves sharing your account key. It's typically used when you want to provide access to clients who are not authenticated with Entra ID.
 
 1. [**Account SAS**](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-sas-create-dotnet): This method uses your storage account key to create a SAS. It's created at the storage account level, allowing access to multiple services within the account. It's typically used when you need to provide access to several services in your storage account. However, it involves sharing your account key, similar to the Service SAS.
 
@@ -92,7 +92,7 @@ To remove all access policies from the resource, call the `Set ACL` operation wi
 
 Gist:
 
-- Service SAS and Account SAS use `StorageSharedKeyCredential`; User delegation SAS use `DefaultAzureCredential` or similar AzureAD
+- Service SAS and Account SAS use `StorageSharedKeyCredential`; User delegation SAS use `DefaultAzureCredential` or similar Entra ID
 - Service SAS and User delegation SAS use `BlobSasBuilder`; Account SAS uses `AccountSasBuilder`
 - Set permissions: `BlobSasPermissions` for user and service; `AccountSasPermissions` for account
 - Obtaining URI:
@@ -106,7 +106,7 @@ Gist:
 // Works for all SAS types, but less secure.
 var credential = new StorageSharedKeyCredential("<account-name>", "<account-key>");
 
-// Using DefaultAzureCredential with Azure AD. More secure, but doesn't work for Service SAS.
+// Using DefaultAzureCredential with Entra ID. More secure, but doesn't work for Service SAS.
 // TokenCredential credential = new DefaultAzureCredential();
 
 var serviceClient = new BlobServiceClient(new Uri("<account-url>"), credential);

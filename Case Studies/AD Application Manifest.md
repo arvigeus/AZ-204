@@ -1,4 +1,4 @@
-# Case Study: AD Application Manifest
+# Case Study: Entra ID Application Manifest
 
 Contoso Corp is a multinational company that has recently decided to move its applications to Azure. The company has a web application that is used by both employees and external vendors. The application is registered in Microsoft Entra ID.
 

@@ -37,7 +37,7 @@ Removing keys:
 - **Management plane**: for managing the Key Vault itself
 - **Data plane**: for working with the data stored in the Key Vault
 
-Both planes use Azure Active Directory (Azure AD) for authentication, and [RBAC](https://learn.microsoft.com/en-us/azure/key-vault/general/rbac-guide?tabs=azure-cli) for authorization (access control). _Data plane_ also uses a [access policies](https://learn.microsoft.com/en-us/azure/key-vault/general/assign-access-policy?tabs=azure-portal) (legacy) for authorization. Minimum standard role for granting management and data (policies) access: `Contributor`.
+Both planes use Azure Microsoft Entra ID for authentication, and [RBAC](https://learn.microsoft.com/en-us/azure/key-vault/general/rbac-guide?tabs=azure-cli) for authorization (access control). _Data plane_ also uses a [access policies](https://learn.microsoft.com/en-us/azure/key-vault/general/assign-access-policy?tabs=azure-portal) (legacy) for authorization. Minimum standard role for granting management and data (policies) access: `Contributor`.
 
 ```sh
 az keyvault set-policy --name myKeyVault --object-id <object-id> --secret-permissions <secret-permissions> --key-permissions <key-permissions> --certificate-permissions <certificate-permissions>
@@ -45,12 +45,12 @@ az keyvault set-policy --name myKeyVault --object-id <object-id> --secret-permis
 
 ### Authentication
 
-Key Vault is associated with the Azure AD tenant of the subscription and all callers must register in this tenant and authenticate to access the key vault.
+Key Vault is associated with the Entra ID tenant of the subscription and all callers must register in this tenant and authenticate to access the key vault.
 
 For applications, there are two ways to obtain a service principal:
 
 - Enable a system-assigned **managed identity** (recommended) for the application. With managed identity, Azure internally manages the application's service principal and automatically authenticates the application with other Azure services. Managed identity is available for applications deployed to various services.
-- If you can't use managed identity, you instead register the application with your Azure AD tenant. Registration also creates a second application object that identifies the app across all tenants.
+- If you can't use managed identity, you instead register the application with your Entra ID tenant. Registration also creates a second application object that identifies the app across all tenants.
 
 `var client = new SecretClient(new Uri("<YourVaultUri>"), new DefaultAzureCredential());`
 
@@ -58,7 +58,7 @@ Authentication using REST:
 
 ```http
 PUT https://<your-key-vault-name>.vault.azure.net/keys/<your-key-name>?api-version=7.2 HTTP/1.1
-Authorization: Bearer <access_token> # token obtained from Azure Active Directory
+Authorization: Bearer <access_token> # token obtained from Microsoft Entra ID
 ```
 
 If Authorization token is missing or rejected:

@@ -162,7 +162,7 @@ Azure App Configuration serves as a centralized repository for feature flags, en
 
 ### Using Customer-Managed Keys for Encryption
 
-A managed identity authenticates with Azure Active Directory and wraps the encryption key using Azure Key Vault. The wrapped key is stored and the unwrapped key is cached for an hour, then refreshed.
+A managed identity authenticates with Microsoft Entra ID and wraps the encryption key using Azure Key Vault. The wrapped key is stored and the unwrapped key is cached for an hour, then refreshed.
 
 Prerequisites:
 

@@ -293,7 +293,7 @@ Answer: Azcopy supports both SAS and OAuth authentication for data transfer betw
 
 ---
 
-Question: You're building an ASP.Net Core app to interact with Azure Blob containers using Azure AD and role-based access. What permission should you set for the Azure Storage API?
+Question: You're building an ASP.Net Core app to interact with Azure Blob containers using Entra ID and role-based access. What permission should you set for the Azure Storage API?
 
 - [ ] `User.Read`
 - [ ] `User.Write`

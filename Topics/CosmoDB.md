@@ -531,7 +531,7 @@ SELECT VALUE COUNT(1) FROM models
 
 ## [Security](https://docs.microsoft.com/en-us/azure/cosmos-db/database-security)
 
-- **Authentication**: Utilizes Azure AD and generates an access key upon account creation for request authentication.
+- **Authentication**: Utilizes Entra and generates an access key upon account creation for request authentication.
 - **Authorization**: Role-based with built-in resources for granular control over containers and documents.
 - **Encryption**: 🔑 (⏺️) or 🗝️ for at-rest data; TLS for in-transit data.
 

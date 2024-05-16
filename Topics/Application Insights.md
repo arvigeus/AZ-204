@@ -151,7 +151,7 @@ telemetry.Flush();
 ## [Monitor an app (Instrumentation)](https://learn.microsoft.com/en-us/azure/azure-monitor/app/opentelemetry-overview?tabs=aspnetcore)
 
 - **Auto instrumentation**: Telemetry collection through configuration without modifying the application's code. Supports `OpenCensus` for tracking metrics across services and technologies like Redis and MongoDB.
-- **Manual Instrumentation**: Coding against the Application Insights or **OpenTelemetry** API. Supports **Azure AD** and **Complex Tracing** (collect data that is not available in Application Insights)
+- **Manual Instrumentation**: Coding against the Application Insights or **OpenTelemetry** API. Supports **Entra ID** and **Complex Tracing** (collect data that is not available in Application Insights)
 
 ## [Availability test](https://learn.microsoft.com/en-us/azure/azure-monitor/app/troubleshoot-availability)
 

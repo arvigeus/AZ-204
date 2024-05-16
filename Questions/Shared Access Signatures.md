@@ -14,7 +14,7 @@ Modifying the storage account key does not directly affect the stored access pol
 
 ---
 
-Question: You are developing a .NET application that interacts with Azure Blob Storage. You need to generate a token that will allow a client to have read and write access to a specific blob in your storage account for a period of 24 hours. This token should be generated in a secure manner without sharing your storage account key. The client is authenticated with Azure Active Directory. Write the C# code to accomplish this task.
+Question: You are developing a .NET application that interacts with Azure Blob Storage. You need to generate a token that will allow a client to have read and write access to a specific blob in your storage account for a period of 24 hours. This token should be generated in a secure manner without sharing your storage account key. The client is authenticated with Microsoft Entra ID. Write the C# code to accomplish this task.
 
 ```cs
 // Define your storage account name, container name, and blob name
@@ -54,7 +54,7 @@ string sasToken = sasBuilder.ToSasQueryParameters(delegationKey, accountName).To
 
 ---
 
-Question: You are developing a .NET application that interacts with Azure Blob Storage. You need to generate a token that will allow a client to have read access to a specific container in your storage account for a period of 48 hours. This token should be generated in a straightforward manner, even if it involves sharing your storage account key. The client is not authenticated with Azure Active Directory. Write the C# code to accomplish this task.
+Question: You are developing a .NET application that interacts with Azure Blob Storage. You need to generate a token that will allow a client to have read access to a specific container in your storage account for a period of 48 hours. This token should be generated in a straightforward manner, even if it involves sharing your storage account key. The client is not authenticated with Microsoft Entra ID. Write the C# code to accomplish this task.
 
 ```cs
 string accountName = "<storage-account-name>";
@@ -133,7 +133,7 @@ Question: Which of the following types of shared access signatures (SAS) applies
 - [ ] Service SAS
 - [x] User delegation SAS
 
-Answer: A user delegation SAS is secured with Azure Active Directory credentials and also by the permissions specified for the SAS. A user delegation SAS applies to Blob storage only.  
+Answer: A user delegation SAS is secured with Microsoft Entra ID credentials and also by the permissions specified for the SAS. A user delegation SAS applies to Blob storage only.  
 An account SAS delegates access to resources in one or more of the storage services. All of the operations available via a service or user delegation SAS are also available via an account SAS.  
 A service SAS delegates access to a resource in the following Azure Storage services: Blob storage, Queue storage, Table storage, or Azure Files.
 
@@ -146,7 +146,7 @@ Question: Which of the following best practices provides the most flexible and s
 - [ ] Implement a user delegation SAS
 
 Answer: The most flexible and secure way to use a service or account SAS is to associate the SAS tokens with a stored access policy.  
-A user delegation SAS is the most secure SAS, but isn't highly flexible because you must use Azure Active Directory to manage credentials.  
+A user delegation SAS is the most secure SAS, but isn't highly flexible because you must use Microsoft Entra ID to manage credentials.  
 Using HTTPS prevents man-in-the-middle attacks but isn't the most flexible and secure practice.
 
 ---

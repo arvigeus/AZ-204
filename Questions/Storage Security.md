@@ -15,12 +15,12 @@ Question: Your company is migrating all data to Azure Storage and wants to ensur
 - [x] Azure Storage Service Encryption (SSE) for data at rest
 - [x] Transport Layer Security (TLS) for data in transit
 - [x] Azure Key Vault for managing cryptographic keys
-- [ ] Azure Active Directory for user access control
+- [ ] Microsoft Entra ID for user access control
 - [ ] Azure Traffic Manager for network optimization
 
 Answer: Azure Storage Service Encryption (SSE) helps protect data at rest. Transport Layer Security (TLS) helps protect data while it's moving from one location to another (in transit). Azure Key Vault provides secure management of cryptographic keys used for encryption. Together, these ensure the security of data during and after migration.
 
-Azure Active Directory is an important part of securing resources by managing user access, but it doesn't directly ensure the security of data during and after migration in the context of encryption-at-rest and encryption-in-transit. Similarly, Azure Traffic Manager is used for network routing optimization and doesn't directly secure data during transit or at rest. Hence, while these options sound good and are indeed crucial for Azure security in general, they are not correct in the context of this question.
+Microsoft Entra ID is an important part of securing resources by managing user access, but it doesn't directly ensure the security of data during and after migration in the context of encryption-at-rest and encryption-in-transit. Similarly, Azure Traffic Manager is used for network routing optimization and doesn't directly secure data during transit or at rest. Hence, while these options sound good and are indeed crucial for Azure security in general, they are not correct in the context of this question.
 
 ---
 

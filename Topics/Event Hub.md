@@ -103,7 +103,7 @@ var consumerGroup = EventHubConsumerClient.DefaultConsumerGroupName;
 
 // Alt to connection string: ClientSecretCredential, DefaultAzureCredential with fullyQualifiedNamespace
 
-// Application Groups: You can connect via SAS or Azure AD (just pass credential to EventHubProducerClient), allowing you to use access policies, throttling, etc.
+// Application Groups: You can connect via SAS or Entra ID (just pass credential to EventHubProducerClient), allowing you to use access policies, throttling, etc.
 await using (var producerClient = new EventHubProducerClient(eventHubsConnectionString, eventHubName))
 {
     string[] partitionIds = await producerClient.GetPartitionIdsAsync(); // Query partition IDs

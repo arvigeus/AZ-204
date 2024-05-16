@@ -24,14 +24,14 @@ The return-response policy aborts pipeline execution and returns either a defaul
 
 ---
 
-Question: Your organization offers web services to third-party clients. These services require non-anonymous access, authentication through OpenID Connect, and are accessed via APIs. To ensure secure Azure AD authentication, you decide to base it on a specific value embedded in the request query parameter. Which policy within Azure API Management should you enforce to meet this requirement?
+Question: Your organization offers web services to third-party clients. These services require non-anonymous access, authentication through OpenID Connect, and are accessed via APIs. To ensure secure Entra ID authentication, you decide to base it on a specific value embedded in the request query parameter. Which policy within Azure API Management should you enforce to meet this requirement?
 
 - [ ] check-header
 - [x] validate-jwt
 - [ ] set-header
 - [ ] control-client-flow
 
-Answer: The JWT Validation or "validate-jwt" policy in Azure API Management is used to validate the JWT (JSON Web Token) extracted from a specified HTTP Header or a URI query parameter. In this scenario, it allows you to securely support Azure AD authentication based on a value passed as a request query parameter. The other options do not provide this specific functionality.
+Answer: The JWT Validation or "validate-jwt" policy in Azure API Management is used to validate the JWT (JSON Web Token) extracted from a specified HTTP Header or a URI query parameter. In this scenario, it allows you to securely support Entra ID authentication based on a value passed as a request query parameter. The other options do not provide this specific functionality.
 
 ---
 
@@ -183,7 +183,7 @@ Question: You are developing a solution that requires the Azure API Management (
 - [ ] check-header
 - [ ] set-body
 
-Answer: By using a authentication-managed-identity identity, you can authenticate to services that support Azure AD authentication without credentials in your code. In this scenario, it allows the APIM instance to authenticate to the backend service securely.
+Answer: By using a authentication-managed-identity identity, you can authenticate to services that support Entra ID authentication without credentials in your code. In this scenario, it allows the APIM instance to authenticate to the backend service securely.
 
 ---
 

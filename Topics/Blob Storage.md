@@ -468,7 +468,7 @@ az storage blob <operation>
 ## [Authorization](https://learn.microsoft.com/en-us/azure/storage/common/authorize-data-access)
 
 - [Shared Key (storage account key)](https://learn.microsoft.com/en-us/rest/api/storageservices/authorize-with-shared-key) (`StorageSharedKeyCredential`): A secret password that gives full access to your Azure Storage account. ⭐: programmatic access (ex: data migration)
-- [Azure Active Directory](https://learn.microsoft.com/en-us/azure/storage/blobs/authorize-access-azure-active-directory) (`DefaultAzureCredential`): Identity-based, role-based authorization with advanced security. ⭐: fine-grained enterprise access control.
+- [Microsoft Entra ID](https://learn.microsoft.com/en-us/azure/storage/blobs/authorize-access-azure-active-directory) (`DefaultAzureCredential`): Identity-based, role-based authorization with advanced security. ⭐: fine-grained enterprise access control.
 - App credentials (`ClientSecretCredential`): App needs to be registered first.
 
 ### [Use OAuth access tokens for authentication](https://learn.microsoft.com/en-us/rest/api/storageservices/authorize-with-azure-active-directory#use-oauth-access-tokens-for-authentication)
@@ -495,7 +495,7 @@ az storage blob <command>
     # Authenticate:
     ## By Storage Account Key
     --account-key # az storage account keys list -g $resourcegroup -n $accountname --query '[0].value' -o tsv
-    ## By AD Login
+    ## By Entra ID Login
     --auth-mode login # Use credentials from az login
     ## By Connection String
     --connection-string
@@ -529,7 +529,7 @@ az storage container list --account-name $storageaccountname # get containers
 // Authorization
 //// Storage Account Key
 TokenCredential credential = new StorageSharedKeyCredential(accountName, "<account-key>");
-//// AD Login
+//// Entra ID Login
 TokenCredential credential = new DefaultAzureCredential();
 //// App registration
 TokenCredential credential = new ClientSecretCredential("<tenant-id>", "<client-id>", "<client-secret>");
@@ -579,7 +579,7 @@ Headers:
 - `Authorization`:
   - Storage Account Key: `[Storage_Account_Key]`
   - Shared key: `SharedKey [your_account]:[signature]`
-  - AD: `Bearer [access_token]`
+  - Entra ID: `Bearer [access_token]`
 
 SAS GET param may be used instead of `Authorization` header.
 

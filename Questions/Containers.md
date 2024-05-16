@@ -146,9 +146,9 @@ Question: What is needed to enable authentication on your Azure Container App?
 - [ ] A secret key to be embedded in the app's code
 - [ ] A Premium Azure service tier subscription
 - [ ] An Azure Container App certificate issued by Microsoft
-- [ ] Azure Active Directory is required as an Identity provider
+- [ ] Microsoft Entra ID is required as an Identity provider
 
-Answer: Auth works only with HTTPS, requires any identity provider and specified provider within app settings. Authough AAD is a valid option, it's incorrect to state it's required.
+Answer: Auth works only with HTTPS, requires any identity provider and specified provider within app settings. Authough Entra ID is a valid option, it's incorrect to state it's required.
 
 ---
 
@@ -797,13 +797,13 @@ Answer: `az container create` is the correct command to deploy a container in Az
 
 Question: You are planning to use Azure Container Registry for your application. Which identity type should you use to ensure both headless authentication and role-based access control (RBAC)?
 
-- [ ] Individual AD Identity
+- [ ] Individual Entra ID Identity
 - [ ] Managed Identity for Azure Resources
-- [x] AD Service Principal
+- [x] Entra ID Service Principal
 - [ ] Admin User
 
 Answer: Service principals are designed for headless authentication and can be assigned specific Azure roles, making them ideal for both requirements.  
-Individual AD Identity and Admin User are used for interactive push/pull operations.  
+Individual Entra ID Identity and Admin User are used for interactive push/pull operations.  
 Managed Identity for Azure Resources: While it supports unattended operations, it's limited to select Azure services and may not offer the full range of RBAC options.
 
 ---
@@ -856,9 +856,9 @@ Question: You are using Azure Container Instances (ACI) to run a container that 
 - [x] Storage Account Key
 - [ ] Shared Access Signature (SAS) Token
 - [ ] OAuth Token
-- [ ] Azure AD Credentials
+- [ ] Entra ID Credentials
 
-Answer: To mount an Azure File Share to an Azure Container Instance, you need the Storage Account Key. SAS Tokens, OAuth Tokens, and Azure AD Credentials are not used for this specific operation.
+Answer: To mount an Azure File Share to an Azure Container Instance, you need the Storage Account Key. SAS Tokens, OAuth Tokens, and Entra ID Credentials are not used for this specific operation.
 
 ---
 

@@ -105,7 +105,7 @@ Geo-filtering allows for the control of content access by country/region codes. 
 ## Working with SDK
 
 ```cs
-// You need to configure Azure Active Directory to provide authentication for the application
+// You need to configure Microsoft Entra ID to provide authentication for the application
 public static void ManageCdnEndpoint(string subscriptionId, TokenCredentials authResult, string resourceGroupName, string profileName, string endpointName, string resourceLocation)
 {
     // Create CDN client

@@ -1,53 +1,53 @@
-# Active Directory
+# Entra ID
 
 Question: You are tasked with providing secure remote access to an on-premises application for your organization's employees. Which action should you perform?
 
-- [x] Activate application proxy in Azure AD.
-- [ ] Upgrade the staff accounts to Azure AD Premium P1.
-- [ ] Establish a new conditional access policy in Azure AD.
-- [ ] Set up the portal to utilize Azure AD business-to-consumer (B2C).
+- [x] Activate application proxy in Microsoft Entra ID.
+- [ ] Upgrade the staff accounts to Microsoft Entra ID Premium P1.
+- [ ] Establish a new conditional access policy in Microsoft Entra ID.
+- [ ] Set up the portal to utilize Microsoft Entra ID business-to-consumer (B2C).
 
-Answer: The correct action is to activate application proxy in Azure AD. Azure AD Application Proxy provides secure remote access to on-premises applications.
-
----
-
-Question: Your organization is planning to collaborate with a partner company on a project. You need to provide the partner company's users with access to certain applications in your Azure AD. Which action should you perform?
-
-- [ ] Activate application proxy in Azure AD.
-- [ ] Upgrade the staff accounts to Azure AD Premium P1.
-- [ ] Establish a new conditional access policy in Azure AD.
-- [x] Configure the applications to use Azure AD business-to-business (B2B).
-
-Answer: The correct action is to configure the applications to use Azure AD business-to-business (B2B). Azure AD B2B allows you to share your company's applications with external users in a secure manner.
+Answer: The correct action is to activate application proxy in Microsoft Entra ID. Microsoft Entra ID Application Proxy provides secure remote access to on-premises applications.
 
 ---
 
-Question: As an administrator for a startup utilizing Azure AD for identity and access management, you're tasked with implementing mandatory multi-factor authentication for all users. What is the most appropriate step to take?
+Question: Your organization is planning to collaborate with a partner company on a project. You need to provide the partner company's users with access to certain applications in your Microsoft Entra ID. Which action should you perform?
 
-- [ ] Implement Azure AD business-to-consumer (B2C).
-- [ ] Upgrade to Azure AD Premium P1 for all user accounts.
-- [ ] Establish a new conditional access policy in Azure AD.
-- [x] Activate security defaults in Azure AD.
-- [ ] Set up an application proxy in Azure AD.
+- [ ] Activate application proxy in Microsoft Entra ID.
+- [ ] Upgrade the staff accounts to Microsoft Entra ID Premium P1.
+- [ ] Establish a new conditional access policy in Microsoft Entra ID.
+- [x] Configure the applications to use Microsoft Entra ID business-to-business (B2B).
 
-Answer: The most appropriate step is to activate security defaults in Azure AD. This feature provides a basic level of security, including mandatory multi-factor authentication for all users, at no additional cost. The other options, while useful in certain scenarios, do not directly address the requirement of enabling mandatory multi-factor authentication for all users.
-
----
-
-Question: Your organization uses Azure AD for identity management. You want to implement a policy that triggers multi-factor authentication (MFA) when a sign-in is deemed risky. Which two actions should you perform?
-
-- [ ] Activate application proxy in Azure AD.
-- [ ] Upgrade the staff accounts to Azure AD Premium P1.
-- [x] Upgrade the staff accounts to Azure AD Premium P2.
-- [x] Establish a new risk-based conditional access policy in Azure AD.
-- [ ] Enable security defaults in Azure AD.
-- [ ] Configure the applications to use Azure AD business-to-business (B2B).
-
-Answer: The correct actions are to upgrade the staff accounts to Azure AD Premium P2 and establish a new risk-based conditional access policy in Azure AD. Risk-based policies require access to Azure AD Identity Protection, which is an Azure AD Premium P2 feature.
+Answer: The correct action is to configure the applications to use Microsoft Entra ID business-to-business (B2B). Microsoft Entra ID B2B allows you to share your company's applications with external users in a secure manner.
 
 ---
 
-Question: In Azure AD, what happens to Conditional Access policies when the licenses required for them expire?
+Question: As an administrator for a startup utilizing Microsoft Entra ID for identity and access management, you're tasked with implementing mandatory multi-factor authentication for all users. What is the most appropriate step to take?
+
+- [ ] Implement Microsoft Entra ID business-to-consumer (B2C).
+- [ ] Upgrade to Microsoft Entra ID Premium P1 for all user accounts.
+- [ ] Establish a new conditional access policy in Microsoft Entra ID.
+- [x] Activate security defaults in Microsoft Entra ID.
+- [ ] Set up an application proxy in Microsoft Entra ID.
+
+Answer: The most appropriate step is to activate security defaults in Microsoft Entra ID. This feature provides a basic level of security, including mandatory multi-factor authentication for all users, at no additional cost. The other options, while useful in certain scenarios, do not directly address the requirement of enabling mandatory multi-factor authentication for all users.
+
+---
+
+Question: Your organization uses Microsoft Entra ID for identity management. You want to implement a policy that triggers multi-factor authentication (MFA) when a sign-in is deemed risky. Which two actions should you perform?
+
+- [ ] Activate application proxy in Microsoft Entra ID.
+- [ ] Upgrade the staff accounts to Microsoft Entra ID Premium P1.
+- [x] Upgrade the staff accounts to Microsoft Entra ID Premium P2.
+- [x] Establish a new risk-based conditional access policy in Microsoft Entra ID.
+- [ ] Enable security defaults in Microsoft Entra ID.
+- [ ] Configure the applications to use Microsoft Entra ID business-to-business (B2B).
+
+Answer: The correct actions are to upgrade the staff accounts to Microsoft Entra ID Premium P2 and establish a new risk-based conditional access policy in Microsoft Entra ID. Risk-based policies require access to Microsoft Entra ID Identity Protection, which is an Microsoft Entra ID Premium P2 feature.
+
+---
+
+Question: In Microsoft Entra ID, what happens to Conditional Access policies when the licenses required for them expire?
 
 - [ ] The policies are automatically disabled.
 - [ ] The policies are automatically deleted.
@@ -59,7 +59,7 @@ Answer: When licenses required for Conditional Access expire, the policies aren'
 
 ---
 
-Question: You are developing an application that uses Azure Active Directory for authentication. The application needs to authorize users based on their group membership in the organization. The application should receive this information in the user's token when they authenticate. How would you configure your application in Azure AD to achieve this?
+Question: You are developing an application that uses Microsoft Entra ID for authentication. The application needs to authorize users based on their group membership in the organization. The application should receive this information in the user's token when they authenticate. How would you configure your application in Microsoft Entra ID to achieve this?
 
 - [ ] Enable the `OAuth2AllowImplicitFlow` attribute in the application manifest.
 - [ ] Set the `requiredResourceAccess` attribute in the application manifest to include the group IDs.
@@ -70,7 +70,7 @@ Answer: `groupMembershipClaims` is used to emit group claims in the token that t
 
 ---
 
-Question: You are developing an application that uses Azure Active Directory for authentication. The application needs to authorize users based on their group membership in the organization. However, due to the large number of groups in your organization, you want to limit the groups included in the user's token to only Security Groups. How would you configure the `groupMembershipClaims` attribute in your application's manifest in Azure AD to achieve this?
+Question: You are developing an application that uses Microsoft Entra ID for authentication. The application needs to authorize users based on their group membership in the organization. However, due to the large number of groups in your organization, you want to limit the groups included in the user's token to only Security Groups. How would you configure the `groupMembershipClaims` attribute in your application's manifest in Microsoft Entra ID to achieve this?
 
 - [ ] Set `groupMembershipClaims` to `All`
 - [ ] Set `groupMembershipClaims` to `None`
@@ -81,10 +81,10 @@ Answer: Set `groupMembershipClaims` to `SecurityGroup` will ensure that only Sec
 
 ---
 
-Question: In the context of Azure Active Directory, which of the following statements correctly describes the difference between AppRoles and Groups?
+Question: In the context of Microsoft Entra ID, which of the following statements correctly describes the difference between AppRoles and Groups?
 
 - [ ] AppRoles and Groups are both specific to an application and are removed when the application is removed.
-- [ ] AppRoles are specific to an Azure AD tenant, while Groups are specific to an application.
+- [ ] AppRoles are specific to an Microsoft Entra ID tenant, while Groups are specific to an application.
 - [x] AppRoles are specific to an application and are removed with the app registration, while Groups are tenant-specific and persist even after the app is removed.
 - [ ] Groups are removed with the app registration, while AppRoles are tenant-specific and persist even after the app is removed.
 
@@ -110,7 +110,7 @@ Question: Which of the following app scenarios require code to handle Conditiona
 - [ ] Apps performing the Integrated Windows authentication flow
 
 Answer: Apps performing the on-behalf-of flow require code to handle Conditional Access challenges.  
-The Integrated Windows authentication flow allows applications on domain or Azure Active Directory (Azure AD) joined computers to acquire a token silently.
+The Integrated Windows authentication flow allows applications on domain or Microsoft Entra ID joined computers to acquire a token silently.
 
 ---
 
@@ -222,7 +222,7 @@ Answer: MSAL does not provide proactive security threat alerts as this is typica
 
 ---
 
-Question: You have an application registered in Azure AD and you have configured `appsettings.json` as follows:
+Question: You have an application registered in Microsoft Entra ID and you have configured `appsettings.json` as follows:
 
 ```json
 {
@@ -379,15 +379,15 @@ public class DepartmentController : Controller
 
 ---
 
-Question: You are creating an internal portal for staff members to access confidential financial reports. The portal uses Azure AD for user authentication. The staff accounts are currently on Azure AD Basic licenses. You are tasked with setting up multi-factor authentication (MFA) for a specific team of staff members. Which two steps should you take?
+Question: You are creating an internal portal for staff members to access confidential financial reports. The portal uses Microsoft Entra ID for user authentication. The staff accounts are currently on Microsoft Entra ID Basic licenses. You are tasked with setting up multi-factor authentication (MFA) for a specific team of staff members. Which two steps should you take?
 
-- [ ] Activate application proxy in Azure AD.
-- [ ] Set up the portal to utilize Azure AD business-to-consumer (B2C).
-- [ ] Enable security defaults in Azure AD.
-- [x] Upgrade the staff accounts to Azure AD Premium P1.
-- [x] Establish a new conditional access policy in Azure AD.
+- [ ] Activate application proxy in Microsoft Entra ID.
+- [ ] Set up the portal to utilize Microsoft Entra ID business-to-consumer (B2C).
+- [ ] Enable security defaults in Microsoft Entra ID.
+- [x] Upgrade the staff accounts to Microsoft Entra ID Premium P1.
+- [x] Establish a new conditional access policy in Microsoft Entra ID.
 
-Answer: Conditional access policies require Azure AD Premium P1 licenses.  
+Answer: Conditional access policies require Microsoft Entra ID Premium P1 licenses.  
 Security defaults enable MFA for **ALL** users, which does not meat requirenments for specific staff members.
 
 ---
@@ -403,18 +403,18 @@ Answer: The authorization Server is the specific component in the OAuth process 
 
 ---
 
-Question: In Azure Active Directory (Azure AD), what is the requirement for applications to delegate identity and access management?
+Question: In Microsoft Entra ID, what is the requirement for applications to delegate identity and access management?
 
-- [ ] Applications can optionally register with Azure AD.
+- [ ] Applications can optionally register with Microsoft Entra ID.
 - [ ] Applications must register with a third-party identity provider.
-- [x] Applications must register with Azure AD.
-- [ ] Registration with Azure AD is discouraged for client applications.
+- [x] Applications must register with Microsoft Entra ID.
+- [ ] Registration with Microsoft Entra ID is discouraged for client applications.
 
-Answer: In Azure AD, all applications must register to delegate identity and access management. This registration process allows the application to be integrated with Azure AD, enabling features like authentication, authorization, and more.
+Answer: In Microsoft Entra ID, all applications must register to delegate identity and access management. This registration process allows the application to be integrated with Microsoft Entra ID, enabling features like authentication, authorization, and more.
 
 ---
 
-Question: You are developing a web application using ASP.Net Core. The application needs to authenticate users via Azure AD and also needs to access Azure Blob Storage on behalf of the authenticated users. What settings should you set in API permissions pane to allow this?
+Question: You are developing a web application using ASP.Net Core. The application needs to authenticate users via Microsoft Entra ID and also needs to access Azure Blob Storage on behalf of the authenticated users. What settings should you set in API permissions pane to allow this?
 
 Answer:
 
@@ -424,7 +424,7 @@ Azure Storage: Set `user_impersonation` to "Delegate" to allow the application t
 
 ---
 
-Question: You are developing a web application using ASP.Net Core. The application needs to authenticate users via Azure AD and also access Azure Blob Storage on behalf of the authenticated users. Which of the following permissions should be set to "Delegated" in the Azure Portal to meet these requirements?
+Question: You are developing a web application using ASP.Net Core. The application needs to authenticate users via Microsoft Entra ID and also access Azure Blob Storage on behalf of the authenticated users. Which of the following permissions should be set to "Delegated" in the Azure Portal to meet these requirements?
 
 - [x] `Microsoft Graph > User.Read`
 - [ ] `Microsoft Graph > User.ReadWrite`
@@ -443,7 +443,7 @@ Azure Storage > user_impersonation should be set to "Delegated". This allows the
 
 ---
 
-Question: You are developing a web application using ASP.Net Core. The application needs to authenticate users via Azure AD. What value should be set for the `Microsoft Graph > User.Read` permission in the Azure Portal to meet this requirement?
+Question: You are developing a web application using ASP.Net Core. The application needs to authenticate users via Microsoft Entra ID. What value should be set for the `Microsoft Graph > User.Read` permission in the Azure Portal to meet this requirement?
 
 - [ ] None
 - [ ] Application
@@ -467,12 +467,12 @@ Answer: "Delegated" allows the application to access Azure Blob Storage on behal
 
 Question: You are a solutions architect for 'StreamBox,' a video streaming service. The company wants to implement a feature that allows users to quickly sign in using their social media credentials like Instagram, Reddit, or Google, in addition to their regular email accounts. Which Azure service should be utilized to meet this requirement?
 
-- [ ] Azure AD B2B
+- [ ] Microsoft Entra ID B2B
 - [ ] Azure Multi-Factor Authentication
-- [x] Azure AD B2C
-- [ ] Azure AD Single Tenant Authentication
+- [x] Microsoft Entra ID B2C
+- [ ] Microsoft Entra ID Single Tenant Authentication
 
-Answer: AD B2C supports authentication through a variety of social media platforms and email accounts, making it the most suitable choice for this scenario.
+Answer: Emtra ID B2C supports authentication through a variety of social media platforms and email accounts, making it the most suitable choice for this scenario.
 
 ---
 
@@ -498,41 +498,41 @@ Answer:
 
 ---
 
-Question: Click on the following steps in the correct order to protect an API in Azure API Management with Azure Active Directory:
+Question: Click on the following steps in the correct order to protect an API in Azure API Management with Microsoft Entra ID:
 
-- [x] Register the backend API application in Azure AD.
-- [x] Register the web App (website containing summarized results) in Azure AD so that it can call the backend API.
-- [x] Allow permissions between the website app to call the backend API app. Add the configurations in Azure AD.
+- [x] Register the backend API application in Microsoft Entra ID.
+- [x] Register the web App (website containing summarized results) in Microsoft Entra ID so that it can call the backend API.
+- [x] Allow permissions between the website app to call the backend API app. Add the configurations in Microsoft Entra ID.
 - [x] Enable OAuth 2.0 user authorization and add the validate-jwt policy to validate the OAuth token for API calls.
 
 Answer:
 
-1. Register the backend API application in Azure AD.
-1. Register the web App (website containing summarized results) in Azure AD so that it can call the backend API.
-1. Allow permissions between the website app to call the backend API app. Add the configurations in Azure AD.
+1. Register the backend API application in Microsoft Entra ID.
+1. Register the web App (website containing summarized results) in Microsoft Entra ID so that it can call the backend API.
+1. Allow permissions between the website app to call the backend API app. Add the configurations in Microsoft Entra ID.
 1. Enable OAuth 2.0 user authorization and add the validate-jwt policy to validate the OAuth token for API calls.
 
 ---
 
-Question: You need to implement authentication for two applications: a web application and an API. Only users from a specific AD tenant should be able to access both applications. Which of the following account types should you select to meet the security requirements?
+Question: You need to implement authentication for two applications: a web application and an API. Only users from a specific Entra ID tenant should be able to access both applications. Which of the following account types should you select to meet the security requirements?
 
-- [ ] Accounts in any organizational directory (Any Azure AD directory - Multitenant)
-- [ ] Accounts in any organizational directory (Any Azure AD directory - Multitenant) and personal Microsoft accounts
+- [ ] Accounts in any organizational directory (Any Microsoft Entra ID directory - Multitenant)
+- [ ] Accounts in any organizational directory (Any Microsoft Entra ID directory - Multitenant) and personal Microsoft accounts
 - [x] Accounts in this organizational directory only (Single tenant)
 - [ ] Personal Microsoft accounts only
 
-Answer: This option restricts access to only users in the specific AD tenant, meeting the requirement.  
+Answer: This option restricts access to only users in the specific Entra ID tenant, meeting the requirement.  
 Allowing accounts from any organizational directory would violate the requirements.  
 Personal Microsoft accounts are related to Skype, Xbox, etc accounts.
 
 ---
 
-Question: You are tasked with developing a web-based solution that will be hosted on Azure. The application should enforce secure access through Azure Active Directory (Azure AD). The requirements are as follows:
+Question: You are tasked with developing a web-based solution that will be hosted on Azure. The application should enforce secure access through Microsoft Entra ID. The requirements are as follows:
 
-- Users should authenticate using their Azure AD accounts.
-- The application should offer personalized experiences based on the user's Active Directory group memberships.
+- Users should authenticate using their Microsoft Entra ID accounts.
+- The application should offer personalized experiences based on the user's Entra ID group memberships.
 
-How would you modify the Azure AD application manifest file to meet these requirements?
+How would you modify the Microsoft Entra ID application manifest file to meet these requirements?
 
 ```jsonc
 {

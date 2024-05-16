@@ -1,13 +1,13 @@
-# [Microsoft Azure Active Directory (Azure AD)](https://docs.microsoft.com/en-us/azure/active-directory/)
+# [Microsoft Entra ID](https://learn.microsoft.com/en-us/entra/identity/)
 
-Implements [OAuth 2.0](https://learn.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-protocols) authorization protocol, allowing third-party apps to access web-hosted resources on behalf of users. These resources have a unique _application ID URI_.
+Implements [OAuth 2.0](https://learn.microsoft.com/en-us/entra/identity-platform/v2-protocols) authorization protocol, allowing third-party apps to access web-hosted resources on behalf of users. These resources have a unique _application ID URI_.
 
-## Azure Active Directory (AD) vs Role-Based Access Control (RBAC)
+## Microsoft Entra ID vs Role-Based Access Control (RBAC)
 
-| Feature        | Azure AD                                                            | Azure RBAC                                                                                   |
+| Feature        | Entra ID                                                            | Azure RBAC                                                                                   |
 | -------------- | ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
 | **Purpose**    | Authentication. Identity & Access Management                        | Authorization                                                                                |
-| **Focus**      | Azure AD Resources                                                  | Azure Resources                                                                              |
+| **Focus**      | Entra ID Resources                                                  | Azure Resources                                                                              |
 | **Scope**      | Tenant                                                              | Management Group, Subscription, Resource Group, Resource                                     |
 | **Roles**      | Global, User, Billing Admins; Custom roles; Multiple roles per user | Owner, Contributor, Reader, User Access Admin; Custom roles (P1/P2); Multiple roles per user |
 | **Access Via** | Azure Portal, MS 365 Admin, Graph, PowerShell                       | Azure Portal, CLI, PowerShell, ARM templates, REST API                                       |
@@ -18,14 +18,14 @@ Implements [OAuth 2.0](https://learn.microsoft.com/en-us/azure/active-directory/
 - For multi-tenant applications, an _application service principal_ is utilized to grant permissions. This enables the app to access Microsoft Graph API resources across multiple tenants without relying on a specific user identity.
 - For single-tenant scenarios where the app only needs to access resources within a specific tenant, a _Managed Identity_ could be more appropriate.
 - When the app needs to perform actions specific to an individual user (_on behalf of the user_), delegated permissions are used, requiring user authentication and consent.
-- If the permissions required by the application can change dynamically based on runtime conditions, leveraging _Azure AD roles and policies_ would be more suitable.
+- If the permissions required by the application can change dynamically based on runtime conditions, leveraging _Entra ID roles and policies_ would be more suitable.
 - For short-lived operations that don't require persistent permissions, _token-based or key-based temporary access methods_ could be more fitting.
 
 ## Application Registration
 
-All applications _must [register with Azure AD](<(https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-provider-aad?tabs=workforce-tenant)>)_ to delegate identity and access management: `Portal > app > 'Authentication' > 'Add identity provider' > set provider to Microsoft > 'Add'`. This creates an application object and a globally unique ID (app/client ID).
+All applications _must [register with Entra ID](https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-provider-aad?tabs=workforce-tenant)_ to delegate identity and access management: `Portal > app > 'Authentication' > 'Add identity provider' > set provider to Microsoft > 'Add'`. This creates an application object and a globally unique ID (app/client ID).
 
-- **Application Object**: Resides in the Azure AD tenant where the app is registered. It serves as the _global representation_ of your application for use across all tenants. This object has:
+- **Application Object**: Resides in the Entra ID tenant where the app is registered. It serves as the _global representation_ of your application for use across all tenants. This object has:
 
   - A 1:1 relationship with the Software Application.
   - A 1:N relationship with _Service Principal Objects_, meaning one Application Object can have multiple corresponding _Service Principal Objects_.
@@ -41,7 +41,7 @@ List service principals associated with an app: `az ad sp list --filter "appId e
 
 | [Integrate authentication and authorization](https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-overview) | Web App | Backend API                                               | Daemon |
 | -------------------------------------------------------------------------------------------------------------------------- | ------- | --------------------------------------------------------- | ------ |
-| 1. Register in Azure AD                                                                                                    | ✓       | ✓                                                         | ✓      |
+| 1. Register in Entra ID                                                                                                    | ✓       | ✓                                                         | ✓      |
 | 2. Configure app with code sample                                                                                          | ✕       | ✓                                                         | ✕      |
 | 3. Validate token                                                                                                          | ID      | Access                                                    | ✕      |
 | 4. Configure secrets & certificates                                                                                        | ✓       | ✓                                                         | ✓      |
@@ -94,7 +94,7 @@ client_id=6731de76-14a6-49ae-97bc-6eba6914391e
 - Prompt additional verification (e.g., second password or fingerprint) when users sign in
 - Using a middle tier to solve a "challenge" presented by API
 - [Multi-Factor Authentication](https://learn.microsoft.com/en-us/azure/active-directory/authentication/concept-mfa-licensing) (**all Microsoft 365 plans**). When [Security Defaults](https://learn.microsoft.com/en-us/azure/active-directory/fundamentals/security-defaults) is enabled, MFA is activated for **all users**. To apply MFA to specific users only, _disable Security Defaults_.
-- Risk-based policies (require Azure AD Identity Protection - **Premium P2** tier)
+- Risk-based policies (require Entra ID Identity Protection - **Premium P2** tier)
 - Device restrictions (enrolled in Microsoft's Intune service)
 - Certain physical locations or IP ranges
 
@@ -102,13 +102,13 @@ When Conditional Access licenses expire, policies stay active but can't be updat
 
 Apps don't need to be changed, unless they need silent or indirect services access, or on-behalf-of flow.
 
-## Other Azure AD features
+## Other Entra ID features
 
-- [Azure AD B2C](https://learn.microsoft.com/en-us/azure/active-directory-b2c/overview) supports multiple login methods, including social media, email/password.
-- [Azure AD B2B](https://learn.microsoft.com/en-us/azure/active-directory/external-identities/what-is-b2b) allows you to share your company's applications with external users in a secure manner.
-- [Azure AD Application Proxy](https://learn.microsoft.com/en-us/azure/active-directory/app-proxy/what-is-application-proxy) provides secure remote access to on-premises applications.
-- [Azure AD Connect](https://en.wikipedia.org/wiki/Azure_AD_Connect) allows you to synchronize an AD tenant with an on-premises AD domain.
-- [Azure AD Enterprise Application](https://learn.microsoft.com/en-us/azure/active-directory/manage-apps/add-application-portal) allow you to integrate other applications with Azure AD, including your own apps.
+- [Entra ID B2C](https://learn.microsoft.com/en-us/azure/active-directory-b2c/overview) supports multiple login methods, including social media, email/password.
+- [Entra ID B2B](https://learn.microsoft.com/en-us/azure/active-directory/external-identities/what-is-b2b) allows you to share your company's applications with external users in a secure manner.
+- [Entra ID Application Proxy](https://learn.microsoft.com/en-us/azure/active-directory/app-proxy/what-is-application-proxy) provides secure remote access to on-premises applications.
+- [Entra ID Connect](https://en.wikipedia.org/wiki/Azure_AD_Connect) allows you to synchronize an AD tenant with an on-premises AD domain.
+- [Entra ID Enterprise Application](https://learn.microsoft.com/en-us/azure/active-directory/manage-apps/add-application-portal) allow you to integrate other applications with Entra ID, including your own apps.
 
 ## MSAL (Microsoft Authentication Library)
 
@@ -129,7 +129,7 @@ Enables secure access to various APIs, with a unified API across platforms.
 | On-behalf-of       | Both             | Service-to-Service, Service-to-API, Microservices | Uses an existing token to get another       |
 | Device code        | Public           | IoT, CLI                                          | Polls the endpoint until user authenticates |
 | Implicit           | Public           | Legacy SPAs                                       | Token in URI fragment                       |
-| Integrated Windows | Both             | Intranet Apps                                     | Auto auth on domain / Azure AD-joined PCs   |
+| Integrated Windows | Both             | Intranet Apps                                     | Auto auth on domain / Entra ID-joined PCs   |
 | Interactive        | Public           | User Interactive Apps                             | Requires user action                        |
 | Username/password  | Both             | Legacy, Testing                                   | Direct with Credentials                     |
 
@@ -140,7 +140,7 @@ Enables secure access to various APIs, with a unified API across platforms.
 
 When building web apps or public client apps that require a broker, ensure to set the `redirectUri`. This URL is used by the identity provider to return security tokens to your application.
 
-Integrating Azure AD authentication into an ASP.NET Core application:
+Integrating Entra ID authentication into an ASP.NET Core application:
 
 ```cs
 builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
@@ -169,23 +169,23 @@ IConfidentialClientApplication app = ConfidentialClientApplicationBuilder.Create
 
 Common modifiers:
 
-| Modifier                                              | Description                                                                                                                                                                                                                                                                                         |
-| ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `.WithAuthority()`                                    | Sets the application default authority to an Azure Active Directory authority, with the possibility of choosing the Azure Cloud, the audience, the tenant (tenant ID or domain name), or providing directly the authority URI. Example: `.WithAuthority(AzureCloudInstance.AzurePublic, _tenantId)` |
-| `.WithTenantId(string tenantId)`                      | Overrides the tenant ID, or the tenant description.                                                                                                                                                                                                                                                 |
-| `.WithClientId(string)`                               | Overrides the client ID.                                                                                                                                                                                                                                                                            |
-| `.WithRedirectUri(string redirectUri)`                | Overrides the default redirect URI (ex: for scenarios requiring a broker)                                                                                                                                                                                                                           |
-| `.WithComponent(string)`                              | Sets the name of the library using MSAL.NET (for telemetry reasons).                                                                                                                                                                                                                                |
-| `.WithDebugLoggingCallback()`                         | If called, the application calls Debug.Write simply enabling debugging traces.                                                                                                                                                                                                                      |
-| `.WithLogging()`                                      | If called, the application calls a callback with debugging traces.                                                                                                                                                                                                                                  |
-| `.WithTelemetry(TelemetryCallback telemetryCallback)` | Sets the delegate used to send telemetry.                                                                                                                                                                                                                                                           |
+| Modifier                                              | Description                                                                                                                                                                                                                                                                                     |
+| ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.WithAuthority()`                                    | Sets the application default authority to an Microsoft Entra ID authority, with the possibility of choosing the Azure Cloud, the audience, the tenant (tenant ID or domain name), or providing directly the authority URI. Example: `.WithAuthority(AzureCloudInstance.AzurePublic, _tenantId)` |
+| `.WithTenantId(string tenantId)`                      | Overrides the tenant ID, or the tenant description.                                                                                                                                                                                                                                             |
+| `.WithClientId(string)`                               | Overrides the client ID.                                                                                                                                                                                                                                                                        |
+| `.WithRedirectUri(string redirectUri)`                | Overrides the default redirect URI (ex: for scenarios requiring a broker)                                                                                                                                                                                                                       |
+| `.WithComponent(string)`                              | Sets the name of the library using MSAL.NET (for telemetry reasons).                                                                                                                                                                                                                            |
+| `.WithDebugLoggingCallback()`                         | If called, the application calls Debug.Write simply enabling debugging traces.                                                                                                                                                                                                                  |
+| `.WithLogging()`                                      | If called, the application calls a callback with debugging traces.                                                                                                                                                                                                                              |
+| `.WithTelemetry(TelemetryCallback telemetryCallback)` | Sets the delegate used to send telemetry.                                                                                                                                                                                                                                                       |
 
 Confidential client application only:
 
-| Modifier                                         | Description                                                                                    |
-| ------------------------------------------------ | ---------------------------------------------------------------------------------------------- |
-| `.WithCertificate(X509Certificate2 certificate)` | Sets the certificate identifying the application with Azure Active Directory.                  |
-| `.WithClientSecret(string clientSecret)`         | Sets the client secret (app password) identifying the application with Azure Active Directory. |
+| Modifier                                         | Description                                                                                |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------ |
+| `.WithCertificate(X509Certificate2 certificate)` | Sets the certificate identifying the application with Microsoft Entra ID.                  |
+| `.WithClientSecret(string clientSecret)`         | Sets the client secret (app password) identifying the application with Microsoft Entra ID. |
 
 Acquiring Token:
 
@@ -197,7 +197,7 @@ Console.WriteLine($"Token: {result.AccessToken}");
 
 ## [Application manifest](https://learn.microsoft.com/en-us/azure/active-directory/develop/reference-app-manifest)
 
-An Azure AD application manifest configures an app's identity and attributes, facilitating OAuth authorization and user consent. It serves as a mechanism for updating the application object in the Microsoft identity platform.
+An Entra ID application manifest configures an app's identity and attributes, facilitating OAuth authorization and user consent. It serves as a mechanism for updating the application object in the Microsoft identity platform.
 
 - `signInAudience`:
 
@@ -209,10 +209,10 @@ An Azure AD application manifest configures an app's identity and attributes, fa
 - `groupMembershipClaims`: (_Tenant-specific_) Groups claim issued in access token that the app expects. Groups persist even after the associated app is removed.
 
   - "None"
-  - "SecurityGroup" (will include security groups and Azure AD roles)
+  - "SecurityGroup" (will include security groups and Entra ID roles)
   - "ApplicationGroup" (this option includes only groups that are assigned to the application)
-  - "DirectoryRole" (gets the Azure AD directory roles the user is a member of)
-  - "All" (this will get all of the security groups, distribution groups, and Azure AD directory roles that the signed-in user is a member of).
+  - "DirectoryRole" (gets the Entra ID directory roles the user is a member of)
+  - "All" (this will get all of the security groups, distribution groups, and Entra ID directory roles that the signed-in user is a member of).
 
 - [`appRoles`](https://learn.microsoft.com/en-us/azure/active-directory/develop/howto-add-app-roles-in-apps) (_Application-specific_): Collection of roles that an app may declare. Defined in the app registration, and will get removed with it. Correspond to `Role` in `--api-permissions`
 
@@ -236,12 +236,12 @@ An Azure AD application manifest configures an app's identity and attributes, fa
 | `addIns`                     | Defines custom behavior that a consuming service can use to call an app in specific contexts.                                         |
 | `allowPublicClient`          | Specifies the fallback application type.                                                                                              |
 | `knownClientApplications`    | Used for bundling consent if you have a solution that contains two parts: a client app and a custom web API app.                      |
-| `oauth2RequirePostResponse`  | Specifies whether, as part of OAuth 2.0 token requests, Azure AD will allow POST requests, as opposed to GET requests.                |
+| `oauth2RequirePostResponse`  | Specifies whether, as part of OAuth 2.0 token requests, Entra ID will allow POST requests, as opposed to GET requests.                |
 | `passwordCredentials`        | Similar to `keyCredentials`, holds references to app-assigned credentials, string-based shared secrets.                               |
 | `preAuthorizedApplications`  | Lists applications and requested permissions for implicit consent.                                                                    |
-| `replyUrlsWithType`          | Holds the list of registered redirect_uri values that Azure AD will accept as destinations when returning tokens.                     |
+| `replyUrlsWithType`          | Holds the list of registered redirect_uri values that Entra ID will accept as destinations when returning tokens.                     |
 | `signInAudience`             | Specifies what Microsoft accounts are supported for the current application.                                                          |
-| `identifierUris`             | User-defined URI(s) that uniquely identify a web app within its Azure AD tenant or verified customer owned domain.                    |
+| `identifierUris`             | User-defined URI(s) that uniquely identify a web app within its Entra ID tenant or verified customer owned domain.                    |
 | `tags`                       | Custom strings that can be used to categorize and identify the application.                                                           |
 | `parentalControlSettings`    | Specifies the countries/regions in which the app is blocked for minors and the legal age group rule that applies to users of the app. |
 | `accessTokenAcceptedVersion` | Specifies the access token version expected by the resource.                                                                          |
@@ -251,7 +251,7 @@ An Azure AD application manifest configures an app's identity and attributes, fa
 | `samlMetadataUrl`            | The URL to the SAML metadata for the app.                                                                                             |
 | `publisherDomain`            | The verified publisher domain for the application.                                                                                    |
 | `informationalUrls`          | Specifies the links to the app's terms of service and privacy statement.                                                              |
-| `appId`                      | Specifies the unique identifier for the app that is assigned to an app by Azure AD.                                                   |
+| `appId`                      | Specifies the unique identifier for the app that is assigned to an app by Entra ID.                                                   |
 | `name`                       | The display name for the app.                                                                                                         |
 | `id`                         | The unique identifier for the app in the directory.                                                                                   |
 

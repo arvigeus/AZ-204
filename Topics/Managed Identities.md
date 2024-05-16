@@ -1,4 +1,4 @@
-# [Azure Managed Identities](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/)
+# [Azure Managed Identities](https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/)
 
 Enable Azure App Services-based apps to access other services without handling credentials. These identities are _Azure-exclusive_ and _can't be used with other cloud providers_ like AWS or GCP.
 
@@ -24,12 +24,12 @@ The inheritance order for scope is Management group, Subscription, Resource grou
 ## Using Managed Identity with a Virtual Machine
 
 1. **Initiate Managed Identity**: Request to enable (sistem assigned) or create (user assigned) managed identity via ARM.
-1. **Create Service Principal**: ARM sets a service principal in the trusted Azure AD tenant for the managed identity.
+1. **Create Service Principal**: ARM sets a service principal in the trusted Entra ID tenant for the managed identity.
 1. **Configure Identity**: ARM updates [IMDS](https://learn.microsoft.com/en-us/azure/virtual-machines/instance-metadata-service) (VM Specific) with the service principal client ID and certificate.
 1. **Assign Roles & Access**: Use service principal information to grant access to Azure resources via RBAC.
 1. **Request Token**: Code on Azure resource asks for a token from IMDS: `http://169.254.169.254/metadata/identity/oauth2/token`
-1. **Retrieve Token**: By using the configured client ID and certificate, Azure AD returns a JWT access token upon request.
-1. **Use Token**: Code uses the token to authenticate with Azure AD-supported services.
+1. **Retrieve Token**: By using the configured client ID and certificate, Entra ID returns a JWT access token upon request.
+1. **Use Token**: Code uses the token to authenticate with Entra ID-supported services.
 
 ## Managing Identities
 

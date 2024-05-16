@@ -44,11 +44,11 @@ md: What types of ACR login methods are there? Their characteristics?
 
 ---
 
-sh: How to authenticate with individual AD identity in ACR?
+sh: How to authenticate with individual Entra ID identity in ACR?
 
 ---
 
-sh: How to create and authenticate with AD service principal in ACR?
+sh: How to create and authenticate with Entra ID service principal in ACR?
 
 ---
 

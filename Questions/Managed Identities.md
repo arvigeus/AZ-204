@@ -33,19 +33,19 @@ Oauth 2.0 is a protocol that can be used to acquire a token, but isn't the basis
 
 ---
 
-Question: You are the administrator of an Azure SQL database that is set up to allow Azure AD-based access. You want your developers to connect to this database using Microsoft SQL Server Management Studio (SSMS) using their on-premises Active Directory credentials without frequent (minimizing) login prompts. Which approach should you adopt?
+Question: You are the administrator of an Azure SQL database that is set up to allow Entra ID-based access. You want your developers to connect to this database using Microsoft SQL Server Management Studio (SSMS) using their on-premises Entra ID credentials without frequent (minimizing) login prompts. Which approach should you adopt?
 
-- [ ] Azure AD B2C.
+- [ ] Entra ID B2C.
 - [ ] Azure Conditional Access.
-- [x] Active Directory integrated authentication.
-- [ ] Azure AD guest user access.
-- [ ] Azure AD token.
+- [x] Entra ID integrated authentication.
+- [ ] Entra ID guest user access.
+- [ ] Entra ID token.
 
-Answer: Active Directory integrated authentication allows seamless authentication using on-premises AD credentials.  
-Azure AD B2C is designed for customer identity access, not for on-premises AD integration.  
-Azure Conditional Access sets access policies but doesn't ensure seamless on-premises AD authentication.  
-Azure AD guest user access allows external users to access company resources, not related to on-premises AD authentication.  
-Azure AD token can be used for Azure SQL Database, they would not necessarily reduce the number of authentication prompts.
+Answer: Entra ID integrated authentication allows seamless authentication using on-premises Emtra ID credentials.  
+Entra ID B2C is designed for customer identity access, not for on-premises Emtra ID integration.  
+Azure Conditional Access sets access policies but doesn't ensure seamless on-premises Emtra ID authentication.  
+Entra ID guest user access allows external users to access company resources, not related to on-premises Emtra ID authentication.  
+Entra ID token can be used for Azure SQL Database, they would not necessarily reduce the number of authentication prompts.
 
 ---
 
@@ -105,9 +105,9 @@ Answer: Deny assignments in Azure RBAC take precedence over role assignments. Th
 
 ---
 
-Question: You have developed a web API hosted on Azure App Services. You are required to secure this web API using OAuth 2.0 and integrate it with your organization's Azure AD tenant. Which two actions should you take?
+Question: You have developed a web API hosted on Azure App Services. You are required to secure this web API using OAuth 2.0 and integrate it with your organization's Entra ID tenant. Which two actions should you take?
 
-- [x] Register an application in Azure AD.
+- [x] Register an application in Entra ID.
 - [x] Configure an Azure API Management instance.
 - [ ] Create an application proxy.
 - [ ] Establish an Azure VPN Gateway.
@@ -115,7 +115,7 @@ Question: You have developed a web API hosted on Azure App Services. You are req
 
 Answer:
 
-- **Register an application in Azure AD**: Essential for setting up OAuth 2.0 authentication.
+- **Register an application in Entra ID**: Essential for setting up OAuth 2.0 authentication.
 - **Configure an Azure API Management instance**: Can validate OAuth tokens and manage APIs.
 
 Incorrect options:
@@ -231,7 +231,7 @@ Question: An e-commerce company is planning to migrate their monolithic applicat
 - [ ] Any of these
 - [ ] None of these
 
-Answer: This scenario is best suited for a System-assigned managed identity. System-assigned managed identities are tied to the lifecycle of the Azure resource (in this case, the Azure Container App) and are automatically cleaned up by Azure when the resource is deleted. The application can use the System-assigned managed identity to authenticate to any service that supports Azure AD authentication without having any credentials in the code. The Azure Container App can be granted access to the Azure Key Vault and Azure SQL Database using Azure role-based access control (RBAC).
+Answer: This scenario is best suited for a System-assigned managed identity. System-assigned managed identities are tied to the lifecycle of the Azure resource (in this case, the Azure Container App) and are automatically cleaned up by Azure when the resource is deleted. The application can use the System-assigned managed identity to authenticate to any service that supports Entra ID authentication without having any credentials in the code. The Azure Container App can be granted access to the Azure Key Vault and Azure SQL Database using Azure role-based access control (RBAC).
 
 ---
 
@@ -249,8 +249,8 @@ Answer: This scenario is best suited for User-assigned managed identities. User-
 Question: What is the primary purpose of `ChainedTokenCredential` in Azure?
 
 - [x] Combines multiple credentials, attempting each in sequence until successful authentication.
-- [ ] Binds multiple Azure AD groups into a single token.
-- [ ] Creates a chain of Azure AD users for fallback authentication.
+- [ ] Binds multiple Entra ID groups into a single token.
+- [ ] Creates a chain of Entra ID users for fallback authentication.
 - [ ] Encrypts a token using a chain of cryptographic keys.
 
 Answer: It combines multiple credentials for flexible authentication.
@@ -271,13 +271,13 @@ The other roles listed do not inherently include the necessary permission for ro
 
 Question: You are an administrator for a company with various Azure resources. Different teams require different levels of access to these resources. Which of the following options should be used to manage access according to the specific needs of each team?
 
-- [ ] Azure Active Directory (Azure AD)
+- [ ] Microsoft Entra ID
 - [ ] Azure Resource Manager Templates (ARM Templates)
 - [x] Azure Role-Based Access Control (Azure RBAC)
 - [ ] Azure Virtual Network (VNet)
 
 Answer: Azure Role-Based Access Control (Azure RBAC) is the authorization system used to manage access to Azure resources. It allows administrators to assign permissions to users, groups, and applications at different scopes, providing the flexibility to grant access according to specific needs.  
-The other options listed, such as Azure AD, ARM Templates, and VNet, are important Azure services but do not provide the specific functionality needed to manage access to Azure resources based on roles.
+The other options listed, such as Entra ID, ARM Templates, and VNet, are important Azure services but do not provide the specific functionality needed to manage access to Azure resources based on roles.
 
 ---
 
@@ -331,7 +331,7 @@ Other roles listed grant more permissions than required for this specific task, 
 
 Question: In the Azure Portal, where do you navigate to assign roles and grant access to specific Azure resources?
 
-- [ ] Azure Active Directory
+- [ ] Microsoft Entra ID
 - [ ] Access Policies
 - [x] Access control (IAM)
 - [ ] Resource Configuration

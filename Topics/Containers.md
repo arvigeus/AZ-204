@@ -28,15 +28,15 @@ az acr create --resource-group $resourceGroup --name $registryName --sku Standar
 # NOTE: High numbers of repositories and tags can impact the performance. Periodically delete unused.
 
 # ACR Login: https://learn.microsoft.com/en-us/azure/container-registry/container-registry-authentication
-## - Interactive: Individual AD login, Admin Account
-## - Unatended / Headless: AD Service Principal, Managed Identity for Azure Resources
+## - Interactive: Individual Entra ID login, Admin Account
+## - Unatended / Headless: Entra ID Service Principal, Managed Identity for Azure Resources
 ## Roles: https://learn.microsoft.com/en-us/azure/container-registry/container-registry-roles?tabs=azure-cli
 ##
-## 1) Individual login with Azure AD: Interactive push/pull by developers, testers.
+## 1) Individual login with Entra ID: Interactive push/pull by developers, testers.
 ## az login - provides the token. It has to be renewed every 3 hours
 az acr login --name "$registryName" # Token must be renewed every 3 hours.
 ##
-## 2) AD Service Principal: Unattended push/pull in CI/CD pipelines
+## 2) Entra ID Service Principal: Unattended push/pull in CI/CD pipelines
 ### Create service principal
 #### Method 1: Short version that will setup and return appId and password in JSON format
 az ad sp create-for-rbac --name $ServicePrincipalName --role AcrPush,AcrPull,AcrDelete --scopes /subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/Microsoft.ContainerRegistry/registries/$registryName
@@ -536,7 +536,7 @@ ENTRYPOINT ["dotnet", "WebApplication1.dll"]
 | [az upgrade](https://learn.microsoft.com/en-us/cli/azure/reference-index?view=azure-cli-latest#az-upgrade)                                                 | Upgrade Azure CLI and extensions.                                                   | `az upgrade`                                                                                           |
 | [az identity create](https://learn.microsoft.com/en-us/cli/azure/identity?view=azure-cli-latest#az-identity-create)                                        | Create a managed identity.                                                          | `az identity create --name MyManagedIdentity --resource-group $resourceGroup`                          |
 | [az role assignment create](https://learn.microsoft.com/en-us/cli/azure/role/assignment?view=azure-cli-latest#az-role-assignment-create)                   | Create a new role assignment for a user, group, or service principal.               | `az role assignment create --assignee john.doe@domain.com --role Reader`                               |
-| [az ad sp](https://learn.microsoft.com/en-us/cli/azure/ad/sp?view=azure-cli-latest)                                                                        | Manage Azure Active Directory service principals.                                   | `az ad sp create-for-rbac --name MyServicePrincipal`                                                   |
+| [az ad sp](https://learn.microsoft.com/en-us/cli/azure/ad/sp?view=azure-cli-latest)                                                                        | Manage Microsoft Entra ID service principals.                                       | `az ad sp create-for-rbac --name MyServicePrincipal`                                                   |
 | [az monitor log-analytics query](https://learn.microsoft.com/en-us/cli/azure/monitor/log-analytics?view=azure-cli-latest#az-monitor-log-analytics-query)   | Query a Log Analytics workspace.                                                    | `az monitor log-analytics query --workspace MyWorkspace --query 'MyQuery'`                             |
 | [az acr import](https://learn.microsoft.com/en-us/cli/azure/acr?view=azure-cli-latest#az-acr-import)                                                       | Import an image to an ACR from another registry.                                    | `az acr import --name MyRegistry --source myregistry.azurecr.io/myimage:tag`                           |
 | [az containerapp revision list](https://learn.microsoft.com/en-us/cli/azure/containerapp?view=azure-cli-latest#az-containerapp-revision-list)              | List the revisions of a Container App.                                              | `az containerapp revision list --name MyContainerApp --resource-group $resourceGroup`                  |
