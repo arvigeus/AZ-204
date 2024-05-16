@@ -24,7 +24,7 @@ TLDR;
 - Create an Azure App Service Web App
 - Enable diagnostics logging
 - Deploy code to a web app
-- Configure web app settings including SSL, API settings, and connection strings
+- Configure web app settings including Transport Layer Security (TLS), API settings, and connection strings
 - Implement autoscaling
 
 #### Implement Azure Functions
@@ -53,7 +53,7 @@ TLDR;
 #### Implement user authentication and authorization
 
 - Authenticate and authorize users by using the Microsoft Identity platform
-- Authenticate and authorize users and apps by using Microsoft Azure Active Directory (Azure AD), part of Microsoft Entra
+- Authenticate and authorize users and apps by using Microsoft Entra ID
 - Create and implement shared access signatures
 - Implement solutions that interact with Microsoft Graph
 
@@ -69,7 +69,7 @@ TLDR;
 
 - Configure cache and expiration policies for Azure Cache for Redis
 - Implement secure and optimized application cache patterns including data sizing, connections, encryption, and expiration
-- Implement Azure CDN endpoints and profiles
+- Implement Azure Content Delivery Network endpoints and profiles
 
 #### Troubleshoot solutions by using Application Insights
 
@@ -81,9 +81,9 @@ TLDR;
 
 #### Implement API Management
 
-- Create an APIM instance
+- Create an Azure API Management instance
 - Create and document APIs
-- Configure authentication for APIs
+- Configure access to APIs
 - Implement policies for APIs
 
 #### Develop event-based solutions
@@ -106,9 +106,9 @@ TLDR;
    - [Azure Container Apps](https://docs.microsoft.com/en-us/azure/container-apps/)
 1. [Azure Blob Storage](https://docs.microsoft.com/en-us/azure/storage/blobs/)
 1. [Azure Cosmos DB](https://docs.microsoft.com/en-us/azure/cosmos-db/)
-1. [Microsoft Identity Platform](https://docs.microsoft.com/en-us/azure/active-directory/develop/)
-   - [Azure Managed Identities](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/)
-   - [Microsoft Azure Active Directory (Azure AD)](https://docs.microsoft.com/en-us/azure/active-directory/)
+1. [Microsoft Identity Platform](https://learn.microsoft.com/en-us/entra/identity-platform/)
+   - [Azure Managed Identities](https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/overview)
+   - [Microsoft Entra ID](https://learn.microsoft.com/en-us/entra/identity/)
 1. [Microsoft Graph](https://learn.microsoft.com/en-us/graph/)
 1. [Azure Key Vault](https://docs.microsoft.com/en-us/azure/key-vault/)
 1. [Azure App Configuration](https://learn.microsoft.com/en-us/azure/azure-app-configuration/)

@@ -14,19 +14,19 @@ In this exercise you learn how to perform the following actions:
 ## Register a new application
 
 1. Sign in to the portal: <https://portal.azure.com>
-1. Search for and select Azure Active Directory.
-1. Under Manage, select App registrations > New registration.
-1. When the Register an application page appears, enter your application's registration information:
+1. Search for and select **Microsoft Entra ID**.
+1. Under Manage, select **App registrations** > **New registration**.
+1. When the **Register an application** page appears, enter your application's registration information:
 
-   | Field                   | Value                                                                                                |
-   | ----------------------- | ---------------------------------------------------------------------------------------------------- |
-   | Name                    | az204appreg                                                                                          |
-   | Supported account types | Select Accounts in this organizational directory only                                                |
-   | Redirect URI (optional) | Select Public client/native (mobile & desktop) and enter <http://localhost> in the box to the right. |
+   | Field                   | Value                                                                                                    |
+   | ----------------------- | -------------------------------------------------------------------------------------------------------- |
+   | Name                    | `az204appreg`                                                                                            |
+   | Supported account types | Select **Accounts in this organizational directory only**                                                |
+   | Redirect URI (optional) | Select **Public client/native (mobile & desktop)** and enter `http://localhost` in the box to the right. |
 
 1. Select **Register**.
 
-Azure Active Directory assigns a unique application (client) ID to your app, and you're taken to your application's **Overview** page.
+Microsoft Entra ID assigns a unique application (client) ID to your app, and you're taken to your application's **Overview** page.
 
 ## Set up the console application
 
@@ -56,7 +56,7 @@ In this section, you add the necessary packages and code to the project.
 
 ### Add packages and using statements
 
-1. Add the Microsoft.Identity.Client package to the project in a terminal in Visual Studio Code.
+1. Add the `Microsoft.Identity.Client` package to the project in a terminal in Visual Studio Code.
 
    ```sh
    dotnet add package Microsoft.Identity.Client
@@ -94,10 +94,10 @@ In this section, you add the necessary packages and code to the project.
        .Build();
    ```
 
-   | Code           | Description                                                                                                                                            |
-   | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-   | .Create        | Creates a PublicClientApplicationBuilder from a clientID.                                                                                              |
-   | .WithAuthority | Adds a known Authority corresponding to an ADFS server. In the code we're specifying the Public cloud, and using the tenant for the app we registered. |
+   | Code             | Description                                                                                                                                            |
+   | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+   | `.Create`        | Creates a `PublicClientApplicationBuilder` from a clientID.                                                                                            |
+   | `.WithAuthority` | Adds a known Authority corresponding to an ADFS server. In the code we're specifying the Public cloud, and using the tenant for the app we registered. |
 
 ### Acquire a token
 

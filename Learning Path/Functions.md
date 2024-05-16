@@ -6,15 +6,15 @@ Azure Functions lets you develop serverless applications on Microsoft Azure. You
 
 ### Discover Azure Functions
 
-Azure Function is a serverless compute service that enables user to run event-triggered code without having to provision or manage infrastructure. Being as a trigger-based service, it runs a script or piece of code in response to a variety of events. This could be in the context of creating a web API, reacting to changes in a database, processing data from IoT devices, or managing message queues.
+Azure **Functions** is a serverless solution that allows you to write less code, maintain less infrastructure, and save on costs. Instead of worrying about deploying and maintaining servers, the cloud infrastructure provides all the up-to-date resources needed to keep your applications running.
 
-Azure Functions introduces the concepts of triggers and bindings to address this need. Triggers initiate the execution of your code based on specific events, while bindings simplify the process of managing input and output data in your code.
+We often build systems to react to a series of critical events. Whether you're building a web API, responding to database changes, processing IoT data streams, or even managing message queues - every application needs a way to run some code as these events occur.
 
-Additionally, Azure provides a suite of integration and automation services, each capable of addressing integration challenges and automating business processes. These services enable defining inputs, actions, conditions, and outputs, providing an integrated approach to streamline your application workflows.
+Azure Functions supports _triggers_, which are ways to start execution of your code, and _bindings_, which are ways to simplify coding for input and output data. There are other integration and automation services in Azure and they all can solve integration problems and automate business processes. They can all define input, actions, conditions, and output.
 
 #### Compare Azure Functions and Azure Logic Apps
 
-Both Functions and Logic Apps are Azure Services that enable serverless workloads. Azure Functions is a serverless compute service, whereas Azure Logic Apps is a serverless workflow integration platform. Both can create complex orchestrations. An orchestration is a collection of functions or steps, called actions in Logic Apps, that are executed to accomplish a complex task.
+Both Functions and Logic Apps are Azure Services that enable serverless workloads. Azure Functions is a serverless compute service, whereas Azure Logic Apps is a serverless workflow integration platform. Both can create complex _orchestrations_. An orchestration is a collection of functions or steps, called actions in Logic Apps, that are executed to accomplish a complex task.
 
 For Azure Functions, you develop orchestrations by writing code and using the [Durable Functions extension](https://learn.microsoft.com/en-us/azure/azure-functions/durable/durable-functions-overview). For Logic Apps, you create orchestrations by using a GUI or editing configuration files.
 
@@ -34,7 +34,6 @@ The following table lists some of the key differences between Functions and Logi
 Like Azure Functions, Azure App Service WebJobs with the WebJobs SDK is a code-first integration service that is designed for developers. Both are built on Azure App Service and support features such as source control integration, authentication, and monitoring with Application Insights integration.
 
 Azure Functions is built on the WebJobs SDK, so it shares many of the same event triggers and connections to other Azure services. Here are some factors to consider when you're choosing between Azure Functions and WebJobs with the WebJobs SDK:
-Here's your table in markdown format:
 
 |                                             | Functions                                                                                                                                                                 | WebJobs with WebJobs SDK                                                                                                             |
 | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
@@ -138,7 +137,7 @@ Functions share a few core technical concepts and components, regardless of the 
 
 ### Explore Azure Functions development
 
-A function contains two important pieces - your code, which can be written in various languages, and some config, the _function.json_ file. For compiled languages, this config file is generated automatically from annotations in your code. For scripting languages, you must provide the config file yourself.
+A **function** contains two important pieces - your code, which can be written in various languages, and some config, the _function.json_ file. For compiled languages, this config file is generated automatically from annotations in your code. For scripting languages, you must provide the config file yourself.
 
 The _function.json_ file defines the function's trigger, bindings, and other configuration settings. Every function has one and only one trigger. The runtime uses this config file to determine the events to monitor and how to pass data into and return data from a function execution. Following is an example _function.json_ file.
 
@@ -295,6 +294,27 @@ public class Person
     public string RowKey { get; set; }
     public string Name { get; set; }
     public string MobileNumber { get; set; }
+}
+```
+
+##### JavaScript example
+
+The same _function.json_ file can be used with a JavaScript function:
+
+```js
+// From an incoming queue message that is a JSON object, add fields and write to Table Storage
+module.exports = async function (context, order) {
+  order.PartitionKey = "Orders";
+  order.RowKey = generateRandomId();
+
+  context.bindings.order = order;
+};
+
+function generateRandomId() {
+  return (
+    Math.random().toString(36).substring(2, 15) +
+    Math.random().toString(36).substring(2, 15)
+  );
 }
 ```
 

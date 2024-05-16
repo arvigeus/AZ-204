@@ -122,7 +122,7 @@ The built-in authentication feature for App Service and Azure Functions can save
 
 - Azure App Service allows you to integrate various auth capabilities into your web app or API without implementing them yourself.
 - It’s built directly into the platform and doesn’t require any particular language, SDK, security expertise, or code.
-- You can integrate with multiple login providers. For example, Azure AD, Facebook, Google, Twitter.
+- You can integrate with multiple login providers. For example, Microsoft Entra ID, Facebook, Google, Twitter.
 
 #### Identity providers
 
@@ -538,7 +538,8 @@ Autoscaling is a cloud system or process that adjusts available resources based 
 Autoscaling in Azure App Service monitors the resource metrics of a web app as it runs. It detects situations where other resources are required to handle an increasing workload, and ensures those resources are available before the system becomes overloaded.
 
 Autoscaling responds to changes in the environment by adding or removing web servers and balancing the load between them. Autoscaling doesn't have any effect on the CPU power, memory, or storage capacity of the web servers powering the app, it only changes the number of web servers.
-Autoscaling rules
+
+##### Autoscaling rules
 
 Autoscaling makes its decisions based on rules that you define. A rule specifies the threshold for a metric, and triggers an autoscale event when this threshold is crossed. Autoscaling can also deallocate resources when the workload has diminished.
 
@@ -837,11 +838,11 @@ You can swap deployment slots on your app's Deployment slots page and the Overvi
 
 To swap deployment slots:
 
-1. Go to your app's Deployment slots page and select Swap. The Swap dialog box shows settings in the selected source and target slots that will be changed.
+1. Go to your app's **Deployment slots** page and select **Swap**. The **Swap** dialog box shows settings in the selected source and target slots that will be changed.
 
-1. Select the desired Source and Target slots. Usually, the target is the production slot. Also, select the Source Changes and Target Changes tabs and verify that the configuration changes are expected. When you're finished, you can swap the slots immediately by selecting Swap.
+1. Select the desired **Source** and **Target** slots. Usually, the target is the production slot. Also, select the **Source Changes** and **Target Changes** tabs and verify that the configuration changes are expected. When you're finished, you can swap the slots immediately by selecting **Swap**.
 
-   To see how your target slot would run with the new settings before the swap actually happens, don't select Swap, but follow the instructions in Swap with preview below.
+   To see how your target slot would run with the new settings before the swap actually happens, don't select Swap, but follow the instructions in _Swap with preview_ below.
 
 1. When you're finished, close the dialog box by selecting Close.
 
@@ -887,14 +888,14 @@ Some apps might require custom warm-up actions before the swap. The `application
 
 ```xml
 <system.webServer>
-<applicationInitialization>
-<add initializationPage="/" hostName="[app hostname]" />
-<add initializationPage="/Home/About" hostName="[app hostname]" />
-</applicationInitialization>
+  <applicationInitialization>
+    <add initializationPage="/" hostName="[app hostname]" />
+    <add initializationPage="/Home/About" hostName="[app hostname]" />
+  </applicationInitialization>
 </system.webServer>
 ```
 
-For more information on customizing the applicationInitialization element, see [Most common deployment slot swap failures and how to fix them](https://ruslany.net/2017/11/most-common-deployment-slot-swap-failures-and-how-to-fix-them/).
+For more information on customizing the `applicationInitialization` element, see [Most common deployment slot swap failures and how to fix them](https://ruslany.net/2017/11/most-common-deployment-slot-swap-failures-and-how-to-fix-them/).
 
 You can also customize the warm-up behavior with one or both of the following app settings:
 
@@ -935,16 +936,16 @@ In addition to automatic traffic routing, App Service can route requests to a sp
 To let users opt out of your beta app, for example, you can put this link on your webpage:
 
 ```html
-<a href="<webappname>.azurewebsites.net/?x-ms-routing-name=self"
-  >Go back to production app</a
->
+<a href="<webappname>.azurewebsites.net/?x-ms-routing-name=self">
+  Go back to production app
+</a>
 ```
 
 The string `x-ms-routing-name=self` specifies the production slot. After the client browser accesses the link, it's redirected to the production slot. Every subsequent request has the `x-ms-routing-name=self` cookie that pins the session to the production slot.
 
 To let users opt in to your beta app, set the same query parameter to the name of the non-production slot. Here's an example:
 
-```html
+```xml
 <webappname>.azurewebsites.net/?x-ms-routing-name=staging</webappname>
 ```
 

@@ -23,7 +23,7 @@ Some high-level differences are highlighted in the following table.
 | Ability to scale workload up and down | N/A                            |
 | Message size up to 100 MB             | Message size up to 256 KB      |
 
-Advanced features
+## Advanced features
 
 Service Bus includes advanced features that enable you to solve more complex messaging problems. The following table describes several of these features.
 
@@ -61,7 +61,7 @@ Fully supported Service Bus client libraries are available via the Azure SDK.
 
 ## Discover Service Bus queues, topics, and subscriptions
 
-The messaging entities that form the core of the messaging capabilities in Service Bus are queues, topics and subscriptions, and rules/actions.
+The messaging entities that form the core of the messaging capabilities in Service Bus are **queues**, **topics and subscriptions**, and rules/actions.
 
 ### Queues
 
@@ -85,8 +85,8 @@ In this mode, when Service Bus receives the request from the consumer, it marks 
 
 In this mode, the receive operation becomes two-stage, which makes it possible to support applications that can't tolerate missing messages.
 
-- Finds the next message to be consumed, _locks_ it to prevent other consumers from receiving it, and then, return the message to the application.
-- After the application finishes processing the message, it requests the Service Bus service to complete the second stage of the receive process. Then, the service **marks the message as consumed**.
+1. Finds the next message to be consumed, _locks_ it to prevent other consumers from receiving it, and then, return the message to the application.
+1. After the application finishes processing the message, it requests the Service Bus service to complete the second stage of the receive process. Then, the service **marks the message as consumed**.
 
 If the application is unable to process the message for some reason, it can request the Service Bus service to **abandon** the message. Service Bus **unlocks** the message and makes it available to be received again, either by the same consumer or by another competing consumer. Secondly, there's a **timeout** associated with the lock. If the application fails to process the message before the lock timeout expires, Service Bus unlocks the message and makes it available to be received again.
 

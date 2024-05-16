@@ -16,7 +16,7 @@ When determining which queuing technology fits the purpose of a given solution, 
 
 #### Consider using Service Bus queues
 
-As a solution architect/developer, you should consider using Service Bus queues when:
+As a solution architect/developer, **you should consider using Service Bus queues** when:
 
 - Your solution needs to receive messages without having to poll the queue. With Service Bus, you can achieve it by using a long-polling receive operation using the TCP-based protocols that Service Bus supports.
 - Your solution requires the queue to provide a guaranteed first-in-first-out (FIFO) ordered delivery.
@@ -27,7 +27,7 @@ As a solution architect/developer, you should consider using Service Bus queues 
 
 #### Consider using Storage queues
 
-As a solution architect/developer, you should consider using Storage queues when:
+As a solution architect/developer, **you should consider using Storage queues** when:
 
 - Your application must store over 80 gigabytes of messages in a queue.
 - Your application wants to track progress for processing a message in the queue. It's useful if the worker processing a message crashes. Another worker can then use that information to continue from where the prior worker left off.

@@ -71,7 +71,7 @@ Microsoft Graph currently supports two versions: `v1.0` and `beta`.
 
 #### Resource
 
-A resource can be an entity or complex type, commonly defined with properties. Entities differ from complex types by always including an id property.
+A resource can be an entity or complex type, commonly defined with properties. Entities differ from complex types by always including an **id** property.
 
 Your URL includes the resource you're interacting with in the request, such as `me`, **user**, **group**, **drive**, and **site**. Often, top-level resources also include _relationships_, which you can use to access other resources, like `me/messages` or `me/drive`. You can also interact with resources using _methods_; for example, to send an email, use `me/sendMail`.
 
@@ -84,7 +84,6 @@ Query parameters can be OData system query options, or other strings that a meth
 You can use optional OData system query options to include more or fewer properties than the default response, filter the response for items that match a custom query, or provide another parameters for a method.
 
 For example, adding the following `filter` parameter restricts the messages returned to only those with the `emailAddress` property of `jon@contoso.com`.
-HTTP
 
 ```http
 GET https://graph.microsoft.com/v1.0/me/messages?filter=emailAddress eq 'jon@contoso.com'
@@ -101,7 +100,7 @@ Following are links to some tools you can use to build and test requests using M
 
 The Microsoft Graph SDKs are designed to simplify building high-quality, efficient, and resilient applications that access Microsoft Graph. The SDKs include two components: a service library and a core library.
 
-The service library contains models and request builders that are generated from Microsoft Graph metadata to provide a rich, strongly typed, and discoverable experience when working with the many datasets available in Microsoft Graph.
+The service library contains models and request builders that are generated from Microsoft Graph metadata to provide a rich and discoverable experience.
 
 The core library provides a set of features that enhance working with all the Microsoft Graph services. Embedded support for retry handling, secure redirects, transparent authentication, and payload compression, improve the quality of your application's interactions with Microsoft Graph, with no added complexity, while leaving you completely in control. The core library also provides support for common tasks such as paging through collections and creating batch requests.
 

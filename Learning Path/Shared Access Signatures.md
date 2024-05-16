@@ -10,11 +10,11 @@ A shared access signature (SAS) is a signed URI that points to one or more stora
 
 Azure Storage supports three types of shared access signatures:
 
-- **User delegation SAS**: A user delegation SAS is secured with Azure Active Directory credentials and also by the permissions specified for the SAS. A user delegation SAS applies to Blob storage only.
+- **User delegation SAS**: A user delegation SAS is secured with Microsoft Entra credentials and also by the permissions specified for the SAS. A user delegation SAS applies to Blob storage only.
 - **Service SAS**: A service SAS is secured with the storage account key. A service SAS delegates access to a resource in the following Azure Storage services: Blob storage, Queue storage, Table storage, or Azure Files.
 - **Account SAS**: An account SAS is secured with the storage account key. An account SAS delegates access to resources in one or more of the storage services. All of the operations available via a service or user delegation SAS are also available via an account SAS.
 
-:information_source: Microsoft recommends that you use Azure Active Directory credentials when possible as a security best practice, rather than using the account key, which can be more easily compromised. When your application design requires shared access signatures for access to Blob storage, use Azure Active Directory credentials to create a user delegation SAS when possible for superior security
+:information_source: Microsoft recommends that you use Microsoft Entra credentials when possible as a security best practice, rather than using the account key, which can be more easily compromised. When your application design requires shared access signatures for access to Blob storage, use Microsoft Entra credentials to create a user delegation SAS when possible for superior security
 
 ### How shared access signatures work
 
@@ -41,7 +41,7 @@ The SAS token itself is made up of several components.
 To reduce the potential risks of using a SAS, Microsoft provides some guidance:
 
 - To securely distribute a SAS and prevent man-in-the-middle attacks, always use HTTPS.
-- The most secure SAS is a user delegation SAS. Use it wherever possible because it removes the need to store your storage account key in code. You must use Azure Active Directory to manage credentials. This option might not be possible for your solution.
+- The most secure SAS is a user delegation SAS. Use it wherever possible because it removes the need to store your storage account key in code. You must use Microsoft Entra ID to manage credentials. This option might not be possible for your solution.
 - Try to set your expiration time to the smallest useful value. If a SAS key becomes compromised, it can be exploited for only a short time.
 - Apply the rule of minimum-required privileges. Only grant the access that's required. For example, in your app, read-only access is sufficient.
 - There are some situations where a SAS isn't the correct solution. When there's an unacceptable risk of using a SAS, create a middle-tier service to manage users and their access to storage.

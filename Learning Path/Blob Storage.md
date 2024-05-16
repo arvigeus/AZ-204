@@ -46,6 +46,8 @@ The available access tiers are:
 
 - The **Cool** access tier, which is optimized for storing large amounts of data that is infrequently accessed and stored for at least 30 days. The Cool tier has lower storage costs and higher access costs compared to the Hot tier.
 
+- The **Cold** access tier, which is optimized for storing data that is infrequently accessed and stored for a minimum of 90 days. The cold tier has lower storage costs and higher access costs compared to the cool tier.
+
 - The **Archive** tier, which is available only for individual block blobs. The archive tier is optimized for data that can tolerate several hours of retrieval latency and will remain in the Archive tier for at least 180 days. The archive tier is the most cost-effective option for storing data, but accessing that data is more expensive than accessing data in the hot or cool tiers.
 
 If there's a change in the usage pattern of your data, you can switch between these access tiers at any time.
@@ -109,9 +111,9 @@ https://myaccount.blob.core.windows.net/mycontainer/myvirtualdirectory/myblob
 Azure Storage provides a comprehensive set of security capabilities that together enable developers to build secure applications:
 
 - All data (including metadata) written to Azure Storage is automatically encrypted using Storage Service Encryption (SSE).
-- Azure Active Directory (Azure AD) and Role-Based Access Control (RBAC) are supported for Azure Storage for both resource management operations and data operations, as follows:
-  - You can assign RBAC roles scoped to the storage account to security principals and use Azure AD to authorize resource management operations such as key management.
-  - Azure AD integration is supported for blob and queue data operations. You can assign RBAC roles scoped to a subscription, resource group, storage account, or an individual container or queue to a security principal or a managed identity for Azure resources.
+- Microsoft Entra ID and Role-Based Access Control (RBAC) are supported for Azure Storage for both resource management operations and data operations, as follows:
+  - You can assign RBAC roles scoped to the storage account to security principals and use Microsoft Entra ID to authorize resource management operations such as key management.
+  - Microsoft Entra integration is supported for blob and queue data operations. You can assign RBAC roles scoped to a subscription, resource group, storage account, or an individual container or queue to a security principal or a managed identity for Azure resources.
 - Data can be secured in transit between an application and Azure by using Client-Side Encryption, HTTPS, or SMB 3.0.
 - OS and data disks used by Azure virtual machines can be encrypted using Azure Disk Encryption.
 - Delegated access to the data objects in Azure Storage can be granted using a shared access signature.
@@ -185,8 +187,6 @@ It's easier to enable HTTP access for your custom domain, because Azure Storage 
 
 ## Manage the Azure Blob storage lifecycle
 
-Data sets have unique lifecycles. Early in the lifecycle, people access some data often. But the need for access drops drastically as the data ages. Some data stays idle in the cloud and is rarely accessed once stored.
-
 ### Explore the Azure Blob storage lifecycle
 
 Data sets have unique lifecycles. Early in the lifecycle, people access some data often. But the need for access drops drastically as the data ages. Some data stays idle in the cloud and is rarely accessed once stored. Some data expires days or months after creation, while other data sets are actively read and modified throughout their lifetimes.
@@ -195,9 +195,10 @@ Data sets have unique lifecycles. Early in the lifecycle, people access some dat
 
 Azure storage offers different access tiers, allowing you to store blob object data in the most cost-effective manner. Available access tiers include:
 
-- Hot - Optimized for storing data that is accessed frequently.
-- Cool - Optimized for storing data that is infrequently accessed and stored for at least 30 days.
-- Archive - Optimized for storing data that is rarely accessed and stored for at least 180 days with flexible latency requirements, on the order of hours.
+- **Hot** - Optimized for storing data that is accessed frequently.
+- **Cool** - Optimized for storing data that is infrequently accessed and stored for at least 30 days.
+- **Cold tier** - Optimized for storing data that is infrequently accessed and stored for a minimum of 90 days. The cold tier has lower storage costs and higher access costs compared to the cool tier.
+- **Archive** - Optimized for storing data that is rarely accessed and stored for at least 180 days with flexible latency requirements, on the order of hours.
 
 The following considerations apply to the different access tiers:
 
@@ -459,13 +460,13 @@ The Azure Storage client libraries for .NET offer a convenient interface for mak
 
 The following table lists the basic classes, along with a brief description:
 
-| Class               | Description                                                                                                                                                    |
-| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| BlobServiceClient   | Represents the storage account, and provides operations to retrieve and configure account properties, and to work with blob containers in the storage account. |
-| BlobContainerClient | Represents a specific blob container, and provides operations to work with the container and the blobs within.                                                 |
-| BlobClient          | Represents a specific blob, and provides general operations to work with the blob, including operations to upload, download, delete, and create snapshots.     |
-| AppendBlobClient    | Represents an append blob, and provides operations specific to append blobs, such as appending log data.                                                       |
-| BlockBlobClient     | Represents a block blob, and provides operations specific to block blobs, such as staging and then committing blocks of data.                                  |
+| Class                 | Description                                                                                                                                                    |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `BlobServiceClient`   | Represents the storage account, and provides operations to retrieve and configure account properties, and to work with blob containers in the storage account. |
+| `BlobContainerClient` | Represents a specific blob container, and provides operations to work with the container and the blobs within.                                                 |
+| `BlobClient`          | Represents a specific blob, and provides general operations to work with the blob, including operations to upload, download, delete, and create snapshots.     |
+| `AppendBlobClient`    | Represents an append blob, and provides operations specific to append blobs, such as appending log data.                                                       |
+| `BlockBlobClient`     | Represents a block blob, and provides operations specific to block blobs, such as staging and then committing blocks of data.                                  |
 
 The following packages contain the classes used to work with Blob Storage data resources:
 
@@ -479,7 +480,7 @@ Working with any Azure resource using the SDK begins with creating a client obje
 
 When your application creates a client object, you pass a URI referencing the endpoint to the client constructor. You can construct the endpoint string manually, as shown in the examples in this article, or you can query for the endpoint at runtime using the Azure Storage management library.
 
-The code samples in this unit use [DefaultAzureCredential](https://learn.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential) to authenticate to Azure via an Azure Active Directory (Azure AD) security principal. The authentication process includes obtaining an access token for authorization. This access token is passed as a credential when the client is instantiated, and the credential persists throughout the client lifetime. The Azure AD security principal requesting the token must be assigned an appropriate Azure RBAC role that grants access to blob data.
+The code samples in this unit use [DefaultAzureCredential](https://learn.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential) to authenticate to Azure via a Microsoft Entra security principal. The authentication process includes obtaining an access token for authorization. This access token is passed as a credential when the client is instantiated, and the credential persists throughout the client lifetime. The Microsoft Entra security principal requesting the token must be assigned an appropriate Azure RBAC role that grants access to blob data.
 
 #### Create a BlobServiceClient object
 

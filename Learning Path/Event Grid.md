@@ -211,11 +211,9 @@ When Event Grid can't deliver an event within a certain time period or after try
 
 If either of the conditions is met, the event is dropped or dead-lettered. By default, Event Grid doesn't turn on dead-lettering. To enable it, you must specify a storage account to hold undelivered events when creating the event subscription. You pull events from this storage account to resolve deliveries.
 
-If Event Grid receives a 400 (Bad Request) or 413 (Request Entity Too Large) response code, it immediately schedules the event for dead-lettering. These response codes indicate delivery of the event will never succeed.
+If Event Grid receives a 400 (Bad Request) or 413 (Request Entity Too Large) response code, it immediately schedules the event for dead-lettering. These response codes indicate delivery of the event failed.
 
-There's a five-minute delay between the last attempt to deliver an event and when it's delivered to the dead-letter location. This delay is intended to reduce the number of Blob storage operations. If the dead-letter location is unavailable for four hours, the event is dropped.
-
-Before setting the dead-letter location, you must have a storage account with a container. You provide the endpoint for this container when creating the event subscription.
+There's a five-minute delay between the last attempt to deliver an event and delivery to the dead-letter location. This delay is intended to reduce the number of Blob storage operations. If the dead-letter location is unavailable for four hours, the event is dropped.
 
 #### Custom delivery properties
 
@@ -225,6 +223,8 @@ Event subscriptions allow you to set up HTTP headers that are included in delive
 - Azure Service Bus topics and queues
 - Azure Event Hubs
 - Relay Hybrid Connections
+
+Before setting the dead-letter location, you must have a storage account with a container. You provide the endpoint for this container when creating the event subscription.
 
 ### Control access to events
 

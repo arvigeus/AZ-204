@@ -25,7 +25,7 @@ Azure Container Registry is available in multiple service tiers. These tiers pro
 
 | Tier     | Description                                                                                                                                                                                                                                                                                                                                                                                 |
 | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Basic    | A cost-optimized entry point for developers learning about Azure Container Registry. Basic registries have the same programmatic capabilities as Standard and Premium (such as Azure Active Directory authentication integration, image deletion, and webhooks). However, the included storage and image throughput are most appropriate for lower usage scenarios.                         |
+| Basic    | A cost-optimized entry point for developers learning about Azure Container Registry. Basic registries have the same programmatic capabilities as Standard and Premium (such as Microsoft Entra authentication integration, image deletion, and webhooks). However, the included storage and image throughput are most appropriate for lower usage scenarios.                                |
 | Standard | Standard registries offer the same capabilities as Basic, with increased included storage and image throughput. Standard registries should satisfy the needs of most production scenarios.                                                                                                                                                                                                  |
 | Premium  | Premium registries provide the highest amount of included storage and concurrent operations, enabling high-volume scenarios. In addition to higher image throughput, Premium adds features such as geo-replication for managing a single registry across multiple regions, content trust for image tag signing, and private link with private endpoints to restrict access to the registry. |
 
@@ -61,7 +61,7 @@ ACR Tasks is a suite of features within Azure Container Registry. It provides cl
 
 ACR Tasks supports several scenarios to build and maintain container images and other artifacts.
 
-- **Quick task** - Build and push a single container image to a container registry on-demand, in Azure, without needing a local Docker Engine installation. Think docker build, docker push in the cloud.
+- **Quick task** - Build and push a single container image to a container registry on-demand, in Azure, without needing a local Docker Engine installation. Think `docker build`, `docker push` in the cloud.
 
 - **Automatically triggered tasks** - Enable one or more triggers to build an image:
 
@@ -127,7 +127,6 @@ A Dockerfile is a script that contains a series of instructions that are used to
 #### Create a Dockerfile
 
 The first step in creating a Dockerfile is choosing a base image that serves as the foundation for your application. For example, if you're building a .NET application, you might choose a Microsoft .NET image as your base.
-Dockerfile
 
 ```Dockerfile
 # Use the .NET 6 runtime as a base image
@@ -729,7 +728,7 @@ Dapr is an open source, [Cloud Native Computing Foundation (CNCF)](https://www.c
 | [Observability](https://learn.microsoft.com/en-us/azure/container-apps/observability)                                                         | Send tracing information to an Application Insights backend.                                                                               |
 | [Secrets](https://docs.dapr.io/developing-applications/building-blocks/secrets/secrets-overview/)                                             | Access secrets from your application code or reference secure values in your Dapr components.                                              |
 
-:information_source: The table covers stable Dapr APIs. To learn more about using alpha APIs and features, visit limitations.
+:information_source: The table covers stable Dapr APIs. To learn more about using alpha APIs and features, [visit limitations](https://learn.microsoft.com/en-us/azure/container-apps/dapr-overview?tabs=bicep1%2Cyaml#unsupported-dapr-capabilities).
 
 #### Dapr core concepts
 
