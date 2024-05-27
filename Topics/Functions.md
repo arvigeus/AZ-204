@@ -84,7 +84,8 @@ az functionapp plan list --resource-group $resourceGroup --query "[?sku.family==
 
 ### [function.json](https://github.com/Azure/azure-functions-host/wiki/function.json)
 
-Auto generated for compiled languages. or scripting languages, like `C# Script`, you must provide the config file yourself.
+Auto generated for compiled languages.  
+For scripting languages, like `C# Script`, you must provide the config file yourself.
 
 - For triggers, the direction is always `in`
 - Input and output bindings use `in` and `out`, or `inout` in some cases.
@@ -372,13 +373,22 @@ Identify which part of the system or user code generated the log.
 
 ## [Custom Handlers](https://learn.microsoft.com/en-us/azure/azure-functions/functions-custom-handlers)
 
-Essentially, custom handlers are lightweight web servers that interact with the Azure Functions host. They can be implemented in any language that supports HTTP primitives.
+Lightweight web servers that interact with the Azure Functions host. They can be implemented in any language that supports HTTP primitives.
 
 When an event occurs, the Azure Functions host forwards the request to the custom handler's web server, which executes the function and returns the output for further processing by the host.
 
 The custom handler web server needs to start within 60 seconds.
 
-In `host.json`, use the `customHandler` property to set the executable path and arguments (`customHandler.description.defaultExecutablePath`). In `local.settings.json`, set `FUNCTIONS_WORKER_RUNTIME` to "custom" for local development.
+### Application structure
+
+- `host.json` - use the `customHandler.description.defaultExecutablePath` property to set the executable path and arguments
+- `local.settings.json` - set `FUNCTIONS_WORKER_RUNTIME` to "custom" for local development
+- A command / script / executable, which runs a web server
+- A `function.json` file for each function (**inside a folder that matches the function name**). Example: `MyFunctionName/function.json`
+
+### HTTP-only function
+
+`customHandler.enableForwardingHttpRequest` lets your HTTP-triggered function directly handle the original HTTP request and response instead of Azure's custom payloads. This makes your handler act more like a traditional web server. It's handy for simpler setups with no extra bindings or outputs, but keep in mind Azure Functions isn't a full-fledged reverse proxy—some features like HTTP/2 and WebSockets aren't supported. Think of it as giving your handler raw access to the HTTP action without Azure's middleman interference.
 
 ## Triggers and Bindings full samples
 
