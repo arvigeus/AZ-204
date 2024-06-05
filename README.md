@@ -157,6 +157,7 @@ TLDR;
 - [Developing Solutions for Microsoft Azure (AZ-204) - Pluralsight](https://www.pluralsight.com/paths/developing-solutions-for-microsoft-azure-az-204)
 - [AZ-204 Developing Solutions for Microsoft Azure - Udemy](https://www.udemy.com/course/70532-azure/)
 - [Microsoft Certifications Knowledge Hub](https://github.com/mscerts/hub/blob/main/README.md)
+- [Mastering the AZ-204 Exam - A Comprehensive Guide to Azure Certification Preparation](https://programmingwithwolfgang.com/mastering-az-204-exam-comprehensive-guide-azure-certification-preparation)
 
 ## Emojis
 
