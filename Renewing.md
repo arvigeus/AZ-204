@@ -9,5 +9,6 @@
 - Renewal exams are free.
 - The renewal assessment typically consists of around 25 questions.
 - The renewal exam is designed to be completed within 45 minutes.
+- You need at least 60% to pass.
 
 **[Renewal for Microsoft Certified: Azure Developer Associate](https://learn.microsoft.com/en-us/credentials/certifications/azure-developer/renew/)**
