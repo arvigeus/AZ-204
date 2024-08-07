@@ -25,7 +25,7 @@ Question: Your company is developing an ASP.NET web application that requires a 
 
 - [x] In Memory Cache
 - [ ] Sql Server
-- [ ] CosmoDB
+- [ ] Cosmos DB
 - [ ] Cache for Redis at Standard Tier
 - [ ] Cache for Redis at Premium Tier
 
@@ -37,12 +37,12 @@ Question: Your company is developing an ASP.NET web application that requires st
 
 - [ ] In Memory Cache
 - [x] Sql Server
-- [ ] CosmoDB
+- [ ] Cosmos DB
 - [ ] Cache for Redis at Standard Tier
 - [ ] Cache for Redis at Premium Tier
 
 Answer: Sql Server allows for scalability, persistent storage, and can be configured for concurrent access, making it suitable for performance-sensitive applications that use relational databases.  
-NOTE: CosmoDB is theoretically _possible_, but it's more complex to set up, more expensive to run.
+NOTE: Cosmos DB is theoretically _possible_, but it's more complex to set up, more expensive to run.
 
 ---
 
@@ -50,7 +50,7 @@ Question: Your company is developing an ASP.NET web application that requires a 
 
 - [ ] In Memory Cache
 - [ ] Sql Server
-- [ ] CosmoDB
+- [ ] Cosmos DB
 - [x] Cache for Redis at Standard Tier
 - [ ] Cache for Redis at Premium Tier
 
@@ -62,7 +62,7 @@ Question: Your company is developing an ASP.NET web application that requires a 
 
 - [ ] In Memory Cache
 - [ ] Sql Server
-- [ ] CosmoDB
+- [ ] Cosmos DB
 - [ ] Cache for Redis at Standard Tier
 - [x] Cache for Redis at Premium Tier
 

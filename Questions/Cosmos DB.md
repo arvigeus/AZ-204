@@ -1,4 +1,4 @@
-# CosmoDB
+# Cosmos DB
 
 Question: Which of the following consistency levels offers the greatest throughput?
 
@@ -367,7 +367,7 @@ Question: Given the following data:
 
 What result this query will produce:
 
-```cosmodb
+```Cosmos DB
 SELECT {
   "name": p.name,
   "sku": p.sku,
@@ -460,7 +460,7 @@ Answer: Cosmos DB internally stores data in a JSON-like format, regardless of th
 
 Question: When executing a query in Azure Cosmos DB utilizing the Table API as follows:
 
-```cosmodb
+```Cosmos DB
 SELECT
 FROM Invoices i
 WHERE i.id =1
@@ -799,7 +799,7 @@ Answer: You can have up to one free tier Azure Cosmos DB account per Azure subsc
 
 ---
 
-Question: What operations can a stored procedure perform of document in CosmoDB?
+Question: What operations can a stored procedure perform of document in Cosmos DB?
 
 - [x] Create
 - [x] Read

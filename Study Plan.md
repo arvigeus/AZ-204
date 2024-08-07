@@ -13,7 +13,7 @@
 1. Develop for Azure storage
 
    - [Blob Storage](./Topics/Blob%20Storage.md)
-   - [CosmoDB](./Topics/CosmoDB.md)
+   - [Cosmos DB](./Topics/Cosmos%20DB.md)
 
 1. Implement Azure security
 
