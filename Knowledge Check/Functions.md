@@ -175,19 +175,19 @@ md: Define and describe Blob binding: in, out, inout?
 
 ---
 
-md: Define and describe CosmoDB trigger?
+md: Define and describe Cosmos DB trigger?
 
 <!-- [CosmosDBTrigger(databaseName, collectionName, ConnectionStringSetting, LeaseCollectionName)] IReadOnlyList<Document> input; ConnectionStringSetting is name of env var -->
 
 ---
 
-md: Define and describe CosmoDB input binding?
+md: Define and describe Cosmos DB input binding?
 
 <!-- [CosmosDB(databaseName, collectionName, Id, PartitionKey)] dynamic document; -->
 
 ---
 
-md: Define and describe CosmoDB output binding?
+md: Define and describe Cosmos DB output binding?
 
 <!-- [CosmosDB(databaseName, collectionName, Id, CreateIfNotExists)] out dynamic document; -->
 
