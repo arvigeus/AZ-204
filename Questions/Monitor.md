@@ -131,9 +131,9 @@ Answer: Create a diagnostic setting to send the activity log to a Log Analytics 
 
 Question: Which diagnostic setting destination in Azure allows you to perform complex analysis with Kusto queries?
 
-- [x] Azure Event Hubs
+- [ ] Azure Event Hubs
 - [ ] Azure Storage Account
-- [ ] Log Analytics Workspace
+- [x] Log Analytics Workspace
 - [ ] Azure Virtual Machine
 
 Answer: Log Analytics Workspace enables the correlation of activity log data with other monitoring data, complex analysis, and deep insights on activity log entries.
