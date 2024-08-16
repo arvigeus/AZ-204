@@ -344,8 +344,8 @@ Answer: Access control (IAM) is the specific section within the Azure Portal whe
 Question: A new web application has been deployed in a specific Azure subscription. The DevOps team will be responsible for monitoring the application and executing future deployments. You need to set up Role-Based Access Control (RBAC) for the DevOps team to allow them to view and manage deployment pipelines within the subscription. What RBAC role should you assign to the DevOps team?
 
 - [ ] `*/write`
-- [x] Microsoft.Pipelines/write
-- [ ] Microsoft.DevOps//write
+- [ ] Microsoft.Pipelines/write
+- [x] Microsoft.DevOps//write
 - [ ] Microsoft.Management/write
 - [ ] Microsoft.Management/read
 
