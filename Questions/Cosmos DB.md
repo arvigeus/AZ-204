@@ -792,7 +792,7 @@ Question: How many free tier Azure Cosmos DB accounts can you have per Azure sub
 
 - [ ] Two
 - [ ] Unlimited
-- [ ] One
+- [x] One
 - [ ] None
 
 Answer: You can have up to one free tier Azure Cosmos DB account per Azure subscription.
