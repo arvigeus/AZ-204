@@ -43,8 +43,8 @@ Question: When would you use the App-assigned address feature?
 - [ ] To access an on-premises database server.
 - [x] To support IP-based SSL for your app.
 - [ ] To access resources in your Azure virtual network.
-- [x] To restrict access to your app from a set of well-defined IP addresses.
-- [ ] To support a dedicated inbound address for your app.
+- [ ] To restrict access to your app from a set of well-defined IP addresses.
+- [x] To support a dedicated inbound address for your app.
 
 Answer: To support IP-based SSL for your app, To support a dedicated inbound address for your app.
 
