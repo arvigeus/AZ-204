@@ -103,7 +103,7 @@ var plaintext = "<To be encrypted>";
 var encryptionAlgorithm = EncryptionAlgorithm.RsaOaep;
 
 var client = new KeyClient(vaultUri: new Uri(vaultUrl), credential: credential);
-KeyVaultSecret secret = await client.GetSecretAsync(secretKeyName;
+KeyVaultSecret secret = await client.GetSecretAsync(secretKeyName);
 string secretValue = secret.Value;
 
 var keyResponse = await client.GetKeyAsync(secretKeyName);
