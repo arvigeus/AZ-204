@@ -10,6 +10,30 @@ Answer: Azure Logic Apps enables serverless workloads and uses a designer-first 
 
 ---
 
+Question: What is a key benefit of the Flex Consumption plan in Azure Functions hosting options?
+
+- [ ] It provides fully predictable billing and manual scale instances.
+- [x] It offers high scalability with compute choices, virtual networking, and pay-as-you-go billing.
+- [ ] It allows for the packaging of custom libraries with function code.
+
+Answer: The Flex Consumption plan provides high scalability, compute choices, virtual networking, and pay-as-you-go billing.  
+Fully predictable billing and manual scale instances is a feature of the Dedicated plan.  
+Packaging of custom libraries with function code is a feature of Container Apps, not the Flex Consumption plan.
+
+---
+
+Question: What is the maximum number of instances for a function app on a Consumption plan in Windows?
+
+- [ ] 300
+- [ ] 100
+- [x] 200
+
+Answer: The maximum number of instances for a function app on a Consumption plan in Windows is 200.  
+300 is the maximum number of instances for Container Apps.  
+100 is the maximum number of instances for a function app on a Consumption plan in Linux.
+
+---
+
 Question: You need your Azure Function to use different connection strings when working locally, and when working on production. How to achieve that?
 
 - [ ] Store connection strings in Key Vault and read them in your function

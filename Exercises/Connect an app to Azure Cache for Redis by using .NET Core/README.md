@@ -10,7 +10,7 @@ In this exercise you learn how to:
 - An **Azure account** with an active subscription. If you don't already have one, you can sign up for a free trial at <https://azure.com/free>.
 - [Visual Studio Code](https://code.visualstudio.com/) on one of the [supported platforms](https://code.visualstudio.com/docs/supporting/requirements#_platforms).
 - The [C# extension](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp) for Visual Studio Code.
-- [.NET 6](https://dotnet.microsoft.com/download/dotnet/6.0) is the target framework for this exercise.
+- [.NET 8](https://dotnet.microsoft.com/download/dotnet/8.0) is the target framework for this exercise.
 
 ## Create Azure resources
 
@@ -22,7 +22,7 @@ In this exercise you learn how to:
    az group create --name az204-redis-rg --location <myLocation>
    ```
 
-1. Create an Azure Cache for Redis instance by using the `az redis create` command. The instance name needs to be unique and the script below will attempt to generate one for you, replace `<myLocation>` with the region you used in the previous step. This command takes a few minutes to complete.
+1. Create an Azure Cache for Redis instance by using the `az redis create` command. The instance name needs to be unique and the following script attempts to generate one for you, replace `<myLocation>` with the region you used in the previous step. This command takes a few minutes to complete.
 
    ```sh
    redisName=az204redis$RANDOM
@@ -34,11 +34,11 @@ In this exercise you learn how to:
 
 1. In the Azure portal, navigate to the new Redis Cache you created.
 
-1. Select **Access keys** in the **Settings** section of the Navigation Pane and leave the portal open. Copy the P**rimary connection string (StackExchange.Redis)** value to use in the app later.
+1. Select **Access keys** in the **Settings**/**Authentication** section of the Navigation Pane and leave the portal open. Copy the **Primary connection string (StackExchange.Redis)** value to use in the app later.
 
 ## Create the console application
 
-1. Create a console app by running the command below in the Visual Studio Code terminal.
+1. Create a console app by running the following command in the Visual Studio Code terminal.
 
    ```sh
    dotnet new console -o Rediscache
@@ -74,7 +74,7 @@ In this exercise you learn how to:
 
        // Snippet below executes a PING to test the server connection
        var result = await db.ExecuteAsync("ping");
-       Console.WriteLine($"PING = {result.Type} : {result}");
+       Console.WriteLine($"PING = {result.Resp2Type} : {result}");
 
        // Call StringSetAsync on the IDatabase object to set the key "test:key" to the value "100"
        bool setValue = await db.StringSetAsync("test:key", "100");
@@ -86,14 +86,14 @@ In this exercise you learn how to:
    }
    ```
 
-1. In the Visual Studio Code terminal, run the commands below to build the app to check for errors, and then run the app using the commands below
+1. In the Visual Studio Code terminal, run the following commands to build and run the app.
 
    ```sh
    dotnet build
    dotnet run
    ```
 
-1. The output should be similar to the following:
+1. The output should be similar to the following example:
 
    ```txt
    PING = SimpleString : PONG

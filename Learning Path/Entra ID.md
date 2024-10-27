@@ -40,21 +40,25 @@ If you register an application in the portal, an application object (the globall
 
 #### Application object
 
-A Microsoft Entra application is defined by its one and only application object. The application object resides in the Microsoft Entra tenant where the application was registered (known as the application's "home" tenant). An application object is used as a template or blueprint to create one or more service principal objects. A service principal is created in every tenant where the application is used. Similar to a class in object-oriented programming, the application object has some static properties that are applied to all the created service principals (or application instances).
+A Microsoft Entra application is scoped to its one and only application object. The application object resides in the Microsoft Entra tenant where the application was registered (known as the application's "home" tenant). An application object is used as a template or blueprint to create one or more service principal objects. A service principal is created in every tenant where the application is used. Similar to a class in object-oriented programming, the application object has some static properties that are applied to all the created service principals (or application instances).
 
-The application object describes three aspects of an application: how the service can issue tokens in order to access the application, resources that the application might need to access, and the actions that the application can take.
+The application object describes three aspects of an application:
+
+- How the service can issue tokens in order to access the application.
+- Resources that the application might need to access.
+- The actions that the application can take.
 
 The Microsoft Graph [Application entity](https://learn.microsoft.com/en-us/graph/api/resources/application) defines the schema for an application object's properties.
 
 #### Service principal object
 
-To access resources secured by a Microsoft Entra tenant, the entity that requires access must be represented by a security principal. This is true for both users (user principal) and applications (service principal).
+To access resources secured by a Microsoft Entra tenant, the entity that is requesting access must be represented by a security principal. This is true for both users (user principal) and applications (service principal).
 
 The security principal defines the access policy and permissions for the user/application in the Microsoft Entra tenant. This enables core features such as authentication of the user/application during sign-in, and authorization during resource access.
 
 There are three types of service principal:
 
-- **Application** - This type of service principal is the local representation, or application instance, of a global application object in a single tenant or directory. A service principal is created in each tenant where the application is used and references the globally unique app object. The service principal object defines what the app can actually do in the specific tenant, who can access the app, and what resources the app can access.
+- **Application** - This type of service principal is the local representation, or application instance, of a global application object in a single tenant or directory. A service principal is created in each tenant where the application is used, and references the globally unique app object. The service principal object defines what the app can actually do in the specific tenant, who can access the app, and what resources the app can access.
 - **Managed identity** - This type of service principal is used to represent a [managed identity](https://learn.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview). Managed identities provide an identity for applications to use when connecting to resources that support Microsoft Entra authentication. When a managed identity is enabled, a service principal representing that managed identity is created in your tenant. Service principals representing managed identities can be granted access and permissions, but can't be updated or modified directly.
 - **Legacy** - This type of service principal represents a legacy app, which is an app created before app registrations were introduced or an app created through legacy experiences. A legacy service principal can have:
   - credentials
@@ -69,9 +73,9 @@ The application object is the _global_ representation of your application for us
 An application object has:
 
 - A one to one relationship with the software application, and
-- A one to many relationship with its corresponding service principal object(s).
+- A one to many relationships with its corresponding service principal objects.
 
-A service principal must be created in each tenant where the application is used to enable it to establish an identity for sign-in and/or access to resources being secured by the tenant. A single-tenant application has only one service principal (in its home tenant), created and consented for use during application registration. A multitenant application also has a service principal created in each tenant where a user from that tenant consented to its use.
+A service principal must be created in each tenant where the application is used to establish an identity for sign-in and/or access to resources being secured by the tenant. A single-tenant application has only one service principal (in its home tenant), created and consented for use during application registration. A multitenant application also has a service principal created in each tenant where a user from that tenant consented to its use.
 
 ### Discover permissions and consent
 
@@ -85,7 +89,7 @@ Here are some examples of Microsoft web-hosted resources:
 - Microsoft 365 Mail API: <https://outlook.office.com>
 - Azure Key Vault: <https://vault.azure.net>
 
-The same is true for any third-party resources that have integrated with the Microsoft identity platform. Any of these resources also can define a set of permissions that can be used to divide the functionality of that resource into smaller chunks. When a resource's functionality is chunked into small permission sets, third-party apps can be built to request only the permissions that they need to perform their function. Users and administrators can know what data the app can access.
+The same is true for any third-party resources that are integrated with the Microsoft identity platform. Any of these resources also can define a set of permissions that can be used to divide the functionality of that resource into smaller chunks. When a resource's functionality is chunked into small permission sets, third-party apps can be built to request only the permissions that they need to perform their function. Users and administrators can know what data the app can access.
 
 In OAuth 2.0, these types of permission sets are called _scopes_. They're also often referred to as _permissions_. In the Microsoft identity platform, a permission is represented as a string value. An app requests the permissions it needs by specifying the permission in the `scope` query parameter. Identity platform supports several well-defined [OpenID Connect scopes](https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes) and resource-based permissions (each permission is indicated by appending the permission value to the resource's identifier or application ID URI). For example, the permission string `https://graph.microsoft.com/Calendars.Read` is used to request permission to read users calendars in Microsoft Graph.
 
@@ -95,13 +99,14 @@ An app most commonly requests these permissions by specifying the scopes in requ
 
 #### Permission types
 
-The Microsoft identity platform supports two types of permissions: _delegated permissions_ and _app-only access_.
+The Microsoft identity platform supports two types of permissions: _delegated access_ and _app-only access_.
 
--**Delegated permissions** are used by apps that have a signed-in user present. For these apps, either the user or an administrator consents to the permissions that the app requests. The app is delegated with the permission to act as a signed-in user when it makes calls to the target resource. -**App-only access permissions** are used by apps that run without a signed-in user present, for example, apps that run as background services or daemons. Only an administrator can consent to app-only access permissions.
+- **Delegated access** are used by apps that have a signed-in user present. For these apps, either the user or an administrator consents to the permissions that the app requests. The app is delegated with the permission to act as a signed-in user when it makes calls to the target resource.
+- **App-only access permissions** are used by apps that run without a signed-in user present, for example, apps that run as background services or daemons. Only an administrator can consent to app-only access permissions.
 
 #### Consent types
 
-Applications in Microsoft identity platform rely on consent in order to gain access to necessary resources or APIs. There are many kinds of consent that your app may need to know about in order to be successful. If you're defining permissions, you'll also need to understand how your users gain access to your app or API.
+Applications in Microsoft identity platform rely on consent in order to gain access to necessary resources or APIs. There are many kinds of consent that your app might need to know about in order to be successful. If you're defining permissions, you'll also need to understand how your users gain access to your app or API.
 
 There are three consent types: _static user consent_, _incremental and dynamic user consent_, and _admin consent_.
 
@@ -182,7 +187,7 @@ The Microsoft Authentication Library (MSAL) enables developers to acquire tokens
 
 ### Explore the Microsoft Authentication Library
 
-The Microsoft Authentication Library (MSAL) can be used to provide secure access to Microsoft Graph, other Microsoft APIs, third-party web APIs, or your own web API. MSAL supports many different application architectures and platforms including .NET, JavaScript, Java, Python, Android, and iOS.
+The Microsoft Authentication Library (MSAL) enables developers to acquire security tokens from the Microsoft identity platform to authenticate users and access secured web APIs. It can be used to provide secure access to Microsoft Graph, other Microsoft APIs, third-party web APIs, or your own web API MSAL supports many different application architectures and platforms including .NET, JavaScript, Java, Python, Android, and iOS.
 
 MSAL gives you many ways to get tokens, with a consistent API for many platforms. Using MSAL provides the following benefits:
 
@@ -197,40 +202,41 @@ MSAL gives you many ways to get tokens, with a consistent API for many platforms
 
 Using MSAL, a token can be acquired from many application types: web applications, web APIs, single-page apps (JavaScript), mobile and native applications, and daemons and server-side applications. MSAL currently supports the platforms and frameworks listed in the following table.
 
-| Library                | Supported platforms and frameworks                                                  |
-| ---------------------- | ----------------------------------------------------------------------------------- |
-| MSAL for Android       | Android                                                                             |
-| MSAL Angular           | Single-page apps with Angular and Angular.js frameworks                             |
-| MSAL for iOS and macOS | iOS and macOS                                                                       |
-| MSAL Go (Preview)      | Windows, macOS, Linux                                                               |
-| MSAL Java              | Windows, macOS, Linux                                                               |
-| MSAL.js                | JavaScript/TypeScript frameworks such as Vue.js, Ember.js, or Durandal.js           |
-| MSAL.NET               | .NET Framework, .NET Core, Xamarin Android, Xamarin iOS, Universal Windows Platform |
-| MSAL Node              | Web apps with Express, desktop apps with Electron, Cross-platform console apps      |
-| MSAL Python            | Windows, macOS, Linux                                                               |
-| MSAL React             | Single-page apps with React and React-based libraries (Next.js, Gatsby.js)          |
+| Library                | Supported platforms and frameworks                                                               |
+| ---------------------- | ------------------------------------------------------------------------------------------------ |
+| MSAL for Android       | Android                                                                                          |
+| MSAL Angular           | Single-page apps with Angular and Angular.js frameworks                                          |
+| MSAL for iOS and macOS | iOS and macOS                                                                                    |
+| MSAL Go (Preview)      | Windows, macOS, Linux                                                                            |
+| MSAL Java              | Windows, macOS, Linux                                                                            |
+| MSAL.js                | JavaScript/TypeScript frameworks such as Vue.js, Ember.js, or Durandal.js                        |
+| MSAL.NET               | .NET Framework, .NET, .NET MAUI, WINUI, Xamarin Android, Xamarin iOS, Universal Windows Platform |
+| MSAL Node              | Web apps with Express, desktop apps with Electron, Cross-platform console apps                   |
+| MSAL Python            | Windows, macOS, Linux                                                                            |
+| MSAL React             | Single-page apps with React and React-based libraries (Next.js, Gatsby.js)                       |
 
 #### Authentication flows
 
 The following table shows some of the different authentication flows provided by Microsoft Authentication Library (MSAL). These flows can be used in various application scenarios.
 
-| Flow               | Description                                                                   |
-| ------------------ | ----------------------------------------------------------------------------- |
-| Authorization code | Native and web apps securely obtain tokens in the name of the user            |
-| Client credentials | Service applications run without user interaction                             |
-| On-behalf-of       | The application calls a service/web API, which in turn calls Microsoft Graph  |
-| Implicit           | Used in browser-based applications                                            |
-| Device code        | Enables sign-in to a device by using another device that has a browser        |
-| Integrated Windows | Windows computers silently acquire an access token when they're domain joined |
-| Interactive        | Mobile and desktop applications call Microsoft Graph in the name of a user    |
-| Username/password  | The application signs in a user by using their username and password          |
+| Authentication flow                     | Enables                                                                                                                                                                                          | Supported application types               |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------- |
+| Authorization code                      | User sign-in and access to web APIs on behalf of the user.                                                                                                                                       | Desktop, Mobile, SPA (requires PKCE), Web |
+| Client credentials                      | Access to web APIs by using the identity of the application itself. Typically used for server-to-server communication and automated scripts requiring no user interaction.                       | Daemon                                    |
+| Device code                             | User sign-in and access to web APIs on behalf of the user on input-constrained devices like smart TVs and IoT devices. Also used by command line interface (CLI) applications.                   | Desktop, Mobile                           |
+| Implicit grant                          | User sign-in and access to web APIs on behalf of the user. The implicit grant flow is no longer recommended - use authorization code with PKCE instead.                                          | SPA, Web                                  |
+| On-behalf-of (OBO)                      | Access from an "upstream" web API to a "downstream" web API on behalf of the user. The user's identity and delegated permissions are passed through to the downstream API from the upstream API. | Web API                                   |
+| Username/password (ROPC)                | Allows an application to sign in the user by directly handling their password. The ROPC flow is NOT recommended.                                                                                 | Desktop, Mobile                           |
+| Integrated Windows authentication (IWA) | Allows applications on domain or Microsoft Entra joined computers to acquire a token silently (without any UI interaction from the user).                                                        | Desktop, Mobile                           |
 
-##### Public client, and confidential client applications
+##### Public client and confidential client applications
 
-Security tokens can be acquired by multiple types of applications. These applications tend to be separated into the following two categories. Each is used with different libraries and objects.
+The Microsoft Authentication Library (MSAL) defines two types of clients; public clients and confidential clients. A client is a software entity that has a unique identifier assigned by an identity provider. The client types differ based their ability to authenticate securely with the authorization server and to hold sensitive, identity proving information so that it can't be accessed or known to a user within the scope of its access.
 
-- **Public client applications**: Are apps that run on devices or desktop computers or in a web browser. They're not trusted to safely keep application secrets, so they only access web APIs on behalf of the user. (They support only public client flows.) Public clients can't hold configuration-time secrets, so they don't have client secrets.
-- **Confidential client applications**: Are apps that run on servers (web apps, web API apps, or even service/daemon apps). They're considered difficult to access, and for that reason capable of keeping an application secret. Confidential clients can hold configuration-time secrets. Each instance of the client has a distinct configuration (including client ID and client secret).
+When examining the public or confidential nature of a given client, we're evaluating the ability of that client to prove its identity to the authorization server. This is important because the authorization server must be able to trust the identity of the client in order to issue access tokens.
+
+- **Public client applications** run on devices, such as desktop, browserless APIs, mobile or client-side browser apps. They can't be trusted to safely keep application secrets, so they can only access web APIs on behalf of the user. Anytime the source, or compiled bytecode of a given app, is transmitted anywhere it can be read, disassembled, or otherwise inspected by untrusted parties. As they also only support public client flows and can't hold configuration-time secrets, they can't have client secrets.
+- **Confidential client applications** run on servers, such as web apps, web API apps, or service/daemon apps. They're considered difficult to access by users or attackers, and therefore can adequately hold configuration-time secrets to assert proof of its identity. The client ID is exposed through the web browser, but the secret is passed only in the back channel and never directly exposed.
 
 ### Initialize client applications
 
@@ -238,11 +244,11 @@ With MSAL.NET 3.x, the recommended way to instantiate an application is by using
 
 Before initializing an application, you first need to register it so that your app can be integrated with the Microsoft identity platform. After registration, you may need the following information (which can be found in the Azure portal):
 
-- The client ID (a string representing a GUID)
-- The identity provider URL (named the instance) and the sign-in audience for your application. These two parameters are collectively known as the authority.
-- The tenant ID if you're writing a line of business application solely for your organization (also named single-tenant application).
-- The application secret (client secret string) or certificate (of type X509Certificate2) if it's a confidential client app.
-- For web apps, and sometimes for public client apps (in particular when your app needs to use a broker), you have to also set the `redirectUri` where the identity provider connects back to your application with the security tokens.
+- **Application (client) ID** - This is a string representing a GUID.
+- **Directory (tenant) ID** - Provides identity and access management (IAM) capabilities to applications and resources used by your organization. It can specify if you're writing a line of business application solely for your organization (also named single-tenant application).
+- The identity provider URL (named the **instance**) and the sign-in audience for your application. These two parameters are collectively known as the authority.
+- **Client credentials** - which can take the form of an application secret (client secret string) or certificate (of type `X509Certificate2`) if it's a confidential client app.
+- For web apps, and sometimes for public client apps (in particular when your app needs to use a broker), you need to set the **Redirect URI** where the identity provider will contact back your application with the security tokens.
 
 #### Initializing public and confidential client applications from code
 
@@ -269,15 +275,17 @@ In the code snippets using application builders, `.With` methods can be applied 
 - `.WithAuthority` modifier: The `.WithAuthority` modifier sets the application default authority to a Microsoft Entra authority, with the possibility of choosing the Azure Cloud, the audience, the tenant (tenant ID or domain name), or providing directly the authority URI.
 
   ```csharp
-  var clientApp = PublicClientApplicationBuilder.Create(client_id)
-      .WithAuthority(AzureCloudInstance.AzurePublic, tenant_id)
+  IPublicClientApplication app;
+  app = PublicClientApplicationBuilder.Create(clientId)
+      .WithAuthority(AzureCloudInstance.AzurePublic, tenantId)
       .Build();
   ```
 
 - `.WithRedirectUri` modifier: The `.WithRedirectUri` modifier overrides the default redirect URI.
 
   ```csharp
-  var clientApp = PublicClientApplicationBuilder.Create(client_id)
+  IPublicClientApplication app;
+  app = PublicClientApplicationBuilder.Create(client_id)
       .WithAuthority(AzureCloudInstance.AzurePublic, tenant_id)
       .WithRedirectUri("http://localhost")
       .Build();
@@ -300,9 +308,6 @@ The table below lists some of the modifiers you can set on a public, or confiden
 
 #### Modifiers specific to confidential client applications
 
-The modifiers you can set on a confidential client application builder are:
+The modifiers specific to a confidential client application builder can be found in the `ConfidentialClientApplicationBuilder` class. The different methods can be found in the [Azure SDK for .NET documentation](https://learn.microsoft.com/en-us/dotnet/api/microsoft.identity.client.confidentialclientapplicationbuilder).
 
-| Modifier                                       | Description                                                                                |
-| ---------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| .WithCertificate(X509Certificate2 certificate) | Sets the certificate identifying the application with Microsoft Entra ID.                  |
-| .WithClientSecret(string clientSecret)         | Sets the client secret (app password) identifying the application with Microsoft Entra ID. |
+Modifiers such as `.WithCertificate(X509Certificate2 certificate)` and `.WithClientSecret(string clientSecret)` are mutually exclusive. If you provide both, MSAL throws a meaningful exception.

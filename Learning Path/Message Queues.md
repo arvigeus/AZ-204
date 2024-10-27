@@ -23,7 +23,8 @@ As a solution architect/developer, **you should consider using Service Bus queue
 - Your solution needs to support automatic duplicate detection.
 - You want your application to process messages as parallel long-running streams (messages are associated with a stream using the **session ID** property on the message). In this model, each node in the consuming application competes for streams, as opposed to messages. When a stream is given to a consuming node, the node can examine the state of the application stream state using transactions.
 - Your solution requires transactional behavior and atomicity when sending or receiving multiple messages from a queue.
-- Your application handles messages that can exceed 64 KB but won't likely approach the 256-KB limit.
+- Your application handles messages that can exceed 64 KB but won't likely approach the 256 KB or 1-MB limit, depending on the chosen service tier (although Service Bus queues can handle messages up to 100 MB).
+- You deal with a requirement to provide a role-based access model to the queues, and different rights/permissions for senders and receivers.
 
 #### Consider using Storage queues
 

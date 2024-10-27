@@ -9,7 +9,7 @@ Before you begin, make sure you have the following requirements in place:
 - An **Azure account** with an active subscription. If you don't already have one, you can sign up for a free trial at <https://azure.com/free>.
 - The [Azure Functions Core Tools](https://github.com/Azure/azure-functions-core-tools#installing) version 4.x.
 - [Visual Studio Code](https://code.visualstudio.com/) on one of the [supported platforms](https://code.visualstudio.com/docs/supporting/requirements#_platforms).
-- [.NET 6](https://dotnet.microsoft.com/download/dotnet/6.0) is the target framework for the steps below.
+- [.NET 8](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) is the target framework.
 - The [C# extension](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp) for Visual Studio Code.
 - The [Azure Functions extension](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurefunctions) for Visual Studio Code.
 
@@ -17,26 +17,24 @@ Before you begin, make sure you have the following requirements in place:
 
 In this section, you use Visual Studio Code to create a local Azure Functions project in C#. Later in this exercise, you publish your function code to Azure.
 
-1. Choose the Azure icon in the Activity bar, then in the **Workspace** area, select **Add**.... Finally, select **Create Function**....
-
-   ![Choosing to create a new project.](https://learn.microsoft.com/en-us/training/wwl-azure/develop-azure-functions/media/create-function.png)
-
-   :information_source: A pop-up message will likely appear prompting you to create a new project, if it does select **Create new project**.
-
-2. Choose a directory location for your project workspace and choose **Select**.
+1. In Visual Studio Code, press F1 to open the command palette and search for and run the command `Azure Functions: Create New Project...`.
+1. Select the directory location for your project workspace and choose **Select**. You should either create a new folder or choose an empty folder for the project workspace. Don't choose a project folder that is already part of a workspace.
 
    :information_source: Be sure to select a project folder that is outside of an existing workspace.
 
-3. Provide the following information at the prompts:
+1. Provide the following information at the prompts:
+
    - **Select a language**: Choose `C#`.
-   - **Select a .NET runtime**: Choose `.NET 6`
-   - **Select a template for your project's first function**: Choose `HTTP trigger`.
+   - **Select a .NET runtime**: Choose `.NET 8.0 Isolated (LTS)`
+   - **Select a template for your project's first function**: Choose `HTTP trigger`.¹
    - **Provide a function name**: Type `HttpExample`.
    - **Provide a namespace**: Type `My.Function`.
    - **Authorization level**: Choose `Anonymous`, which enables anyone to call your function endpoint.
-   - **Select how you would like to open your project**: Choose `Add to workspace`.
+   - **Select how you would like to open your project**: Select `Open in current window`.
 
-Using this information, Visual Studio Code generates an Azure Functions project with an HTTP trigger.
+   ¹ Depending on your VS Code settings, you might need to use the `Change template filter` option to see the full list of templates.
+
+1. Visual Studio Code uses the provided information and generates an Azure Functions project with an HTTP trigger. You can view the local project files in the Explorer.
 
 ## Run the function locally
 
@@ -56,11 +54,11 @@ Visual Studio Code integrates with Azure Functions Core tools to let you run thi
 
 1. Press **Shift + F5** to stop Core Tools and disconnect the debugger.
 
-After you've verified that the function runs correctly on your local computer, it's time to use Visual Studio Code to publish the project directly to Azure.
+After verifying that the function runs correctly on your local computer, it's time to use Visual Studio Code to publish the project directly to Azure.
 
 ## Sign in to Azure
 
-Before you can publish your app, you must sign in to Azure. If you're already signed in, go to the next section.
+Before you can publish your app, you must sign in to Azure. If you already signed in, go to the next section.
 
 1. If you aren't already signed in, choose the Azure icon in the Activity bar, then in the **Azure: Functions** area, choose **Sign in to Azure**....
 
@@ -68,7 +66,7 @@ Before you can publish your app, you must sign in to Azure. If you're already si
 
 1. When prompted in the browser, choose your Azure account and sign in using your Azure account credentials.
 
-1. After you've successfully signed in, you can close the new browser window. The subscriptions that belong to your Azure account are displayed in the Side bar.
+1. After successfully signing in, you can close the new browser window. The subscriptions that belong to your Azure account are displayed in the Side bar.
 
 ## Create resources in Azure
 
@@ -82,7 +80,7 @@ In this section, you create the Azure resources you need to deploy your local fu
 
    - Select **Create Function App in Azure**...
    - **Enter a globally unique name for the function app**: Type a name that is valid in a URL path. The name you type is validated to make sure that it's unique in Azure Functions.
-   - **Select a runtime stack**: Use the same choice you made in the _Create your local project_ section above.
+   - **Select a runtime stack**: Use the same choice you made in the _Create your local project_ section earlier in this exercise.
    - **Select a location for new resources**: For better performance, choose a region near you.
    - **Select subscription**: Choose the subscription to use. _You won't see this if you only have one subscription._
 
@@ -95,17 +93,15 @@ In this section, you create the Azure resources you need to deploy your local fu
    - A function app, which provides the environment for executing your function code. A function app lets you group functions as a logical unit for easier management, deployment, and sharing of resources within the same hosting plan.
    - An Application Insights instance connected to the function app, which tracks usage of your serverless function.
 
-## Deploy the code
+## Deploy the project to Azure
 
-1. In the **WORKSPACE** section of the Azure bar select the **Deploy**... button, and then select **Deploy to Function App**....
+:bangbang: Publishing to an existing function overwrites any previous deployments.
 
-   ![Image showing location of the **Deploy...** button.](https://learn.microsoft.com/en-us/training/wwl-azure/develop-azure-functions/media/deploy-function-app.png)
+1. In the command palette, search for and run the command `Azure Functions: Deploy to Function App...`.
+1. Select the function app you created. When prompted about overwriting previous deployments, select **Deploy** to deploy your function code to the new function app resource.
+1. After deployment completes, select **View Output** to view the creation and deployment results, including the Azure resources that you created. If you miss the notification, select the bell icon in the lower right corner to see it again.
 
-1. When prompted to **Select a resource**, choose the function app you created in the previous section.
-
-1. Confirm that you want to deploy your function by selecting **Deploy** on the confirmation prompt.
-
-   :bangbang: Publishing to an existing function overwrites any previous deployments.
+   ![Screenshot of the View Output window.](https://learn.microsoft.com/en-us/training/wwl-azure/develop-azure-functions/media/function-create-notifications.png)
 
 ## Run the function in Azure
 
@@ -116,5 +112,3 @@ In this section, you create the Azure resources you need to deploy your local fu
 1. In **Enter request body** you see the request message body value of `{ "name": "Azure" }`. Press Enter to send this request message to your function.
 
 1. When the function executes in Azure and returns a response, a notification is raised in Visual Studio Code.
-
-   ![Executed function notification](https://learn.microsoft.com/en-us/training/wwl-azure/develop-azure-functions/media/executed-function-notification.png)

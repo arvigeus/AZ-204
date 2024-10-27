@@ -1,6 +1,6 @@
 # Create resources by using the Microsoft .NET SDK v3
 
-In this exercise you create a console app to perform the following operations in Azure Cosmos DB:
+In this exercise, you create a console app to perform the following operations in Azure Cosmos DB:
 
 - Connect to an Azure Cosmos DB account
 - Create a database
@@ -10,7 +10,7 @@ In this exercise you create a console app to perform the following operations in
 
 - An Azure account with an active subscription. If you don't already have one, you can sign up for a free trial at <https://azure.com/free>.
 - [Visual Studio Code](https://code.visualstudio.com/) on one of the [supported platforms](https://code.visualstudio.com/docs/supporting/requirements#_platforms).
-- [.NET 6](https://dotnet.microsoft.com/download/dotnet/6.0) is the target framework for the exercise.
+- [.NET 8](https://dotnet.microsoft.com/download/dotnet/8.0) is the target framework for the exercise.
 - The [C# extension](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp) for Visual Studio Code.
 
 ## Setting up
@@ -41,9 +41,9 @@ Perform the following actions to prepare Azure, and your local environment, for 
    az cosmosdb create --name <myCosmosDBacct> --resource-group az204-cosmos-rg
    ```
 
-   Record the `documentEndpoint` shown in the JSON response, it's used later in the exercise.
+   Record the `documentEndpoint` shown in the JSON response for use later in the exercise.
 
-1. Retrieve the primary key for the account by using the following command. Record the `primaryMasterKey` from the command results it will be used in the code.
+1. Retrieve the primary key for the account by using the following command. Record the `primaryMasterKey` from the command results for use in the code.
 
    ```sh
    # Retrieve the primary key
@@ -192,7 +192,7 @@ private async Task CreateContainerAsync()
 
 ## Run the application
 
-1. Save your work and, in a terminal in Visual Studio Code, run the `dotnet build` command to check for any errors. If the build is successful run the dotnet run command. The console displays the following messages.
+1. Save your work and, in a terminal in Visual Studio Code, check for any errors by running the `dotnet build` command. Run the `dotnet run` command if the build is successful. The console displays the following messages.
 
    ```txt
    Beginning operations...

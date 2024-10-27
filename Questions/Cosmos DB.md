@@ -44,6 +44,36 @@ User-defined functions run on existing data.
 
 ---
 
+Question: What is the purpose of the context object in a stored procedure in Azure Cosmos DB?
+
+- [ ] It provides access to the database schema and metadata.
+- [ ] It allows for the creation of new collections within the database.
+- [x] It provides access to all operations that can be performed in Azure Cosmos DB, and access to the request and response objects.
+
+Answer: The context object in a stored procedure provides access to all operations that can be performed in Azure Cosmos DB, and access to the request and response objects.
+
+---
+
+Question: What is the role of pretriggers in Azure Cosmos DB?
+
+- [ ] Pretriggers are automatically executed for each database operation.
+- [x] Pretriggers are executed before modifying a database item and must be specified for each database operation where you want them to execute.
+- [ ] Pretriggers are used to execute operations after modifying a database item.
+
+Answer: Pretriggers in Azure Cosmos DB are executed before modifying a database item and they need to be specified for each database operation where they should execute.
+
+---
+
+Question: What is the purpose of the lease container in the Azure Cosmos DB change feed processor?
+
+- [ ] It stores the data from which the change feed is generated.
+- [ ] It processes the change feed across multiple workers.
+- [x] It acts as a state storage and coordinates processing the change feed across multiple workers.
+
+Answer: The lease container acts as a state storage and coordinates processing the change feed across multiple workers.
+
+---
+
 Question: Your company is developing a new online multiplayer game. The game includes a feature that shows a global leaderboard to players. The leaderboard doesn't have to be up-to-the-minute for each player, but any lag should be within a defined limit. What consistency level would be most suitable for this scenario?
 
 - [ ] Strong

@@ -30,11 +30,12 @@ Azure Storage offers two performance levels of storage accounts, standard and pr
 
 The following table describes the types of storage accounts recommended by Microsoft for most scenarios using Blob storage.
 
-| Storage account type | Performance tier | Usage                                                                                                                                                                                         |
-| -------------------- | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| General-purpose v2   | Standard         | Standard storage account type for blobs, file shares, queues, and tables. Recommended for most scenarios using Blob Storage or one of the other Azure Storage services.                       |
-| Block blob           | Premium          | Premium storage account type for block blobs and append blobs. Recommended for scenarios with high transaction rates or that use smaller objects or require consistently low storage latency. |
-| Page blobs           | Premium          | Premium storage account type for page blobs only.                                                                                                                                             |
+| Type of storage account     | Supported storage services                                                                | Redundancy options                        | Usage                                                                                                                                                                                                               |
+| --------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Standard general-purpose v2 | Blob Storage (including Data Lake Storage), Queue Storage, Table Storage, and Azure Files | LRS / GRS / RA-GRS / ZRS / GZRS / RA-GZRS | Standard storage account type for blobs, file shares, queues, and tables. Recommended for most scenarios using Azure Storage. If you want support for NFS in Azure Files, use the premium file shares account type. |
+| Premium block blobs         | Blob Storage (including Data Lake Storage)                                                | LRS and ZRS                               | Premium storage account type for block blobs and append blobs. Recommended for scenarios with high transaction rates or smaller objects, or requiring consistently low storage latency.                             |
+| Premium file shares         | Azure Files                                                                               | LRS and ZRS                               | Premium storage account type for file shares only. Recommended for enterprise or high-performance scale applications.                                                                                               |
+| Premium page blobs          | Page blobs only                                                                           | LRS and ZRS                               | Premium storage account type for page blobs only.                                                                                                                                                                   |
 
 #### Access tiers for block blob data
 
@@ -44,11 +45,11 @@ The available access tiers are:
 
 - The **Hot** access tier, which is optimized for frequent access of objects in the storage account. The Hot tier has the highest storage costs, but the lowest access costs. New storage accounts are created in the hot tier by default.
 
-- The **Cool** access tier, which is optimized for storing large amounts of data that is infrequently accessed and stored for at least 30 days. The Cool tier has lower storage costs and higher access costs compared to the Hot tier.
+- The **Cool** access tier, which is optimized for storing large amounts of data that is infrequently accessed and stored for a minimum of 30 days. The Cool tier has lower storage costs and higher access costs compared to the Hot tier.
 
 - The **Cold** access tier, which is optimized for storing data that is infrequently accessed and stored for a minimum of 90 days. The cold tier has lower storage costs and higher access costs compared to the cool tier.
 
-- The **Archive** tier, which is available only for individual block blobs. The archive tier is optimized for data that can tolerate several hours of retrieval latency and will remain in the Archive tier for at least 180 days. The archive tier is the most cost-effective option for storing data, but accessing that data is more expensive than accessing data in the hot or cool tiers.
+- The **Archive** tier, which is available only for individual block blobs. The archive tier is optimized for data that can tolerate several hours of retrieval latency and remains in the Archive tier for a minimum 180 days. The archive tier is the most cost-effective option for storing data, but accessing that data is more expensive than accessing data in the hot or cool tiers.
 
 If there's a change in the usage pattern of your data, you can switch between these access tiers at any time.
 
@@ -108,82 +109,46 @@ https://myaccount.blob.core.windows.net/mycontainer/myvirtualdirectory/myblob
 
 ### Explore Azure Storage security features
 
-Azure Storage provides a comprehensive set of security capabilities that together enable developers to build secure applications:
+Azure Storage uses service-side encryption (SSE) to automatically encrypt your data when it's persisted to the cloud. Azure Storage encryption protects your data and to help you to meet your organizational security and compliance commitments.
 
-- All data (including metadata) written to Azure Storage is automatically encrypted using Storage Service Encryption (SSE).
-- Microsoft Entra ID and Role-Based Access Control (RBAC) are supported for Azure Storage for both resource management operations and data operations, as follows:
-  - You can assign RBAC roles scoped to the storage account to security principals and use Microsoft Entra ID to authorize resource management operations such as key management.
-  - Microsoft Entra integration is supported for blob and queue data operations. You can assign RBAC roles scoped to a subscription, resource group, storage account, or an individual container or queue to a security principal or a managed identity for Azure resources.
-- Data can be secured in transit between an application and Azure by using Client-Side Encryption, HTTPS, or SMB 3.0.
-- OS and data disks used by Azure virtual machines can be encrypted using Azure Disk Encryption.
-- Delegated access to the data objects in Azure Storage can be granted using a shared access signature.
+Microsoft recommends using service-side encryption to protect your data for most scenarios. However, the Azure Storage client libraries for Blob Storage and Queue Storage also provide client-side encryption for customers who need to encrypt data on the client.
 
 #### Azure Storage encryption for data at rest
 
-Azure Storage automatically encrypts your data when persisting it to the cloud. Encryption protects your data and helps you meet your organizational security and compliance commitments. Data in Azure Storage is encrypted and decrypted transparently using 256-bit AES encryption, one of the strongest block ciphers available, and is FIPS 140-2 compliant. Azure Storage encryption is similar to BitLocker encryption on Windows.
+Azure Storage automatically encrypts your data when persisting it to the cloud. Encryption protects your data and helps you meet your organizational security and compliance commitments. Data in Azure Storage is encrypted and decrypted transparently using 256-bit Advanced Encryption Standard (AES) encryption, one of the strongest block ciphers available, and is Federal Information Processing Standards (FIPS) 140-2 compliant. Azure Storage encryption is similar to BitLocker encryption on Windows.
 
-Azure Storage encryption is enabled for all new and existing storage accounts and can't be disabled. Because your data is secured by default, you don't need to modify your code or applications to take advantage of Azure Storage encryption.
+Azure Storage encryption is enabled for all storage accounts and can't be disabled. Because your data is secured by default, you don't need to modify your code or applications to take advantage of Azure Storage encryption.
 
-Storage accounts are encrypted regardless of their performance tier (standard or premium) or deployment model (Azure Resource Manager or classic). All Azure Storage redundancy options support encryption, and all copies of a storage account are encrypted. All Azure Storage resources are encrypted, including blobs, disks, files, queues, and tables. All object metadata is also encrypted.
+Data in a storage account is encrypted regardless of performance tier, access tier, or deployment model. All new and existing block blobs, append blobs, and page blobs are encrypted, including blobs in the archive tier. All Azure Storage redundancy options support encryption, and all data in both the primary and secondary regions is encrypted when geo-replication is enabled. All Azure Storage resources are encrypted, including blobs, disks, files, queues, and tables. All object metadata is also encrypted.
 
-Encryption doesn't affect Azure Storage performance. There's no extra cost for Azure Storage encryption.
+There's no extra cost for Azure Storage encryption.
 
 ##### Encryption key management
 
-You can rely on Microsoft-managed keys for the encryption of your storage account, or you can manage encryption with your own keys. If you choose to manage encryption with your own keys, you have two options:
+Data in a new storage account is encrypted with Microsoft-managed keys by default. You can continue to rely on Microsoft-managed keys for the encryption of your data, or you can manage encryption with your own keys. If you choose to manage encryption with your own keys, you have two options. You can use either type of key management, or both:
 
-- You can specify a customer-managed key to use for encrypting and decrypting all data in the storage account. A customer-managed key is used to encrypt all data in all services in your storage account.
-- You can specify a customer-provided key on Blob storage operations. A client making a read or write request against Blob storage can include an encryption key on the request for granular control over how blob data is encrypted and decrypted.
+- You can specify a _customer-managed key_ to use for encrypting and decrypting data in Blob Storage and in Azure Files.Customer-managed keys must be stored in Azure Key Vault or Azure Key Vault Managed Hardware Security Model (HSM).
+- You can specify a _customer-provided key_ on Blob Storage operations. A client can include an encryption key on a read/write request for granular control over how blob data is encrypted and decrypted.
 
 The following table compares key management options for Azure Storage encryption.
 
-|                                  | Microsoft-managed keys | Customer-managed keys                                                                                 | Customer-provided keys                                                |
-| -------------------------------- | ---------------------- | ----------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| Encryption/decryption operations | Azure                  | Azure                                                                                                 | Azure                                                                 |
-| Azure Storage services supported | All                    | Blob storage, Azure Files                                                                             | Blob storage                                                          |
-| Key storage                      | Microsoft key store    | Azure Key Vault                                                                                       | Azure Key Vault or any other key store                                |
-| Key rotation responsibility      | Microsoft              | Customer                                                                                              | Customer                                                              |
-| Key usage                        | Microsoft              | Azure portal, Storage Resource Provider REST API, Azure Storage management libraries, PowerShell, CLI | Azure Storage REST API (Blob storage), Azure Storage client libraries |
-| Key access                       | Microsoft only         | Microsoft, Customer                                                                                   | Customer only                                                         |
+| Key management parameter         | Microsoft-managed keys                | Customer-managed keys                 | Customer-provided keys   |
+| -------------------------------- | ------------------------------------- | ------------------------------------- | ------------------------ |
+| Encryption/decryption operations | Azure                                 | Azure                                 | Azure                    |
+| Azure Storage services supported | All                                   | Blob Storage, Azure Files             | Blob Storage             |
+| Key storage                      | Microsoft key store                   | Azure Key Vault or Key Vault HSM      | Customer's own key store |
+| Key rotation responsibility      | Microsoft                             | Customer                              | Customer                 |
+| Key control                      | Microsoft                             | Customer                              | Customer                 |
+| Key scope                        | Account (default), container, or blob | Account (default), container, or blob | N/A                      |
 
-### Discover static website hosting in Azure Storage
+#### Client-side encryption
 
-You can serve static content (HTML, CSS, JavaScript, and image files) directly from a storage container named _$web_. Hosting your content in Azure Storage enables you to use serverless architectures that include Azure Functions and other Platform as a service (PaaS) services. Azure Storage static website hosting is a great option in cases where you don't require a web server to render content.
+The Azure Blob Storage client libraries for .NET, Java, and Python support encrypting data within client applications before uploading to Azure Storage, and decrypting data while downloading to the client. The Queue Storage client libraries for .NET and Python also support client-side encryption.
 
-Static websites have some limitations. For example, If you want to configure headers, you have to use Azure Content Delivery Network (Azure CDN). There's no way to configure headers as part of the static website feature itself. Also, AuthN and AuthZ aren't supported. If these features are important for your scenario, consider using [Azure Static Web Apps](https://azure.microsoft.com/services/app-service/static/).
+The Blob Storage and Queue Storage client libraries uses AES in order to encrypt user data. There are two versions of client-side encryption available in the client libraries:
 
-#### Enable static website hosting
-
-Static website hosting is a feature that you have to enable on the storage account. When you configure your account for static website hosting, Azure Storage automatically creates a container named _$web_. The _$web_ container contains the files for your static website.
-
-To enable static website hosting:
-
-1. Locate your storage account in the Azure portal and display the account overview
-1. Select **Static website** to display the configuration page
-1. Select **Enabled** to enable static website hosting for the account
-1. In the **Index document name** field, specify a default index page. For example, _index.html_.
-1. In the **Error document path** field, specify a default error page. For example, _404.html_.
-1. Select **Save**.
-
-![Screenshot showing the locations of the fields to enable and configure static website hosting.](https://learn.microsoft.com/en-us/training/wwl-azure/explore-azure-blob-storage/media/enable-static-website-hosting.png)
-
-#### Impact of setting the access level on the web container
-
-You can modify the public access level of the _$web_ container, but making this modification has no impact on the primary static website endpoint because these files are served through anonymous access requests. That means public (read-only) access to all files.
-
-While the primary static website endpoint isn't affected, a change to the public access level does impact the primary blob service endpoint.
-
-For example, if you change the public access level of the _$web_ container from Private (no anonymous access) to Blob (anonymous read access for blobs only), then the level of public access to the primary static website endpoint `https://contosoblobaccount.z22.web.core.windows.net/index.html` doesn't change.
-
-However, the public access to the primary blob service endpoint `https://contosoblobaccount.blob.core.windows.net/$web/index.html` does change from private to public. Now users can open that file by using either of these two endpoints.
-
-Disabling public access on a storage account by using the public access setting of the storage account doesn't affect static websites that are hosted in that storage account. For more information, see Remediate anonymous public read access to blob data (Azure Resource Manager deployments).
-
-#### Mapping a custom domain to a static website URL
-
-You can make your static website available via a custom domain.
-
-It's easier to enable HTTP access for your custom domain, because Azure Storage natively supports it. To enable HTTPS, you have to use Azure CDN because Azure Storage doesn't yet natively support HTTPS with custom domains. Visit [Map a custom domain to an Azure Blob Storage endpoint](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-custom-domain-name) for step-by-step guidance.
+- Version 2 uses Galois/Counter Mode (GCM) mode with AES. The Blob Storage and Queue Storage SDKs support client-side encryption with v2.
+- Version 1 uses Cipher Block Chaining (CBC) mode with AES. The Blob Storage, Queue Storage, and Table Storage SDKs support client-side encryption with v1.
 
 ## Manage the Azure Blob storage lifecycle
 
@@ -195,32 +160,25 @@ Data sets have unique lifecycles. Early in the lifecycle, people access some dat
 
 Azure storage offers different access tiers, allowing you to store blob object data in the most cost-effective manner. Available access tiers include:
 
-- **Hot** - Optimized for storing data that is accessed frequently.
-- **Cool** - Optimized for storing data that is infrequently accessed and stored for at least 30 days.
-- **Cold tier** - Optimized for storing data that is infrequently accessed and stored for a minimum of 90 days. The cold tier has lower storage costs and higher access costs compared to the cool tier.
-- **Archive** - Optimized for storing data that is rarely accessed and stored for at least 180 days with flexible latency requirements, on the order of hours.
+- **Hot** - An online tier optimized for storing data that is accessed frequently.
+- **Cool** - An online tier optimized for storing data that is infrequently accessed and stored for a minimum of 30 days.
+- **Cold tier** - An online tier optimized for storing data that is infrequently accessed and stored for a minimum of 90 days. The cold tier has lower storage costs and higher access costs compared to the cool tier.
+- **Archive** - An offline tier optimized for storing data that is rarely accessed and stored for at least 180 days with flexible latency requirements, on the order of hours.
 
-The following considerations apply to the different access tiers:
-
-- The access tier can be set on a blob during or after upload.
-- Only the hot and cool access tiers can be set at the account level. The archive access tier can only be set at the blob level.
-- Data in the cool access tier has slightly lower availability, but still has high durability, retrieval latency, and throughput characteristics similar to hot data.
-- Data in the archive access tier is stored offline. The archive tier offers the lowest storage costs but also the highest access costs and latency.
-- The hot and cool tiers support all redundancy options. The archive tier supports only LRS, GRS, and RA-GRS.
-- Data storage limits are set at the account level and not per access tier. You can choose to use all of your limit in one tier or across all three tiers.
+Data storage limits are set at the account level and not per access tier. You can choose to use all of your limit in one tier or across all three tiers.
 
 #### Manage the data lifecycle
 
-Azure Blob storage lifecycle management offers a rich, rule-based policy for General Purpose v2 and Blob storage accounts. Use the policy to transition your data to the appropriate access tiers or expire at the end of the data's lifecycle. The lifecycle management policy lets you:
+Azure Blob Storage lifecycle management offers a rule-based policy that you can use to transition blob data to the appropriate access tiers or to expire data at the end of the data lifecycle.
 
-- Transition blobs to a cooler storage tier (hot to cool, hot to archive, or cool to archive) to optimize for performance and cost
-- Delete blobs at the end of their lifecycles
-- Define rules to be run once per day at the storage account level
-- Apply rules to containers or a subset of blobs (using prefixes as filters)
+With the lifecycle management policy, you can:
 
-Consider a scenario where data gets frequent access during the early stages of the lifecycle, but only occasionally after two weeks. Beyond the first month, the data set is rarely accessed. In this scenario, hot storage is best during the early stages. Cool storage is most appropriate for occasional access. Archive storage is the best tier option after the data ages over a month. By adjusting storage tiers in respect to the age of data, you can design the least expensive storage options for your needs. To achieve this transition, lifecycle management policy rules are available to move aging data to cooler tiers.
+- Transition blobs from cool to hot immediately when accessed, to optimize for performance.
+- Transition current versions of a blob, previous versions of a blob, or blob snapshots to a cooler storage tier if these objects aren't accessed or modified for a period of time, to optimize for cost.
+- Delete current versions of a blob, previous versions of a blob, or blob snapshots at the end of their lifecycles.
+- Apply rules to an entire storage account, to select containers, or to a subset of blobs using name prefixes or blob index tags as filters.
 
-:information_source: Data stored in a premium block blob storage account cannot be tiered to Hot, Cool, or Archive using Set Blob Tier or using Azure Blob Storage lifecycle management. To move data, you must synchronously copy blobs from the block blob storage account to the Hot tier in a different account using the Put Block From URL API or a version of AzCopy that supports this API. The Put Block From URL API synchronously copies data on the server, meaning the call completes only once all the data is moved from the original server location to the destination location.
+Consider a scenario where data is frequently accessed during the early stages of the lifecycle, but only occasionally after two weeks. Beyond the first month, the data set is rarely accessed. In this scenario, hot storage is best during the early stages. Cool storage is most appropriate for occasional access. Archive storage is the best tier option after the data ages over a month. By moving data to the appropriate storage tier based on its age with lifecycle management policy rules, you can design the least expensive solution for your needs.
 
 ### Discover Blob storage lifecycle policies
 
@@ -259,7 +217,7 @@ Each rule within the policy has several parameters:
 | Parameter name | Parameter type | Notes                                                                                                                      | Required |
 | -------------- | -------------- | -------------------------------------------------------------------------------------------------------------------------- | -------- |
 | `name`         | String         | A rule name can include up to 256 alphanumeric characters. Rule name is case-sensitive. It must be unique within a policy. | True     |
-| `enabled`      | Boolean        | An optional boolean to allow a rule to be temporarily disabled. Default value is true if it's not set.                     | False    |
+| `enabled`      | Boolean        | An optional boolean to allow a rule to be temporarily disabled. Default value is true.                                     | False    |
 | `type`         | Enum value     | The current valid type is Lifecycle.                                                                                       | True     |
 | `definition`   | Object         | An object that defines the lifecycle rule. Each definition is made up of a filter set and an action set.                   | True     |
 
@@ -267,7 +225,7 @@ Each rule within the policy has several parameters:
 
 Each rule definition includes a filter set and an action set. The filter set limits rule actions to a certain set of objects within a container or objects names. The action set applies the tier or delete actions to the filtered set of objects.
 
-The following sample rule filters the account to run the actions on objects that exist inside `container1` and start with `foo`.
+The following sample rule filters the account to run the actions on objects that exist inside `sample-container` and start with `blob1`.
 
 - Tier blob to cool tier 30 days after last modification
 - Tier blob to archive tier 90 days after last modification
@@ -278,23 +236,32 @@ The following sample rule filters the account to run the actions on objects that
 {
   "rules": [
     {
-      "name": "ruleFoo",
       "enabled": true,
+      "name": "sample-rule",
       "type": "Lifecycle",
       "definition": {
+        "actions": {
+          "version": {
+            "delete": {
+              "daysAfterCreationGreaterThan": 90
+            }
+          },
+          "baseBlob": {
+            "tierToCool": {
+              "daysAfterModificationGreaterThan": 30
+            },
+            "tierToArchive": {
+              "daysAfterModificationGreaterThan": 90,
+              "daysAfterLastTierChangeGreaterThan": 7
+            },
+            "delete": {
+              "daysAfterModificationGreaterThan": 2555
+            }
+          }
+        },
         "filters": {
           "blobTypes": ["blockBlob"],
-          "prefixMatch": ["container1/foo"]
-        },
-        "actions": {
-          "baseBlob": {
-            "tierToCool": { "daysAfterModificationGreaterThan": 30 },
-            "tierToArchive": { "daysAfterModificationGreaterThan": 90 },
-            "delete": { "daysAfterModificationGreaterThan": 2555 }
-          },
-          "snapshot": {
-            "delete": { "daysAfterCreationGreaterThan": 90 }
-          }
+          "prefixMatch": ["sample-container/blob1"]
         }
       }
     }
@@ -318,23 +285,24 @@ Actions are applied to the filtered blobs when the run condition is met.
 
 Lifecycle management supports tiering and deletion of blobs and deletion of blob snapshots. Define at least one action for each rule on blobs or blob snapshots.
 
-| Action                      | Base Blob                              | Snapshot      | Version       |
-| --------------------------- | -------------------------------------- | ------------- | ------------- |
-| tierToCool                  | Supported for blockBlob                | Supported     | Supported     |
-| enableAutoTierToHotFromCool | Supported for blockBlob                | Not supported | Not supported |
-| tierToArchive               | Supported for blockBlob                | Supported     | Supported     |
-| delete                      | Supported for blockBlob and appendBlob | Supported     | Supported     |
+| Action                      | Current Version                        | Snapshot      | Previous Versions |
+| --------------------------- | -------------------------------------- | ------------- | ----------------- |
+| tierToCool                  | Supported for blockBlob                | Supported     | Supported         |
+| tierToCold                  | Supported for blockBlob                | Supported     | Supported         |
+| enableAutoTierToHotFromCool | Supported for blockBlob                | Not supported | Not supported     |
+| tierToArchive               | Supported for blockBlob                | Supported     | Supported         |
+| delete                      | Supported for blockBlob and appendBlob | Supported     | Supported         |
 
 :information_source: If you define more than one action on the same blob, lifecycle management applies the least expensive action to the blob. For example, action `delete` is cheaper than action `tierToArchive`. Action `tierToArchive` is cheaper than action `tierToCool`.
 
 The run conditions are based on age. Base blobs use the last modified time to track age, and blob snapshots use the snapshot creation time to track age.
 
-| Action run condition               | Condition value                          | Description                                                                                                                        |
-| ---------------------------------- | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| daysAfterModificationGreaterThan   | Integer value indicating the age in days | The condition for base blob actions.                                                                                               |
-| daysAfterCreationGreaterThan       | Integer value indicating the age in days | The condition for blob snapshot actions.                                                                                           |
-| daysAfterLastAccessTimeGreaterThan | Integer value indicating the age in days | The condition for a current version of a blob when access tracking is enabled.                                                     |
-| daysAfterLastTierChangeGreaterThan | Integer value indicating the age in days | This condition applies only to `tierToArchive` actions and can be used only with the `daysAfterModificationGreaterThan` condition. |
+| Action run condition               | Condition value                          | Description                                                                                                                                                                                |
+| ---------------------------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| daysAfterModificationGreaterThan   | Integer value indicating the age in days | The condition for base blob actions.                                                                                                                                                       |
+| daysAfterCreationGreaterThan       | Integer value indicating the age in days | The condition for blob snapshot actions.                                                                                                                                                   |
+| daysAfterLastAccessTimeGreaterThan | Integer value indicating the age in days | The condition for a current version of a blob when access tracking is enabled.                                                                                                             |
+| daysAfterLastTierChangeGreaterThan | Integer value indicating the age in days | The minimum duration in days that a rehydrated blob is kept in hot, cool, or cold tiers before being returned to the archive tier. This condition applies only to `tierToArchive` actions. |
 
 ### Implement Blob storage lifecycle policies
 
@@ -349,24 +317,17 @@ The following are the steps and some examples for the Portal and Azure CLI.
 
 #### Azure portal
 
-There are two ways to add a policy through the Azure portal: Azure portal List view, and Azure portal Code view.
-
-##### Azure portal List view
-
-1. Sign in to the [Azure portal](https://portal.azure.com/).
-1. Select **All resources** and then select your storage account.
-1. Under **Data management**, select **Lifecycle management** to view or change your rules.
-1. Select the **List view** tab.
-1. Select **Add rule** and then fill out the **Action set** form fields. In the following example, blobs are moved to cool storage if they haven't been modified for 30 days.
-1. Select **Filter set** to add an optional filter. Then, select Browse to specify a container and folder by which to filter.
-1. Select **Review + add** to review the policy settings.
-1. Select **Add** to add the new policy.
+There are two ways to add a policy through the Azure portal: Azure portal List view, and Azure portal Code view. Following is an example of how to add a policy in the Azure portal Code view.
 
 ##### Azure portal Code view
 
-1. Follow the first three steps in the List view section.
+1. In the Azure portal, navigate to your storage account.
 
-1. Select the Code view tab. The following JSON is an example of a policy that moves a block blob whose name begins with log to the cool tier if it has been more than 30 days since the blob was modified.
+1. Under **Data management**, select **Lifecycle Management** to view or change lifecycle management policies.
+
+1. Select the **Code View** tab. On this tab, you can define a lifecycle management policy in JSON.
+
+   The following JSON is an example of a policy that moves a block blob whose name begins with _log_ to the cool tier if it has been more than 30 days since the blob was modified.
 
    ```json
    {
@@ -392,8 +353,6 @@ There are two ways to add a policy through the Azure portal: Azure portal List v
      ]
    }
    ```
-
-1. Select **Save**.
 
 #### Azure CLI
 
@@ -428,17 +387,9 @@ To check the rehydration priority while the rehydration operation is underway, c
 
 #### Copy an archived blob to an online tier
 
-You can use either the **Copy Blob** or **Copy Blob from URL** operation to copy the blob. When you copy an archived blob to a new blob in an online tier, the source blob remains unmodified in the archive tier. You must copy the archived blob to a new blob with a different name or to a different container. You can't overwrite the source blob by copying to the same blob.
+The first option for moving a blob from the archive tier to an online tier is to copy the archived blob to a new destination blob that is in either the hot or cool tier. You can use the [Copy Blob](https://learn.microsoft.com/en-us/rest/api/storageservices/copy-blob) operation to copy the blob. When you copy an archived blob to a new blob in an online tier, the source blob remains unmodified in the archive tier. You must copy the archived blob to a new blob with a different name or to a different container. You can't overwrite the source blob by copying to the same blob.
 
-Copying an archived blob to an online destination tier is supported within the same storage account only. You can't copy an archived blob to a destination blob that is also in the archive tier.
-
-The following table shows the behavior of a blob copy operation, depending on the tiers of the source and destination blob.
-
-|                          | Hot tier source | Cool tier source | Archive tier source                                           |
-| ------------------------ | --------------- | ---------------- | ------------------------------------------------------------- |
-| Hot tier destination     | Supported       | Supported        | Supported within the same account. Requires blob rehydration. |
-| Cool tier destination    | Supported       | Supported        | Supported within the same account. Requires blob rehydration. |
-| Archive tier destination | Supported       | Supported        | Unsupported                                                   |
+Rehydrating an archived blob by copying it to an online destination tier is supported within the same storage account only for service versions earlier than 2021-02-12. Beginning with service version 2021-02-12, you can rehydrate an archived blob by copying it to a different storage account, as long as the destination account is in the same region as the source account.
 
 #### Change a blob's access tier to an online tier
 
@@ -460,13 +411,13 @@ The Azure Storage client libraries for .NET offer a convenient interface for mak
 
 The following table lists the basic classes, along with a brief description:
 
-| Class                 | Description                                                                                                                                                    |
-| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `BlobServiceClient`   | Represents the storage account, and provides operations to retrieve and configure account properties, and to work with blob containers in the storage account. |
-| `BlobContainerClient` | Represents a specific blob container, and provides operations to work with the container and the blobs within.                                                 |
-| `BlobClient`          | Represents a specific blob, and provides general operations to work with the blob, including operations to upload, download, delete, and create snapshots.     |
-| `AppendBlobClient`    | Represents an append blob, and provides operations specific to append blobs, such as appending log data.                                                       |
-| `BlockBlobClient`     | Represents a block blob, and provides operations specific to block blobs, such as staging and then committing blocks of data.                                  |
+| Class               | Description                                                                                                                                                                    |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| BlobClient          | The BlobClient allows you to manipulate Azure Storage blobs.                                                                                                                   |
+| BlobClientOptions   | Provides the client configuration options for connecting to Azure Blob Storage.                                                                                                |
+| BlobContainerClient | The BlobContainerClient allows you to manipulate Azure Storage containers and their blobs.                                                                                     |
+| BlobServiceClient   | The BlobServiceClient allows you to manipulate Azure Storage service resources and blob containers. The storage account provides the top-level namespace for the Blob service. |
+| BlobUriBuilder      | The BlobUriBuilder class provides a convenient way to modify the contents of a Uri instance to point to different Azure Storage resources like an account, container, or blob. |
 
 The following packages contain the classes used to work with Blob Storage data resources:
 
@@ -560,9 +511,9 @@ public BlobClient GetBlobClient(
 Blob containers support system properties and user-defined metadata, in addition to the data they contain.
 
 - **System properties**: System properties exist on each Blob storage resource. Some of them can be read or set, while others are read-only. Under the covers, some system properties correspond to certain standard HTTP headers. The Azure Storage client library for .NET maintains these properties for you.
-- **User-defined metadata**: User-defined metadata consists of one or more name-value pairs that you specify for a Blob storage resource. You can use metadata to store additional values with the resource. Metadata values are for your own purposes only, and do not affect how the resource behaves.
+- **User-defined metadata**: User-defined metadata consists of one or more name-value pairs that you specify for a Blob storage resource. You can use metadata to store other values with the resource. Metadata values are for your own purposes only, and don't affect how the resource behaves.
 
-Metadata name/value pairs are valid HTTP headers, and so should adhere to all restrictions governing HTTP headers. Metadata names must be valid HTTP header names and valid C# identifiers, may contain only ASCII characters, and should be treated as case-insensitive. Metadata values containing non-ASCII characters should be Base64-encoded or URL-encoded.
+  Metadata name/value pairs are valid HTTP headers, and so should adhere to all restrictions governing HTTP headers. Metadata names must be valid HTTP header names and valid C# identifiers, can contain only ASCII characters, and should be treated as case-insensitive. Metadata values containing non-ASCII characters should be Base64-encoded or URL-encoded.
 
 #### Retrieve container properties
 
@@ -670,9 +621,9 @@ x-ms-meta-name:string-value
 
 Beginning with version 2009-09-19, metadata names must adhere to the naming rules for C# identifiers.
 
-Names are case-insensitive. Note that metadata names preserve the case with which they were created, but are case-insensitive when set or read. If two or more metadata headers with the same name are submitted for a resource, the Blob service returns status code `400 (Bad Request)`.
+Names are case-insensitive. Metadata names preserve the case with which they were created, but are case-insensitive when set or read. If two or more metadata headers with the same name are submitted for a resource, the Blob service returns status code `400 (Bad Request)`.
 
-The metadata consists of name/value pairs. The total size of all metadata pairs can be up to 8KB in size.
+The metadata consists of name/value pairs. The total size of all metadata pairs can be up to 8 KB in size.
 
 Metadata name/value pairs are valid HTTP headers, and so they adhere to all restrictions governing HTTP headers.
 
@@ -680,11 +631,11 @@ Metadata name/value pairs are valid HTTP headers, and so they adhere to all rest
 
 Metadata on a blob or container resource can be retrieved or set directly, without returning or altering the content of the resource.
 
-Note that metadata values can only be read or written in full; partial updates are not supported. Setting metadata on a resource overwrites any existing metadata values for that resource.
+Metadata values can only be read or written in full; partial updates aren't supported. Setting metadata on a resource overwrites any existing metadata values for that resource.
 
 ##### Retrieving properties and metadata
 
-The GET and HEAD operations both retrieve metadata headers for the specified container or blob. These operations return headers only; they do not return a response body. The URI syntax for retrieving metadata headers on a container is as follows:
+The GET and HEAD operations both retrieve metadata headers for the specified container or blob. These operations return headers only; they don't return a response body. The URI syntax for retrieving metadata headers on a container is as follows:
 
 ```txt
 GET/HEAD https://myaccount.blob.core.windows.net/mycontainer?restype=container

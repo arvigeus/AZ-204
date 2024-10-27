@@ -6,14 +6,16 @@ Azure Container Registry (ACR) is a managed, private Docker registry service bas
 
 ### Discover the Azure Container Registry
 
-Use the Azure Container Registry (ACR) service with your existing container development and deployment pipelines, or use Azure Container Registry Tasks to build container images in Azure. Build on demand, or fully automate builds with triggers such as source code commits and base image updates.
+Azure Container Registry (ACR) is a managed registry service based on the open-source Docker Registry 2.0. Create and maintain Azure container registries to store and manage your container images and related artifacts.
+
+Use the ACR service with your existing container development and deployment pipelines, or use Azure Container Registry Tasks to build container images in Azure. Build on demand, or fully automate builds with triggers such as source code commits and base image updates.
 
 #### Use cases
 
 Pull images from an Azure container registry to various deployment targets:
 
 - **Scalable orchestration systems** that manage containerized applications across clusters of hosts, including Kubernetes, DC/OS, and Docker Swarm.
-- **Azure services** that support building and running applications at scale, including Azure Kubernetes Service (AKS), App Service, Batch, Service Fabric, and others.
+- **Azure services** that support building and running applications at scale, including Azure Kubernetes Service (AKS), App Service, Batch, and Service Fabric.
 
 Developers can also push to a container registry as part of a container development workflow. For example, target a container registry from a continuous integration and delivery tool such as Azure Pipelines or Jenkins.
 
@@ -23,15 +25,15 @@ Configure ACR Tasks to automatically rebuild application images when their base 
 
 Azure Container Registry is available in multiple service tiers. These tiers provide predictable pricing and several options for aligning to the capacity and usage patterns of your private Docker registry in Azure.
 
-| Tier     | Description                                                                                                                                                                                                                                                                                                                                                                                 |
-| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Basic    | A cost-optimized entry point for developers learning about Azure Container Registry. Basic registries have the same programmatic capabilities as Standard and Premium (such as Microsoft Entra authentication integration, image deletion, and webhooks). However, the included storage and image throughput are most appropriate for lower usage scenarios.                                |
-| Standard | Standard registries offer the same capabilities as Basic, with increased included storage and image throughput. Standard registries should satisfy the needs of most production scenarios.                                                                                                                                                                                                  |
-| Premium  | Premium registries provide the highest amount of included storage and concurrent operations, enabling high-volume scenarios. In addition to higher image throughput, Premium adds features such as geo-replication for managing a single registry across multiple regions, content trust for image tag signing, and private link with private endpoints to restrict access to the registry. |
+| Tier     | Description                                                                                                                                                                                                                                                                                                                                                                                  |
+| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Basic    | A cost-optimized entry point for developers learning about Azure Container Registry. Basic registries have the same programmatic capabilities as Standard and Premium (such as Microsoft Entra authentication integration, image deletion, and webhooks). However, the included storage and image throughput are most appropriate for lower usage scenarios.                                 |
+| Standard | Standard registries offer the same capabilities as Basic, with increased included storage and image throughput. Standard registries should satisfy the needs of most production scenarios.                                                                                                                                                                                                   |
+| Premium  | Premium registries provide the highest amount of included storage and concurrent operations, enabling high-volume scenarios. In addition to higher image throughput, Premium adds features such as: geo-replication for managing a single registry across multiple regions, content trust for image tag signing, and private link with private endpoints to restrict access to the registry. |
 
 #### Supported images and artifacts
 
-Grouped in a repository, each image is a read-only snapshot of a Docker-compatible container. Azure container registries can include both Windows and Linux images. In addition to Docker container images, Azure Container Registry stores related content formats such as [Helm charts](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-helm-repos) and images built to the [Open Container Initiative (OCI) Image Format Specification](https://github.com/opencontainers/image-spec/blob/master/spec.md).
+When images are grouped in a repository, each image is a read-only snapshot of a Docker-compatible container. Azure container registries can include both Windows and Linux images. In addition to Docker container images, Azure Container Registry stores related content formats such as [Helm charts](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-helm-repos) and images built to the [Open Container Initiative (OCI) Image Format Specification](https://github.com/opencontainers/image-spec/blob/master/spec.md).
 
 #### Automated image builds
 
@@ -39,13 +41,14 @@ Use [Azure Container Registry Tasks](https://learn.microsoft.com/en-us/azure/con
 
 ### Explore storage capabilities
 
-Basic, Standard, and Premium Azure container registry tiers benefit from advanced Azure storage features like encryption-at-rest for image data security and geo-redundancy for image data protection.
+All Azure Container Registry tiers benefit from advanced Azure storage features like encryption-at-rest for image data security and geo-redundancy for image data protection.
 
-- **Encryption-at-rest**: All container images in your registry are encrypted at rest. Azure automatically encrypts an image before storing it, and decrypts it on-the-fly when you or your applications and services pull the image.
+- **Encryption-at-rest:** All container images and other artifacts in your registry are encrypted at rest. Azure automatically encrypts an image before storing it, and decrypts it on-the-fly when you or your applications and services pull the image. Optionally apply an extra encryption layer with a customer-managed key.
+- **Regional storage:** Azure Container Registry stores data in the region where the registry is created, to help customers meet data residency and compliance requirements. In all regions except Brazil South and Southeast Asia, Azure might also store registry data in a paired region in the same geography. In the Brazil South and Southeast Asia regions, registry data is always confined to the region, to accommodate data residency requirements for those regions.
 
-- **Regional storage**: Azure Container Registry stores data in the region where the registry is created, to help customers meet data residency and compliance requirements. In all regions except Brazil South and Southeast Asia, Azure may also store registry data in a paired region in the same geography. In the Brazil South and Southeast Asia regions, registry data is always confined to the region, to accommodate data residency requirements for those regions.
+  If a regional outage occurs, the registry data might become unavailable and isn't automatically recovered. Customers who wish to have their registry data stored in multiple regions for better performance across different geographies, or who wish to have resiliency in a regional outage event, should enable geo-replication.
 
-  If a regional outage occurs, the registry data may become unavailable and isn't automatically recovered. Customers who wish to have their registry data stored in multiple regions for better performance across different geographies or who wish to have resiliency in the event of a regional outage should enable geo-replication.
+- **Geo-replication:** For scenarios requiring high-availability assurance, consider using the geo-replication feature of Premium registries. Geo-replication helps guard against losing access to your registry in a regional failure event. Geo-replication provides other benefits, too, like network-close image storage for faster pushes and pulls in distributed development or deployment scenarios.
 
 - **Zone redundancy**: A feature of the Premium service tier, zone redundancy uses Azure availability zones to replicate your registry to a minimum of three separate zones in each enabled region.
 
@@ -55,7 +58,11 @@ Basic, Standard, and Premium Azure container registry tiers benefit from advance
 
 ### Build and manage containers with tasks
 
-ACR Tasks is a suite of features within Azure Container Registry. It provides cloud-based container image building for platforms including Linux, Windows, and Azure Resource Manager, and can automate OS and framework patching for your Docker containers. ACR Tasks enables automated builds triggered by source code updates, updates to a container's base image, or timers.
+Azure Container Registry (ACR) tasks are a suite of features that:
+
+- Provide cloud-based container image building for platforms like Linux, Windows, and Advanced RISC Machines (Arm).
+- Extend the early parts of an application development cycle to the cloud with on-demand container image builds.
+- Enable automated builds triggered by source code updates, updates to a container's base image, or timers.
 
 #### Task scenarios
 
@@ -75,7 +82,9 @@ Each ACR Task has an associated source code context - the location of a set of s
 
 #### Quick task
 
-Before you commit your first line of code, ACR Tasks's quick task feature can provide an integrated development experience by offloading your container image builds to Azure. With quick tasks, you can verify your automated build definitions and catch potential problems prior to committing your code.
+The _inner-loop_ development cycle is the iterative process of writing code, building, and testing your application before committing to source control. It's really the beginning of container lifecycle management.
+
+Before you commit your first line of code, ACR Tasks's quick task feature can provide an integrated development experience by offloading your container image builds to Azure. With quick tasks, you can verify your automated build definitions and catch potential problems before committing your code.
 
 Using the familiar `docker build` format, the [az acr build](https://learn.microsoft.com/en-us/cli/azure/acr#az-acr-build) command in the Azure CLI takes a context (the set of files to build), sends it to ACR Tasks and, by default, pushes the built image to its registry upon completion.
 
@@ -108,11 +117,11 @@ By default, ACR Tasks builds images for the Linux OS and the amd64 architecture.
 
 | OS      | Architecture |
 | ------- | ------------ |
-| Linux   | amd64        |
-|         | arm          |
-|         | arm64        |
+| Linux   | AMD64        |
+|         | Arm          |
+|         | Arm64        |
 |         | 386          |
-| Windows | amd64        |
+| Windows | AMD64        |
 
 ### Explore elements of a Dockerfile
 
@@ -147,13 +156,13 @@ CMD ["dotnet", "MyApp.dll"]
 
 Let's go through each line to see what it does:
 
-- `FROM mcr.microsoft.com/dotnet/runtime:6.0`: This command sets the base image to the .NET 6 runtime, which is needed to run .NET 6 apps.
-- `WORKDIR /app`: Sets the working directory to `/app`, which is where app files are copied.
-- `COPY bin/Release/net6.0/publish/ .`: Copies the contents of the published app to the container's `/app` directory. We assume that the .NET 6 app has already been built and published to the `bin/Release/net6.0/publish` directory.
-- `EXPOSE 80`: Exposes port 80, which is the default HTTP port, to the outside world. Change this line accordingly if your app listens on a different port.
-- `CMD ["dotnet", "MyApp.dll"]`: The command to run when the container starts. In this case, we're running the dotnet command with the name of our app's DLL file (`MyApp.dll`). Change this line to match your apps name and entry point.
+- **`FROM mcr.microsoft.com/dotnet/runtime:6.0`**: This command sets the base image to the .NET 6 runtime, which is needed to run .NET 6 apps.
+- **`WORKDIR /app`**: Sets the working directory to `/app`, which is where app files are copied.
+- **`COPY bin/Release/net6.0/publish/ .`**: Copies the contents of the published app to the container's `/app` directory. We assume that the .NET 6 app is built and published to the `bin/Release/net6.0/publish` directory.
+- **`EXPOSE 80`**: Exposes port 80, which is the default HTTP port, to the outside world. Change this line accordingly if your app listens on a different port.
+- **`CMD ["dotnet", "MyApp.dll"]`**: The command to run when the container starts. In this case, we're running the dotnet command with the name of our app's DLL file (`MyApp.dll`). Change this line to match your apps name and entry point.
 
-We're not going to cover the Dockerfile file specification, visit the [Dockerfile reference](https://docs.docker.com/engine/reference/builder/) for more information. Each of these steps creates a cached container image as we build the final container image. These temporary images are layered on top of the previous and presented as single image once all steps complete.
+We're not going to cover the Dockerfile file specification. Visit the [Dockerfile reference](https://docs.docker.com/engine/reference/builder/) for more information. Each of these steps creates a cached container image as we build the final container image. These temporary images are layered on top of the previous and presented as single image once all steps complete.
 
 #### Resources
 
@@ -164,7 +173,7 @@ We're not going to cover the Dockerfile file specification, visit the [Dockerfil
 
 Azure Container Instances (ACI) is a great solution for any scenario that can operate in isolated containers, including simple applications, task automation, and build jobs. Here are some of the benefits:
 
-- **Fast startup**: ACI can start containers in Azure in seconds, without the need to provision and manage VMs
+- **Fast startup**: ACI can start containers in Azure in seconds, without the need to provision and manage a virtual machine (VM)
 - **Container access**: ACI enables exposing your container groups directly to the internet with an IP address and a fully qualified domain name (FQDN)
 - **Hypervisor-level security**: Isolate your application as completely as it would be in a VM
 - **Customer data**: The ACI service stores the minimum customer data required to ensure your container groups are running as expected
@@ -453,7 +462,7 @@ With Azure Container Apps, you can:
 
 #### Azure Container Apps environments
 
-Individual container apps are deployed to a single Container Apps environment, which acts as a secure boundary around groups of container apps. Container Apps in the same environment are deployed in the same virtual network and write logs to the same Log Analytics workspace. You may provide an existing virtual network when you create an environment.
+Individual container apps are deployed to a single Container Apps environment, which acts as a secure boundary around groups of container apps. Container Apps in the same environment are deployed in the same virtual network and write logs to the same Log Analytics workspace. You might provide an existing virtual network when you create an environment.
 
 Reasons to deploy container apps to the same environment include situations when you need to:
 
@@ -597,7 +606,7 @@ Container Apps uses federated identity, in which a third-party identity provider
 | Facebook                    | `/.auth/login/facebook`       | [Facebook](https://learn.microsoft.com/en-us/azure/container-apps/authentication-facebook)                                  |
 | GitHub                      | `/.auth/login/github`         | [GitHub](https://learn.microsoft.com/en-us/azure/container-apps/authentication-github)                                      |
 | Google                      | `/.auth/login/google`         | [Google](https://learn.microsoft.com/en-us/azure/container-apps/authentication-google)                                      |
-| Twitter                     | `/.auth/login/twitter`        | [Twitter](https://learn.microsoft.com/en-us/azure/container-apps/authentication-twitter)                                    |
+| X                           | `/.auth/login/twitter`        | [X](https://learn.microsoft.com/en-us/azure/container-apps/authentication-twitter)                                          |
 | Any OpenID Connect provider | `/.auth/login/<providerName>` | [OpenID Connect](https://learn.microsoft.com/en-us/azure/container-apps/authentication-openid)                              |
 
 When you use one of these providers, the sign-in endpoint is available for user authentication and authentication token validation from the provider. You can provide your users with any number of these provider options.
@@ -610,7 +619,7 @@ The authentication and authorization middleware component is a feature of the pl
 
 The platform middleware handles several things for your app:
 
-- Authenticates users and clients with the specified identity provider(s)
+- Authenticates users and clients with the specified identity providers
 - Manages the authenticated session
 - Injects identity information into HTTP request headers
 
@@ -652,7 +661,7 @@ az containerapp revision list \
   -o table
 ```
 
-For more information about Container Apps commands, visit the [az containerapp](https://learn.microsoft.com/en-us/cli/azure/containerapp) reference.
+For more information about Container Apps commands, visit the [`az containerapp`](https://learn.microsoft.com/en-us/cli/azure/containerapp) reference.
 
 #### Manage secrets in Azure Container Apps
 
@@ -661,7 +670,7 @@ Azure Container Apps allows your application to securely store sensitive configu
 - Secrets are scoped to an application, outside of any specific revision of an application.
 - Adding, removing, or changing secrets doesn't generate new revisions.
 - Each application revision can reference one or more secrets.
-- Multiple revisions can reference the same secret(s).
+- Multiple revisions can reference the same secrets.
 
 An updated or deleted secret doesn't automatically affect existing revisions in your app. When a secret is updated or deleted, you can respond to changes in one of two ways:
 
@@ -679,7 +688,7 @@ When you create a container app, secrets are defined using the `--secrets` param
 - The parameter accepts a space-delimited set of name/value pairs.
 - Each pair is delimited by an equals sign (`=`).
 
-In the example below a connection string to a queue storage account is declared in the `--secrets` parameter. The value for queue-connection-string comes from an environment variable named `$CONNECTION_STRING`.
+In the example below, a connection string to a queue storage account is declared in the `--secrets` parameter. The value for queue-connection-string comes from an environment variable named `$CONNECTION_STRING`.
 
 ```sh
 az containerapp create \
@@ -716,7 +725,7 @@ Dapr is an open source, [Cloud Native Computing Foundation (CNCF)](https://www.c
 
 #### Dapr APIs
 
-![Decorative](https://learn.microsoft.com/en-us/training/wwl-azure/implement-azure-container-apps/media/azure-container-apps-distributed-application-runtime-building-blocks.png)
+![Screenshot of Decorative.](https://learn.microsoft.com/en-us/training/wwl-azure/implement-azure-container-apps/media/azure-container-apps-dapr-building-blocks.png)
 
 | Dapr API                                                                                                                                      | Description                                                                                                                                |
 | --------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -727,6 +736,7 @@ Dapr is an open source, [Cloud Native Computing Foundation (CNCF)](https://www.c
 | [Actors](https://docs.dapr.io/developing-applications/building-blocks/actors/actors-overview/)                                                | Dapr actors are message-driven, single-threaded, units of work designed to quickly scale. For example, in burst-heavy workload situations. |
 | [Observability](https://learn.microsoft.com/en-us/azure/container-apps/observability)                                                         | Send tracing information to an Application Insights backend.                                                                               |
 | [Secrets](https://docs.dapr.io/developing-applications/building-blocks/secrets/secrets-overview/)                                             | Access secrets from your application code or reference secure values in your Dapr components.                                              |
+| [Configuration](https://docs.dapr.io/developing-applications/building-blocks/configuration/)                                                  | Retrieve and subscribe to application configuration items for supported configuration stores.                                              |
 
 :information_source: The table covers stable Dapr APIs. To learn more about using alpha APIs and features, [visit limitations](https://learn.microsoft.com/en-us/azure/container-apps/dapr-overview?tabs=bicep1%2Cyaml#unsupported-dapr-capabilities).
 

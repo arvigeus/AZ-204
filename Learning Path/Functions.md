@@ -6,7 +6,7 @@ Azure Functions lets you develop serverless applications on Microsoft Azure. You
 
 ### Discover Azure Functions
 
-Azure **Functions** is a serverless solution that allows you to write less code, maintain less infrastructure, and save on costs. Instead of worrying about deploying and maintaining servers, the cloud infrastructure provides all the up-to-date resources needed to keep your applications running.
+Azure Functions is a serverless solution that allows you to write less code, maintain less infrastructure, and save on costs. Instead of worrying about deploying and maintaining servers, the cloud infrastructure provides all the up-to-date resources needed to keep your applications running.
 
 We often build systems to react to a series of critical events. Whether you're building a web API, responding to database changes, processing IoT data streams, or even managing message queues - every application needs a way to run some code as these events occur.
 
@@ -20,7 +20,7 @@ For Azure Functions, you develop orchestrations by writing code and using the [D
 
 The following table lists some of the key differences between Functions and Logic Apps:
 
-|                   | Azure Functions                                                       | Logic Apps                                                                                             |
+| Topic             | Azure Functions                                                       | Logic Apps                                                                                             |
 | ----------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
 | Development       | Code-first (imperative)                                               | Designer-first (declarative)                                                                           |
 | Connectivity      | About a dozen built-in binding types, write code for custom bindings  | Large collection of connectors, Enterprise Integration Pack for B2B scenarios, build custom connectors |
@@ -35,7 +35,7 @@ Like Azure Functions, Azure App Service WebJobs with the WebJobs SDK is a code-f
 
 Azure Functions is built on the WebJobs SDK, so it shares many of the same event triggers and connections to other Azure services. Here are some factors to consider when you're choosing between Azure Functions and WebJobs with the WebJobs SDK:
 
-|                                             | Functions                                                                                                                                                                 | WebJobs with WebJobs SDK                                                                                                             |
+| Factor                                      | Functions                                                                                                                                                                 | WebJobs with WebJobs SDK                                                                                                             |
 | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
 | Serverless app model with automatic scaling | Yes                                                                                                                                                                       | No                                                                                                                                   |
 | Develop and test in browser                 | Yes                                                                                                                                                                       | No                                                                                                                                   |
@@ -47,42 +47,77 @@ Azure Functions offers more developer productivity than Azure App Service WebJob
 
 ### Compare Azure Functions hosting options
 
-When you create a function app in Azure, you must choose a hosting plan for your app. There are three basic hosting plans available for Azure Functions: [Consumption plan](https://learn.microsoft.com/en-us/azure/azure-functions/consumption-plan), [Premium plan](https://learn.microsoft.com/en-us/azure/azure-functions/functions-premium-plan), and [Dedicated (App service) Dedicated plan](https://learn.microsoft.com/en-us/azure/azure-functions/dedicated-plan). All hosting plans are generally available (GA) on both Linux and Windows virtual machines.
+When you create a function app in Azure, you must choose a hosting plan for your app. Azure provides you with these hosting options for your function code:
 
-The hosting plan you choose dictates the following behaviors:
+| Hosting option                                                                                                 | Service              | Availability             | Container support |
+| -------------------------------------------------------------------------------------------------------------- | -------------------- | ------------------------ | ----------------- |
+| **[Consumption plan](https://learn.microsoft.com/en-us/azure/azure-functions/consumption-plan)**               | Azure Functions      | Generally available (GA) | None              |
+| **[Flex Consumption plan](https://learn.microsoft.com/en-us/azure/azure-functions/flex-consumption-plan)**     | Azure Functions      | Preview                  | None              |
+| **[Premium plan](https://learn.microsoft.com/en-us/azure/azure-functions/functions-premium-plan)**             | Azure Functions      | GA                       | Linux             |
+| **[Dedicated plan](https://learn.microsoft.com/en-us/azure/azure-functions/dedicated-plan)**                   | Azure Functions      | GA                       | Linux             |
+| **[Container Apps](https://learn.microsoft.com/en-us/azure/azure-functions/functions-container-apps-hosting)** | Azure Container Apps | GA                       | Linux             |
+
+Azure App Service infrastructure facilitates Azure Functions hosting on both Linux and Windows virtual machines. The hosting option you choose dictates the following behaviors:
 
 - How your function app is scaled.
 - The resources available to each function app instance.
 - Support for advanced functionality, such as Azure Virtual Network connectivity.
+- Support for Linux containers.
 
-Following is a summary of the benefits of the three main hosting plans for Functions:
+The plan you choose also impacts the costs for running your function code.
 
-| Plan             | Benefits                                                                                                                                                                                                                                              |
-| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Consumption plan | This is the default hosting plan. It scales automatically and you only pay for compute resources when your functions are running. Instances of the Functions host are dynamically added and removed based on the number of incoming events.           |
-| Premium plan     | Automatically scales based on demand using pre-warmed workers, which run applications with no delay after being idle, runs on more powerful instances, and connects to virtual networks.                                                              |
-| Dedicated plan   | Run your functions within an App Service plan at regular App Service plan rates. Best for long-running scenarios where [Durable Functions](https://learn.microsoft.com/en-us/azure/azure-functions/durable/durable-functions-overview) can't be used. |
+#### Overview of plans
 
-There are two other hosting options, which provide the highest amount of control and isolation in which to run your function apps.
+Following is a summary of the benefits of the various hosting options:
 
-| Hosting option                                                                                                                                                                                        | Details                                                                                                                                                                                                                                        |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ASE                                                                                                                                                                                                   | [App Service Environment (ASE)](https://learn.microsoft.com/en-us/azure/app-service/environment/intro) is an App Service feature that provides a fully isolated and dedicated environment for securely running App Service apps at high scale. |
-| Kubernetes ([Direct](https://learn.microsoft.com/en-us/azure/azure-functions/functions-kubernetes-keda) or [Azure Arc](https://learn.microsoft.com/en-us/azure/app-service/overview-arc-integration)) | Kubernetes provides a fully isolated and dedicated environment running on top of the Kubernetes platform.                                                                                                                                      |
+##### Consumption plan
 
-#### Hosting plans and scaling
+The Consumption plan is the default hosting plan. Pay for compute resources only when your functions are running (pay-as-you-go) with automatic scale. On the Consumption plan, instances of the Functions host are dynamically added and removed based on the number of incoming events.
 
-The following table compares the scaling behaviors of the various hosting plans. Maximum instances are given on a per-function app (Consumption) or per-plan (Premium/Dedicated) basis, unless otherwise indicated.
+##### Flex Consumption plan
 
-| Plan             | Scale out                                                                                                                                                                                                                                                  | Max # instances             |
-| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
-| Consumption plan | Event driven. Scale out automatically, even during periods of high load. Azure Functions infrastructure scales CPU and memory resources by adding more instances of the Functions host, based on the number of incoming trigger events.                    | Windows: 200, Linux: 100    |
-| Premium plan     | Event driven. Scale out automatically, even during periods of high load. Azure Functions infrastructure scales CPU and memory resources by adding more instances of the Functions host, based on the number of events that its functions are triggered on. | Windows: 100, Linux: 20-100 |
-| Dedicated plan   | Manual/autoscale                                                                                                                                                                                                                                           | 10-20                       |
-| ASE              | Manual/autoscale                                                                                                                                                                                                                                           | 100                         |
-| Kubernetes       | Event-driven autoscale for Kubernetes clusters using KEDA.                                                                                                                                                                                                 | Varies by cluster           |
+Get high scalability with compute choices, virtual networking, and pay-as-you-go billing. On the Flex Consumption plan, instances of the Functions host are dynamically added and removed based on the configured per instance concurrency and the number of incoming events.
 
-:information_source: The maximum scale out can vary by region and hosting plan. For more information, visit the [Premium plan article](https://learn.microsoft.com/en-us/azure/azure-functions/functions-premium-plan#region-max-scale-out) and [App Service plan limits](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits).
+You can reduce cold starts by specifying the number of pre-provisioned (always ready) instances. Scales automatically based on demand.
+
+##### Premium plan
+
+Automatically scales based on demand using prewarmed workers, which run applications with no delay after being idle, runs on more powerful instances, and connects to virtual networks.
+
+Consider the Azure Functions Premium plan in the following situations:
+
+- Your function apps run continuously, or nearly continuously.
+- You want more control of your instances and want to deploy multiple function apps on the same plan with event-driven scaling.
+- You have a high number of small executions and a high execution bill, but low GB seconds in the Consumption plan.
+- You need more CPU or memory options than are provided by consumption plans.
+- Your code needs to run longer than the maximum execution time allowed on the Consumption plan.
+- You require virtual network connectivity.
+- You want to provide a custom Linux image in which to run your functions.
+
+##### Dedicated plan
+
+Run your functions within an App Service plan at regular App Service plan rates. Best for long-running scenarios where Durable Functions can't be used.
+
+Consider an App Service plan in the following situations:
+
+- You must have fully predictable billing, or you need to manually scale instances.
+- You want to run multiple web apps and function apps on the same plan
+- You need access to larger compute size choices.
+- Full compute isolation and secure network access provided by an App Service Environment (ASE).
+- High memory usage and high scale (ASE).
+
+##### Container Apps
+
+Create and deploy containerized function apps in a fully managed environment hosted by Azure Container Apps.
+
+Use the Azure Functions programming model to build event-driven, serverless, cloud native function apps. Run your functions alongside other microservices, APIs, websites, and workflows as container-hosted programs.
+
+Consider hosting your functions on Container Apps in the following situations:
+
+- You want to package custom libraries with your function code to support line-of-business apps.
+- You need to migration code execution from on-premises or legacy apps to cloud native microservices running in containers.
+- You want to avoid the overhead and complexity of managing Kubernetes clusters and dedicated compute.
+- You need the high-end processing power provided by dedicated CPU compute resources for your functions.
 
 #### Function app timeout duration
 
@@ -90,11 +125,19 @@ The `functionTimeout` property in the _host.json_ project file specifies the tim
 
 The following table shows the default and maximum values (in minutes) for specific plans:
 
-| Plan             | Default | Maximum   |
-| ---------------- | ------- | --------- |
-| Consumption plan | 5       | 10        |
-| Premium plan     | 30      | Unlimited |
-| Dedicated plan   | 30      | Unlimited |
+| Plan                  | Default | Maximum¹   |
+| --------------------- | ------- | ---------- |
+| Consumption plan      | 5       | 10         |
+| Flex Consumption plan | 30      | Unlimited³ |
+| Premium plan          | 30²     | Unlimited³ |
+| Dedicated plan        | 30²     | Unlimited³ |
+| Container Apps        | 30⁵     | Unlimited³ |
+
+¹ Regardless of the function app timeout setting, 230 seconds is the maximum amount of time that an HTTP triggered function can take to respond to a request.  
+² The default timeout for version 1.x of the Functions runtime is _unlimited_.  
+³ Guaranteed for up to 60 minutes. OS and runtime patching, vulnerability patching, and scale in behaviors can still cancel function executions.  
+⁴ In a Flex Consumption plan, the host doesn't enforce an execution time limit. However, there are currently no guarantees because the platform might need to terminate your instances during scale-in, deployments, or to apply updates.  
+⁵ When the minimum number of replicas is set to zero, the default timeout depends on the specific triggers used in the app.
 
 #### Storage account requirements
 
@@ -104,32 +147,20 @@ The same storage account used by your function app can also be used by your trig
 
 ### Scale Azure Functions
 
-In the Consumption and Premium plans, Azure Functions scales CPU and memory resources by adding more instances of the Functions host. The number of instances is determined on the number of events that trigger a function.
+The following table compares the scaling behaviors of the various hosting plans. Maximum instances are given on a per-function app (Consumption) or per-plan (Premium/Dedicated) basis, unless otherwise indicated.
 
-Each instance of the Functions host in the Consumption plan is limited to 1.5 GB of memory and one CPU. An instance of the host is the entire function app, meaning all functions within a function app share resource within an instance and scale at the same time. Function apps that share the same Consumption plan scale independently. In the Premium plan, the plan size determines the available memory and CPU for all apps in that plan on that instance.
+| Plan                  | Scale out                                                                                                                                                                                                   | Max # instances                                                            |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| Consumption plan      | Event driven. Scales out automatically, even during periods of high load. Functions infrastructure scales CPU and memory resources by adding more instances based on the number of incoming trigger events. | Windows: 200<br>Linux: 100¹                                                |
+| Flex Consumption plan | Per-function scaling. Event-driven scaling decisions are calculated on a per-function basis, providing a more deterministic way of scaling the functions in your app.                                       | Limited only by total memory usage of all instances across a given region. |
+| Premium plan          | Event driven. Scale out automatically based on the number of events that its functions are triggered on.                                                                                                    | Windows: 100<br>Linux: 20-100²                                             |
+| Dedicated plan³       | Manual/autoscale                                                                                                                                                                                            | 10-30<br>100 (ASE)                                                         |
+| Container Apps        | Event driven. Scale out automatically by adding more instances of the Functions host, based on the number of events that its functions are triggered on.                                                    | 10-300⁴                                                                    |
 
-Function code files are stored on Azure Files shares on the function's main storage account. When you delete the main storage account of the function app, the function code files are deleted and can't be recovered.
-
-#### Runtime scaling
-
-Azure Functions uses a component called the _scale controller_ to monitor the rate of events and determine whether to scale out or scale in. The scale controller uses heuristics for each trigger type. For example, when you're using an Azure Queue storage trigger, it scales based on the queue length and the age of the oldest queue message.
-
-The unit of scale for Azure Functions is the function app. When the function app is scaled out, more resources are allocated to run multiple instances of the Azure Functions host. Conversely, as compute demand is reduced, the scale controller removes function host instances. The number of instances is eventually "scaled in" to zero when no functions are running within a function app.
-
-![Scale controller monitoring events and creating instances](https://learn.microsoft.com/en-us/training/wwl-azure/explore-azure-functions/media/central-listener.png)
-
-:information_source: After your function app has been idle for a number of minutes, the platform may scale the number of instances on which your app runs in to zero. The next request has the added latency of scaling from zero to one. This latency is referred to as a \_cold start\*.
-
-#### Scaling behaviors
-
-Scaling can vary on many factors, and scale differently based on the trigger and language selected. There are a few intricacies of scaling behaviors to be aware of:
-
-- **Maximum instances**: A single function app only scales out to a maximum of 200 instances. A single instance may process more than one message or request at a time though, so there isn't a set limit on number of concurrent executions.
-- **New instance rate**: For HTTP triggers, new instances are allocated, at most, once per second. For non-HTTP triggers, new instances are allocated, at most, once every 30 seconds.
-
-#### Limit scale-out
-
-You may wish to restrict the maximum number of instances an app used to scale out. This is most common for cases where a downstream component like a database has limited throughput. By default, Consumption plan functions scale out to as many as 200 instances, and Premium plan functions scales out to as many as 100 instances. You can specify a lower maximum for a specific app by modifying the `functionAppScaleLimit` value. The `functionAppScaleLimit` can be set to `0` or `null` for unrestricted, or a valid value between `1` and the app maximum.
+1. During scale-out, there's currently a limit of 500 instances per subscription per hour for Linux 1. apps on a Consumption plan.
+2. In some regions, Linux apps on a Premium plan can scale to 100 instances.
+3. For specific limits for the various App Service plan options, see the [App Service plan limits](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#app-service-limits).
+4. On Container Apps, you can set the maximum number of replicas, which is honored as long as there's enough cores quota available
 
 ## Develop Azure Functions
 
@@ -137,63 +168,46 @@ Functions share a few core technical concepts and components, regardless of the 
 
 ### Explore Azure Functions development
 
-A **function** contains two important pieces - your code, which can be written in various languages, and some config, the _function.json_ file. For compiled languages, this config file is generated automatically from annotations in your code. For scripting languages, you must provide the config file yourself.
-
-The _function.json_ file defines the function's trigger, bindings, and other configuration settings. Every function has one and only one trigger. The runtime uses this config file to determine the events to monitor and how to pass data into and return data from a function execution. Following is an example _function.json_ file.
-
-```jsonc
-{
-  "disabled": false,
-  "bindings": [
-    // ... bindings here
-    {
-      "type": "bindingType",
-      "direction": "in",
-      "name": "myParamName"
-      // ... more depending on binding
-    }
-  ]
-}
-```
-
-The `bindings` property is where you configure both triggers and bindings. Each binding shares a few common settings and some settings that are specific to a particular type of binding. Every binding requires the following settings:
-
-| Property    | Types  | Comments                                                                                                                             |
-| ----------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------ |
-| `type`      | string | Name of binding. For example, `queueTrigger`.                                                                                        |
-| `direction` | string | Indicates whether the binding is for receiving data into the function or sending data from the function. For example, `in` or `out`. |
-| `name`      | string | The name that is used for the bound data in the function. For example, `myQueue`.                                                    |
-
-#### Function app
-
 A function app provides an execution context in Azure in which your functions run. As such, it's the unit of deployment and management for your functions. A function app is composed of one or more individual functions that are managed, deployed, and scaled together. All of the functions in a function app share the same pricing plan, deployment method, and runtime version. Think of a function app as a way to organize and collectively manage your functions.
 
 :information_source: In Functions 2.x all functions in a function app must be authored in the same language. In previous versions of the Azure Functions runtime, this wasn't required.
 
-#### Folder structure
-
-The code for all the functions in a specific function app is located in a root project folder that contains a host configuration file. The [host.json](https://learn.microsoft.com/en-us/azure/azure-functions/functions-host-json) file contains runtime-specific configurations and is in the root folder of the function app. A bin folder contains packages and other library files that the function app requires. Specific folder structures required by the function app depend on language:
-
-- [C# compiled (.csproj)](https://learn.microsoft.com/en-us/azure/azure-functions/functions-dotnet-class-library#functions-class-library-project)
-- [C# script (.csx)](https://learn.microsoft.com/en-us/azure/azure-functions/functions-reference-csharp#folder-structure)
-- [F# script](https://learn.microsoft.com/en-us/azure/azure-functions/functions-reference-fsharp#folder-structure)
-- [Java](https://learn.microsoft.com/en-us/azure/azure-functions/functions-reference-java#folder-structure)
-- [JavaScript](https://learn.microsoft.com/en-us/azure/azure-functions/functions-reference-node#folder-structure)
-- [Python](https://learn.microsoft.com/en-us/azure/azure-functions/functions-reference-python#folder-structure)
-
-#### Local development environments
+#### Develop and test Azure Functions locally
 
 Functions make it easy to use your favorite code editor and development tools to create and test functions on your local computer. Your local functions can connect to live Azure services, and you can debug them on your local computer using the full Functions runtime.
 
-The way in which you develop functions on your local computer depends on your language and tooling preferences. See [Code and test Azure Functions locally](https://learn.microsoft.com/en-us/azure/azure-functions/functions-develop-local) for more information.
+The way in which you develop functions on your local computer depends on your language and tooling preferences. For more information, see [Code and test Azure Functions locally](https://learn.microsoft.com/en-us/azure/azure-functions/functions-develop-local).
 
-:warning: Do not mix local development with portal development in the same function app. When you create and publish functions from a local project, you should not try to maintain or modify project code in the portal.
+:information_source: Because of limitations on editing function code in the Azure portal, you should develop your functions locally and publish your code project to a function app in Azure. For more information, see [Development limitations in the Azure portal](https://learn.microsoft.com/en-us/azure/azure-functions/functions-how-to-use-azure-function-app-settings#development-limitations-in-the-azure-portal)
+
+##### Local project files
+
+A Functions project directory contains the following files in the project root folder, regardless of language:
+
+- `host.json`
+- `local.settings.json`
+- Other files in the project depend on your language and specific functions.
+
+The `host.json` metadata file contains configuration options that affect all functions in a function app instance. Other function app configuration options are managed depending on where the function app runs:
+
+- **Deployed to Azure:** in your application settings
+- **On your local computer:** in the local.settings.json file.
+
+Configurations in `host.json` related to bindings are applied equally to each function in the function app. You can also override or apply settings per environment using application settings. To learn more, see the [host.json reference](https://learn.microsoft.com/en-us/azure/azure-functions/functions-host-json).
+
+The `local.settings.json` file stores app settings, and settings used by local development tools. Settings in the `local.settings.json` file are used only when you're running your project locally. When you publish your project to Azure, be sure to also add any required settings to the app settings for the function app.
+
+:bangbang: Because the `local.settings.json` may contain secrets, such as connection strings, you should never store it in a remote repository.
+
+##### Synchronize settings
+
+When you develop your functions locally, any local settings required by your app must also be present in the app settings of the deployed function app. You can also download current settings from the function app to your local project.
 
 ### Create triggers and bindings
 
-Triggers cause a function to run. A trigger defines how a function is invoked and a function must have exactly one trigger. Triggers have associated data, which is often provided as the payload of the function.
+A trigger defines how a function is invoked and a function must have exactly one trigger. Triggers have associated data, which is often provided as the payload of the function.
 
-Binding to a function is a way of declaratively connecting another resource to the function; bindings may be connected as _input bindings_, _output bindings_, or both. Data from bindings is provided to the function as parameters.
+Binding to a function is a way of declaratively connecting another resource to the function; bindings might be connected as _input bindings_, _output bindings_, or both. Data from bindings is provided to the function as parameters.
 
 You can mix and match different bindings to suit your needs. Bindings are optional and a function might have one or multiple input and/or output bindings.
 
@@ -203,7 +217,7 @@ Triggers and bindings let you avoid hardcoding access to other services. Your fu
 
 Triggers and bindings are defined differently depending on the development language.
 
-| Language                                | Triggers and bindings are configured by...              |
+| Language                                | Configure triggers and bindings by...                   |
 | --------------------------------------- | ------------------------------------------------------- |
 | C# class library                        | Decorating methods and parameters with C# attributes    |
 | Java                                    | Decorating methods and parameters with Java annotations |
@@ -211,7 +225,7 @@ Triggers and bindings are defined differently depending on the development langu
 
 For languages that rely on _function.json_, the portal provides a UI for adding bindings in the **Integration** tab. You can also edit the file directly in the portal in the **Code + test** tab of your function.
 
-In .NET and Java, the parameter type defines the data type for input data. For instance, use `string` to bind to the text of a queue trigger, a byte array to read as binary, and a custom type to de-serialize to an object. Since .NET class library functions and Java functions don't rely on _function.json_ for binding definitions, they can't be created and edited in the portal. C# portal editing is based on C# script, which uses _function.json_ instead of attributes.
+In .NET and Java, the parameter type defines the data type for input data. For instance, use `string` to bind to the text of a queue trigger, a byte array to read as binary, and a custom type to deserialize to an object. Since .NET class library functions and Java functions don't rely on _function.json_ for binding definitions, they can't be created and edited in the portal. C# portal editing is based on C# script, which uses _function.json_ instead of attributes.
 
 For languages that are dynamically typed such as JavaScript, use the `dataType` property in the _function.json_ file. For example, to read the content of an HTTP request in binary format, set `dataType` to `binary`:
 
@@ -244,20 +258,21 @@ Here's a _function.json_ file for this scenario.
 
 ```json
 {
+  "disabled": false,
   "bindings": [
     {
       "type": "queueTrigger",
       "direction": "in",
-      "name": "order",
+      "name": "myQueueItem",
       "queueName": "myqueue-items",
-      "connection": "MY_STORAGE_ACCT_APP_SETTING"
+      "connection": "MyStorageConnectionAppSetting"
     },
     {
+      "tableName": "Person",
+      "connection": "MyStorageConnectionAppSetting",
+      "name": "tableBinding",
       "type": "table",
-      "direction": "out",
-      "name": "$return",
-      "tableName": "outTable",
-      "connection": "MY_TABLE_STORAGE_ACCT_APP_SETTING"
+      "direction": "out"
     }
   ]
 }
@@ -267,60 +282,9 @@ The first element in the `bindings` array is the Queue storage trigger. The `typ
 
 The second element in the `bindings` array is the Azure Table Storage output binding. The `type` and `direction` properties identify the binding. The `name` property specifies how the function provides the new table row, in this case by using the function return value. The name of the table is in `tableName`, and the connection string is in the app setting identified by `connection`.
 
-##### C# script example
+##### C# function example
 
-Here's C# script code that works with this trigger and binding. Notice that the name of the parameter that provides the queue message content is `order`; this name is required because the `name` property value in _function.json_ is `order`.
-
-```csharp
-#r "Newtonsoft.Json"
-
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Linq;
-
-// From an incoming queue message that is a JSON object, add fields and write to Table storage
-// The method return value creates a new row in Table Storage
-public static Person Run(JObject order, ILogger log)
-{
-    return new Person() {
-            PartitionKey = "Orders",
-            RowKey = Guid.NewGuid().ToString(),
-            Name = order["Name"].ToString(),
-            MobileNumber = order["MobileNumber"].ToString() };
-}
-
-public class Person
-{
-    public string PartitionKey { get; set; }
-    public string RowKey { get; set; }
-    public string Name { get; set; }
-    public string MobileNumber { get; set; }
-}
-```
-
-##### JavaScript example
-
-The same _function.json_ file can be used with a JavaScript function:
-
-```js
-// From an incoming queue message that is a JSON object, add fields and write to Table Storage
-module.exports = async function (context, order) {
-  order.PartitionKey = "Orders";
-  order.RowKey = generateRandomId();
-
-  context.bindings.order = order;
-};
-
-function generateRandomId() {
-  return (
-    Math.random().toString(36).substring(2, 15) +
-    Math.random().toString(36).substring(2, 15)
-  );
-}
-```
-
-##### Class library example
-
-In a class library, the same trigger and binding information — queue and table names, storage accounts, function parameters for input and output — is provided by attributes instead of a _function.json_ file. Here's an example:
+Following is the same example represented in a C# function. The same trigger and binding information, queue and table names, storage accounts, and function parameters for input and output are provided by attributes instead of a _function.json_ file.
 
 ```csharp
 public static class QueueTriggerTableOutput
@@ -348,31 +312,22 @@ public class Person
 }
 ```
 
-#### Additional resource
-
-For more detailed examples of triggers and bindings please visit:
-
-- [Azure Blob storage bindings for Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-storage-blob)
-- [Azure Cosmos DB bindings for Azure Functions 2.x](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-cosmosdb-v2)
-- [Timer trigger for Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-timer)
-- [Azure Functions HTTP triggers and bindings](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-http-webhook)
-
 ### Connect functions to Azure services
 
-Your function project references connection information by name from its configuration provider. It doesn't directly accept the connection details, allowing them to be changed across environments. For example, a trigger definition might include a `connection` property, but you can't set the connection string directly in a _function.json_. Instead, you would set `connection` to the name of an environment variable that contains the connection string.
+As a security best practice, Azure Functions takes advantage of the application settings functionality of Azure App Service to help you more securely store strings, keys, and other tokens required to connect to other services. Application settings in Azure are stored encrypted and can be accessed at runtime by your app as environment variable `name` `value` pairs. For triggers and bindings that require a connection property, you set the application setting name instead of the actual connection string. You can't configure a binding directly with a connection string or key.
 
-The default configuration provider uses environment variables that are set in [Application Settings](https://learn.microsoft.com/en-us/azure/azure-functions/functions-how-to-use-azure-function-app-settings?tabs=portal#settings) when running in the Azure Functions service, or from the [local settings file](https://learn.microsoft.com/en-us/azure/azure-functions/functions-develop-local#local-settings-file) when developing locally.
+The default configuration provider uses environment variables. These variables are defined in application settings when running in the Azure and in the local settings file when developing locally.
 
 #### Configure an identity-based connection
 
 Some connections in Azure Functions are configured to use an identity instead of a secret. Support depends on the extension using the connection. In some cases, a connection string may still be required in Functions even though the service to which you're connecting supports identity-based connections.
 
-:information_source: Identity-based connections are not supported with Durable Functions.
+:information_source: When running in a Consumption or Elastic Premium plan, your app uses the `WEBSITE_AZUREFILESCONNECTIONSTRING` and `WEBSITE_CONTENTSHARE` settings when connecting to Azure Files on the storage account used by your function app. Azure Files doesn't support using managed identity when accessing the file share.
 
-When hosted in the Azure Functions service, identity-based connections use a [managed identity](https://learn.microsoft.com/en-us/azure/app-service/overview-managed-identity?toc=/azure/azure-functions/toc.json). The system-assigned identity is used by default, although a user-assigned identity can be specified with the `credential` and `clientID` properties. When run in other contexts, such as local development, your developer identity is used instead.
+When hosted in the Azure Functions service, identity-based connections use a managed identity. The system-assigned identity is used by default, although a user-assigned identity can be specified with the `credential` and `clientID` properties. Configuring a user-assigned identity with a resource ID is **not** supported. When run in other contexts, such as local development, your developer identity is used instead, although this can be customized.
 
 #### Grant permission to the identity
 
-Whatever identity is being used must have permissions to perform the intended actions. This is typically done by assigning a role in Azure RBAC or specifying the identity in an access policy, depending on the service to which you're connecting.
+Identities must have permissions to perform the intended actions. This is typically done by assigning a role in Azure RBAC or specifying the identity in an access policy, depending on the service to which you're connecting.
 
 :bangbang: Some permissions might be exposed by the target service that are not necessary for all contexts. Where possible, adhere to the **principle of least privilege**, granting the identity only required privileges.

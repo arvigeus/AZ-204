@@ -6,7 +6,7 @@ Instrumenting and monitoring, your apps helps you maximize their availability an
 
 ### Explore Application Insights
 
-Application Insights is an extension of Azure Monitor and provides Application Performance Monitoring (also known as “APM”) features. APM tools are useful to monitor applications from development, through test, and into production in the following ways:
+Application Insights is an extension of Azure Monitor and provides Application Performance Monitoring (APM) features. APM tools are useful to monitor applications from development, through test, and into production in the following ways:
 
 - Proactively understand how an application is performing.
 - Reactively review application execution data to determine the cause of an incident.
@@ -19,15 +19,15 @@ The log trace is associated with other telemetry to give a detailed view of the 
 
 Features include, but not limited to:
 
-| Feature                            | Description                                                                                                                                                    |
-| ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Live Metrics                       | Observe activity from your deployed application in real time with no effect on the host environment.                                                           |
-| Availability                       | Also known as “Synthetic Transaction Monitoring”, probe your application's external endpoint(s) to test the overall availability and responsiveness over time. |
-| GitHub or Azure DevOps integration | Create GitHub or Azure DevOps work items in the context of Application Insights data.                                                                          |
-| Usage                              | Understand which features are popular with users and how users interact and use your application.                                                              |
-| Smart Detection                    | Automatic failure and anomaly detection through proactive telemetry analysis.                                                                                  |
-| Application Map                    | A high-level top-down view of the application architecture and at-a-glance visual references to component health and responsiveness.                           |
-| Distributed Tracing                | Search and visualize an end-to-end flow of a given execution or transaction.                                                                                   |
+| Feature                            | Description                                                                                                                                                 |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Live Metrics                       | Observe activity from your deployed application in real time with no effect on the host environment.                                                        |
+| Availability                       | Also known as _Synthetic Transaction Monitoring_, probe your applications external endpoints to test the overall availability and responsiveness over time. |
+| GitHub or Azure DevOps integration | Create GitHub or Azure DevOps work items in the context of Application Insights data.                                                                       |
+| Usage                              | Understand which features are popular with users and how users interact and use your application.                                                           |
+| Smart Detection                    | Automatic failure and anomaly detection through proactive telemetry analysis.                                                                               |
+| Application Map                    | A high-level top-down view of the application architecture and at-a-glance visual references to component health and responsiveness.                        |
+| Distributed Tracing                | Search and visualize an end-to-end flow of a given execution or transaction.                                                                                |
 
 #### What Application Insights monitors
 
@@ -61,41 +61,43 @@ There are several ways to get started monitoring and analyzing app performance:
 Application Insights log-based metrics let you analyze the health of your monitored apps, create powerful dashboards, and configure alerts. There are two kinds of metrics:
 
 - **Log-based metrics** behind the scene are translated into [Kusto queries](https://learn.microsoft.com/en-us/azure/kusto/query/) from stored events.
-- **Standard metrics** are stored as pre-aggregated time series.
+- **Standard metrics** are stored as preaggregated time series.
 
-Since _standard metrics_ are pre-aggregated during collection, they have better performance at query time. Standard metrics are a better choice for dashboarding and in real-time alerting. The _log-based metrics_ have more dimensions, which makes them the superior option for data analysis and ad-hoc diagnostics. Use the [namespace selector](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-getting-started#create-your-first-metric-chart) to switch between log-based and standard metrics in [metrics explorer](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-getting-started).
+Since _standard metrics_ are preaggregated during collection, they have better performance at query time. Standard metrics are a better choice for dashboarding and in real-time alerting. The _log-based metrics_ have more dimensions, which makes them the superior option for data analysis and ad-hoc diagnostics. Use the [namespace selector](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-getting-started#create-your-first-metric-chart) to switch between log-based and standard metrics in [metrics explorer](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-getting-started).
 
 #### Log-based metrics
 
-Developers can use the SDK to send events manually (by writing code that explicitly invokes the SDK) or they can rely on the automatic collection of events from auto-instrumentation. In either case, the Application Insights backend stores all collected events as logs, and the Application Insights blades in the Azure portal act as an analytical and diagnostic tool for visualizing event-based data from logs.
+Developers can use the SDK to send events manually (by writing code that explicitly invokes the SDK) or they can rely on the automatic collection of events from autoinstrumentation. In either case, the Application Insights backend stores all collected events as logs, and the Application Insights blades in the Azure portal act as an analytical and diagnostic tool for visualizing event-based data from logs.
 
 Using logs to retain a complete set of events can bring great analytical and diagnostic value. For example, you can get an exact count of requests to a particular URL with the number of distinct users who made these calls. Or you can get detailed diagnostic traces, including exceptions and dependency calls for any user session. Having this type of information can significantly improve visibility into the application health and usage, allowing to cut down the time necessary to diagnose issues with an app.
 
-At the same time, collecting a complete set of events might be impractical (or even impossible) for applications that generate a large volume of telemetry. For situations when the volume of events is too high, Application Insights implements several telemetry volume reduction techniques, such as sampling and filtering that reduces the number of collected and stored events. Unfortunately, lowering the number of stored events also lowers the accuracy of the metrics that, behind the scenes, must perform query-time aggregations of the events stored in logs.
+At the same time, collecting a complete set of events may be impractical (or even impossible) for applications that generate a large volume of telemetry. For situations when the volume of events is too high, Application Insights implements several telemetry volume reduction techniques, such as sampling and filtering that reduces the number of collected and stored events. Unfortunately, lowering the number of stored events also lowers the accuracy of the metrics that, behind the scenes, must perform query-time aggregations of the events stored in logs.
 
-#### Pre-aggregated metrics
+#### Preaggregated metrics
 
-The pre-aggregated metrics aren't stored as individual events with lots of properties. Instead, they're stored as pre-aggregated time series, and only with key dimensions. This makes the new metrics superior at query time: retrieving data happens faster and requires less compute power. This enables new scenarios such as near real-time alerting on dimensions of metrics, more responsive dashboards, and more.
+The preaggregated metrics aren't stored as individual events with lots of properties. Instead, they're stored as preaggregated time series, and only with key dimensions. This makes the new metrics superior at query time: retrieving data happens faster and requires less compute power. This enables new scenarios such as near real-time alerting on dimensions of metrics, more responsive dashboards, and more.
 
 :bangbang: Both, log-based and pre-aggregated metrics coexist in Application Insights. To differentiate the two, in the Application Insights UX the pre-aggregated metrics are now called "Standard metrics (preview)", while the traditional metrics from the events were renamed to "Log-based metrics".
 
-The newer SDKs ([Application Insights 2.7](https://www.nuget.org/packages/Microsoft.ApplicationInsights/2.7.2) SDK or later for .NET) pre-aggregate metrics during collection. This applies to [standard metrics sent by default](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftinsightscomponents) so the accuracy isn't affected by sampling or filtering. It also applies to custom metrics sent using [GetMetric](https://learn.microsoft.com/en-us/azure/azure-monitor/app/api-custom-events-metrics#getmetric) resulting in less data ingestion and lower cost.
+The newer SDKs ([Application Insights 2.7](https://www.nuget.org/packages/Microsoft.ApplicationInsights/2.7.2) SDK or later for .NET) preaggregate metrics during collection. This applies to [standard metrics sent by default](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/metrics-supported#microsoftinsightscomponents) so the accuracy isn't affected by sampling or filtering. It also applies to custom metrics sent using [GetMetric](https://learn.microsoft.com/en-us/azure/azure-monitor/app/api-custom-events-metrics#getmetric) resulting in less data ingestion and lower cost.
 
-For the SDKs that don't implement pre-aggregation the Application Insights backend still populates the new metrics by aggregating the events received by the Application Insights event collection endpoint. While you don't benefit from the reduced volume of data transmitted over the wire, you can still use the pre-aggregated metrics and experience better performance and support of the near real-time dimensional alerting with SDKs that don't pre-aggregate metrics during collection.
+For the SDKs that don't implement preaggregation the Application Insights backend still populates the new metrics by aggregating the events received by the Application Insights event collection endpoint. While you don't benefit from the reduced volume of data transmitted over the wire, you can still use the preaggregated metrics and experience better performance and support of the near real-time dimensional alerting with SDKs that don't preaggregate metrics during collection.
 
-It's worth mentioning that the collection endpoint pre-aggregates events before ingestion sampling, which means that [ingestion sampling](https://learn.microsoft.com/en-us/azure/azure-monitor/app/sampling) will never impact the accuracy of pre-aggregated metrics, regardless of the SDK version you use with your application.
+It's worth mentioning that the collection endpoint preaggregates events before ingestion sampling, which means that [ingestion sampling](https://learn.microsoft.com/en-us/azure/azure-monitor/app/sampling) will never impact the accuracy of preaggregated metrics, regardless of the SDK version you use with your application.
 
 ### Instrument an app for monitoring
 
-Application Insights is enabled through either Auto-Instrumentation (agent) or by adding the Application Insights SDK to your application code.
+At a basic level, "instrumenting" is simply enabling an application to capture telemetry. There are two methods to instrument your application:
 
-#### Auto-instrumentation
+- Automatic instrumentation (autoinstrumentation)
+- Manual instrumentation
 
-Auto-instrumentation is the preferred instrumentation method. It requires no developer investment and eliminates future overhead related to updating the SDK. It's also the only way to instrument an application in which you don't have access to the source code.
+**Autoinstrumentation** enables telemetry collection through configuration without touching the application's code. Although it's more convenient, it tends to be less configurable. It's also not available in all languages. See [Autoinstrumentation supported environments and languages](https://learn.microsoft.com/en-us/azure/azure-monitor/app/codeless-overview). When autoinstrumentation is available, it's the easiest way to enable Azure Monitor Application Insights.
 
-In essence, all you have to do is enable and - in some cases - configure the agent, which collects the telemetry automatically.
+**Manual instrumentation** is coding against the Application Insights or OpenTelemetry API. In the context of a user, it typically refers to installing a language-specific SDK in an application. This means that you have to manage the updates to the latest package version by yourself. You can use this option if you need to make custom dependency calls or API calls that are not captured by default with autoinstrumentation. There are two options for manual instrumentation:
 
-The list of services supported by auto-instrumentation changes rapidly, visit [this](https://learn.microsoft.com/en-us/azure/azure-monitor/app/codeless-overview#supported-environments-languages-and-resource-providers) page for a list of what is currently supported.
+- [Application Insights SDKs](https://learn.microsoft.com/en-us/azure/azure-monitor/app/asp-net-core)
+- [Azure Monitor OpenTelemetry Distros](https://learn.microsoft.com/en-us/azure/azure-monitor/app/opentelemetry-enable).
 
 #### Enabling via Application Insights SDKs
 
@@ -107,47 +109,54 @@ You only need to install the Application Insights SDK in the following circumsta
 
 To use the SDK, you install a small instrumentation package in your app and then instrument the web app, any background components, and JavaScript within the web pages. The app and its components don't have to be hosted in Azure. The instrumentation monitors your app and directs the telemetry data to an Application Insights resource by using a unique token.
 
-The Application Insights SDKs for .NET, .NET Core, Java, Node.js, and JavaScript all support distributed tracing natively.
+A list of SDK versions and names is hosted on GitHub. For more information, visit [SDK Version](https://github.com/microsoft/ApplicationInsights-dotnet/blob/develop/docs/versions_and_names.md).
 
-Additionally, any technology can be tracked manually with a call to `TrackDependency` on the `TelemetryClient`.
+#### Enable via OpenTelemetry
 
-#### Enable via OpenCensus
+Microsoft worked with project stakeholders from two previously popular open-source telemetry projects, [OpenCensus](https://opencensus.io/) and [OpenTracing](https://opentracing.io/). Together, we helped to create a single project, OpenTelemetry. OpenTelemetry includes contributions from all major cloud and Application Performance Management (APM) vendors and lives within the [Cloud Native Computing Foundation (CNCF)](https://www.cncf.io/). Microsoft is a Platinum Member of the CNCF.
 
-In addition to the Application Insights SDKs, Application Insights also supports distributed tracing through OpenCensus. OpenCensus is an open source, vendor-agnostic, single distribution of libraries to provide metrics collection and distributed tracing for services. It also enables the open source community to enable distributed tracing with popular technologies like Redis, Memcached, or MongoDB.
+Some legacy terms in Application Insights are confusing because of the industry convergence on OpenTelemetry. The following table highlights these differences. OpenTelemetry terms are replacing Application Insights terms.
+
+| Application Insights      | OpenTelemetry                             |
+| ------------------------- | ----------------------------------------- |
+| Autocollectors            | Instrumentation libraries                 |
+| Channel                   | Exporter                                  |
+| Codeless / Agent-based    | Autoinstrumentation                       |
+| Traces                    | Logs                                      |
+| Requests                  | Server Spans                              |
+| Dependencies              | Other Span Types (Client, Internal, etc.) |
+| Operation ID              | Trace ID                                  |
+| ID or Operation Parent ID | Span ID                                   |
 
 ### Select an availability test
 
-After you've deployed your web app or website, you can set up recurring tests to monitor availability and responsiveness. Application Insights sends web requests to your application at regular intervals from points around the world. It can alert you if your application isn't responding or responds too slowly.
+After you deploy your web app or website, you can set up recurring tests to monitor availability and responsiveness. Application Insights sends web requests to your application at regular intervals from points around the world. It can alert you if your application isn't responding or responds too slowly. You can create up to 100 availability tests per Application Insights resource.
 
-You can set up availability tests for any HTTP or HTTPS endpoint that's accessible from the public internet. You don't have to make any changes to the website you're testing. In fact, it doesn't even have to be a site that you own. You can test the availability of a REST API that your service depends on.
+Availability tests don't require any changes to the website you're testing and work for any HTTP or HTTPS endpoint that's accessible from the public internet. You can also test the availability of a REST API that your service depends on.
 
 You can create up to 100 availability tests per Application Insights resource, and there are three types of availability tests:
 
+- **Standard test:** This is a type of availability test that checks the availability of a website by sending a single request, similar to the deprecated URL ping test. In addition to validating whether an endpoint is responding and measuring the performance, Standard tests also include TLS/SSL certificate validity, proactive lifetime check, HTTP request verb (for example, `GET`,`HEAD`, and `POST`), custom headers, and custom data associated with your HTTP request.
+- **Custom TrackAvailability test:** If you decide to create a custom application to run availability tests, you can use the [TrackAvailability()](https://learn.microsoft.com/en-us/dotnet/api/microsoft.applicationinsights.telemetryclient.trackavailability) method to send the results to Application Insights.
 - [URL ping test (classic)](https://learn.microsoft.com/en-us/azure/azure-monitor/app/monitor-web-app-availability): You can create this test through the portal to validate whether an endpoint is responding and measure performance associated with that response. You can also set custom success criteria coupled with more advanced features, like parsing dependent requests and allowing for retries.
-- [Standard test (Preview)](https://learn.microsoft.com/en-us/azure/azure-monitor/app/availability-standard-tests): This single request test is similar to the URL ping test. It includes SSL certificate validity, proactive lifetime check, HTTP request verb (for example `GET`, `HEAD`, or `POST`), custom headers, and custom data associated with your HTTP request.
-- [Custom TrackAvailability test](https://learn.microsoft.com/en-us/azure/azure-monitor/app/availability-azure-functions): If you decide to create a custom application to run availability tests, you can use the [TrackAvailability()](https://learn.microsoft.com/en-us/dotnet/api/microsoft.applicationinsights.telemetryclient.trackavailability) method to send the results to Application Insights.
 
-:information_source: **Multi-step test** is a fourth type of availability test, however that is only available through Visual Studio 2019. **Custom TrackAvailability test** is the long term supported solution for multi request or authentication test scenarios.
-
-:bangbang: **The URL ping test** relies on the DNS infrastructure of the public internet to resolve the domain names of the tested endpoints. If you're using private DNS, you must ensure that the public domain name servers can resolve every domain name of your test. When that's not possible, you can use custom **TrackAvailability** tests instead.
-
-Visit the [troubleshooting](https://learn.microsoft.com/en-us/azure/azure-monitor/app/troubleshoot-availability) article for guidance on diagnosing availability issues.
+:bangbang: **URL ping tests:** On September 30, 2026, URL ping tests in Application Insights will be retired. Existing URL ping tests will be removed from your resources. Review the [pricing](https://azure.microsoft.com/pricing/details/monitor) for standard tests and [transition](https://aka.ms/availabilitytestmigration) to using them before September 30, 2026 to ensure you can continue to run single-step availability tests in your Application Insights resources.
 
 ### Troubleshoot app performance by using Application Map
 
-Application Map helps you spot performance bottlenecks or failure hotspots across all components of your distributed application. Each node on the map represents an application component or its dependencies; and has health KPI and alerts status. You can click through from any component to more detailed diagnostics, such as Application Insights events. If your app uses Azure services, you can also click through to Azure diagnostics, such as SQL Database Advisor recommendations.
+Application Map helps you spot performance bottlenecks or failure hotspots across all components of your distributed application. Each node on the map represents an application component or its dependencies; and has health key performance indicator and alerts status. You can select through from any component to more detailed diagnostics, such as Application Insights events. If your app uses Azure services, you can also select through to Azure diagnostics, such as SQL Database Advisor recommendations.
 
 Components are independently deployable parts of your distributed/microservices application. Developers and operations teams have code-level visibility or access to telemetry generated by these application components.
 
 - Components are different from "observed" external dependencies such as SQL, Event Hubs, etc. which your team/organization may not have access to (code or telemetry).
 - Components run on any number of server/role/container instances.
-- Components can be separate Application Insights instrumentation keys (even if subscriptions are different) or different roles reporting to a single Application Insights instrumentation key. The preview map experience shows the components regardless of how they're set up.
+- Components can be separate Application Insights instrumentation keys (even if subscriptions are different) or different roles reporting to a single Application Insights instrumentation key. The preview map experience shows the components regardless of their configuration.
 
 You can see the full application topology across multiple levels of related application components. Components could be different Application Insights resources, or different roles in a single resource. The app map finds components by following HTTP dependency calls made between servers with the Application Insights SDK installed.
 
 This experience starts with progressive discovery of the components. When you first load the application map, a set of queries is triggered to discover the components related to this component. A button at the top-left corner updates with the number of components in your application as they're discovered.
 
-On clicking "Update map components", the map is refreshed with all components discovered until that point. Depending on the complexity of your application, this may take a minute to load.
+Selecting **Update map components** refreshes with all components discovered until that point. Depending on the complexity of your application, this may take a minute to load.
 
 If all of the components are roles within a single Application Insights resource, then this discovery step isn't required. The initial load for such an application has all its components.
 

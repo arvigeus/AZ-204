@@ -24,6 +24,26 @@ General-purpose-v1 is a legacy account type.
 
 ---
 
+Question: What is the maximum size of data that a block blob in Azure Blob storage can store?
+
+- [ ] 8-TB
+- [ ] Unlimited
+- [x] 190.7-TiB
+
+Answer: Block blobs in Azure Blob storage can store up to about 190.7-TiB of data.
+
+---
+
+Question: What are the two versions of client-side encryption available in the Azure Blob Storage and Queue Storage client libraries?
+
+- [x] Version 1 uses Cipher Block Chaining (CBC) mode with AES and Version 2 uses Galois/Counter Mode (GCM) mode with AES
+- [ ] Version 1 uses Advanced Encryption Standard (AES) and Version 2 uses Federal Information Processing Standards (FIPS)
+- [ ] Version 1 uses Galois/Counter Mode (GCM) mode with AES and Version 2 uses Cipher Block Chaining (CBC) mode with AES
+
+Answer: Version 1 uses CBC mode with AES, while Version 2 uses GCM mode with AES.
+
+---
+
 Question: Which access tier is considered to be offline and can't be read or modified?
 
 - [ ] Cool

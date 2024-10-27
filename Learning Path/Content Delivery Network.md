@@ -6,7 +6,7 @@ A content delivery network (CDN) is a distributed network of servers that can ef
 
 ### Explore Azure Content Delivery Networks
 
-Azure Content Delivery Network (CDN) offers developers a global solution for rapidly delivering high-bandwidth content to users by caching their content at strategically placed physical nodes across the world. Azure CDN can also accelerate dynamic content, which cannot be cached, by leveraging various network optimizations using CDN POPs. For example, route optimization to bypass Border Gateway Protocol (BGP).
+Azure Content Delivery Network (CDN) offers developers a global solution for rapidly delivering high-bandwidth content to users. It caches content at strategically placed physical nodes across the world. Azure CDN can also accelerate dynamic content, which can't be cached, by using various network optimizations using CDN POPs. For example, route optimization to bypass Border Gateway Protocol (BGP).
 
 The benefits of using Azure CDN to deliver web site assets include:
 
@@ -32,7 +32,9 @@ The benefits of using Azure CDN to deliver web site assets include:
 
 #### Requirements
 
-To use Azure CDN you need to create at least one CDN profile, which is a collection of CDN endpoints. Every CDN endpoint represents a specific configuration of content deliver behavior and access. To organize your CDN endpoints by internet domain, web application, or some other criteria, you can use multiple profiles. Because [Azure CDN pricing](https://azure.microsoft.com/pricing/details/cdn/) is applied at the CDN profile level, you must create multiple CDN profiles if you want to use a mix of pricing tiers.
+- To use Azure Content Delivery Network, you must own at least one Azure subscription.
+- You also need to create a content delivery network profile, which is a collection of content delivery network endpoints. Every content delivery network endpoint is a specific configuration which users can customize with required content delivery behavior and access. To organize your content delivery network endpoints by internet domain, web application, or some other criteria, you can use multiple profiles.
+- Since [Azure Content Delivery Network pricing](https://azure.microsoft.com/pricing/details/cdn/) gets applied at the content delivery network profile level. If you want to use a mix of pricing tiers you must create multiple content delivery network profiles.
 
 ##### Limitations
 
@@ -59,28 +61,48 @@ For a complete list of features that each Azure CDN product supports, visit [Com
 
 ### Control cache behavior on Azure Content Delivery Networks
 
-Because a cached resource can potentially be out-of-date or stale (compared to the corresponding resource on the origin server), it is important for any caching mechanism to control when content is refreshed. To save time and bandwidth consumption, a cached resource is not compared to the version on the origin server every time it is accessed. Instead, as long as a cached resource is considered to be fresh, it is assumed to be the most current version and is sent directly to the client. A cached resource is considered to be fresh when its age is less than the age or period defined by a cache setting. For example, when a browser reloads a webpage, it verifies that each cached resource on your hard drive is fresh and loads it. If the resource is not fresh (stale), an up-to-date copy is loaded from the server.
+Controlling when content is refreshed is important for any caching mechanism. A cached resource might be out-of-date or stale (compared to the corresponding resource on the origin server).
 
 #### Controlling caching behavior
 
-Azure CDNs provide two mechanisms for caching files. However, these configuration settings depend on the tier you've selected. Caching rules in Azure CDN Standard for Microsoft are set at the endpoint level and provide three configuration options. Other tiers provide additional configuration options, which include:
+You can use content delivery network caching rules to set or modify default cache expiration behavior. These caching rules can either be global or with custom conditions. Azure Content Delivery Network offers two ways to control how your files get cached:
 
-- **Caching rules**. Caching rules can be either global (apply to all content from a specified endpoint) or custom. Custom rules apply to specific paths and file extensions.
-- **Query string caching**. Query string caching enables you to configure how Azure CDN responds to a query string. Query string caching has no effect on files that can't be cached.
+- **Caching rules:** Azure Content Delivery Network provides global and custom types of caching rules.
 
-With the Azure CDN Standard for Microsoft Tier, caching rules are as simple as the following three options:
+  - Global caching rules - You can set one global caching rule for each endpoint in your profile, which affects all requests to the endpoint. The global caching rule overrides any HTTP cache-directive headers, if set.
+  - Custom caching rules - You can set one or more custom caching rules for each endpoint in your profile. Custom caching rules match specific paths and file extensions, get processed in order, and override the global caching rule, if set.
 
-- Ignore query strings. This option is the default mode. A CDN POP simply passes the request and any query strings directly to the origin server on the first request and caches the asset. New requests for the same asset will ignore any query strings until the TTL expires.
-- Bypass caching for query strings. Each query request from the client is passed directly to the origin server with no caching.
-- Cache every unique URL. Every time a requesting client generates a unique URL, that URL is passed back to the origin server and the response cached with its own TTL. This final method is inefficient where each request is a unique URL, as the cache-hit ratio becomes low.
+- **Query string caching:** You can adjust how the Azure content delivery network treats caching for requests with query strings. If the file isn't cacheable, the query string caching setting has no effect, based on caching rules and content delivery network default behaviors.
 
-To change these settings, in the Endpoint pane, select **Caching rules** and then select the caching option that you want to apply to the endpoint and select **Save**.
+:information_source: Caching rules are available only for **Azure CDN Standard from Edgio** profiles. For **Azure CDN from Microsoft** profiles, you must use the [Standard rules engine](https://learn.microsoft.com/en-us/azure/cdn/cdn-standard-rules-engine-reference) For **Azure CDN Premium from Edgio** profiles, you must use the [Edgio Premium rules engine](https://learn.microsoft.com/en-us/azure/cdn/cdn-verizon-premium-rules-engine) in the **Manage** portal for similar functionality.
+
+#### Standard rules engine
+
+In the Standard rules engine for Azure Content Delivery Network, a rule consists of one or more match conditions and an action. The rules engine is designed to be the final authority on how specific types of requests get processed by Standard Azure Content Delivery Network.
+
+Common uses for the rules:
+
+- Override or define a custom cache policy.
+- Redirect requests.
+- Modify HTTP request and response headers.
+
+A rule consists of one or more match conditions and an action. The first part of a rule is a match condition or set of match conditions. In the Standard rules engine for Azure Content Delivery Network, each rule can have up to four match conditions. A match condition identifies specific types of requests for which defined actions are performed. If you use multiple match conditions, the match conditions are grouped together by using `AND` logic. Following is a table highlighting a few of the available match options.
+
+| Match condition | Description                                                                                            |
+| --------------- | ------------------------------------------------------------------------------------------------------ |
+| Device type     | Identifies requests made from a mobile device or desktop device.                                       |
+| HTTP version    | Identifies requests based on the HTTP version of the request.                                          |
+| Request cookies | Identifies requests based on cookie information in the incoming request.                               |
+| Post argument   | Identifies requests based on arguments defined for the POST request method that's used in the request. |
+| Query string    | Identifies requests that contain a specific query string parameter, set to match a specific pattern.   |
+
+For a complete list of match conditions, visit [Match conditions in the Standard rules engine for Azure Content Delivery Network](https://learn.microsoft.com/en-us/azure/cdn/cdn-standard-rules-engine-match-conditions)
 
 #### Caching and time to live
 
-If you publish a website through Azure CDN, the files on that site are cached until their TTL expires. The Cache-Control header contained in the HTTP response from origin server determines the TTL duration.
+Files from publicly accessible origin web servers can be cached in Azure Content Delivery Network until their time to live (TTL) elapses. The TTL gets determined by the `Cache-Control` header in the HTTP response from the origin server. This article describes how to set `Cache-Control` headers for the Web Apps feature of Microsoft Azure App Service, Azure Cloud Services, ASP.NET applications, and Internet Information Services (IIS) sites, all of which are configured similarly. You can set the `Cache-Control` header either by using configuration files or programmatically.
 
-If you don't set a TTL on a file, Azure CDN sets a default value. However, this default may be overridden if you have set up caching rules in Azure. Default TTL values are as follows:
+If you don't set a TTL on a file, Azure CDN sets a default value. However, this default might be overridden if you set up caching rules in Azure. Default TTL values are as follows:
 
 - Generalized web delivery optimizations: seven days
 - Large file optimizations: one day
@@ -88,11 +110,9 @@ If you don't set a TTL on a file, Azure CDN sets a default value. However, this 
 
 #### Content updating
 
-In normal operation, an Azure CDN edge node will serve an asset until its TTL expires. The edge node reconnects to the origin server when the TTL expires and a client makes a request to the same asset. The node will fetch another copy of the asset, resetting the TTL in the process.
+Azure Content Delivery Network edge nodes cache contents until the content's time to live (TTL) expires. After the TTL expires, when a client makes a request for the content from the edge node, the edge node will retrieve a new updated copy of the content to serve to the client. Then the refreshed content in cache of the edge node.
 
-To ensure that users always receive the latest version of an asset, consider including a version string in the asset URL. This approach causes the CDN to retrieve the new asset immediately.
-
-Alternatively, you can purge cached content from the edge nodes, which refreshes the content on the next client request. You might purge cached content when publishing a new version of a web app or to replace any out-of-date assets.
+The best practice to make sure your users always obtain the latest copy of your assets is to version your assets for each update and publish them as new URLs. Content delivery network will immediately retrieve the new assets for the next client requests. Sometimes you might wish to purge cached content from all edge nodes and force them all to retrieve new updated assets. The reason might be due to updates to your web application, or to quickly update assets that contain incorrect information.
 
 You can purge content in several ways.
 
@@ -145,7 +165,7 @@ static void Main(string[] args)
 
 #### List CDN profiles and endpoints
 
-The first thing the method below does is list all the profiles and endpoints in our resource group, and if it finds a match for the profile and endpoint names specified in our constants, makes a note of it for later so we don't try to create duplicates.
+The following method lists all the profiles and endpoints in our resource group. If the code finds a match for the profile and endpoint names specified in our constants, it notes it for later so we don't try to create duplicates.
 
 ```csharp
 private static void ListProfilesAndEndpoints(CdnManagementClient cdn)

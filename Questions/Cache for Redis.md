@@ -10,7 +10,7 @@ Answer: The standard tier is the lowest tier that offers replication，which is 
 
 ---
 
-Question: Which of the following represents the expire time resolution when applying a time to live (TTL) to a key in Redis?
+Question: Which of the following choices represents the expire time resolution when applying a time to live (TTL) to a key in Redis?
 
 - [x] 1-millisecond
 - [ ] 10-milliseconds

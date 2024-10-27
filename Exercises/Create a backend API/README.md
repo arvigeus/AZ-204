@@ -59,7 +59,7 @@ This section shows how to import and publish an OpenAPI specification backend AP
 
 1. On the **API Management** screen, select the API Management instance you created.
 
-1. Select **APIs** in the **API management service** navigation pane.
+1. In the **API management service** navigation pane, under **APIs**, select **APIs**.
 
    ![Select APIs in the service navigation pane.](https://learn.microsoft.com/en-us/training/wwl-azure/explore-api-management/media/select-apis-navigation-pane.png)
 
@@ -77,11 +77,13 @@ This section shows how to import and publish an OpenAPI specification backend AP
    | Description           | Automatically populated                               | Provide an optional description of the API.                                                                                                                                                           |
    | API URL suffix        | _conference_                                          | The suffix is appended to the base URL for the API management service. API Management distinguishes APIs by their suffix and therefore the suffix must be unique for every API for a given publisher. |
 
-## Configure the backend settings
+## Configure the API settings
 
-The `Demo Conference API` is created and a backend needs to be specified.
+The _Demo Conference API_ is created. Configure the API settings.
 
-1. Select **Settings** in the blade to the right and enter `https://conferenceapi.azurewebsites.net/` in the **Web service URL** field.
+1. Select **Settings** in the blade to the right.
+
+1. Confirm that `https://conferenceapi.azurewebsites.net/` is in the **Web service URL** field.
 
 1. Deselect the **Subscription required** checkbox.
 
@@ -91,13 +93,13 @@ The `Demo Conference API` is created and a backend needs to be specified.
 
 ## Test the API
 
-Now that the API has been imported and the backend configured it's time to test the API.
+Now that the API has been imported and configured it's time to test the API.
 
 1. Select **Test**.
 
    ![Select test in the right pane.](https://learn.microsoft.com/en-us/training/wwl-azure/explore-api-management/media/select-test.png)
 
-1. Select **GetSpeakers**. The page shows **Query parameters** and **Headers**, if any. The `Ocp-Apim-Subscription-Key` is filled in automatically for the subscription key associated with this API.
+1. Select **GetSpeakers**. The page shows **Query parameters** and **Headers**, if any.
 
 1. Select **Send**.
 

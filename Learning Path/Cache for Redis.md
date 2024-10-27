@@ -8,7 +8,7 @@ Caching is a common technique that aims to improve the performance and scalabili
 
 Azure Cache for Redis provides an in-memory data store based on the [Redis](https://redis.io/) software. Redis improves the performance and scalability of an application that uses backend data stores heavily. It's able to process large volumes of application requests by keeping frequently accessed data in the server memory, which can be written to and read from quickly. Redis brings a critical low-latency and high-throughput data storage solution to modern applications.
 
-Azure Cache for Redis offers both the Redis open-source (OSS Redis) and a commercial product from Redis Labs (Redis Enterprise) as a managed service. It provides secure and dedicated Redis server instances and full Redis API compatibility. The service is operated by Microsoft, hosted on Azure, and usable by any application within or outside of Azure.
+Azure Cache for Redis offers both the Redis open-source (OSS Redis) and a commercial product from Redis Labs (Redis Enterprise) as a managed service. It provides secure and dedicated Redis server instances and full Redis API compatibility. Microsoft operates the service, hosted on Azure, and usable by any application within or outside of Azure.
 
 #### Key scenarios
 
@@ -28,7 +28,7 @@ Azure Cache for Redis is available in these tiers:
 
 | Tier             | Description                                                                                                                                                                                                                       |
 | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Basic            | An OSS Redis cache running on a single VM. This tier has no service-level agreement (SLA) and is ideal for development/test and noncritical workloads.                                                                            |
+| Basic            | An OSS Redis cache running on a single virtual machine (VM). This tier has no service-level agreement (SLA) and is ideal for development/test and noncritical workloads.                                                          |
 | Standard         | An OSS Redis cache running on two VMs in a replicated configuration.                                                                                                                                                              |
 | Premium          | High-performance OSS Redis caches. This tier offers higher throughput, lower latency, better availability, and more features. Premium caches are deployed on more powerful VMs compared to the VMs for Basic or Standard caches.  |
 | Enterprise       | High-performance caches powered by Redis Labs' Redis Enterprise software. This tier supports Redis modules including RediSearch, RedisBloom, and RedisTimeSeries. Also, it offers even higher availability than the Premium tier. |
@@ -72,17 +72,17 @@ Redis supports a set of known commands. A command is typically issued as `COMMAN
 
 Here are some common commands you can use:
 
-| Command                 | Description                                                                                                                                              |
-| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ping`                  | Ping the server. Returns "PONG".                                                                                                                         |
-| `set [key] [value]`     | Sets a key/value in the cache. Returns "OK" on success.                                                                                                  |
-| `get [key]`             | Gets a value from the cache.                                                                                                                             |
-| `exists [key]`          | Returns '1' if the **key** exists in the cache, '0' if it doesn't.                                                                                       |
-| `type [key]`            | Returns the type associated with the value for the given **key**.                                                                                        |
-| `incr [key]`            | Increment the given value associated with the **key** by '1'. The value must be an integer or double value. This returns the new value.                  |
-| `incrby [key] [amount]` | Increment the given value associated with the **key** by the specified amount. The value must be an integer or double value. This returns the new value. |
-| `del [key]`             | Deletes the value associated with the **key**.                                                                                                           |
-| `flushdb`               | Delete all keys and values in the database.                                                                                                              |
+| Command                 | Description                                                                                                                                         |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ping`                  | Ping the server. Returns `PONG`.                                                                                                                    |
+| `set [key] [value]`     | Sets a key/value in the cache. Returns "OK" on success.                                                                                             |
+| `get [key]`             | Gets a value from the cache.                                                                                                                        |
+| `exists [key]`          | Returns '1' if the **key** exists in the cache, '0' if it doesn't.                                                                                  |
+| `type [key]`            | Returns the type associated with the value for the given **key**.                                                                                   |
+| `incr [key]`            | Increment the given value associated with the **key** by '1'. The value must be an integer or double value. This returns the new value.             |
+| `incrby [key] [amount]` | Increment the given value associated with the **key** by the specified amount. The value must be an integer or double value. Returns the new value. |
+| `del [key]`             | Deletes the value associated with the **key**.                                                                                                      |
+| `flushdb`               | Delete all keys and values in the database.                                                                                                         |
 
 Following is an example of a command:
 
@@ -101,7 +101,7 @@ OK
 
 ##### Adding an expiration time to values
 
-Caching is important because it allows us to store commonly used values in memory. However, we also need a way to expire values when they're stale. In Redis this is done by applying a time to live (TTL) to a key.
+Caching is important because it allows us to store commonly used values in memory. However, we also need a way to expire values when they're stale. In Redis expiring values is done by applying a time to live (TTL) to a key.
 
 When the TTL elapses, the key is automatically deleted, exactly as if the DEL command were issued. Here are some notes on TTL expirations.
 
@@ -128,7 +128,7 @@ OK
 To connect to an Azure Cache for Redis instance, you need several pieces of information. Clients need the host name, port, and an access key for the cache. You can retrieve this information in the Azure portal through the **Settings > Access Keys** page.
 
 - The host name is the public Internet address of your cache, which was created using the name of the cache. For example, `sportsresults.redis.cache.windows.net`.
-- The access key acts as a password for your cache. There are two keys created: primary and secondary. You can use either key, two are provided in case you need to change the primary key. You can switch all of your clients to the secondary key, and regenerate the primary key. This would block any applications using the original primary key. Microsoft recommends periodically regenerating the keys - much like you would your personal passwords.
+- The access key acts as a password for your cache. There are two keys created: primary and secondary. You can use either key. Two are provided in case you need to change the primary key. You can switch all of your clients to the secondary key, and regenerate the primary key. This would block any applications using the original primary key. Microsoft recommends periodically regenerating the keys - much like you would your personal passwords.
 
 :warning: Your access keys should be considered confidential information, treat them like you would a password. Anyone who has an access key can perform any operation on your cache!
 
@@ -174,13 +174,13 @@ var redisConnection = ConnectionMultiplexer.Connect(connectionString);
 
 Once you have a `ConnectionMultiplexer`, there are three primary things you might want to do:
 
-- Access a Redis Database. This is what we will focus on here.
-- Make use of the publisher/subscriber features of Redis. This is outside the scope of this module.
+- Access a Redis Database.
+- Make use of the publisher/subscriber features of Redis, which is outside the scope of this module.
 - Access an individual server for maintenance or monitoring purposes.
 
 ##### Accessing a Redis database
 
-The Redis database is represented by the `IDatabase` type. You can retrieve one using the `GetDatabase()` method:
+The `IDatabase` type represents the Redis database. You can retrieve one using the `GetDatabase()` method:
 
 ```csharp
 IDatabase db = redisConnection.GetDatabase();
@@ -229,8 +229,8 @@ Here are some of the more common ones that work with single keys, you can [read 
 
 | Method              | Description                                                                                                                                                |
 | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `CreateBatch`       | Creates a group of operations that will be sent to the server as a single unit, but not necessarily processed as a unit.                                   |
-| `CreateTransaction` | Creates a group of operations that will be sent to the server as a single unit and processed on the server as a single unit.                               |
+| `CreateBatch`       | Creates a group of operations to be sent to the server as a single unit, but not necessarily processed as a unit.                                          |
+| `CreateTransaction` | Creates a group of operations to be sent to the server as a single unit and processed on the server as a single unit.                                      |
 | `KeyDelete`         | Delete the key/value.                                                                                                                                      |
 | `KeyExists`         | Returns whether the given key exists in cache.                                                                                                             |
 | `KeyExpire`         | Sets a time-to-live (TTL) expiration on a key.                                                                                                             |
@@ -249,7 +249,7 @@ Console.WriteLine(result.ToString()); // displays: "PONG"
 
 The `Execute` and `ExecuteAsync` methods return a `RedisResult` object that is a data holder that includes two properties:
 
-- `Type` that returns a `string` indicating the type of the result - "STRING", "INTEGER", etc.
+- `Resp2Type` that returns a `string` indicating the type of the result - `STRING`, `INTEGER`, etc.
 - `IsNull` a true/false value to detect when the result is `null`.
 
 You can then use `ToString()` on the `RedisResult` to get the actual return value.
@@ -258,10 +258,10 @@ You can use `Execute` to perform any supported commands - for example, we can ge
 
 ```csharp
 var result = await db.ExecuteAsync("client", "list");
-Console.WriteLine($"Type = {result.Type}\r\nResult = {result}");
+Console.WriteLine($"Type = {result.Resp2Type}\r\nResult = {result}");
 ```
 
-This would output all the connected clients:
+This outputs all the connected clients:
 
 ```txt
 Type = BulkString
@@ -323,7 +323,7 @@ Console.WriteLine(stat.Sport); // displays "Soccer"
 
 #### Cleaning up the connection
 
-Once you're done with the Redis connection, you can `Dispose` the `ConnectionMultiplexer`. This closes all connections and shutdown the communication to the server.
+When the connection is no longer needed, you can `Dispose` the `ConnectionMultiplexer`. This closes all connections and shutdown the communication to the server.
 
 ```csharp
 redisConnection.Dispose();

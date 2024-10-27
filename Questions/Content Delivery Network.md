@@ -1,6 +1,6 @@
 # Azure CDN
 
-Question: Each Azure subscription has default limits on resources needed for an Azure Content Delivery Network. Which of the following resources has subscription limitations that may impact your solution?
+Question: Each Azure subscription has default limits on resources needed for an Azure Content Delivery Network (CDN). Which of the following resources has subscription limitations you need to consider for your solution?
 
 - [ ] Resource group
 - [x] CDN profiles
@@ -12,7 +12,7 @@ Storage accounts aren't a resource used in Azure CDNs.
 
 ---
 
-Question: When publishing a website through Azure CDN, the files on that site are cached until their time-to-live (TTL) expires. What is the default TTL for large file optimizations?
+Question: When you publish a website through Azure Content Delivery Network, the files on that site are cached until their time-to-live (TTL) expires. What is the default TTL for large file optimizations?
 
 - [x] One day
 - [ ] One week

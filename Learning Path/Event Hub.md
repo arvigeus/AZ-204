@@ -6,33 +6,40 @@ Azure Event Hubs is a big data streaming platform and event ingestion service. I
 
 ### Discover Azure Event Hubs
 
-Azure Event Hubs represents the "front door" for an event pipeline, often called an event ingestor in solution architectures. An event ingestor is a component or service that sits between event publishers and event consumers to decouple the production of an event stream from the consumption of those events. Event Hubs provides a unified streaming platform with time retention buffer, decoupling event producers from event consumers.
+Azure Event Hubs is a native data-streaming service in the cloud that can stream millions of events per second, with low latency, from any source to any destination. Event Hubs is compatible with Apache Kafka. It enables you to run existing Kafka workloads without any code changes.
 
-The following table highlights key features of the Azure Event Hubs service:
+With Event Hubs, you can ingest, buffer, store, and process your stream in real time to get actionable insights. Event Hubs uses a partitioned consumer model. It enables multiple applications to process the stream concurrently and lets you control the speed of processing. Event Hubs also integrates with Azure Functions for serverless architectures.
 
-| Feature                        | Description                                                                                                                                                                                                                                                                                |
-| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Fully managed PaaS             | Event Hubs is a fully managed Platform-as-a-Service (PaaS) with little configuration or management overhead, so you focus on your business solutions. Event Hubs for Apache Kafka ecosystems give you the PaaS Kafka experience without having to manage, configure, or run your clusters. |
-| Real-time and batch processing | Event Hubs uses a partitioned consumer model, enabling multiple applications to process the stream concurrently and letting you control the speed of processing.                                                                                                                           |
-| Capture event data             | Capture your data in near-real time in Azure Blob storage or Azure Data Lake Storage for long-term retention or micro-batch processing.                                                                                                                                                    |
-| Scalable                       | Scaling options, like Auto-inflate, scale the number of throughput units to meet your usage needs.                                                                                                                                                                                         |
-| Rich ecosystem                 | Event Hubs for Apache Kafka ecosystems enables Apache Kafka (1.0 and later) clients and applications to talk to Event Hubs. You don't need to set up, configure, and manage your own Kafka clusters.                                                                                       |
+A broad ecosystem is available for the industry-standard AMQP 1.0 protocol. SDKs are available in languages like .NET, Java, Python, and JavaScript, so you can start processing your streams from Event Hubs. All supported client languages provide low-level integration.
+
+#### Key capabilities
+
+Learn about the key capabilities of Azure Event Hubs in the following sections.
+
+##### Apache Kafka on Azure Event Hubs
+
+Event Hubs is a multi-protocol event streaming engine that natively supports Advanced Message Queuing Protocol (AMQP), Apache Kafka, and HTTPS protocols. Because it supports Apache Kafka, you can bring Kafka workloads to Event Hubs without making any code changes. You don't need to set up, configure, or manage your own Kafka clusters or use a Kafka-as-a-service offering that's not native to Azure.
+
+##### Schema Registry in Event Hubs
+
+Azure Schema Registry in Event Hubs provides a centralized repository for managing schemas of event streaming applications. Schema Registry comes free with every Event Hubs namespace. It integrates with your Kafka applications or Event Hubs SDK-based applications.
+
+##### Real-time processing of streaming events with Stream Analytics
+
+Event Hubs integrates with Azure Stream Analytics to enable real-time stream processing. With the built-in no-code editor, you can develop a Stream Analytics job by using drag-and-drop functionality, without writing any code.
+
+Alternatively, developers can use the SQL-based Stream Analytics query language to perform real-time stream processing and take advantage of a wide range of functions for analyzing streaming data.
 
 #### Key concepts
 
 Event Hubs contains the following key components:
 
-- An **Event Hubs client** is the primary interface for developers interacting with the Event Hubs client library. There are several different Event Hubs clients, each dedicated to a specific use of Event Hubs, such as publishing or consuming events.
-- An **Event Hubs producer** is a type of client that serves as a source of telemetry data, diagnostics information, usage logs, or other log data, as part of an embedded device solution, a mobile device application, a game title running on a console or other device, some client or server based business solution, or a web site.
-- An **Event Hubs consumer** is a type of client that reads information from the Event Hubs and allows processing of it. Processing may involve aggregation, complex computation and filtering. Processing may also involve distribution or storage of the information in a raw or transformed fashion. Event Hubs consumers are often robust and high-scale platform infrastructure parts with built-in analytics capabilities, like Azure Stream Analytics, Apache Spark.
-- A **partition** is an ordered sequence of events that is held in an Event Hubs. Partitions are a means of data organization associated with the parallelism required by event consumers. Azure Event Hubs provides message streaming through a partitioned consumer pattern in which each consumer only reads a specific subset, or partition, of the message stream. As newer events arrive, they're added to the end of this sequence. The number of partitions is specified at the time an Event Hubs is created and can't be changed.
-- A **consumer group** is a view of an entire Event Hubs. Consumer groups enable multiple consuming applications to each have a separate view of the event stream, and to read the stream independently at their own pace and from their own position. There can be at most five concurrent readers on a partition per consumer group; however it's recommended that there's only one active consumer for a given partition and consumer group pairing. Each active reader receives all of the events from its partition; if there are multiple readers on the same partition, then they'll receive duplicate events.
-- **Event receivers**: Any entity that reads event data from an Event Hubs. All Event Hubs consumers connect via the AMQP 1.0 session. The Event Hubs service delivers events through a session as they become available. All Kafka consumers connect via the Kafka protocol 1.0 and later.
-- **Throughput units** or **processing units**: Prepurchased units of capacity that control the throughput capacity of Event Hubs.
-
-The following figure shows the Event Hubs stream processing architecture:
-
-![Image showing the event processing flow.](https://learn.microsoft.com/en-us/training/wwl-azure/azure-event-hubs/media/event-hubs-stream-processing.png)
+- **Producer applications**: These applications can ingest data to an event hub by using Event Hubs SDKs or any Kafka producer client.
+- **Namespace**: The management container for one or more event hubs or Kafka topics. The management tasks such as allocating streaming capacity, configuring network security, and enabling geo-disaster recovery are handled at the namespace level.
+- **Event Hubs/Kafka topic**: In Event Hubs, you can organize events into an event hub or a Kafka topic. It's an append-only distributed log, which can comprise one or more partitions.
+- **Partitions**: They're used to scale an event hub. They're like lanes in a freeway. If you need more streaming throughput, you can add more partitions.
+- **Consumer applications**: These applications can consume data by seeking through the event log and maintaining consumer offset. Consumers can be Kafka consumer clients or Event Hubs SDK clients.
+- **Consumer group**: This logical group of consumer instances reads data from an event hub or Kafka topic. It enables multiple consumers to read the same streaming data in an event hub independently at their own pace and with their own offsets.
 
 ### Explore Event Hubs Capture
 
@@ -151,7 +158,7 @@ This unit contains examples of common operations you can perform with the Event 
 
 #### Inspect Event Hubs
 
-Many Event Hubs operations take place within the scope of a specific partition. Because partitions are owned by the Event Hubs, their names are assigned at the time of creation. To understand what partitions are available, you query the Event Hubs using one of the Event Hubs clients. For illustration, the `EventHubProducerClient` is demonstrated in these examples, but the concept and form are common across clients.
+Many Event Hubs operations take place within the scope of a specific partition. Because Event Hubs owns the partitions, their names are assigned at the time of creation. To understand what partitions are available, you query the Event Hubs using one of the Event Hubs clients. For illustration, the `EventHubProducerClient` is demonstrated in these examples, but the concept and form are common across clients.
 
 ```csharp
 var connectionString = "<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>";
@@ -165,7 +172,7 @@ await using (var producer = new EventHubProducerClient(connectionString, eventHu
 
 #### Publish events to Event Hubs
 
-In order to publish events, you need to create an `EventHubProducerClient`. Producers publish events in batches and may request a specific partition, or allow the Event Hubs service to decide which partition events should be published to. We recommended using automatic routing when the publishing of events needs to be highly available or when event data should be distributed evenly among the partitions. Our example takes advantage of automatic routing.
+In order to publish events, you need to create an `EventHubProducerClient`. Producers publish events in batches and might request a specific partition, or allow the Event Hubs service to decide which partition events should be published to. We recommended using automatic routing when the publishing of events needs to be highly available or when event data should be distributed evenly among the partitions. Our example takes advantage of automatic routing.
 
 ```csharp
 var connectionString = "<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>";
@@ -183,7 +190,7 @@ await using (var producer = new EventHubProducerClient(connectionString, eventHu
 
 #### Read events from an Event Hubs
 
-In order to read events from an Event Hubs, you need to create an `EventHubConsumerClient` for a given consumer group. When an Event Hubs is created, it provides a default consumer group that can be used to get started with exploring Event Hubs. In our example, we'll focus on reading all events that have been published to the Event Hubs using an iterator.
+In order to read events from an Event Hubs, you need to create an `EventHubConsumerClient` for a given consumer group. When an Event Hubs is created, it provides a default consumer group that can be used to get started with exploring Event Hubs. In our example, we focus on reading all events published to the Event Hubs using an iterator.
 
 :information_source: It is important to note that this approach to consuming is intended to improve the experience of exploring the Event Hubs client library and prototyping. It is recommended that it not be used in production scenarios. For production use, we recommend using the **[Event Processor Client](https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/eventhub/Azure.Messaging.EventHubs.Processor)**, as it provides a more robust and performant experience.
 
@@ -200,8 +207,8 @@ await using (var consumer = new EventHubConsumerClient(consumerGroup, connection
 
     await foreach (PartitionEvent receivedEvent in consumer.ReadEventsAsync(cancellationSource.Token))
     {
-        // At this point, the loop will wait for events to be available in the Event Hub.  When an event
-        // is available, the loop will iterate with the event that was received.  Because we did not
+        // At this point, the loop will wait for events to be available in the Event Hub. When an event
+        // is available, the loop will iterate with the event that was received. Because we did not
         // specify a maximum wait time, the loop will wait forever unless cancellation is requested using
         // the cancellation token.
     }
@@ -210,7 +217,7 @@ await using (var consumer = new EventHubConsumerClient(consumerGroup, connection
 
 #### Read events from an Event Hubs partition
 
-To read from a specific partition, the consumer needs to specify where in the event stream to begin receiving events; in our example, we focus on reading all published events for the first partition of the Event Hubs.
+To read from a specific partition, the consumer needs to specify where in the event stream to begin receiving events. In our example, we focus on reading all published events for the first partition of the Event Hubs.
 
 ```csharp
 var connectionString = "<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>";
@@ -228,8 +235,8 @@ await using (var consumer = new EventHubConsumerClient(consumerGroup, connection
 
     await foreach (PartitionEvent receivedEvent in consumer.ReadEventsFromPartitionAsync(partitionId, startingPosition, cancellationSource.Token))
     {
-        // At this point, the loop will wait for events to be available in the partition.  When an event
-        // is available, the loop will iterate with the event that was received.  Because we did not
+        // At this point, the loop will wait for events to be available in the partition. When an event
+        // is available, the loop will iterate with the event that was received. Because we did not
         // specify a maximum wait time, the loop will wait forever unless cancellation is requested using
         // the cancellation token.
     }
@@ -238,7 +245,7 @@ await using (var consumer = new EventHubConsumerClient(consumerGroup, connection
 
 #### Process events using an Event Processor client
 
-For most production scenarios, it's recommended that the `EventProcessorClient` be used for reading and processing events. Since the `EventProcessorClient` has a dependency on Azure Storage blobs for persistence of its state, you need to provide a `BlobContainerClient` for the processor, which has been configured for the storage account and container that should be used.
+For most production scenarios, the recommendation is to use `EventProcessorClient` for reading and processing events. Since the `EventProcessorClient` has a dependency on Azure Storage blobs for persistence of its state, you need to provide a `BlobContainerClient` for the processor, which has been configured for the storage account and container that should be used.
 
 ```csharp
 var cancellationSource = new CancellationTokenSource();

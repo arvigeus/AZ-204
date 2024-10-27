@@ -1,8 +1,8 @@
 # Build and run a container image by using Azure Container Registry Tasks
 
-In this exercise you use ACR Tasks to perform the following actions:
+In this exercise, you use ACR Tasks to perform the following actions:
 
-- Create an Azure Container Registry
+- Create an Azure Container Registry (ACR)
 - Build and push image from a Dockerfile
 - Verify the results
 - Run the image in the ACR
@@ -23,7 +23,7 @@ In this exercise you use ACR Tasks to perform the following actions:
 
 ## Create an Azure Container Registry
 
-1. Create a resource group for the registry, replace `<myLocation>` in the following command with a location near you.
+1. Create a resource group for the registry. Replace `<myLocation>` in the following command with a location near you.
 
    ```sh
    az group create --name az204-acr-rg --location <myLocation>
@@ -108,7 +108,7 @@ Now use Azure Container Registry to build and push an image based on a local Doc
 
 ## Run the image in the ACR
 
-1. Run the sample/hello-world:v1 container image from your container registry by using the `az acr run` command. The following example uses `$Registry` to specify the registry where you run the command. Replace `<myContainerRegistry>` with the name you used earlier.
+1. Run the `sample/hello-world:v1` container image from your container registry by using the `az acr run` command. The following example uses `$Registry` to specify the registry where you run the command. Replace `<myContainerRegistry>` with the name you used earlier.
 
    ```sh
    az acr run --registry <myContainerRegistry> \
@@ -117,7 +117,7 @@ Now use Azure Container Registry to build and push an image based on a local Doc
 
    The `cmd` parameter in this example runs the container in its default configuration, but `cmd` supports other `docker run` parameters or even other `docker` commands.
 
-   The following is shortened sample of the output:
+   The following sample output is shortened:
 
    ```txt
    Packing source code into tar to upload...

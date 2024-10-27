@@ -6,51 +6,69 @@ Azure Event Grid is deeply integrated with Azure services and can be integrated 
 
 ### Explore Azure Event Grid
 
-Azure Event Grid is a serverless event broker that you can use to integrate applications using events. Events are delivered by Event Grid to subscriber destinations such as applications, Azure services, or any endpoint to which Event Grid has network access. The source of those events can be other applications, SaaS services and Azure services. Publishers emit events, but have no expectation about how the events are handled. Subscribers decide on which events they want to handle.
-
-Event Grid allows you to easily build applications with event-based architectures. Event Grid has built-in support for events coming from Azure services, like storage blobs and resource groups. Event Grid also has support for your own events, using custom topics.
-
-You can use filters to route specific events to different endpoints, multicast to multiple endpoints, and make sure your events are reliably delivered.
-
-The following image shows how Event Grid connects sources and handlers, and isn't a comprehensive list of supported integrations.
-
-![Image showing the Event Grid model of sources and handlers](https://learn.microsoft.com/en-us/training/wwl-azure/azure-event-grid/media/functional-model.png)
+Azure Event Grid is a highly scalable, fully managed Pub Sub message distribution service that offers flexible message consumption patterns using the Hypertext Transfer Protocol (HTTP) and Message Queuing Telemetry Transport (MQTT) protocols. With Azure Event Grid, you can build data pipelines with device data, integrate applications, and build event-driven serverless architectures. Event Grid enables clients to publish and subscribe to messages over the MQTT v3.1.1 and v5.0 protocols to support Internet of Things (IoT) solutions. Through HTTP, Event Grid enables you to build event-driven solutions where a publisher service announces its system state changes (events) to subscriber applications. Event Grid can be configured to send events to subscribers (push delivery) or subscribers can connect to Event Grid to read events (pull delivery). Event Grid supports CloudEvents 1.0 specification to provide interoperability across systems.
 
 #### Concepts in Azure Event Grid
 
-There are five concepts in Azure Event Grid you need to understand to help you get started:
+There are several concepts in Azure Event Grid you need to understand to help you get started.
 
-- **Events** - What happened.
-- **Event sources** - Where the event took place.
-- **Topics** - The endpoint where publishers send events.
-- **Event subscriptions** - The endpoint or built-in mechanism to route events, sometimes to more than one handler. Subscriptions are also used by handlers to intelligently filter incoming events.
-- **Event handlers** - The app or service reacting to the event.
+##### Publishers
 
-#### Events
+A publisher is the application that sends events to Event Grid. It can be the same application where the events originated, the event source. Azure services publish events to Event Grid to announce an occurrence in their service. You can publish events from your own application. Organizations that host services outside of Azure can publish events through Event Grid too.
 
-An event is the smallest amount of information that fully describes something that happened in the system. Every event has common information like: source of the event, time the event took place, and unique identifier. Every event also has specific information that is only relevant to the specific type of event. For example, an event about a new file being created in Azure Storage has details about the file, such as the `lastTimeModified` value. Or, an Event Hubs event has the URL of the Capture file.
+A _partner_ is a kind of publisher that sends events from its system to make them available to Azure customers. Partners not only can publish events to Azure Event Grid, but they can also receive events from it. These capabilities are enabled through the Partner Events feature.
 
-An event of size up to 64 KB is covered by General Availability (GA) Service Level Agreement (SLA). The support for an event of size up to 1 MB is currently in preview. Events over 64 KB are charged in 64-KB increments.
+##### Events and CloudEvents
 
-#### Event sources
+An event is the smallest amount of information that fully describes something that happened in a system. Every event has common information like `source` of the event, the `time` the event took place, and a unique identifier. Every event also has specific information that is only relevant to the specific type of event.
+
+Event Grid conforms to Cloud Native Computing Foundation’s open standard [CloudEvents 1.0](https://github.com/cloudevents/spec) specification using the [HTTP protocol binding](https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/bindings/http-protocol-binding.md) with [JSON format](https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/formats/json-format.md). It means that your solutions publish and consume event messages using a format like the following example:
+
+```json
+{
+  "specversion": "1.0",
+  "type": "com.yourcompany.order.created",
+  "source": "https://yourcompany.com/orders/",
+  "subject": "O-28964",
+  "id": "A234-1234-1234",
+  "time": "2018-04-05T17:31:00Z",
+  "comexampleextension1": "value",
+  "comexampleothervalue": 5,
+  "datacontenttype": "application/json",
+  "data": {
+    "orderId": "O-28964",
+    "URL": "https://com.yourcompany/orders/O-28964"
+  }
+}
+```
+
+The maximum allowed size for an event is 1 MB. Events over 64 KB are charged in 64-KB increments.
+
+##### Event sources
 
 An event source is where the event happens. Each event source is related to one or more event types. For example, Azure Storage is the event source for blob created events. IoT Hub is the event source for device created events. Your application is the event source for custom events that you define. Event sources are responsible for sending events to Event Grid.
 
-#### Topics
+##### Topics
 
-The Event Grid topic provides an endpoint where the source sends events. The publisher creates the Event Grid topic, and decides whether an event source needs one topic or more than one topic. A topic is used for a collection of related events. To respond to certain types of events, subscribers decide which topics to subscribe to.
+A topic holds events that have been published to Event Grid. You typically use a topic resource for a collection of related events. To respond to certain types of events, subscribers (an Azure service or other applications) decide which topics to subscribe to. There are several kinds of topics: custom topics, system topics, and partner topics.
 
 **System topics** are built-in topics provided by Azure services. You don't see system topics in your Azure subscription because the publisher owns the topics, but you can subscribe to them. To subscribe, you provide information about the resource you want to receive events from. As long as you have access to the resource, you can subscribe to its events.
 
 **Custom topics** are application and third-party topics. When you create or are assigned access to a custom topic, you see that custom topic in your subscription.
 
-#### Event subscriptions
+**Partner topics** are a kind of topic used to subscribe to events published by a partner. The feature that enables this type of integration is called Partner Events. Through that integration, you get a partner topic where events from a partner system are made available. Once you have a partner topic, you create an event subscription as you would do for any other type of topic.
+
+##### Event subscriptions
 
 A subscription tells Event Grid which events on a topic you're interested in receiving. When creating the subscription, you provide an endpoint for handling the event. You can filter the events that are sent to the endpoint. You can filter by event type, or subject pattern. Set an expiration for event subscriptions that are only needed for a limited time and you don't want to worry about cleaning up those subscriptions.
 
-#### Event handlers
+##### Event handlers
 
 From an Event Grid perspective, an event handler is the place where the event is sent. The handler takes some further action to process the event. Event Grid supports several handler types. You can use a supported Azure service or your own webhook as the handler. Depending on the type of handler, Event Grid follows different mechanisms to guarantee the delivery of the event. For HTTP webhook event handlers, the event is retried until the handler returns a status code of `200 – OK`. For Azure Storage Queue, the events are retried until the Queue service successfully processes the message push into the queue.
+
+##### Security
+
+Event Grid provides security for subscribing to topics and when publishing events to topics. When subscribing, you must have adequate permissions on the Event Grid topic. If using push delivery, the event handler is an Azure service, and a managed identity is used to authenticate Event Grid, the managed identity should have an appropriate RBAC role. For example, if sending events to Event Hubs, the managed identity used in the event subscription should be a member of the Event Hubs Data Sender role.
 
 ### Discover event schemas
 
@@ -152,20 +170,20 @@ Event Grid provides durable delivery. It tries to deliver each event at least on
 
 #### Retry schedule
 
-When Event Grid receives an error for an event delivery attempt, Event Grid decides whether it should retry the delivery, dead-letter the event, or drop the event based on the type of the error.
+When Event Grid receives an error for an event delivery attempt, Event Grid decides whether it should: retry the delivery, dead-letter the event, or drop the event based on the type of the error.
 
-If the error returned by the subscribed endpoint is a configuration-related error that can't be fixed with retries (for example, if the endpoint is deleted), Event Grid will either dead-letter the event or drop the event if dead-letter isn't configured.
+If the error returned by the subscribed endpoint is a configuration-related error that can't be fixed with retries, Event Grid will either: perform dead-lettering on the event, or drop the event if dead-letter isn't configured.
 
 The following table describes the types of endpoints and errors for which retry doesn't happen:
 
-| Endpoint Type   | Error Codes                                                                                   |
-| --------------- | --------------------------------------------------------------------------------------------- |
-| Azure Resources | 400 Bad Request, 413 Request Entity Too Large, 403 Forbidden                                  |
-| Webhook         | 400 Bad Request, 413 Request Entity Too Large, 403 Forbidden, 404 Not Found, 401 Unauthorized |
+| Endpoint Type   | Error Codes                                                              |
+| --------------- | ------------------------------------------------------------------------ |
+| Azure Resources | 400 (Bad request), 413 (Request entity is too large)                     |
+| Webhook         | 400 (Bad request), 413 (Request entity is too large), 401 (Unauthorized) |
 
 :bangbang: If Dead-Letter isn't configured for an endpoint, events will be dropped when the above errors happen. Consider configuring Dead-Letter if you don't want these kinds of events to be dropped.
 
-If the error returned by the subscribed endpoint isn't among the above list, Event Grid waits 30 seconds for a response after delivering a message. After 30 seconds, if the endpoint hasn’t responded, the message is queued for retry. Event Grid uses an exponential backoff retry policy for event delivery.
+If the error returned by the subscribed endpoint isn't among the previous list, Event Grid waits 30 seconds for a response after delivering a message. After 30 seconds, if the endpoint hasn’t responded, the message is queued for retry. Event Grid uses an exponential backoff retry policy for event delivery.
 
 If the endpoint responds within 3 minutes, Event Grid attempts to remove the event from the retry queue on a best effort basis but duplicates may still be received. Event Grid adds a small randomization to all retry steps and may opportunistically skip certain retries if an endpoint is consistently unhealthy, down for a long period, or appears to be overwhelmed.
 

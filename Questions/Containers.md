@@ -11,6 +11,27 @@ Answer: Due to the YAML format's more concise nature, a YAML file is recommended
 
 ---
 
+Question: What is the purpose of a restart policy in Azure Container Instances?
+
+- [ ] To charge customers more for compute resources used while the container is running.
+- [ ] To ensure that containers are never restarted, even if the process fails.
+- [x] To specify when and how containers should be restarted, based on the desired behavior.
+
+Answer: The restart policy allows you to specify when and how containers should be restarted, based on the desired behavior. This can help optimize resource usage and ensure that tasks are completed successfully.
+
+---
+
+Question: If you want to mount multiple volumes, what options are at your disposal for deployment?
+
+- [ ] YAML file only
+- [x] Azure Resource Manager template and YAML file
+- [ ] Azure Resource Manager template and PowerShell
+
+Answer: To mount multiple volumes in a container instance, you must deploy using an Azure Resource Manager template or a YAML file.  
+PowerShell alone doesn't directly support volume mounting.
+
+---
+
 Question: Which of the following methods is recommended when deploying a multi-container group that includes containers and additional Azure service resources (for example, an Azure Files share)?
 
 - [x] Azure Resource Management template

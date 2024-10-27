@@ -22,6 +22,46 @@ Answer: Intermediating message producers and consumers with a queue means that t
 
 ---
 
+Question: What is a key consideration when choosing to use Service Bus queues over Storage queues?
+
+- [x] Your solution requires the queue to provide a guaranteed first-in-first-out (FIFO) ordered delivery.
+- [ ] Your application must store over 80 gigabytes of messages in a queue.
+- [ ] You require server side logs of all of the transactions executed against your queues.
+
+Answer: Service Bus queues provide a guaranteed first-in-first-out (FIFO) ordered delivery.
+
+---
+
+Question: What is the main difference between Service Bus queues and topics with subscriptions?
+
+- [x] Queues allow processing of a message by a single consumer, while topics with subscriptions provide a one-to-many form of communication.
+- [ ] Queues allow processing of a message by multiple consumers, while topics with subscriptions provide a one-to-one form of communication.
+- [ ] Topics with subscriptions allow processing of a message by a single consumer, while queues provide a one-to-many form of communication.
+
+Answer: A queue allows processing of a message by a single consumer. In contrast, topics and subscriptions provide a one-to-many form of communication.
+
+---
+
+Question: What is the role of the `ContentType` property in Service Bus message payloads?
+
+- [ ] It encrypts the payload for secure transmission.
+- [ ] It determines the size of the payload.
+- [x] It enables applications to describe the payload, with the suggested format for the property values being a MIME content-type description.
+
+Answer: The `ContentType` property describes the payload, suggesting a MIME content-type format.
+
+---
+
+Question: What is the purpose of the 'QueueClient' class in Azure Queue Storage when using .NET?
+
+- [ ] It manages the configuration files for client applications.
+- [x] It retrieves and manipulates queues stored in Azure Queue Storage.
+- [ ] It creates and manage messages within a specific queue.
+
+Answer: The 'QueueClient' class is used to interact with queues in Azure Queue Storage, including creating, retrieving, and deleting queues.
+
+---
+
 Question: You are building a logging system for a large-scale manufacturing automation system. You want to send a message to a centralized monitoring system whenever a specific machine error occurs. Once the error has been logged and the necessary maintenance team has been alerted, the message must be removed so that the monitoring system will not attempt to log it again. Which service should you use?
 
 - [ ] Azure Event Hubs

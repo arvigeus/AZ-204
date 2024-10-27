@@ -22,6 +22,40 @@ A feature flag is a variable with a binary state of on or off.
 
 ---
 
+Question: What is the purpose of labels in Azure App Configuration?
+
+- [x] Labels are used to differentiate key-values with the same key in App Configuration.
+- [ ] Labels are used to encrypt key-values in App Configuration.
+- [ ] Labels are used to limit the size of key-values in App Configuration.
+
+Answer: Labels in Azure App Configuration are used to create variants of a key and differentiate key-values with the same key.
+
+---
+
+What is the role of a feature manager in managing application features?
+
+- [ ] A feature manager is a rule for evaluating the state of a feature flag.
+- [ ] A feature manager is a variable with a binary state of on or off.
+- [x] A feature manager is an application package that handles the lifecycle of all the feature flags in an application.
+
+Answer: A feature manager provides extra functionality, such as caching feature flags and updating their states.  
+A feature flag is a variable with a binary state of on or off.  
+A filter is a rule for evaluating the state of a feature flag.
+
+---
+
+Question: What is the purpose of using customer-managed keys in Azure App Configuration?
+
+- [ ] To enable authentication with Microsoft Entra ID
+- [ ] To permanently store the unwrapped encryption key
+- [x] To encrypt sensitive information at rest
+
+Answer: Customer-managed keys are used to encrypt sensitive information in key-value pairs at rest.  
+While a managed identity is used for authentication, it's not the primary purpose of customer-managed keys.  
+The unwrapped encryption key is cached within App Configuration for one hour, not stored permanently.
+
+---
+
 Question: What is the primary difference between Azure App Configuration and Azure Key Vault in terms of encryption?
 
 - [ ] App Configuration does not support encryption at rest.

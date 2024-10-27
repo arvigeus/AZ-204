@@ -21,11 +21,26 @@ Internally, managed identities are service principals of a special type, which a
 
 The following table highlights some of the key differences between the two types of managed identities.
 
-| Characteristic                 | System-assigned managed identity                                                                                                                                  | User-assigned managed identity                                                                              |
+| Property                       | System-assigned managed identity                                                                                                                                  | User-assigned managed identity                                                                              |
 | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
 | Creation                       | Created as part of an Azure resource (for example, an Azure virtual machine or Azure App Service)                                                                 | Created as a stand-alone Azure resource                                                                     |
 | Lifecycle                      | Shared lifecycle with the Azure resource that the managed identity is created with. When the parent resource is deleted, the managed identity is deleted as well. | Independent life-cycle. Must be explicitly deleted.                                                         |
-| Sharing across Azure resources | Can't be shared, it can only be associated with a single Azure resource.                                                                                          | Can be shared, the same user-assigned managed identity can be associated with more than one Azure resource. |
+| Sharing across Azure resources | Can't be shared, it can only be associated with a single Azure resource.                                                                                          | Can be shared. The same user-assigned managed identity can be associated with more than one Azure resource. |
+
+Following are common use cases for managed identities:
+
+- System-assigned managed identity
+
+  - Workloads contained within a single Azure resource.
+  - Workloads needing independent identities.
+  - For example, an application that runs on a single virtual machine.
+
+- User-assigned managed identity
+
+  - Workloads that run on multiple resources and can share a single identity.
+  - Workloads needing preauthorization to a secure resource, as part of a provisioning flow.
+  - Workloads where resources are recycled frequently, but permissions should stay consistent.
+  - For example, a workload where multiple virtual machines need to access the same resource.
 
 #### When to use managed identities
 

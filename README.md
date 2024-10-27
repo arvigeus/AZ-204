@@ -22,10 +22,11 @@ TLDR;
 #### Implement Azure App Service Web Apps
 
 - Create an Azure App Service Web App
-- Enable diagnostics logging
-- Deploy code to a web app
-- Configure web app settings including Transport Layer Security (TLS), API settings, and connection strings
+- Configure and implement diagnostics and logging
+- Deploy code and containers
+- Configure settings including Transport Layer Security (TLS), API settings, and service connections
 - Implement autoscaling
+- Configure deployment slots
 
 #### Implement Azure Functions
 
@@ -46,9 +47,8 @@ TLDR;
 - Set and retrieve properties and metadata
 - Perform operations on data by using the appropriate SDK
 - Implement storage policies and data lifecycle management
-- Implement static site hosting
 
-### Implement Azure security (20–25%)
+### Implement Azure security (15–20%)
 
 #### Implement user authentication and authorization
 
@@ -63,7 +63,7 @@ TLDR;
 - Develop code that uses keys, secrets, and certificates stored in Azure Key Vault
 - Implement Managed Identities for Azure resources
 
-### Monitor, troubleshoot, and optimize Azure solutions (15–20%)
+### Monitor, troubleshoot, and optimize Azure solutions (10–15%)
 
 #### Implement caching for solutions
 
@@ -73,9 +73,9 @@ TLDR;
 
 #### Troubleshoot solutions by using Application Insights
 
-- Configure an app or service to use Application Insights
 - Monitor and analyze metrics, logs, and traces
 - Implement Application Insights web tests and alerts
+- Implement an app or service to use Application Insights
 
 ### Connect to and consume Azure services and third-party services (15–20%)
 
