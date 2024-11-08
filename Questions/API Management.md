@@ -212,7 +212,7 @@ Answer: Request is transformed in inbound section
 
 ---
 
-Question: You have JSON endpoint. The client expexts XML response. What policy should be applied?
+Question: You have JSON endpoint. The client expects XML response. What policy should be applied?
 
 - [ ] `xml-to-json-policy` in inbound section
 - [ ] `xml-to-json-policy` in backend section
