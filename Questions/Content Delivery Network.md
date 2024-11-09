@@ -1,8 +1,8 @@
 # Azure CDN
 
-Question: Each Azure subscription has default limits on resources needed for an Azure Content Delivery Network (CDN). Which of the following resources has subscription limitations you need to consider for your solution?
+Question: Each Azure subscription has default limits on resources needed for an Azure Content Delivery Network (CDN). Which resources have subscription limitations you need to consider for your solution?
 
-- [ ] Resource group
+- [ ] Resource Group
 - [x] CDN profiles
 - [ ] Storage account
 
@@ -36,36 +36,35 @@ Answer: Azure CDN caches content in multiple locations globally, ensuring users 
 
 ---
 
-Question: Which products supports asset pre-loading?
+Question: Which products support asset pre-loading?
 
-- [x] Premium Verison
-- [x] Standard Versizon
+- [x] Azure CDN Premium from Edgio
+- [x] Azure CDN Standard from Edgio
 - [ ] Standard Microsoft
 - [ ] Standard Akamai
 
-Answer: Verizon only
+Answer: Azure CDN from Edgio only
 
 ---
 
 Question: Which product supports real-time stats and alerts?
 
-- [x] Premium Verison
-- [ ] Standard Versizon
+- [x] Azure CDN Premium from Edgio
+- [ ] Azure CDN Standard from Edgio
 - [ ] Standard Microsoft
 - [ ] Standard Akamai
 
-Answer: Premium Verizon only
+Answer: Azure CDN Premium from Edgio only
 
 ---
 
-Question: Which products supports brotl compression?
+Question: Which products support brotli compression?
 
-- [ ] Premium Verison
-- [ ] Standard Versizon
+- [x] Azure CDN Premium from Edgio
+- [x] Azure CDN Standard from Edgio
 - [x] Standard Microsoft
-- [ ] Standard Akamai
 
-Answer: Standard Microsoft only
+Answer: All of the listed
 
 ---
 
