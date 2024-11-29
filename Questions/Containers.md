@@ -3,7 +3,7 @@
 Question: Which of the following methods is recommended when deploying a multi-container group that includes only containers?
 
 - [ ] Azure Resource Management template
-- [x] YAML file
+- [ ] YAML file
 - [ ] `az container create` command
 
 Answer: Due to the YAML format's more concise nature, a YAML file is recommended when your deployment includes only container instances.  
@@ -15,7 +15,7 @@ Question: What is the purpose of a restart policy in Azure Container Instances?
 
 - [ ] To charge customers more for compute resources used while the container is running.
 - [ ] To ensure that containers are never restarted, even if the process fails.
-- [x] To specify when and how containers should be restarted, based on the desired behavior.
+- [ ] To specify when and how containers should be restarted, based on the desired behavior.
 
 Answer: The restart policy allows you to specify when and how containers should be restarted, based on the desired behavior. This can help optimize resource usage and ensure that tasks are completed successfully.
 
@@ -24,7 +24,7 @@ Answer: The restart policy allows you to specify when and how containers should 
 Question: If you want to mount multiple volumes, what options are at your disposal for deployment?
 
 - [ ] YAML file only
-- [x] Azure Resource Manager template and YAML file
+- [ ] Azure Resource Manager template and YAML file
 - [ ] Azure Resource Manager template and PowerShell
 
 Answer: To mount multiple volumes in a container instance, you must deploy using an Azure Resource Manager template or a YAML file.  
@@ -34,7 +34,7 @@ PowerShell alone doesn't directly support volume mounting.
 
 Question: Which of the following methods is recommended when deploying a multi-container group that includes containers and additional Azure service resources (for example, an Azure Files share)?
 
-- [x] Azure Resource Management template
+- [ ] Azure Resource Management template
 - [ ] YAML file
 - [ ] `az container create` command
 
@@ -46,7 +46,7 @@ Answer: Due to the YAML format's more concise nature, a YAML file is recommended
 Question: Which of the following options is true about the built-in authentication feature in Azure Container Apps?
 
 - [ ] It can only be configured to restrict access to authenticated users.
-- [x] It allows for out-of-the-box authentication with federated identity providers.
+- [ ] It allows for out-of-the-box authentication with federated identity providers.
 - [ ] It requires the use of a specific SDK.
 
 Answer: Azure Container Apps provides built-in authentication and authorization features to secure your external ingress-enabled container app with minimal or no code.  
@@ -58,7 +58,7 @@ Question: What is a revision in Azure Container Apps?
 
 - [ ] A dynamic snapshot of a container app version.
 - [ ] A version of a container app that is actively being used.
-- [x] An immutable snapshot of a container app version.
+- [ ] An immutable snapshot of a container app version.
 
 Answer: A revision is an immutable snapshot of a container app version.  
 The security container running the authentication and authorization module doesn't run in-process, so no direct integration with a specific language is possible.
@@ -90,7 +90,7 @@ New-AzContainerGroup -ResourceGroupName "myResourceGroup" -Name "myContainerGrou
 Question: You are planning to deploy a legacy application built using .NET Framework as a containerized solution on Azure. Which operating system type should be specified when creating the Azure Container Group for this application?
 
 - [ ] Linux only
-- [x] Windows only
+- [ ] Windows only
 - [ ] Linux or Windows
 
 Answer: The .NET Framework is Windows-specific, so when creating a container for a .NET Framework application, -OsType "Windows" must be used.
@@ -101,7 +101,7 @@ Question: You are planning to containerize a .NET Core application for deploymen
 
 - [ ] Linux only
 - [ ] Windows only
-- [x] Linux or Windows
+- [ ] Linux or Windows
 
 Answer: As .NET Core is a cross-platform framework, it is capable of running on multiple operating systems, including both Linux and Windows. Therefore, both of these options could be potentially specified when creating the Azure Container Group.
 
@@ -110,7 +110,7 @@ Answer: As .NET Core is a cross-platform framework, it is capable of running on 
 Question: You are tasked with deploying a .NET Core application on Azure, and you plan to use Azure Container Instances for this purpose. Which PowerShell command should you use to create the necessary resources for hosting this application?
 
 - [ ] `New-AzContainerService`
-- [x] `New-AzContainerGroup`
+- [ ] `New-AzContainerGroup`
 - [ ] First `New-AzContainerGroup`, then `New-AzContainerService`
 - [ ] Either `New-AzContainerGroup` or `New-AzContainerService`
 - [ ] None of the mentioned
@@ -122,7 +122,7 @@ Answer: Azure Container Instances (ACI) are created and managed using the `New-A
 Question: Which command is used for creating a container image?
 
 - [ ] `az acr create`
-- [x] `az acr build`
+- [ ] `az acr build`
 - [ ] `az acr build` then `az acr create`
 
 Answer: `az acr build` is used to create container image  
@@ -148,7 +148,7 @@ az deployment group create --resource-group MultiContainerGroup1 --template-file
 Question: You have just deployed several Azure resources within the `DemoResourceGroup` resource group and you want to capture the template that Azure Resource Manager used for the deployment for future use. How can you accomplish this efficiently?
 
 - [ ] `az group export --name DemoResourceGroup`
-- [x] `az group deployment export --name DemoResourceGroup --deployment-name Deployment1`
+- [ ] `az group deployment export --name DemoResourceGroup --deployment-name Deployment1`
 - [ ] Use the Azure portal to manually inspect and copy the JSON of the deployment template.
 - [ ] `Export-AzResourceGroup -Name DemoResourceGroup`
 
@@ -161,9 +161,9 @@ is a manual process that doesn't provide the convenience or automation of a CLI 
 
 Question: What is needed to enable authentication on your Azure Container App?
 
-- [x] A configured ingress rule with `allowInsecure` set to disabled
-- [x] Any Identity provider
-- [x] A specified Authentication / Authorization provider within the app settings
+- [ ] A configured ingress rule with `allowInsecure` set to disabled
+- [ ] Any Identity provider
+- [ ] A specified Authentication / Authorization provider within the app settings
 - [ ] A secret key to be embedded in the app's code
 - [ ] A Premium Azure service tier subscription
 - [ ] An Azure Container App certificate issued by Microsoft
@@ -176,7 +176,7 @@ Answer: Auth works only with HTTPS, requires any identity provider and specified
 Question: You want to store and manage private Docker images that your application will use. Which Azure CLI command would be most appropriate to achieve this?
 
 - [ ] `az containerapp create`
-- [x] `az acr create`
+- [ ] `az acr create`
 - [ ] `az container create`
 - [ ] `az containerapp up`
 
@@ -187,7 +187,7 @@ Answer: `az acr create` - The Azure Container Registry (ACR) service stores and 
 Question: You have a single-container application that doesn't require advanced orchestration features like scaling or networking with other containers. Which Azure CLI command would be the most suitable for this purpose?
 
 - [ ] `az acr create`
-- [x] `az container create`
+- [ ] `az container create`
 - [ ] `az containerapp create`
 - [ ] `az acr build`
 - [ ] `az containerapp up`
@@ -201,7 +201,7 @@ Question: Your team has developed a new microservices-based application, and you
 - [ ] `az container create`
 - [ ] `az acr create`
 - [ ] `az acr build`
-- [x] `az containerapp create`
+- [ ] `az containerapp create`
 
 Answer: `az containerapp create` - Azure Container Apps is a serverless container service that provides advanced features such as scaling and orchestration. The `az containerapp create` command is used to create a new Azure Container App, which is ideal for deploying microservices.
 
@@ -210,7 +210,7 @@ Answer: `az containerapp create` - Azure Container Apps is a serverless containe
 Question: In the context of Dapr, what is the purpose of a Dapr sidecar and how does it interact with a container app?
 
 - [ ] The Dapr sidecar is used to manage the lifecycle of the container app and has no direct interaction with the app itself.
-- [x] The Dapr sidecar is used to expose Dapr APIs to the container app, which can be invoked via HTTP or gRPC.
+- [ ] The Dapr sidecar is used to expose Dapr APIs to the container app, which can be invoked via HTTP or gRPC.
 - [ ] The Dapr sidecar is used to provide a user interface for managing the container app and can be accessed via a web browser.
 - [ ] The Dapr sidecar is used to store the state of the container app and periodically syncs this state with the app.
 
@@ -223,7 +223,7 @@ Question: What is the default behavior of Dapr-enabled container apps regarding 
 
 - [ ] They load no components by default.
 - [ ] They load only the components specified in the application's configuration.
-- [x] They load the full set of deployed components.
+- [ ] They load the full set of deployed components.
 - [ ] They load components based on the runtime context.
 
 Answer: They load the full set of deployed components.
@@ -233,7 +233,7 @@ Answer: They load the full set of deployed components.
 Question: What is the primary function of the "Observability" feature in Dapr?
 
 - [ ] It provides a user interface for monitoring the state of your application.
-- [x] It sends tracing information to an Application Insights backend.
+- [ ] It sends tracing information to an Application Insights backend.
 - [ ] It allows you to observe the behavior of other services in your application.
 - [ ] It provides a dashboard for visualizing the performance of your application.
 
@@ -246,7 +246,7 @@ Question: What is the recommended solution if you need a stable public IP addres
 - [ ] Use a hardcoded IP address in your container group configuration.
 - [ ] Configure a different subnet for your container group.
 - [ ] Utilize Azure Load Balancer to manage IP address changes.
-- [x] Use Application Gateway to ensure a static public IP address.
+- [ ] Use Application Gateway to ensure a static public IP address.
 
 Answer: To address the potential IP changes when a container group restarts, it's advisable to use Application Gateway. Application Gateway provides a stable public IP address that remains consistent even if the container group's IP changes due to restarts or other factors.
 
@@ -256,7 +256,7 @@ Question: If a container group restarts, what will happen to its IP address?
 
 - [ ] The IP address will always remain the same.
 - [ ] The IP address will change to a different subnet.
-- [x] The IP address might change.
+- [ ] The IP address might change.
 - [ ] The IP address will change only if a new image is deployed.
 
 Answer: When a container group restarts, there's a possibility that its IP address might change. This uncertainty is due to the dynamic nature of container group deployments. It's important not to rely on hardcoded IP addresses in such scenarios.
@@ -267,7 +267,7 @@ Question: What happens when you update an application secret in Azure Container 
 
 - [ ] A new revision is created
 - [ ] The application restarts to reflect the updated value
-- [x] Nothing happens
+- [ ] Nothing happens
 
 Answer: Adding, removing, or changing secrets doesn't generate new revisions. Apps need to be restarted to reflect updates.
 
@@ -304,7 +304,7 @@ What should you expect from this command?
 
 - [ ] The value "my-secret-value" will be displayed.
 - [ ] An error will be thrown since the secret value cannot be accessed.
-- [x] Only the variable's name "SECRET" will be displayed, not its value.
+- [ ] Only the variable's name "SECRET" will be displayed, not its value.
 - [ ] The entire container's properties will be displayed.
 
 Answer: The given YAML configuration demonstrates how to set a secure environment variable named "SECRET" with the `secureValue` property. When viewing container properties through the Azure portal or Azure CLI, only the secure variable's name is displayed, not its value. Therefore, executing the given command will show the name of the secure variable "SECRET", but not its actual value.
@@ -339,7 +339,7 @@ What should you use for `osType`?
 - [ ] AMD64
 - [ ] Linux
 - [ ] Windows
-- [x] Both Linux and Windows will work
+- [ ] Both Linux and Windows will work
 - [ ] Neither option will work
 
 Answer: Since this is a single container instance, both Windows and Linux would work. Two or more is for multi-containers, thus Linux only.
@@ -350,7 +350,7 @@ Question: You have declared a connection string to a queue storage account in th
 
 Which of the following commands correctly references the secret `queue-connection-string` in an environment variable in the Azure CLI?
 
-- [x] `--env-vars "ConnectionString=secretref:queue-connection-string"`
+- [ ] `--env-vars "ConnectionString=secretref:queue-connection-string"`
 - [ ] `--env-vars "ConnectionString=queue-connection-string"`
 - [ ] `--env-vars "ConnectionString=$CONNECTION_STRING"`
 - [ ] `--env-vars "ConnectionString=$queue-connection-string"`
@@ -363,7 +363,7 @@ Question: You are using the Standard plan of Azure Container Registry, and you'v
 
 - [ ] Upgrade to a more powerful local machine.
 - [ ] Upgrade to the Premium plan.
-- [x] Delete unused repositories and tags.
+- [ ] Delete unused repositories and tags.
 - [ ] Increase the bandwidth of your internet connection.
 - [ ] Call Azure support.
 
@@ -375,7 +375,7 @@ Question: Which container registry tier has the highest throughput?
 
 - [ ] Basic
 - [ ] Standard
-- [x] Premium
+- [ ] Premium
 
 Answer: Premium has the highest throughput.
 
@@ -436,7 +436,7 @@ Question: Which of the following Azure Container Registry options support geo-re
 
 - [ ] Basic
 - [ ] Standard
-- [x] Premium
+- [ ] Premium
 
 Answer: The premium tier adds geo-replication as a feature.
 
@@ -444,9 +444,9 @@ Answer: The premium tier adds geo-replication as a feature.
 
 Question: Which Azure container registry tiers benefit from encryption-at-rest?
 
-- [x] Basic
-- [x] Standard
-- [x] Premium
+- [ ] Basic
+- [ ] Standard
+- [ ] Premium
 
 Answer: Encryption-at-rest is supported in all three tiers.
 
@@ -454,7 +454,7 @@ Answer: Encryption-at-rest is supported in all three tiers.
 
 Question: You exceed your Azure Container Registry plan limit, what happens?
 
-- [x] HTTP 429 error (Too many requests)
+- [ ] HTTP 429 error (Too many requests)
 - [ ] Have to upgrade tier to continue
 - [ ] Services will run slower
 
@@ -494,7 +494,7 @@ az container create --name $containerName --resource-group $resourceGroup --imag
 
 Question: Suppose you have an ASP.NET Core application running within an Azure Container Instance (ACI) and your monitoring team has a unique container image loaded with their monitoring tools. To ensure compliance, you have been tasked with attaching a "sidecar" container (an auxiliary container that works alongside the main application container) from the same host. However, you must take into account that the solution should be cost-effective and require minimal changes to the current application, keeping the setup simple. What Azure service would you employ to realize this objective?
 
-- [x] ACI Container Groups
+- [ ] ACI Container Groups
 - [ ] Azure Kubernetes Service (AKS)
 - [ ] Azure App Services
 - [ ] Azure Container Registry
@@ -610,9 +610,9 @@ az containerapp create \
 
 Question: What is the recommended strategy in the event of a full region outage?
 
-- [x] Wait for the region to recover and then manually redeploy all environments and apps.
-- [x] Manually deploy to a new region
-- [x] Deploy container apps in advance to multiple regions and use Azure Front Door or Azure Traffic Manager to handle incoming requests.
+- [ ] Wait for the region to recover and then manually redeploy all environments and apps.
+- [ ] Manually deploy to a new region
+- [ ] Deploy container apps in advance to multiple regions and use Azure Front Door or Azure Traffic Manager to handle incoming requests.
 - [ ] Do nothing and hope for the best.
 
 Answer: All actions are recommended strategies.
@@ -621,7 +621,7 @@ Answer: All actions are recommended strategies.
 
 Question: What is the requirement for enabling zone redundancy in your Container Apps environment?
 
-- [x] The environment must include a virtual network (VNET) with an available subnet.
+- [ ] The environment must include a virtual network (VNET) with an available subnet.
 - [ ] The environment must have at least 10 replicas.
 - [ ] The environment must be located in a specific region.
 - [ ] The environment must have a specific number of applications running.
@@ -632,7 +632,7 @@ Answer: The environment must include a virtual network (VNET) with an available 
 
 Question: How can you maintain the availability of a crucial website hosted on Azure Container Apps, even if a single Azure datacenter goes down, while keeping the solution simple and using the least number of Azure services?
 
-- [x] Activate zone redundancy in the Container Apps setting.
+- [ ] Activate zone redundancy in the Container Apps setting.
 - [ ] Set up automatic Azure DevOps deployment pipelines to shift to a new region if the primary datacenter fails.
 - [ ] Use multiple regions and route requests via Azure Front Door.
 
@@ -645,7 +645,7 @@ Question: You want to use managed identities in the scaling rules for your conta
 - [ ] System-assigned identities only
 - [ ] User-assigned identities only
 - [ ] Both
-- [x] None
+- [ ] None
 
 Answer: Using managed identities in scale rules isn't supported.
 
@@ -654,7 +654,7 @@ Answer: Using managed identities in scale rules isn't supported.
 Question: What is ACR Tasks?
 
 - [ ] A tool for managing virtual machines in Azure
-- [x] A suite of features within Azure Container Registry for container image building and patching
+- [ ] A suite of features within Azure Container Registry for container image building and patching
 - [ ] A service for managing Kubernetes clusters
 - [ ] A tool for network monitoring in Azure
 
@@ -666,7 +666,7 @@ Question: What is the default platform for building images with ACR Tasks?
 
 - [ ] Windows/amd64
 - [ ] Linux/arm64
-- [x] Linux/amd64
+- [ ] Linux/amd64
 - [ ] Linux/arm
 
 Answer: By default, ACR Tasks builds images for the Linux OS and the amd64 architecture.
@@ -676,8 +676,8 @@ Answer: By default, ACR Tasks builds images for the Linux OS and the amd64 archi
 Question: The az acr build command in Azure Container Registry is used to build and push a container image to ACR. To which of the following Docker commands is this Azure command equivalent? (Choose two)
 
 - [ ] docker run
-- [x] docker build
-- [x] docker push
+- [ ] docker build
+- [ ] docker push
 - [ ] docker pull
 - [ ] docker compose
 
@@ -687,7 +687,7 @@ Answer: The az acr build command is equivalent to the combination of docker buil
 
 Question: What is the default restart policy in Azure Containers?
 
-- [x] Always
+- [ ] Always
 - [ ] On failure
 - [ ] Never
 
@@ -697,7 +697,7 @@ Answer: Always restart
 
 Question: In Azure Container Instances, which restart policy should you choose if you want the containers in the container group to execute only once and not restart?
 
-- [x] Never
+- [ ] Never
 - [ ] OnFailure
 - [ ] Always
 
@@ -707,9 +707,9 @@ Answer: `Never` policy ensures that the containers in the container group will n
 
 Question: Which command will set environment variable `MinLength` to `8`?
 
-- [x] `az container create --environment-variables 'MinLength'='8'`
-- [x] `az container create --environment-variables 'MinLength=8'`
-- [x] `az container create --environment-variables MinLength=8`
+- [ ] `az container create --environment-variables 'MinLength'='8'`
+- [ ] `az container create --environment-variables 'MinLength=8'`
+- [ ] `az container create --environment-variables MinLength=8`
 - [ ] `az container create --environment-variables {'MinLength':8}`
 - [ ] `az container create --environment-variable-name 'MinLength' --environment-variable-value 8`
 
@@ -722,7 +722,7 @@ Question: You are working on a project that requires deploying a containerized a
 - [ ] Azure Container Apps can fulfill both requirements.
 - [ ] Azure Container Apps can only fulfill the requirement of running a process that requires root access but not the Windows-based operating system requirement.
 - [ ] Azure Container Apps can only fulfill the Windows-based operating system requirement but not the requirement of running a process that requires root access.
-- [x] Azure Container Apps cannot fulfill either of the requirements for this project.
+- [ ] Azure Container Apps cannot fulfill either of the requirements for this project.
 
 Answer: Azure Container Apps can't run privileged containers, and if a process requires root access, it will cause a runtime error. This rules out fulfilling the first requirement. It also only support Linux-based (linux/amd64) container images, which rules out hosting on a Windows-based operating system.
 
@@ -751,7 +751,7 @@ Question: What will happen if you change `template.scale.maxReplicas` from 3 to 
 
 - [ ] All existing revisions will have max 5 replicas now.
 - [ ] A new revision is created. All revisions now have 5 max replicas now.
-- [x] A new revision is created with 5 max replicas. All existing revisions remain unchanged.
+- [ ] A new revision is created with 5 max replicas. All existing revisions remain unchanged.
 
 Answer: Changes made to the `template` section are revision-scope changes, which triggers a new revision. The changes are limited to the revision in which they're deployed, and don't affect other revisions.
 
@@ -779,7 +779,7 @@ Question: What will happen if you change `configuration.ingress.allowInsecure` f
 }
 ```
 
-- [x] All existing revisions will now allow insecure traffic.
+- [ ] All existing revisions will now allow insecure traffic.
 - [ ] A new revision is created. All revisions will now allow insecure traffic.
 - [ ] A new revision is created that allows insecure traffic. All existing revisions remain unchanged.
 
@@ -789,7 +789,7 @@ Answer: Changes made to the `configuration` section are application-scope change
 
 Question: What command should you execute to verify if your image has been successfully pushed to Azure Container Registry?
 
-- [x] `az acr repository list`
+- [ ] `az acr repository list`
 - [ ] `docker images`
 - [ ] `az acr show`
 - [ ] `az acr login`
@@ -805,7 +805,7 @@ Answer: `az acr repository list` lists the repositories in the specified Azure C
 Question: Which command is used to deploy an image in Azure Container Instances (ACI)?
 
 - [ ] `az container push`
-- [x] `az container create`
+- [ ] `az container create`
 - [ ] `az container export`
 - [ ] `docker build`
 
@@ -820,7 +820,7 @@ Question: You are planning to use Azure Container Registry for your application.
 
 - [ ] Individual Entra ID Identity
 - [ ] Managed Identity for Azure Resources
-- [x] Entra ID Service Principal
+- [ ] Entra ID Service Principal
 - [ ] Admin User
 
 Answer: Service principals are designed for headless authentication and can be assigned specific Azure roles, making them ideal for both requirements.  
@@ -833,7 +833,7 @@ Question: You need to attach the standard output and standard error streams of a
 
 - [ ] `az container logs`
 - [ ] `az container exec`
-- [x] `az container attach`
+- [ ] `az container attach`
 - [ ] `az container start`
 
 Answer: `az container attach` is used to attach the standard output and standard error streams of a running container to your terminal.  
@@ -844,7 +844,7 @@ Answer: `az container attach` is used to attach the standard output and standard
 Question: You need to mount Azure Files in `/aci/logs/`. Under which property in the YAML file `mountPath: /mnt/secrets/` will go?
 
 - [ ] volumes
-- [x] volumesMounts
+- [ ] volumesMounts
 
 Answer: `volumesMounts` - Where to mount.
 
@@ -852,7 +852,7 @@ Answer: `volumesMounts` - Where to mount.
 
 Question: You need to mount Azure Files in `/aci/logs/`. Under which property in the YAML file `azureFile:` will go?
 
-- [x] volumes
+- [ ] volumes
 - [ ] volumesMounts
 
 Answer: `volumes` - What to mount.
@@ -865,7 +865,7 @@ Your organization utilizes an Azure container registry. What is the most restric
 
 - [ ] `Owner`
 - [ ] `Contributor`
-- [x] `AcrPush`
+- [ ] `AcrPush`
 - [ ] `AcrPull`
 
 Answer: The `AcrPush` role allows developers to push images to the Azure container registry while adhering to the principle of least privilege.
@@ -874,7 +874,7 @@ Answer: The `AcrPush` role allows developers to push images to the Azure contain
 
 Question: You are using Azure Container Instances (ACI) to run a container that requires access to an Azure File Share. Which of the following is required to mount the Azure File Share to the ACI?
 
-- [x] Storage Account Key
+- [ ] Storage Account Key
 - [ ] Shared Access Signature (SAS) Token
 - [ ] OAuth Token
 - [ ] Entra ID Credentials
@@ -886,7 +886,7 @@ Answer: To mount an Azure File Share to an Azure Container Instance, you need th
 Question: You have a containerized application that requires automatic updates whenever the image in Azure Container Registry (ACR) is updated. What should you configure?
 
 - [ ] Azure DevOps Pipeline
-- [x] Webhooks
+- [ ] Webhooks
 - [ ] Azure Event Hub
 - [ ] Azure Event Grid
 
@@ -899,7 +899,7 @@ What storage service should you utilize to ensure persistent storage for a new A
 - [ ] Azure Table storage
 - [ ] Azure Queue storage
 - [ ] Azure Blob storage
-- [x] Azure Files
+- [ ] Azure Files
 
 Answer:
 
