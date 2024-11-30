@@ -85,6 +85,10 @@ Setting up a scaling rule:
 - Create a scaling rule
 - Set up a scaling condition
 
+### Continuous integration/deployment
+
+Built-in CI/CD with Git (Azure DevOps, third-party, local), FTP, and container registries (ACR, third-party).
+
 ## [Deployment slots](https://learn.microsoft.com/en-us/azure/app-service/deploy-staging-slots)
 
 Require Standard+.
@@ -140,12 +144,12 @@ App Service passes app settings to the container using the `--env` flag to set t
 
 App Settings and Connection Strings are set at app startup and **trigger a restart when changed**. They override settings in `Web.config` or `appsettings.json`.
 
-- **Always On**: Keeps app loaded; off by default and app unloads after 20 mins of inactivity. Needed for Application Insights Profiler.
+- **Always On**: Keeps app loaded; off by default and app unloads after 20 mins of inactivity. Needed for Application Insights Profiler, continuous WebJobs or WebJobs triggered by a CRON expression.
 - **ARR affinity**: In a multi-instance deployment, ensure that the client is routed to the same instance for the life of the session.
 
 ### App Settings
 
-Configuration data is hierarchical (settings can have sub-settings). In Azure CLI `__` denotes the hierarchy.
+Configuration data is hierarchical (settings can have sub-settings). In Linux, nested setting name like `ApplicationInsights:InstrumentationKey` needs to be configured as `ApplicationInsights__InstrumentationKey` Dots (`.`) will be replaced with `_`.
 
 ```cs
 // az webapp config appsettings set --settings MySetting="<value>" MyParentSetting__MySubsetting="<value>" ...
@@ -229,7 +233,7 @@ az webapp config appsettings set --name $appName --resource-group $resourceGroup
         ASPNETCORE_ENVIRONMENT="Development"
         # Custom environment variables
         DB_HOST="myownserver.mysql.database.azure.com"
-
+        # Verify at: https://<app-name>.scm.azurewebsites.net/Env
 ```
 
 ### Handler Mappings

@@ -41,7 +41,6 @@ Question: Which products support asset pre-loading?
 - [x] Azure CDN Premium from Edgio
 - [x] Azure CDN Standard from Edgio
 - [ ] Standard Microsoft
-- [ ] Standard Akamai
 
 Answer: Azure CDN from Edgio only
 
@@ -52,7 +51,6 @@ Question: Which product supports real-time stats and alerts?
 - [x] Azure CDN Premium from Edgio
 - [ ] Azure CDN Standard from Edgio
 - [ ] Standard Microsoft
-- [ ] Standard Akamai
 
 Answer: Azure CDN Premium from Edgio only
 
@@ -137,25 +135,27 @@ Deleting refers to removing the file from the origin server, not the cache, and 
 
 ---
 
-Question: What are the Azure CDN configuration propagation times for Standard (Verizon):
+Question: What are the Azure CDN configuration propagation times for Azure CDN Standard from Microsoft:
 
 - [ ] Instant
-- [ ] Around 1 minute.
-- [x] Around 10 minutes.
-- [ ] Around 1 hour.
+- [ ] Within 1 minute.
+- [x] Within 10 minutes.
+- [ ] Within 30 minutes.
+- [ ] Within 1 hour.
 
-Answer: 1 minute is for Standard (Akamai).
+Answer: For Azure CDN Standard from Microsoft profiles, propagation usually completes in 10 minutes. For Azure CDN Standard from Edgio and Azure CDN Premium from Edgio profiles, propagation usually completes within 30 minutes.
 
 ---
 
-Question: What are the Azure CDN configuration propagation times for Standard (Akamai):
+Question: What are the Azure CDN configuration propagation times for zure CDN Premium from Edgio:
 
 - [ ] Instant
-- [x] Around 1 minute.
-- [ ] Around 10 minutes.
-- [ ] Around 1 hour.
+- [ ] Within 1 minute.
+- [ ] Within 10 minutes.
+- [x] Within 30 minutes.
+- [ ] Within 1 hour.
 
-Answer: 10 minutes is for Standard (Verizon).
+Answer: For Azure CDN Standard from Microsoft profiles, propagation usually completes in 10 minutes. For Azure CDN Standard from Edgio and Azure CDN Premium from Edgio profiles, propagation usually completes within 30 minutes.
 
 ---
 

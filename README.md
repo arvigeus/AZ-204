@@ -188,6 +188,8 @@ In these study notes, emojis may be ambiguous and the correct meaning has to be 
 
 The content found in this repository is a result of my personal study and understanding of the AZ-204 exam topics. While I have made every effort to ensure accuracy, there may be inaccuracies, or even incorrect or missing information contained within these notes.
 
+Since passing the exam in October 2023, I strive to keep this information current, but updates are made on a best-effort basis rather than through active maintenance.
+
 I welcome corrections and contributions from others to enhance the quality and accuracy of this material. If you find any errors or have suggestions for improvement, please feel free to open an issue or submit a pull request.
 
 Please use these notes at your own discretion and cross-reference with official materials and resources to ensure complete understanding of the subject matter.

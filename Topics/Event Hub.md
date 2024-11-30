@@ -6,13 +6,12 @@
 
 ## Key Concepts
 
-- **Event Hubs Client**: Interface for interacting with Event Hubs.
-- **Event Hubs Producer**: Source of various types of data such as telemetry, diagnostics, logs, etc.
-- **Event Hubs Consumer**: Reads information from Event Hubs for processing, distribution, or storage.
-- **Partition**: Ordered sequence of events in an Event Hub, used for parallelism in data processing.
-- **Consumer Group**: Allows multiple applications to read the event stream independently.
-- **Event Receivers**: Entities that read event data from Event Hubs, using AMQP 1.0 or Kafka protocol 1.0 and later.
-- **Throughput Units** (**processing units**): Pre-purchased units controlling the throughput capacity of Event Hubs.
+- **Producer applications**: Source of various types of data such as telemetry, diagnostics, logs, etc. Send data to an event hub via SDKs or Kafka producer clients.
+- **Namespace**: A container managing event hubs or Kafka topics, handling tasks like capacity, security, and disaster recovery.
+- **Event Hubs/Kafka topic**: An append-only log for organizing events, consisting of one or more partitions.
+- **Partitions**: Ordered sequence of events in an Event Hub, used for parallelism in data processing (increasing throughput).
+- **Consumer applications**: Reads information from Event Hubs for processing, distribution, or storage. Uses SDKs or Kafka.
+- **Consumer group**: A logical group allowing multiple consumers to read the same data independently.
 
 ![Image showing the event processing flow.](https://learn.microsoft.com/en-us/training/wwl-azure/azure-event-hubs/media/event-hubs-stream-processing.png)
 

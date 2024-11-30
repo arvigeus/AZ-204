@@ -221,3 +221,17 @@ az eventgrid event-subscription create \
 ```
 
 ---
+
+Question: You need to enable a third-party SaaS application to send events directly to your Azure subscription for processing by your custom applications. What type of Event Grid topic should you configure to achieve this?
+
+- [ ] System Topic
+- [x] Partner Topic
+- [ ] Custom Topic
+- [ ] Event Hub Topic
+
+Answer: Partner Topics are designed specifically for enabling third-party services or SaaS applications to push events into your Azure subscription. These events can then be processed by Azure Functions, Logic Apps, or other subscribers to the topic.  
+System Topic: This is for Azure services that natively emit events, like Blob Storage or Event Hubs. You use system topics when you’re dealing with Azure-native resources.  
+Custom topics are for your own applications to send events into Event Grid—not for third-party SaaS. If the source isn’t a partner but something you built, this would be the choice.  
+Event Hub Topic: Event Hub isn’t even part of Event Grid’s topic system. It’s used for high-throughput streaming of telemetry or event data, not the discrete events Event Grid handles.
+
+---

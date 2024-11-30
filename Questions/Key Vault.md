@@ -217,3 +217,21 @@ az keyvault certificate create --vault-name $kvName -n $certName -p "$(az keyvau
 ```
 
 ---
+
+Question: You are tasked with deploying a cloud-based application that leverages Azure Key Vault for storing sensitive information like certificates and API keys. The application will be rolled out in the following phases:
+
+- Development
+- Testing
+- Staging
+- Production
+
+What is the optimal Azure Key Vault configuration to ensure secure and efficient management of secrets across these phases?
+
+- [ ] Use a single Azure Key Vault for all phases
+- [ ] Set up two Azure Key Vaults: one for Development and Testing, and another for Staging and Production
+- [ ] Establish a unique Azure Key Vault for Production and merge the others into one
+- [x] Create a dedicated Azure Key Vault for each phase
+
+Answer: By allocating a separate Azure Key Vault for each phase you ensure isolation of sensitive data, enabling you to manage access policies, secret lifecycles, and audit logs independently for each phase. This approach enhances security and operational efficiency.
+
+---

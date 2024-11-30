@@ -377,3 +377,28 @@ Question: You have a running application and you want to control the rate of dat
 Answer: Ingestion sampling happens at the Application Insights service endpoint and allows you to set the sampling rate without redeploying your app. It helps you keep within your monthly quota.
 
 ---
+
+Question: Which method should be used here instead of `XXXXXXXXXX` to track response time:
+
+```cs
+var startTime = DateTime.UtcNow;
+var timer = System.Diagnostics.Stopwatch.StartNew();
+
+try {
+  await sendRequest();
+}
+finally {
+  timer.Stop();
+  telemetry.XXXXXXXXXX("type", "name", "myTracedRequest", startTime, timer.Elapsed, success);
+}
+```
+
+- [ ] `TrackEvent`
+- [ ] `TrackException`
+- [x] `TrackDependency`
+- [ ] `TrackRequest`
+- [ ] `TrackTrace`
+
+Answer: `TrackDependency`: for those dependencies not automatically collected by SDK, like response times.
+
+---

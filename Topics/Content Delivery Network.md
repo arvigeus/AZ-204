@@ -44,8 +44,19 @@ Other tiers of Azure CDN provide additional configuration options.
 
 Azure CDN configuration propagation times:
 
-- Azure CDN Standard (Akamai): ~1min.
-- Azure CDN Standard (Verizon): ~10mins.
+- Azure CDN Standard from Microsoft : ~1min.
+- Azure CDN Standard from Edgio: ~10mins.
+
+### [Standard rules engine](https://learn.microsoft.com/en-us/azure/cdn/cdn-standard-rules-engine-reference)
+
+Customize how content is delivered:
+
+1. **Conditions**: Trigger rules based on URL paths, query strings, HTTP headers, or request methods. You can combine multiple conditions for complex logic.
+2. **Actions**: Modify requests or responses by redirecting, rewriting URLs, altering headers, or caching content with custom settings.
+3. **Order Matters**: Rules execute sequentially; the first match takes precedence.
+4. **Limits**: Standard rules have fewer capabilities compared to Premium\u2014stick to straightforward tasks.
+
+Each rule allows 10 match conditions and 5 actions, with up to 25 rules per CDN endpoint, including a default global rule. The global rule has no conditions and always triggers its actions.
 
 ### [Caching behavior settings](https://learn.microsoft.com/en-us/azure/cdn/cdn-caching-rules#caching-behavior-settings)
 
@@ -92,9 +103,9 @@ az cdn endpoint load \
 - Configuration changes take up to 10 minutes to propagate.
 - Compression is part of the caching feature, it only works when caching is enabled.
 
-### Geo-filtering
+### [Geo-filtering](https://learn.microsoft.com/en-us/azure/web-application-firewall/afds/waf-front-door-geo-filtering)
 
-Geo-filtering allows for the control of content access by country/region codes. The **Standard** tier allows only site-wide allowance or blocking, while the **Verizon** and **Akamai** tiers offer additional directory path restrictions.
+Azure Front Door allows you to restrict access to your web app by country or region using the Web Application Firewall (WAF) with custom access rules. These rules use match conditions, such as the GeoMatch operator, to filter requests based on IP addresses, either from the client or a proxy server. You can also combine geo-filtering with path-based conditions. To avoid false positives, always include the ZZ country code for unclassified IPs.
 
 ## [Features](https://learn.microsoft.com/en-us/azure/cdn/cdn-features)
 

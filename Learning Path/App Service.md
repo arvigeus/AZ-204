@@ -289,7 +289,7 @@ To add a new app setting, select **\+ Add**. If you're using deployment slots yo
 
 When finished, select **Apply**. Don't forget to select **Apply** back in the **Environment variables** page.
 
-:information_source: In a default Linux app service or a custom Linux container, any nested JSON key structure in the app setting name like `ApplicationInsights:InstrumentationKey` needs to be configured in App Service as `ApplicationInsights__InstrumentationKey` for the key name. In other words, any `:` should be replaced by `__` (double underscore). Any periods in the app setting name will be replaced with a `*` (single underscore).
+:information\*source: In a default Linux app service or a custom Linux container, any nested JSON key structure in the app setting name like `ApplicationInsights:InstrumentationKey` needs to be configured in App Service as `ApplicationInsights__InstrumentationKey` for the key name. In other words, any `:` should be replaced by `__` (double underscore). Any periods in the app setting name will be replaced with a `_` (single underscore).
 
 ##### Editing application settings in bulk
 

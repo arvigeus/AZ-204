@@ -1157,3 +1157,23 @@ Question: You are developing an application using Azure Functions to handle HTTP
 Answer: The requirement is to have a custom handler web server that starts up in less than 60 seconds.
 
 ---
+
+Questions: It’s Christmas at Grandma’s, and just as you’re savoring your third glass of wine, work calls with an “urgent” issue. Instead of launching into full-blown tech mode, you decide to cobble together an Azure Function - because nothing says “holiday spirit” like a little on-the-fly coding. What’s your go-to approach for resolving this with minimal fuss?
+
+- [ ] Use you poor grandma's Pentium II computer.
+- [x] Use your phone's browser.
+- [ ] Install vim.
+- [ ] Install bunch of SDKs.
+- [x] Choose `C# Script` because you are drunk.
+- [ ] Choose `Java` because you are REALLY drunk.
+- [ ] Create `host.json` file.
+- [x] Create `function.json`.
+- [ ] None of these is applicable, you have to go back to the office and break everyone's hearts.
+
+Answer: You can use your phone to access Azure Portal. Languages like `C# Script`, `JavaScript`, `Python`, `PowerShell` are natively supported for editing in the portal. Because you use a scripting language, you must also create `function.json`.
+
+- Grandma’s ancient computer? Probably best left for playing solitaire.
+- Installing an SDK and editor on that dinosaur will be akin to climbing Everest with slippers on.
+- If you choose Java, you have to use an editor, thus a computer - not the best option here.
+
+---

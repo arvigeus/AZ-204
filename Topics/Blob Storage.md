@@ -620,42 +620,6 @@ You can also use [AZ CLI](https://learn.microsoft.com/en-us/cli/azure/storage/bl
 
 When copying, for destination you need SAS or OAuth authentication (Azure Files only supports SAS).
 
-## [Static website hosting](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-static-website)
-
-Static website can be enabled/disbled from Azure Portal (`storage account > Static Website`) or CLI (`az storage blob service-properties update --account-name <storage-account> --static-website {true|false}`). This creates a container called `$web`. During deployment/maintenance, it should be disabled to prevent broken site for users (changing container/account access won't have any effect on `web` endpoint, only to `blob` endpoint).
-
-Default pages: `_index.html` and `_404.html`.
-
-Endpoint: `https://<storage-account>.web.core.windows.net/`
-
-![Screenshot showing the locations of the fields to enable and configure static website hosting.](https://learn.microsoft.com/en-us/training/wwl-azure/explore-azure-blob-storage/media/enable-static-website-hosting.png)
-
-Lifecycle management doesn't affect system containers such as the `$logs` or `$web` containers.
-
-### Limitations
-
-- If you want to configure headers, or use custom HTTPS domain, Azure Content Delivery Network (Azure CDN) is required.
-- AuthN and AuthZ are not supported.
-- CORS is not supported with static website.
-
-Use [Azure Static Web Apps](https://azure.microsoft.com/services/app-service/static/) if you need these (plus CI/CD)
-
-### [Mapping a custom domain to a static website URL](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-custom-domain-name?tabs=azure-portal)
-
-NOTE: You need to add `index.html` and `error.html` to the `$web` container first
-
-### HTTP Only
-
-- Get the host name of your storage endpoint: Copy value of `Settings > Endpoints > Static website` (**without** `https://`)
-- Create a CNAME record
-- Register your custom domain with Azure via either:
-  - `az storage account update --custom-domain <custom-domain-name> --use-subdomain false ...`
-  - Add the custom domain under networking in the Azure Storage account (`storage account > Networking >  Custom domain > Domain name`).
-
-### HTTPS (and/or headers)
-
-- Integrate the static website with Azure Content Delivery Network (CDN)
-
 ## [Network Access Rules](https://learn.microsoft.com/en-us/azure/storage/common/storage-network-security?tabs=azure-portal)
 
 By default, Azure Storage Accounts accept connections from clients on any network.

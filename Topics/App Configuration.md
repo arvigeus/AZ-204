@@ -9,7 +9,7 @@ You can import and export configuration between Azure App Configuration and sepa
 Azure App Configuration manages configuration data using key-value pairs.
 
 - **Keys**: Unique, _case-sensitive_ identifiers for values. They can include any unicode character except `*`, `,`, and `\` (reserved can be escaped with '\'). Use delimiters like `/` or `:` for hierarchical organization. Azure treats _keys as a whole_ and doesn't enforce any structure. Example: `AppName:Service1:ApiEndpoint`
-- **Labels**: Group keys by criteria, ex: environments or versions (which is _not supported natively_). Default label is `null`. Example: `Key = AppName:DbEndpoint & Label = Test`. Key prefixes are alternative way of grouping (labeling).
+- **Labels**: Group keys by criteria, ex: environments or versions (which is _not supported natively_). Default label is `null`. Example: `Key = AppName:DbEndpoint & Label = Test`. Key prefixes are alternative way of grouping (labeling). To explicitly reference a key-value without a label, use `\0`. Different labels create different versions of the same key, these are considered distinct (unique) entries.
 - **Values**: Unicode strings optionally associated with a user-defined content type for additional metadata.
 
 ### Configuration and Querying
@@ -46,7 +46,7 @@ When using multiple `.Select()`, if a key with the same name exists in both labe
 .Select("TestApp:*", "dev");
 ```
 
-## Feature Management
+## [Feature Management](https://learn.microsoft.com/en-us/azure/azure-app-configuration/howto-feature-filters)
 
 - **Feature flag**: A binary variable (on/off) that controls the execution of an associated code block.
 - **Feature manager**: A software package managing feature flags' lifecycle, providing additional functions like caching and updating flag states.
@@ -160,7 +160,7 @@ Azure App Configuration serves as a centralized repository for feature flags, en
 
 ## Security
 
-### Using Customer-Managed Keys for Encryption
+### [Using Customer-Managed Keys for Encryption](https://learn.microsoft.com/en-us/azure/azure-app-configuration/concept-customer-managed-keys)
 
 A managed identity authenticates with Microsoft Entra ID and wraps the encryption key using Azure Key Vault. The wrapped key is stored and the unwrapped key is cached for an hour, then refreshed.
 
@@ -173,7 +173,7 @@ Prerequisites:
 After setup, assign a managed identity to the App Configuration and grant it `GET`, `WRAP`, and `UNWRAP` (permits decrypting previously wrapped keys) permissions in the Key Vault's access policy:
 
 ```sh
-az keyvault set-policy --name 'MyVault' --object-id 'userObjectId' --key-permissions get list --secret-permissions get list
+az keyvault set-policy --key-permissions get wrapKey unwrapKey
 ```
 
 ## Configure Key Vault

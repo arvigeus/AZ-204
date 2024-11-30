@@ -99,3 +99,68 @@ builder.Configuration.AddAzureAppConfiguration(options =>
 Answer: Merge and override previous values
 
 ---
+
+Question: In Azure App Configuration, how can you explicitly reference a key-value that does not have a label?
+
+- [ ] Use the label "unlabeled"
+- [x] Use the label "\0"
+- [ ] Use the label "%00"
+- [ ] Use the label "null"
+- [ ] Leave the label field blank
+
+Answer: To explicitly reference a key-value without a label, use `\0` (URL encoded as `%00`). This acts as a placeholder to indicate that the key-value in question is unlabeled, allowing you to differentiate it from key-values that might have been assigned specific labels.
+
+---
+
+Question: You are setting up resources in Azure App Configuration and have the following entries:
+
+- Key = `AppName:Region1:DbEndpoint`
+- Key = `AppName:region1:dbendpoint`
+- Key = `AppName:Service1:ApiEndpoint`
+- Key = `AppName:Service1:ApiEndpoint` with Label = `\0`
+- Key = `AppName:Service1:ApiEndpoint` with Label = `Test`
+
+What is the total count of distinct keys that will be saved in Azure App Configuration?
+
+- [ ] 2
+- [ ] 3
+- [ ] 4
+- [x] 5
+
+Answer: Here's the breakdown:
+
+- `AppName:Region1:DbEndpoint` and `AppName:region1:dbendpoint` are considered two unique keys because they differ in case.
+- `AppName:Service1:ApiEndpoint` appears three times with different label variations:
+  - No label (default label)
+  - Label `\0` (acts as no label, but explicitly specified, and is also considered distinct)
+  - Label `Test`
+
+Since different labels create different versions of the same key, these are considered distinct entries.
+
+Therefore, the total number of unique keys stored in Azure App Configuration is: **5**.
+
+---
+
+Question: You are configuring an Azure App Configuration standard tier to use a customer-managed key from Azure Key Vault. What are the essential actions you must perform to ensure secure key access and compliance? Choose all that apply.
+
+- [x] Enable purge protection on the Azure Key Vault.
+- [ ] Connect the Azure App Configuration to a virtual network.
+- [x] Assign a managed identity to the Azure App Configuration instance.
+- [x] Grant the managed identity appropriate permissions on the Azure Key Vault.
+- [ ] Enable public network access for the Azure App Configuration.
+
+Answer: Virtual network connection is not required for customer-managed key integration. The focus is on permissions and identity, not network settings.  
+Public network access is unrelated to key integration and could pose security risks. Key integration relies on identity and access control, not public accessibility.
+
+---
+
+Question: Which Azure CLI command option would correctly configure key access permissions for a managed identity in your Key Vault?
+
+- [x] `az keyvault set-policy --vault-name 'MyVault' --object-id 'userObjectId' --key-permissions get wrapKey unwrapKey`
+- [ ] `az keyvault policy-update --vault 'MyVault' --object-id 'userObjectId' --permissions keys read write`
+- [ ] `az keyvault set-policy --name 'MyVault' --identity-id 'userObjectId' --key-access get list`
+- [ ] `az keyvault update-policy --vault 'MyVault' --object-id 'userObjectId' --permissions keys get list`
+
+Answer: This command correctly sets the necessary permissions: `GET`, `WRAP`, and `UNWRAP`.
+
+---

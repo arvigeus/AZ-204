@@ -1420,6 +1420,19 @@ Answer: The "Always On" setting is required to enable Application Insights Profi
 
 ---
 
+Question: Your company is evaluating Azure App Services Basic plan and needs to have some continuous WebJobs and WebJobs triggered by a CRON expression. What steps must be taken, while staying cost effective?
+
+- [ ] Activate Deployment Slots
+- [x] Turn on "Always On" Feature
+- [ ] Disable IP Restrictions
+- [ ] Switch to Standard Plan
+- [ ] Switch to Premium Plan
+- [ ] Configure a free managed certificate
+
+Answer: To run Continuous WebJobs or WebJobs triggered by a CRON expression in Azure App Service, you must enable the "Always On" feature and have at least a "Basic Plan". The "Always On" setting ensures that the WebJobs continue running even when there is no incoming traffic, and the "Basic Plan" or higher is required to support these operations.
+
+---
+
 Question: Your organization has a web app deployed on Azure using the D1 App Service Plan. You are tasked with setting up the infrastructure to automatically scale when CPU utilization hits 85%, while also keeping costs low. Which of the following actions should you take to meet these objectives?
 
 - [x] Activate autoscaling for the Web App
@@ -1468,5 +1481,25 @@ Questions: Which of the following won't trigger a restart?
 - [x] Storage failover
 
 Answer: Storage failover requires app restart or remounting of Azure Storage.
+
+---
+
+Question: Which of the following can be used for Continuous Integration and Deployment (CI/CD) with Azure App Service? Select all that apply.
+
+- [x] Azure DevOps Services
+- [x] GitLab or other third party git repository
+- [x] Local git repository
+- [x] FTP
+- [ ] Azure File Sync
+- [x] Azure Container Registry
+- [x] Docker Hub or other third party container registries
+- [ ] Azure Pipelines Artifacts
+- [ ] Azure Blob Storage
+
+Answer: Out-of-the-box CI/CD is available through Azure Portal with Git (Azure DevOps, third party, local), FTP, Container Registry (ACR, third-party).
+
+- **Azure File Sync**: Used for synchronizing files between servers and Azure, not for code deployment.
+- **Azure Pipelines Artifacts**: Primarily used for storing artifacts produced by CI/CD pipelines, not directly for deployment.
+- **Azure Blob Storage**: Typically used for general storage purposes, not specifically for CI/CD targeting web apps.
 
 ---

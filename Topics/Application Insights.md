@@ -120,6 +120,8 @@ catch (Exception ex)
 finally
 {
     timer.Stop();
+    // TrackDependency: Tracks the performance of external dependencies not automatically collected by the SDK.
+    // Use it to measure response times for databases, external services, or caches like Azure Redis.
     // Send data to Dependency Tracking in Application Insights
     telemetry.TrackDependency("DependencyType", "myDependency", "myCall", startTime, timer.Elapsed, success);
 }
@@ -133,6 +135,8 @@ telemetry.TrackTrace("Some message", SeverityLevel.Warning);
 // Send data immediately, rather than waiting for the next fixed-interval sending
 telemetry.Flush();
 ```
+
+Read more: [Dependency tracking in Application Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/app/asp-net-dependencies)
 
 ## [Usage analysis](https://learn.microsoft.com/en-us/azure/azure-monitor/app/usage-overview)
 
@@ -150,15 +154,15 @@ telemetry.Flush();
 
 ## [Monitor an app (Instrumentation)](https://learn.microsoft.com/en-us/azure/azure-monitor/app/opentelemetry-overview?tabs=aspnetcore)
 
-- **Auto instrumentation**: Telemetry collection through configuration without modifying the application's code. Supports `OpenCensus` for tracking metrics across services and technologies like Redis and MongoDB.
-- **Manual Instrumentation**: Coding against the Application Insights or **OpenTelemetry** API. Supports **Entra ID** and **Complex Tracing** (collect data that is not available in Application Insights)
+- **Auto instrumentation**: Telemetry collection through configuration without modifying the application's code or configuring instrumentation.
+- **Manual Instrumentation**: Coding against the **Application Insights** or **OpenTelemetry** API. Supports **Entra ID** and **Complex Tracing** (collect data that is not available in Application Insights)
 
 ## [Availability test](https://learn.microsoft.com/en-us/azure/azure-monitor/app/troubleshoot-availability)
 
 Up to 100 tests per Application Insights resource.
 
-- [URL ping test (classic)](https://learn.microsoft.com/en-us/azure/azure-monitor/app/monitor-web-app-availability): Check endpoint response and measure performance. Customize success criteria with advanced features like parsing dependent requests and retries. It relies on public internet DNS; ensure public domain name servers resolve all test domain names. Use custom **TrackAvailability** tests otherwise.
-- [Standard test (Preview)](https://learn.microsoft.com/en-us/azure/azure-monitor/app/availability-standard-tests): Similar to URL ping, this single request test covers SSL certificate validity, proactive lifetime check, HTTP request verb (`GET`, `HEAD`, or `POST`), custom headers, and associated data.
+- [URL ping test (classic - to be retired September 2026)](https://learn.microsoft.com/en-us/azure/azure-monitor/app/monitor-web-app-availability): Check endpoint response and measure performance. Customize success criteria with advanced features like parsing dependent requests and retries. It relies on public internet DNS; ensure public domain name servers resolve all test domain names. Use custom **TrackAvailability** tests otherwise.
+- [Standard test](https://learn.microsoft.com/en-us/azure/azure-monitor/app/availability-standard-tests): Similar to URL ping, this single request test covers SSL certificate validity, proactive lifetime check, HTTP request verb (`GET`, `HEAD`, or `POST`), custom headers, and associated data.
 - [Custom TrackAvailability test](https://learn.microsoft.com/en-us/azure/azure-monitor/app/availability-azure-functions): Use [TrackAvailability()](https://learn.microsoft.com/en-us/dotnet/api/microsoft.applicationinsights.telemetryclient.trackavailability) method to send results to Application Insights. Ideal for `multi-request` or `authentication` test scenarios. (Note: Multi-step test are the legacy version; To create multi-step tests, use Visual Studio)
 
 Example: Create an alert that will notify you via email if the web app becomes unresponsive:
