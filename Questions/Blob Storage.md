@@ -235,16 +235,18 @@ Answer: Archive blobs cannot be accessed directly. To read the data of an archiv
 
 ---
 
-Question: The organization DataGenix has developed a machine learning model for predictive maintenance of industrial machinery. The model runs periodically and stores the predictive results in Blob storage. Additionally, it stores sensor data from the machinery in a separate container. The predictive results are frequently accessed for immediate action and need to be available within minutes. The sensor data is primarily used for compliance and can be accessed less frequently. What would be the optimal Access tier for storing Predictive Results and Sensor Data?
+Question: The organization DataGenix has developed a machine-learning model for the predictive maintenance of industrial machinery. The model runs periodically and stores the predictive results in Blob storage. Additionally, it stores sensor data from the machinery in a separate container. The predictive results are frequently accessed for immediate action and need to be available within minutes. The sensor data is primarily used for compliance and can be accessed less frequently. What would be the optimal access tier for storing Predictive Results and Sensor Data?
 
 Options:
 
 - [ ] Predictive Results – Archive access tier, Sensor Data – Cool access tier
-- [ ] Predictive Results – Hot access tier, Sensor Data – Archive access tier
-- [x] Predictive Results – Cool access tier, Sensor Data – Archive access tier
+- [x] Predictive Results – Hot access tier, Sensor Data – Archive access tier
+- [ ] Predictive Results – Cool access tier, Sensor Data – Archive access tier
 - [ ] Predictive Results – Hot access tier, Sensor Data – Cool access tier
 
-Answer: "Optimal" means "cost effective". Both Hot and Cool are instantly available, but Cool is most optimal for Predictive Results. Anything needing less than an hour could be put in Cool. Use Hot only if you don't want to keep things (frequent deletion).
+Answer:
+- **Predictive Results**: Both Hot and Cool tiers are instantly available (within minutes), but the Hot tier is optimized for frequently accessed data. Anything needing less than an hour that doesn’t need frequent access could be put in Cool.
+- **Sensor Data**: Both Cool and Archive are suitable for less frequently accessed data. Since the question mentions no requirement for instant access and asks for optimal (cost-effective), Archive tier is more suitable.
 
 ---
 
