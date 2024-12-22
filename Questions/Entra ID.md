@@ -150,11 +150,11 @@ Answer: It indicates the type of resource being requested.
 Question: What happens if a user attempts to access Microsoft Key Vault with `scope=User.Read` in the Microsoft Identity platform?
 
 - [ ] The request is successful and the user can access Key Vault data.
-- [x] The request fails because User.Read will assume wrong resource type.
+- [x] The request fails because `User.Read` is intended for a different resource.
 - [ ] The request fails due to insufficient user permissions.
 - [ ] The request is successful but the user the user can only see key names, not the key values.
 
-Answer: Use `https://vault.azure.net/.default` instead
+Answer: The request fails because `User.Read` is a scope for Microsoft Graph and not valid for Key Vault. Use `https://vault.azure.net/.default` to access Key Vault with app-configured permissions.
 
 ---
 
