@@ -1,5 +1,7 @@
 {
+  "extends": ["@epic-web/config/typescript"],
   "include": [
+    "@epic-web/config/reset.d.ts",
     "env.d.ts",
     "**/*.ts",
     "**/*.tsx",

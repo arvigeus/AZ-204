@@ -24,5 +24,8 @@
       "directory": "quiz-app",
       "changeProcessCWD": true
     }
+  ],
+  "eslint.rules.customizations": [
+    { "rule": "*", "fixable": true, "severity": "off" }
   ]
 }
