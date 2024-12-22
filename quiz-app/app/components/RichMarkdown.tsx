@@ -39,7 +39,7 @@ export const RichMarkdown = ({ interactive, children }: RichMarkdownProps) => (
 					)
 
 				let language = match[1] || ''
-				const code = String(children).replace(/\n$/, '')
+				const code = String(children).replace(/\n$/, '') + '\n'
 
 				// Fix language for highlighter
 				switch (language) {
@@ -50,47 +50,7 @@ export const RichMarkdown = ({ interactive, children }: RichMarkdownProps) => (
 						break
 				}
 
-				if (interactive && isLanguageEditSupported(language))
-					return (
-						<Suspense
-							fallback={
-								<SyntaxHighlighter
-									style={ghcolors}
-									language={language}
-									wrapLongLines
-									codeTagProps={{
-										className: 'text-sm px-[1.5rem] py-[0.5rem]',
-									}}
-								>
-									{code}
-								</SyntaxHighlighter>
-							}
-						>
-							<CodeEditor value={code + '\n'} lang={language} />
-						</Suspense>
-					)
-
-				if (isLanguageSupported(language))
-					return (
-						<Suspense
-							fallback={
-								<SyntaxHighlighter
-									style={ghcolors}
-									language={language}
-									wrapLongLines
-									codeTagProps={{
-										className: 'text-sm px-[1.5rem] py-[0.5rem]',
-									}}
-								>
-									{code + '\n'}
-								</SyntaxHighlighter>
-							}
-						>
-							<CodeEditor readOnly value={code + '\n'} lang={language} />
-						</Suspense>
-					)
-
-				return (
+				const highlightedCode = (
 					<SyntaxHighlighter
 						style={ghcolors}
 						language={language}
@@ -102,6 +62,22 @@ export const RichMarkdown = ({ interactive, children }: RichMarkdownProps) => (
 						{code}
 					</SyntaxHighlighter>
 				)
+
+				if (interactive && isLanguageEditSupported(language))
+					return (
+						<Suspense fallback={highlightedCode}>
+							<CodeEditor value={code + '\n'} lang={language} />
+						</Suspense>
+					)
+
+				if (isLanguageSupported(language))
+					return (
+						<Suspense fallback={highlightedCode}>
+							<CodeEditor readOnly value={code + '\n'} lang={language} />
+						</Suspense>
+					)
+
+				return highlightedCode
 			},
 		}}
 	>
