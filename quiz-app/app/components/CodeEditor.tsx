@@ -13,7 +13,7 @@ type CodeEditorProps = Omit<
 > & {
 	lang: SupportedLanguage
 }
-export const CodeEditor = ({ lang, ...props }: CodeEditorProps) => {
+const CodeEditor = ({ lang, ...props }: CodeEditorProps) => {
 	const languate = useMemo(() => {
 		switch (lang) {
 			case 'ps':
@@ -42,3 +42,5 @@ export const CodeEditor = ({ lang, ...props }: CodeEditorProps) => {
 		/>
 	)
 }
+
+export default CodeEditor
