@@ -362,7 +362,7 @@ Answer: The correct way to reference a secret in an environment variable in the 
 Question: You are using the Standard plan of Azure Container Registry, and you've recently noticed an increased delay in the performance of your system. You've been actively using the service for various projects. What could be the possible solutions to address this issue?
 
 - [ ] Upgrade to a more powerful local machine.
-- [ ] Upgrade to the Premium plan.
+- [x] Upgrade to the Premium plan.
 - [x] Delete unused repositories and tags.
 - [ ] Increase the bandwidth of your internet connection.
 - [ ] Call Azure support.
