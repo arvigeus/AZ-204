@@ -359,7 +359,9 @@ Answer: The correct way to reference a secret in an environment variable in the 
 
 ---
 
-Question: You are using the Standard plan of Azure Container Registry, and you've recently noticed an increased delay in the performance of your system. You've been actively using the service for various projects. What could be the possible solutions to address this issue?
+Question: You are using Azure Container Registry with the Standard service tier to manage images for a rapidly growing project. Recently, your team has noticed inconsistencies in overall performance during deployment workflows. Some members have reported delays when accessing certain images, while others claim operations occasionally fail under high load.
+
+Which of the following actions could most effectively address the performance issues without incurring additional costs?
 
 - [ ] Upgrade to a more powerful local machine.
 - [ ] Upgrade to the Premium plan.
@@ -367,7 +369,9 @@ Question: You are using the Standard plan of Azure Container Registry, and you'v
 - [ ] Increase the bandwidth of your internet connection.
 - [ ] Call Azure support.
 
-Answer: Periodically delete unused repositories and tags to improve performance.
+Answer: Performance degradation is likely due to the overhead of managing excessive metadata (unused repositories and tags) in the registry. Cleaning up these resources reduces lookup times and improves efficiency without incurring additional costs.
+
+While upgrading to Premium would resolve performance issues by increasing throughput and capacity, the scenario specifies budget constraints, making this option impractical.
 
 ---
 
