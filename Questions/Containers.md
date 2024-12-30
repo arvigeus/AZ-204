@@ -452,13 +452,16 @@ Answer: Encryption-at-rest is supported in all three tiers.
 
 ---
 
-Question: You exceed your Azure Container Registry plan limit, what happens?
+Question: You are working with an Azure Container Registry and you exceed the request limits for your service tier. What is the expected behavior when this happens, and what strategies should you implement to mitigate the impact on container operations?
 
-- [ ] HTTP 429 error (Too many requests)
-- [ ] Have to upgrade tier to continue
-- [x] Services will run slower
+- [ ] The registry will throttle all pull and push operations, resulting in an `HTTP 429 error`, and you will need to upgrade your service tier to continue operations.
+- [ ] The registry will begin returning `HTTP 503 errors`, and you must reconfigure your container deployment pipeline to reduce the frequency of image pulls and pushes.
+- [x] The registry will temporarily throttle pull and push operations, returning an `HTTP 429 error`, and you should implement retry logic with exponential backoff to mitigate the issue.
+- [ ] The registry will continue to operate normally, but container operations will slow down as a result of throttling, requiring no further intervention.
 
-Answer: You might experience [throttling](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-skus#throttling)
+Answer: When you exceed the request limits in Azure Container Registry, [throttling](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-skus#throttling) occurs, resulting in an `HTTP 429 error`. The recommended solution is implementing retry logic with exponential backoff to handle the temporary throttling and resume operations smoothly.
+
+Upgrading the tier isn’t necessary to resolve throttling.
 
 ---
 
