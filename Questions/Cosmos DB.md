@@ -385,12 +385,25 @@ Question: Given the following data:
     "id": "6e9f51c1-6b45-440f-af5a-2abc96cd083d",
     "categoryName": "Sleeping Bags",
     "name": "Vareno Sleeping Bag (6') Turmeric",
+    "sku": "vareno-sleeping-bag-72109",
     "price": 120,
     "closeout": true,
     "manufacturer": {
       "name": "Vareno"
     },
     "tags": [{ "name": "Color Group: Yellow" }, { "name": "Bag Shape: Mummy" }]
+  },
+  {
+    "id": "12345",
+    "categoryName": "Surfboards",
+    "name": "Teapo Surfboard (6'10\") Grape",
+    "sku": "teapo-surfboard-72109",
+    "price": 500,
+    "closeout": false,
+    "manufacturer": {
+      "name": "Taepo"
+    },
+    "tags": [{ "name": "Color Group: Purple" }]
   }
 ]
 ```
