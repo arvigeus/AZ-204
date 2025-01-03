@@ -295,12 +295,12 @@ Answer: In ASP.NET Core 3, the `Startup.cs` file is where you configure various 
 
 Question: What is the minimum required role to assign an access policy in Azure Key Vault, adhering to the principle of least privilege?
 
-- [x] Key Vault Owner
+- [ ] Key Vault Owner
 - [ ] Global Administrator
-- [ ] Key Vault Administrator
+- [x] Key Vault Administrator
 - [ ] Azure Subscription Owner
 
-Answer: `The Key Vault Owner` has the necessary permissions to assign access policies within the Key Vault.  
+Answer: `The Key Vault Administrator` has the necessary permissions to assign access policies within the Key Vault.  
 Other roles listed grant more permissions than required for this specific task, violating the principle of least privilege.
 
 ---
