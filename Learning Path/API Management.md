@@ -6,7 +6,7 @@ API Management helps organizations publish APIs to external, partner, and intern
 
 ### Discover the API Management service
 
-API Management provides the core functionality to ensure a successful API program through developer engagement, business insights, analytics, security, and protection. Each API consists of one or more operations, and each API can be added to one or more products. To use an API, developers subscribe to a product that contains that API, and then they can call the API's operation, subject to any usage policies that may be in effect.
+API Management provides the core functionality to ensure a successful API program through developer engagement, business insights, analytics, security, and protection. Each API consists of one or more operations, and each API can be added to one or more products. To use an API, developers subscribe to a product that contains that API, and then they can call the API's operation, subject to any usage policies that might be in effect.
 
 #### API Management components
 
@@ -161,7 +161,7 @@ In the previous example policy definition, The `cross-domain` statement would ex
 
 The policy defined in following example demonstrates how to filter data elements from the response payload based on the product associated with the request.
 
-The snippet assumes that response content is formatted as JSON and contains root-level properties named "minutely", "hourly", "daily", "flags".
+The snippet assumes that response content is formatted as JSON and contains root-level properties named _minutely_, _hourly_, _daily_, and _flags_.
 
 ```xml
 <policies>
@@ -203,7 +203,7 @@ This unit provides a reference for the following API Management policies:
 - Limit concurrency - Prevents enclosed policies from executing by more than the specified number of requests at a time.
 - Log to Event Hub - Sends messages in the specified format to an Event Hub defined by a Logger entity.
 - Mock response - Aborts pipeline execution and returns a mocked response directly to the caller.
-- Retry - Retries execution of the enclosed policy statements, if and until the condition is met. Execution will repeat at the specified time intervals and up to the specified retry count.
+- Retry - Retries execution of the enclosed policy statements, if and until the condition is met. Execution repeats at the specified time intervals and up to the specified retry count.
 
 #### Control flow
 
@@ -223,13 +223,13 @@ The `choose` policy applies enclosed policy statements based on the outcome of e
 </choose>
 ```
 
-The control flow policy must contain at least one `<when/>` element. The `<otherwise/>` element is optional. Conditions in `<when/>` elements are evaluated in order of their appearance within the policy. Policy statement(s) enclosed within the first `<when/>` element with condition attribute equals true will be applied. Policies enclosed within the `<otherwise/>` element, if present, will be applied if all of the `<when/>` element condition attributes are false.
+The control flow policy must contain at least one `<when/>` element. The `<otherwise/>` element is optional. Conditions in `<when/>` elements are evaluated in order of their appearance within the policy. Policy statements enclosed within the first `<when/>` element are applied when the condition attribute is true. Policies enclosed within the `<otherwise/>` element, if present, are applied if all of the `<when/>` element condition attributes are false.
 
 #### Forward request
 
 The `forward-request` policy forwards the incoming request to the backend service specified in the request context. The backend service URL is specified in the API settings and can be changed using the set backend service policy.
 
-Removing this policy results in the request not being forwarded to the backend service and the policies in the outbound section are evaluated immediately upon the successful completion of the policies in the inbound section.
+Removing this policy results in the request not being forwarded to the backend service. The policies in the outbound section are evaluated immediately upon the successful completion of the policies in the inbound section.
 
 ```xml
 <forward-request timeout="time in seconds" follow-redirects="true | false"/>
@@ -237,7 +237,7 @@ Removing this policy results in the request not being forwarded to the backend s
 
 #### Limit concurrency
 
-The `limit-concurrency` policy prevents enclosed policies from executing by more than the specified number of requests at any time. Upon exceeding that number, new requests will fail immediately with a `429 Too Many Requests` status code.
+The `limit-concurrency` policy prevents enclosed policies from executing by more than the specified number of requests at any time. When requests exceed that number, new requests fail immediately with a _429 Too Many Requests_ status code.
 
 ```xml
 <limit-concurrency key="expression" max-count="number">
@@ -257,7 +257,7 @@ The `log-to-eventhub` policy sends messages in the specified format to an Event 
 
 #### Mock response
 
-The `mock-response`, as the name implies, is used to mock APIs and operations. It aborts normal pipeline execution and returns a mocked response to the caller. The policy always tries to return responses of highest fidelity. It prefers response content examples, whenever available. It generates sample responses from schemas, when schemas are provided and examples are not. If neither examples or schemas are found, responses with no content are returned.
+The `mock-response`, as the name implies, is used to mock APIs and operations. It aborts normal pipeline execution and returns a mocked response to the caller. The policy always tries to return responses of highest fidelity. It prefers response content examples, whenever available. It generates sample responses from schemas, when schemas are provided and examples aren't. If examples or schemas aren't found, responses with no content are returned.
 
 ```xml
 <mock-response status-code="code" content-type="media type"/>
@@ -281,7 +281,7 @@ The `retry` policy executes its child policies once and then retries their execu
 
 #### Return response
 
-The `return-response` policy aborts pipeline execution and returns either a default or custom response to the caller. Default response is `200 OK` with no body. Custom response can be specified via a context variable or policy statements. When both are provided, the response contained within the context variable is modified by the policy statements before being returned to the caller.
+The `return-response` policy aborts pipeline execution and returns either a default or custom response to the caller. Default response is `200 OK` with no body. Custom response can be specified via a context variable or policy statements. When both are provided, the policy statement modifies the context variable before being returned to the caller.
 
 ```xml
 <return-response response-variable-name="existing context variable">
@@ -291,14 +291,14 @@ The `return-response` policy aborts pipeline execution and returns either a defa
 </return-response>
 ```
 
-#### Additional resources
+#### Other resources
 
 - Visit [API Management policies](https://learn.microsoft.com/en-us/azure/api-management/api-management-policies) for more policy examples.
 - [Error handling in API Management policies](https://learn.microsoft.com/en-us/azure/api-management/api-management-error-handling-policies)
 
 ### Secure APIs by using subscriptions
 
-When you publish APIs through API Management, it's easy and common to secure access to those APIs by using subscription keys. Developers who need to consume the published APIs must include a valid subscription key in HTTP requests when they make calls to those APIs. Otherwise, the calls are rejected immediately by the API Management gateway. They aren't forwarded to the back-end services.
+When you publish APIs through API Management, it's easy and common to secure access to those APIs by using subscription keys. Developers who need to consume the published APIs must include a valid subscription key in HTTP requests when they make calls to those APIs. The API Management gateway rejects calls without a subscription key and the calls aren't forwarded to the back-end services.
 
 To get a subscription key for accessing APIs, a subscription is required. A subscription is essentially a named container for a pair of subscription keys. Developers who need to consume the published APIs can get subscriptions. And they don't need approval from API publishers. API publishers can also create subscriptions directly for API consumers.
 
@@ -306,7 +306,7 @@ To get a subscription key for accessing APIs, a subscription is required. A subs
 
 #### Subscriptions and Keys
 
-A subscription key is a unique auto-generated key that can be passed through in the headers of the client request or as a query string parameter. The key is directly related to a subscription, which can be scoped to different areas. Subscriptions give you granular control over permissions and policies.
+A subscription key is a unique autogenerated key that can be passed through in the headers of the client request or as a query string parameter. The key is directly related to a subscription, which can be scoped to different areas. Subscriptions give you granular control over permissions and policies.
 
 The three main subscription scopes are:
 
@@ -348,7 +348,7 @@ Here's an example curl command that passes a key in the URL as a query string:
 curl https://<apim gateway>.azure-api.net/api/path?subscription-key=<key string>
 ```
 
-If the key is not passed in the header, or as a query string in the URL, you'll get a **401 Access Denied** response from the API gateway.
+If the key isn't passed in the header, or as a query string in the URL, you get a **401 Access Denied** response from the API gateway.
 
 ### Secure APIs by using certificates
 
@@ -363,18 +363,18 @@ With TLS client authentication, the API Management gateway can inspect the certi
 | Certificate Authority (CA) | Only allow certificates signed by a particular CA    |
 | Thumbprint                 | Allow certificates containing a specified thumbprint |
 | Subject                    | Only allow certificates with a specified subject     |
-| Expiration Date            | Only allow certificates that have not expired        |
+| Expiration Date            | Don't allow expired certificates                     |
 
-These properties are not mutually exclusive and they can be mixed together to form your own policy requirements. For instance, you can specify that the certificate passed in the request is signed by a certain certificate authority and hasn't expired.
+These properties aren't mutually exclusive and they can be mixed together to form your own policy requirements. For instance, you can specify that the certificate passed in the request is signed and isn't expired.
 
-Client certificates are signed to ensure that they are not tampered with. When a partner sends you a certificate, verify that it comes from them and not an imposter. There are two common ways to verify a certificate:
+Client certificates are signed to ensure that they aren't tampered with. When a partner sends you a certificate, verify that it comes from them and not an imposter. There are two common ways to verify a certificate:
 
 - Check who issued the certificate. If the issuer was a certificate authority that you trust, you can use the certificate. You can configure the trusted certificate authorities in the Azure portal to automate this process.
 - If the certificate is issued by the partner, verify that it came from them. For example, if they deliver the certificate in person, you can be sure of its authenticity. These are known as self-signed certificates.
 
 #### Accepting client certificates in the Consumption tier
 
-The Consumption tier in API Management is designed to conform with serverless design principals. If you build your APIs from serverless technologies, such as Azure Functions, this tier is a good fit. In the Consumption tier, you must explicitly enable the use of client certificates, which you can do on the **Custom domains** page. This step is not necessary in other tiers.
+The Consumption tier in API Management is designed to conform with serverless design principals. If you build your APIs from serverless technologies, such as Azure Functions, this tier is a good fit. In the Consumption tier, you must explicitly enable the use of client certificates, which you can do on the **Custom domains** page. This step isn't necessary in other tiers.
 
 ![Configure the gateway to request certificates](https://learn.microsoft.com/en-us/training/wwl-azure/explore-api-management/media/configure-request-certificates.png)
 
@@ -386,7 +386,7 @@ Create these policies in the inbound processing policy file within the API Manag
 
 ##### Check the thumbprint of a client certificate
 
-Every client certificate includes a thumbprint, which is a hash, calculated from other certificate properties. The thumbprint ensures that the values in the certificate have not been altered since the certificate was issued by the certificate authority. You can check the thumbprint in your policy. The following example checks the thumbprint of the certificate passed in the request:
+Every client certificate includes a thumbprint, which is a hash, calculated from other certificate properties. The thumbprint ensures that the values in the certificate haven't been altered since the certificate was issued by the certificate authority. You can check the thumbprint in your policy. The following example checks the thumbprint of the certificate passed in the request:
 
 ```xml
 <choose>

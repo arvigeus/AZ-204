@@ -173,7 +173,7 @@ We're not going to cover the Dockerfile file specification. Visit the [Dockerfil
 
 Azure Container Instances (ACI) is a great solution for any scenario that can operate in isolated containers, including simple applications, task automation, and build jobs. Here are some of the benefits:
 
-- **Fast startup**: ACI can start containers in Azure in seconds, without the need to provision and manage a virtual machine (VM)
+- **Fast startup**: ACI can start containers in Azure in seconds, without the need to create and manage a virtual machine (VM)
 - **Container access**: ACI enables exposing your container groups directly to the internet with an IP address and a fully qualified domain name (FQDN)
 - **Hypervisor-level security**: Isolate your application as completely as it would be in a VM
 - **Customer data**: The ACI service stores the minimum customer data required to ensure your container groups are running as expected
@@ -185,7 +185,7 @@ For scenarios where you need full container orchestration, including service dis
 
 #### Container groups
 
-The top-level resource in Azure Container Instances is the container group. A container group is a collection of containers that get scheduled on the same host machine. The containers in a container group share a lifecycle, resources, local network, and storage volumes. It's similar in concept to a pod in Kubernetes.
+The top-level resource in Azure Container Instances is the _container group_. A container group is a collection of containers that get scheduled on the same host machine. Containers in a container group share a lifecycle, resources, local network, and storage volumes. It's similar in concept to a _pod_ in Kubernetes.
 
 The following diagram shows an example of a container group that includes multiple containers:
 
@@ -203,7 +203,7 @@ This example container group:
 
 #### Deployment
 
-There are two common ways to deploy a multi-container group: use a Resource Manager template or a YAML file. A Resource Manager template is recommended when you need to deploy additional Azure service resources (for example, an Azure Files share) when you deploy the container instances. Due to the YAML format's more concise nature, a YAML file is recommended when your deployment includes only container instances.
+There are two common ways to deploy a multi-container group: use a Resource Manager template or a YAML file. A Resource Manager template is recommended when you need to deploy more Azure service resources when you deploy the container instances. Due to the YAML format's more concise nature, a YAML file is recommended when your deployment includes only container instances.
 
 #### Resource allocation
 

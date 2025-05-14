@@ -121,7 +121,7 @@ finally
 {
     timer.Stop();
     // TrackDependency: Tracks the performance of external dependencies not automatically collected by the SDK.
-    // Use it to measure response times for databases, external services, or caches like Azure Redis.
+    // Use it to measure response times for databases, or external services.
     // Send data to Dependency Tracking in Application Insights
     telemetry.TrackDependency("DependencyType", "myDependency", "myCall", startTime, timer.Elapsed, success);
 }
@@ -240,9 +240,3 @@ From env var `APPLICATIONINSIGHTS_CONNECTION_STRING`. Controls where telemetry i
 - **Incoming Messages**: Number of messages received.
 - **Outgoing Messages**: Number of messages sent.
 - **Capture Backlog**: Number of messages waiting to be captured.
-
-### Azure Redis Cache
-
-- **Cache Hits**: Number of successful data retrievals.
-- **Cache Misses**: Number of failed data retrievals.
-- **Get/Set Operations**: Number of get/set operations.

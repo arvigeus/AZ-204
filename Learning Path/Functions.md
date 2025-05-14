@@ -52,7 +52,7 @@ When you create a function app in Azure, you must choose a hosting plan for your
 | Hosting option                                                                                                 | Service              | Availability             | Container support |
 | -------------------------------------------------------------------------------------------------------------- | -------------------- | ------------------------ | ----------------- |
 | **[Consumption plan](https://learn.microsoft.com/en-us/azure/azure-functions/consumption-plan)**               | Azure Functions      | Generally available (GA) | None              |
-| **[Flex Consumption plan](https://learn.microsoft.com/en-us/azure/azure-functions/flex-consumption-plan)**     | Azure Functions      | Preview                  | None              |
+| **[Flex Consumption plan](https://learn.microsoft.com/en-us/azure/azure-functions/flex-consumption-plan)**     | Azure Functions      | GA                       | None              |
 | **[Premium plan](https://learn.microsoft.com/en-us/azure/azure-functions/functions-premium-plan)**             | Azure Functions      | GA                       | Linux             |
 | **[Dedicated plan](https://learn.microsoft.com/en-us/azure/azure-functions/dedicated-plan)**                   | Azure Functions      | GA                       | Linux             |
 | **[Container Apps](https://learn.microsoft.com/en-us/azure/azure-functions/functions-container-apps-hosting)** | Azure Container Apps | GA                       | Linux             |
@@ -115,29 +115,29 @@ Use the Azure Functions programming model to build event-driven, serverless, clo
 Consider hosting your functions on Container Apps in the following situations:
 
 - You want to package custom libraries with your function code to support line-of-business apps.
-- You need to migration code execution from on-premises or legacy apps to cloud native microservices running in containers.
+- You need to migrate code execution from on-premises or legacy apps to cloud native microservices running in containers.
 - You want to avoid the overhead and complexity of managing Kubernetes clusters and dedicated compute.
 - You need the high-end processing power provided by dedicated CPU compute resources for your functions.
 
-#### Function app timeout duration
+#### Function app time-out duration
 
-The `functionTimeout` property in the _host.json_ project file specifies the timeout duration for functions in a function app. This property applies specifically to function executions. After the trigger starts function execution, the function needs to return/respond within the timeout duration.
+The `functionTimeout` property in the _host.json_ project file specifies the time-out duration for functions in a function app. This property applies specifically to function executions. After the trigger starts function execution, the function needs to return/respond within the time-out duration.
 
 The following table shows the default and maximum values (in minutes) for specific plans:
 
 | Plan                  | Default | Maximum¹   |
 | --------------------- | ------- | ---------- |
+| Flex Consumption plan | 30      | Unbounded² |
+| Premium plan          | 30⁴     | Unbounded² |
+| Dedicated plan        | 30⁴     | Unbounded³ |
+| Container Apps        | 30      | Unbounded⁵ |
 | Consumption plan      | 5       | 10         |
-| Flex Consumption plan | 30      | Unlimited³ |
-| Premium plan          | 30²     | Unlimited³ |
-| Dedicated plan        | 30²     | Unlimited³ |
-| Container Apps        | 30⁵     | Unlimited³ |
 
-¹ Regardless of the function app timeout setting, 230 seconds is the maximum amount of time that an HTTP triggered function can take to respond to a request.  
-² The default timeout for version 1.x of the Functions runtime is _unlimited_.  
-³ Guaranteed for up to 60 minutes. OS and runtime patching, vulnerability patching, and scale in behaviors can still cancel function executions.  
-⁴ In a Flex Consumption plan, the host doesn't enforce an execution time limit. However, there are currently no guarantees because the platform might need to terminate your instances during scale-in, deployments, or to apply updates.  
-⁵ When the minimum number of replicas is set to zero, the default timeout depends on the specific triggers used in the app.
+¹ Regardless of the function app time-out setting, 230 seconds is the maximum amount of time that an HTTP triggered function can take to respond to a request. This is because of the default idle time-out of Azure Load Balancer. For longer processing times, consider using the [Durable Functions async pattern](https://learn.microsoft.com/en-us/azure/azure-functions/durable/durable-functions-overview#async-http) or defer the actual work and return an immediate response.  
+² There's no maximum execution time-out duration enforced. However, the grace period given to a function execution is 60 minutes during scale in for the Flex Consumption and Premium plans, and a grace period of 10 minutes is given during platform updates.  
+³ Requires the App Service plan be set to [Always On](https://learn.microsoft.com/en-us/azure/azure-functions/dedicated-plan#always-on). A grace period of 10 minutes is given during platform updates.  
+⁴ The default time-out for version 1.x of the Functions host runtime is _unbounded_.  
+⁵ When the minimum number of replicas is set to zero, the default time-out depends on the specific triggers used in the app.
 
 #### Storage account requirements
 
@@ -170,7 +170,7 @@ Functions share a few core technical concepts and components, regardless of the 
 
 A function app provides an execution context in Azure in which your functions run. As such, it's the unit of deployment and management for your functions. A function app is composed of one or more individual functions that are managed, deployed, and scaled together. All of the functions in a function app share the same pricing plan, deployment method, and runtime version. Think of a function app as a way to organize and collectively manage your functions.
 
-:information_source: In Functions 2.x all functions in a function app must be authored in the same language. In previous versions of the Azure Functions runtime, this wasn't required.
+:information_source: In Functions 2.x, all functions in a function app must be authored in the same language. In previous versions of the Azure Functions runtime, this wasn't required.
 
 #### Develop and test Azure Functions locally
 
@@ -191,7 +191,7 @@ A Functions project directory contains the following files in the project root f
 The `host.json` metadata file contains configuration options that affect all functions in a function app instance. Other function app configuration options are managed depending on where the function app runs:
 
 - **Deployed to Azure:** in your application settings
-- **On your local computer:** in the local.settings.json file.
+- **On your local computer:** in the `local.settings.json` file.
 
 Configurations in `host.json` related to bindings are applied equally to each function in the function app. You can also override or apply settings per environment using application settings. To learn more, see the [host.json reference](https://learn.microsoft.com/en-us/azure/azure-functions/functions-host-json).
 
@@ -212,6 +212,12 @@ Binding to a function is a way of declaratively connecting another resource to t
 You can mix and match different bindings to suit your needs. Bindings are optional and a function might have one or multiple input and/or output bindings.
 
 Triggers and bindings let you avoid hardcoding access to other services. Your function receives data (for example, the content of a queue message) in function parameters. You send data (for example, to create a queue message) by using the return value of the function.
+
+When you develop your functions locally, you need to take trigger and binding behaviors into consideration. For HTTP triggers, you can call the HTTP endpoint on the local computer, using `http://localhost/`. For non-HTTP triggered functions, there are several options to run locally:
+
+- The easiest way to test bindings during local development is to use connection strings that target live Azure services. You can target live services by adding the appropriate connection string settings in the `Values` array in the local.settings.json file. When you do this, local executions during testing use live service data. Because of this, consider setting-up separate services to use during development and testing, and then switch to different services during production.
+- For storage-based triggers, you can use the local [Azurite emulator](/en-us/azure/storage/common/storage-use-azurite) when testing functions with Azure Storage bindings (Queue Storage, Blob Storage, and Table Storage), without having to connect to remote storage services.
+- You can manually run non-HTTP trigger functions by using special administrator endpoints. For more information, see [Manually run a non HTTP-triggered function](/en-us/azure/azure-functions/functions-manually-run-non-http).
 
 #### Trigger and binding definitions
 
@@ -314,20 +320,20 @@ public class Person
 
 ### Connect functions to Azure services
 
-As a security best practice, Azure Functions takes advantage of the application settings functionality of Azure App Service to help you more securely store strings, keys, and other tokens required to connect to other services. Application settings in Azure are stored encrypted and can be accessed at runtime by your app as environment variable `name` `value` pairs. For triggers and bindings that require a connection property, you set the application setting name instead of the actual connection string. You can't configure a binding directly with a connection string or key.
+As a security best practice, Azure Functions takes advantage of the application settings functionality of Azure App Service to help you more securely store strings, keys, and other tokens required to connect to other services. Application settings in Azure are stored encrypted and accessed at runtime by your app as environment variable `name` `value` pairs. For triggers and bindings that require a connection property, you set the application setting name instead of the actual connection string. You can't configure a binding directly with a connection string or key.
 
 The default configuration provider uses environment variables. These variables are defined in application settings when running in the Azure and in the local settings file when developing locally.
 
 #### Configure an identity-based connection
 
-Some connections in Azure Functions are configured to use an identity instead of a secret. Support depends on the extension using the connection. In some cases, a connection string may still be required in Functions even though the service to which you're connecting supports identity-based connections.
+Some connections in Azure Functions are configured to use an identity instead of a secret. Support depends on the extension using the connection. In some cases, a connection string might still be required in Functions even though the service to which you're connecting supports identity-based connections.
 
-:information_source: When running in a Consumption or Elastic Premium plan, your app uses the `WEBSITE_AZUREFILESCONNECTIONSTRING` and `WEBSITE_CONTENTSHARE` settings when connecting to Azure Files on the storage account used by your function app. Azure Files doesn't support using managed identity when accessing the file share.
+:information_source: An app running in a Consumption or Elastic Premium plan, uses the `WEBSITE_AZUREFILESCONNECTIONSTRING` and `WEBSITE_CONTENTSHARE` settings when connecting to Azure Files on the storage account used by your function app. Azure Files doesn't support using managed identity when accessing the file share.
 
 When hosted in the Azure Functions service, identity-based connections use a managed identity. The system-assigned identity is used by default, although a user-assigned identity can be specified with the `credential` and `clientID` properties. Configuring a user-assigned identity with a resource ID is **not** supported. When run in other contexts, such as local development, your developer identity is used instead, although this can be customized.
 
 #### Grant permission to the identity
 
-Identities must have permissions to perform the intended actions. This is typically done by assigning a role in Azure RBAC or specifying the identity in an access policy, depending on the service to which you're connecting.
+Identities must have permissions to perform the intended actions. This is typically done by assigning a role in Azure role-based access control or specifying the identity in an access policy, depending on the service to which you're connecting.
 
-:bangbang: Some permissions might be exposed by the target service that are not necessary for all contexts. Where possible, adhere to the **principle of least privilege**, granting the identity only required privileges.
+:bangbang: Some permissions might be exposed by the target service that aren't necessary for all contexts. Where possible, adhere to the **principle of least privilege**, granting the identity only required privileges.

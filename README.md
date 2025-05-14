@@ -8,7 +8,7 @@ TLDR;
 
 ## [Study guide for Exam AZ-204: Developing Solutions for Microsoft Azure](https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/az-204#skills-measured-prior-to-august-21-2023)
 
-[AZ-204 Exam Updates for April 2023](https://www.youtube.com/watch?v=hzVy9RTl_iA)
+[AZ-204 Exam Updates for October 2024](https://www.youtube.com/watch?v=jSe8w00Uiqg)
 
 ### Develop Azure compute solutions (25–30%)
 
@@ -23,7 +23,7 @@ TLDR;
 
 - Create an Azure App Service Web App
 - Configure and implement diagnostics and logging
-- Deploy code and containers
+- Deploy code and containerized solutions
 - Configure settings including Transport Layer Security (TLS), API settings, and service connections
 - Implement autoscaling
 - Configure deployment slots
@@ -63,13 +63,7 @@ TLDR;
 - Develop code that uses keys, secrets, and certificates stored in Azure Key Vault
 - Implement Managed Identities for Azure resources
 
-### Monitor, troubleshoot, and optimize Azure solutions (10–15%)
-
-#### Implement caching for solutions
-
-- Configure cache and expiration policies for Azure Cache for Redis
-- Implement secure and optimized application cache patterns including data sizing, connections, encryption, and expiration
-- Implement Azure Content Delivery Network endpoints and profiles
+### Monitor, troubleshoot, and optimize Azure solutions (5–10%)
 
 #### Troubleshoot solutions by using Application Insights
 
@@ -77,7 +71,7 @@ TLDR;
 - Implement Application Insights web tests and alerts
 - Implement an app or service to use Application Insights
 
-### Connect to and consume Azure services and third-party services (15–20%)
+### Connect to and consume Azure services and third-party services (20–25%)
 
 #### Implement API Management
 
@@ -113,8 +107,6 @@ TLDR;
 1. [Azure Key Vault](https://docs.microsoft.com/en-us/azure/key-vault/)
 1. [Azure App Configuration](https://learn.microsoft.com/en-us/azure/azure-app-configuration/)
 1. [Azure API Management](https://docs.microsoft.com/en-us/azure/api-management/)
-1. [Azure Cache for Redis](https://docs.microsoft.com/en-us/azure/azure-cache-for-redis/)
-1. [Azure Content Delivery Network (CDN)](https://docs.microsoft.com/en-us/azure/cdn/)
 1. [Azure Application Insights](https://docs.microsoft.com/en-us/azure/azure-monitor/app/app-insights-overview)
 1. [Azure Event Grid](https://docs.microsoft.com/en-us/azure/event-grid/)
 1. [Azure Event Hub](https://docs.microsoft.com/en-us/azure/event-hubs/)

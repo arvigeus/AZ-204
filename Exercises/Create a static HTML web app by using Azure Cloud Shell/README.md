@@ -24,7 +24,7 @@ The `az webapp up` command makes it easy to create and update web apps. When exe
 - Create an app with the specified name.
 - Zip deploy files from the current working directory to the web app.
 
-:bangbang: In order to complete this exercise you need to switch the Cloud Shell to the Classic version. After the Cloud Shell finishes loading select **Settings** from the menu directly at the top of the Cloud Shell and then select **Go to Classic version**.
+:bangbang: In order to complete this exercise, you need to switch the Cloud Shell to the Classic version. When the Cloud Shell finishes loading select **Settings** from the menu at the top of the Cloud Shell, and then select **Go to Classic version**.
 
 ## Download the sample app
 

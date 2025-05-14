@@ -226,11 +226,6 @@ Not supported on Consumption plan ([requires runtime-driven triggers](https://le
 [TimerTrigger("0 */5 * * * *")] TimerInfo myTimer;
 // - `WEBSITE_TIME_ZONE` and `TZ` are not currently supported on the Linux Consumption plan.
 // - RunOnStartup is not recommended for production (messes up schedule). Schedule, RunOnStartup and UseMonitor can be set in local.settings.json > Values
-
-// https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-cache
-[RedisPubSubTrigger("redisConnectionString", "pubsubTest")] string message; // PubSub Not supported on Consumption Plan
-[RedisListTrigger("Redis", "listTest")] string entry;
-[RedisStreamTrigger("Redis", "streamTest")] string entry;
 ```
 
 ## Working with Azure Functions

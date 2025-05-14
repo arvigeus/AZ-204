@@ -140,7 +140,7 @@ Eventual consistency is the weakest form of consistency because a client might r
 
 Azure Cosmos DB offers multiple database APIs, which include NoSQL, MongoDB, PostgreSQL, Cassandra, Gremlin, and Table. By using these APIs, you can model real world data using documents, key-value, graph, and column-family data models. These APIs allow your applications to treat Azure Cosmos DB as if it were various other databases technologies, without the overhead of management, and scaling approaches. Azure Cosmos DB helps you to use the ecosystems, tools, and skills you already have for data modeling and querying with its various APIs.
 
-All the APIs offer automatic scaling of storage and throughput, flexibility, and performance guarantees. There's no one best API, and you may choose any one of the APIs to build your application
+All the APIs offer automatic scaling of storage and throughput, flexibility, and performance guarantees. There's no one best API, and you can choose any one of the APIs to build your application
 
 #### Considerations when choosing an API
 
@@ -148,7 +148,7 @@ API for NoSQL is native to Azure Cosmos DB.
 
 API for MongoDB, PostgreSQL, Cassandra, Gremlin, and Table implement the wire protocol of open-source database engines. These APIs are best suited if the following conditions are true:
 
-- If you have existing MongoDB, PostgreSQL Cassandra, or Gremlin applications
+- If you have existing MongoDB, PostgreSQL, Cassandra, or Gremlin applications
 - If you don't want to rewrite your entire data access layer
 - If you want to use the open-source developer ecosystem, client-drivers, expertise, and resources for your database
 
@@ -198,7 +198,7 @@ The following image shows the high-level idea of RUs:
 The type of Azure Cosmos DB account you're using determines the way consumed RUs get charged. There are three modes in which you can create an account:
 
 - **Provisioned throughput mode**: In this mode, you provision the number of RUs for your application on a per-second basis in increments of 100 RUs per second. To scale the provisioned throughput for your application, you can increase or decrease the number of RUs at any time in increments or decrements of 100 RUs. You can make your changes either programmatically or by using the Azure portal. You can provision throughput at container and database granularity level.
-- **Serverless mode**: In this mode, you don't have to provision any throughput when creating resources in your Azure Cosmos DB account. At the end of your billing period, you get billed for the number of request units that have been consumed by your database operations.
+- **Serverless mode**: In this mode, you don't have to provision any throughput when creating resources in your Azure Cosmos DB account. At the end of your billing period, you get billed for the number of request units consumed by your database operations.
 - **Autoscale mode**: In this mode, you can automatically and instantly scale the throughput (RU/s) of your database or container based on its usage. This scaling operation doesn't affect the availability, latency, throughput, or performance of the workload. This mode is well suited for mission-critical workloads that have variable or unpredictable traffic patterns, and require SLAs on high performance and scale.
 
 ## Work with Azure Cosmos DB

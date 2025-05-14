@@ -81,7 +81,7 @@ Requesting individual user consent:
 
 ```http
 GET https://login.microsoftonline.com/common/oauth2/v2.0/authorize?
-client_id=6731de76-14a6-49ae-97bc-6eba6914391e
+client_id=00001111-aaaa-2222-bbbb-3333cccc4444
 &response_type=code
 &redirect_uri=http%3A%2F%2Flocalhost%2Fmyapp%2F
 &response_mode=query

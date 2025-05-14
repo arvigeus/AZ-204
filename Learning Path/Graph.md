@@ -12,7 +12,7 @@ Microsoft Graph is the gateway to data and intelligence in Microsoft 365. It pro
 
 In the Microsoft 365 platform, three main components facilitate the access and flow of data:
 
-- The Microsoft Graph API offers a single endpoint, `https://graph.microsoft.com`. You can use REST APIs or SDKs to access the endpoint. Microsoft Graph also includes a powerful set of services that manage user and device identity, access, compliance, security, and help protect organizations from data leakage or loss.
+- The Microsoft Graph API offers a single endpoint, `https://graph.microsoft.com`. You can use REST APIs or SDKs to access the endpoint. Microsoft Graph also includes services that manage user and device identity, access, compliance, and security.
 
 - [Microsoft Graph connectors](https://learn.microsoft.com/en-us/microsoftsearch/connectors-overview) work in the incoming direction, **delivering data external to the Microsoft cloud into Microsoft Graph services and applications**, to enhance Microsoft 365 experiences such as Microsoft Search. Connectors exist for many commonly used data sources such as Box, Google Drive, Jira, and Salesforce.
 
@@ -28,7 +28,7 @@ Unless explicitly specified in the corresponding topic, assume types, methods, a
 
 #### Call a REST API method
 
-To read from or write to a resource such as a user or an email message, construct a request that looks like the following:
+To read from or write to a resource such as a user or an email message, construct a request that looks like the following sample:
 
 ```http
 {HTTP method} https://graph.microsoft.com/{version}/{resource}?{query-parameters}
@@ -81,9 +81,9 @@ Each resource might require different permissions to access it. You often need a
 
 Query parameters can be OData system query options, or other strings that a method accepts to customize its response.
 
-You can use optional OData system query options to include more or fewer properties than the default response, filter the response for items that match a custom query, or provide another parameters for a method.
+You can use optional OData system query options to include more or fewer properties than the default response. You can filter the response for items that match a custom query, or provide another parameters for a method.
 
-For example, adding the following `filter` parameter restricts the messages returned to only those with the `emailAddress` property of `jon@contoso.com`.
+For example, adding the following `filter` parameter restricts the messages returned with the `emailAddress` property of `jon@contoso.com`.
 
 ```http
 GET https://graph.microsoft.com/v1.0/me/messages?filter=emailAddress eq 'jon@contoso.com'
@@ -105,6 +105,8 @@ The service library contains models and request builders that are generated from
 The core library provides a set of features that enhance working with all the Microsoft Graph services. Embedded support for retry handling, secure redirects, transparent authentication, and payload compression, improve the quality of your application's interactions with Microsoft Graph, with no added complexity, while leaving you completely in control. The core library also provides support for common tasks such as paging through collections and creating batch requests.
 
 In this unit, you learn about the available SDKs and see some code examples of some of the most common operations.
+
+:information_source: The code samples in this unit are based on version 5.65 of the Microsoft Graph .NET SDK.
 
 #### Install the Microsoft Graph .NET SDK
 
@@ -151,7 +153,7 @@ var graphClient = new GraphServiceClient(deviceCodeCredential, scopes);
 
 #### Read information from Microsoft Graph
 
-To read information from Microsoft Graph, you first need to create a request object and then run the `GET` method on the request.
+To read information from Microsoft Graph, you first need to create a request object, and then run the `GET` method on the request.
 
 ```csharp
 // GET https://graph.microsoft.com/v1.0/me
@@ -166,17 +168,16 @@ var user = await graphClient.Me
 Retrieving a list of entities is similar to retrieving a single entity except there are other options for configuring the request. The `$filter` query parameter can be used to reduce the result set to only those rows that match the provided condition. The `$orderBy` query parameter requests that the server provides the list of entities sorted by the specified properties.
 
 ```csharp
-// GET https://graph.microsoft.com/v1.0/me/messages?$select=subject,sender&$filter=<some condition>&orderBy=receivedDateTime
-
+// GET https://graph.microsoft.com/v1.0/me/messages?
+// $select=subject,sender&$filter=subject eq 'Hello world'
 var messages = await graphClient.Me.Messages
-    .Request()
-    .Select(m => new {
-        m.Subject,
-        m.Sender
-    })
-    .Filter("<filter condition>")
-    .OrderBy("receivedDateTime")
-    .GetAsync();
+    .GetAsync(requestConfig =>
+    {
+        requestConfig.QueryParameters.Select =
+            ["subject", "sender"];
+        requestConfig.QueryParameters.Filter =
+            "subject eq 'Hello world'";
+    });
 ```
 
 #### Delete an entity
@@ -185,28 +186,24 @@ Delete requests are constructed in the same way as requests to retrieve an entit
 
 ```csharp
 // DELETE https://graph.microsoft.com/v1.0/me/messages/{message-id}
-
-string messageId = "AQMkAGUy...";
-var message = await graphClient.Me.Messages[messageId]
-    .Request()
+// messageId is a string containing the id property of the message
+await graphClient.Me.Messages[messageId]
     .DeleteAsync();
 ```
 
 #### Create a new entity
 
-For SDKs that support a fluent style, new items can be added to collections with an `Add` method. For template-based SDKs, the request object exposes a `post` method.
+For fluent style and template-based SDKs, new items can be added to collections with a `POST` method.
 
 ```csharp
 // POST https://graph.microsoft.com/v1.0/me/calendars
-
 var calendar = new Calendar
 {
-    Name = "Volunteer"
+    Name = "Volunteer",
 };
 
 var newCalendar = await graphClient.Me.Calendars
-    .Request()
-    .AddAsync(calendar);
+    .PostAsync(calendar);
 ```
 
 #### Other resources
@@ -237,8 +234,8 @@ Apply the following best practices for consent and authorization in your app:
 
 - **Consider the end user and admin experience**. This will directly affect end user and admin experiences. For example:
 
-  - Consider who will be consenting to your application, either end users or administrators, and configure your application to [request permissions appropriately](https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent).
-  - Ensure that you understand the difference between [static, dynamic and incremental consent](https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent#consent-types).
+  - Consider who is consenting to your application, either end users or administrators, and configure your application to [request permissions appropriately](https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent).
+  - Ensure that you understand the difference between [static, dynamic, and incremental consent](https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent#consent-types).
 
 - **Consider multi-tenant applications**. Expect customers to have various application and consent controls in different states. For example:
 
@@ -254,4 +251,4 @@ Depending on the requests you make to Microsoft Graph, your applications should 
 
 #### Storing data locally
 
-Your application should ideally make calls to Microsoft Graph to retrieve data in real time as necessary. You should only cache or store data locally necessary for a specific scenario, and if that use case is covered by your terms of use and privacy policy, and doesn't violate the [Microsoft APIs Terms of Use](https://learn.microsoft.com/en-us/legal/microsoft-apis/terms-of-use?context=/graph/context). Your application should also implement proper retention and deletion policies.
+Your application should ideally make calls to Microsoft Graph to retrieve data in real time as necessary. You should only cache or store data locally necessary for a specific scenario. If that use case is covered by your terms of use and privacy policy, and doesn't violate the [Microsoft APIs Terms of Use](https://learn.microsoft.com/en-us/legal/microsoft-apis/terms-of-use?context=/graph/context), your application should also implement proper retention and deletion policies.
