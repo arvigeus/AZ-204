@@ -51,7 +51,7 @@ Broker properties like `To`, `ReplyTo`, `ReplyToSessionId`, `MessageId`, `Correl
 - **Multiplexing**: Streams of related messages are directed through one queue or subscription using matching `SessionId` values.
 - **Multiplexed request/reply**: Multiple publishers share a reply queue, and replies are guided by `ReplyToSessionId` and `SessionId`.
 
-Routing is managed interally, but applications can also use user properties for routing, as long as they don't use the reserved `To` property.
+Routing is managed internally, but applications can also use user properties for routing, as long as they don't use the reserved `To` property.
 
 ## Advanced features
 

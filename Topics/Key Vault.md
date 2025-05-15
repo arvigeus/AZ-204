@@ -121,7 +121,7 @@ var certificate = await client.GetCertificateAsync(certificateName);
 
 ## [Disaster and recovery](https://learn.microsoft.com/en-us/azure/key-vault/general/disaster-recovery-guidance)
 
-Redundancy: Data is usually replicated within the primary region and to a secondary region (except for some countries where data regulation require to keep it in the seame region with ZRS). For AKV Premium, data from HSMs is replicated to only two regions. If a primary Azure region becomes unavailable, requests are automatically rerouted to a secondary region. Note that some regions don't support failover and the key vault becomes read-only during this time. Users in these regions should prepare for recovery plans.
+Redundancy: Data is usually replicated within the primary region and to a secondary region (except for some countries where data regulation require to keep it in the same region with ZRS). For AKV Premium, data from HSMs is replicated to only two regions. If a primary Azure region becomes unavailable, requests are automatically rerouted to a secondary region. Note that some regions don't support failover and the key vault becomes read-only during this time. Users in these regions should prepare for recovery plans.
 
 ## Disk Encryption ([Windows](https://learn.microsoft.com/en-us/azure/virtual-machines/windows/disk-encryption-key-vault?tabs=azure-portal), [Linux](https://learn.microsoft.com/en-us/azure/virtual-machines/linux/disk-encryption-key-vault?tabs=azure-portal))
 
