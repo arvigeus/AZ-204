@@ -5,7 +5,7 @@
 - **Consumption Tier**: No Entra ID integration, private endpoint support for inbound connections, developer portal, built-in cache, built-in analytics, backup and restore, management over Git, direct management API, Azure Monitor and Log Analytics request logs, Static IP.
 - **Developer Tier**: Like Premium, without multi-region deployment and availability zones.
 - **Basic Tier**: No Entra ID integration, and workspaces.
-- **Standard Tier**: Has Entra ID Integration and worspaces.
+- **Standard Tier**: Has Entra ID Integration and workspaces.
 - **Premium Tier**: Has VNET, multiple custom domain names, self-hosted gateway
 
 ## Components

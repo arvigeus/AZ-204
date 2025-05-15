@@ -19,7 +19,7 @@ Manage access to Azure resources. To assign Azure roles, you must have `Microsof
 
 Read access to all resources: `*/read`.
 
-The inheritance order for scope is Management group, Subscription, Resource group, Resource. When assigning access, follow the rule of least previlege. Note: Double check if you are granting permissions for resource or resource group!
+The inheritance order for scope is Management group, Subscription, Resource group, Resource. When assigning access, follow the rule of least privilege. Note: Double check if you are granting permissions for resource or resource group!
 
 ## Using Managed Identity with a Virtual Machine
 

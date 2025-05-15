@@ -4,7 +4,7 @@ Azure Event Grid is a serverless broker that facilitates application integration
 
 **Publishers** send events without needing to know or expect specific subscribers. Event Grid supports both Azure and custom topics, simplifying the development of event-driven applications. It ensures reliable delivery by offering the ability to filter and route events to multiple endpoints. Subscriptions to events can include those from Azure services and third-party resources.
 
-A _partner_ is a kond of publisher that sends events to Azure Event Grid for customers and can also receive events from it.
+A _partner_ is a kind of publisher that sends events to Azure Event Grid for customers and can also receive events from it.
 
 ## Concepts
 
