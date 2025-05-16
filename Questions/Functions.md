@@ -36,12 +36,28 @@ Answer: The maximum number of instances for a function app on a Consumption plan
 
 Question: You need your Azure Function to use different connection strings when working locally, and when working on production. How to achieve that?
 
+- [ ] Store connection strings in `function.json`
 - [ ] Store connection strings in Key Vault and read them in your function
 - [ ] Create two versions of the function, one for production and one for local development
 - [ ] Store connection string into `host.json` file
 - [x] Store connection string into `local.settings.json` file
 
-Answer: When the code is executed in your machine, it will read the `local.settings.json` file. When it is run on Azure, the configuration is picked up from the values set in the configuration settings section of the function.
+Answer: When running locally, Azure Functions read configuration values from `local.settings.json`, which emulates the cloud-based `Application Settings`. In Azure, the function reads directly from `Application Settings` configured in the Function App. This separation allows you to manage environment-specific settings without modifying the codebase.
+
+---
+
+Question: You’re deploying an Azure Function written in C# script. It needs to connect to an Azure SQL database in production. Where should the connection string be stored for the deployed app?
+
+- [ ] `host.json`
+- [ ] `function.json`
+- [ ] `local.settings.json`
+- [x] `Application Settings` in Azure Portal
+
+Answer: In production, secrets like connection strings must be stored securely, and Application Settings (under Configuration in the Azure Function's app settings) is the correct place. Azure automatically makes these values available as environment variables.
+
+- `host.json`: Defines global runtime settings (e.g., logging, timeouts). Not for secrets like connection strings.
+- `function.json`: only references configuration values from `Application Settings`; it does not define or store secrets.
+- `local.settings.json`: Can be used for connection string, but it's used for local development only. Ignored in deployment; never reaches Azure.
 
 ---
 
@@ -104,24 +120,23 @@ Answer: Implementing a Failover Mechanism. A failover mechanism can automaticall
 
 ---
 
-Question: You are developing a global web application with users from different geographical locations. Some users are experiencing slow response times due to the distance between their location and the server's location. What can be implemented to improve the response times for these users?
+Question: Which Azure Functions hosting plan is most suitable for always-on workloads that require full control over scaling rules and consistently allocated infrastructure resources?
 
-- [ ] Implementing Sticky Sessions
-- [x] Implementing a Content Delivery Network (CDN)
-- [ ] Implementing a Failover Mechanism
-- [ ] Implementing Asynchronous Request Handling
+- [x] Dedicated Plan
+- [ ] Premium Plan
+- [ ] Container Apps Plan
 
-Answer: Implementing a Content Delivery Network (CDN). A CDN can cache the application's content at various points of presence (PoPs) around the world, reducing the distance between users and the server and improving response times.
+Answer: The Dedicated Plan runs on the Azure App Service Plan, which is ideal for always-on workloads, supports manual and rule-based autoscaling, and provides predictable resource allocation. It’s best when your functions are part of a larger app that’s running continuously and you want full control over the hosting environment.
 
 ---
 
-Question: Which of the following Azure Functions hosting plans is best when predictive scaling and costs are required?
+Question: Which Azure Functions hosting plan is most suitable for always-on workloads that require event-driven auto-scaling?
 
-- [ ] Functions Premium Plan
-- [x] Dedicated plan
-- [ ] Consumption plan
+- [ ] Dedicated Plan
+- [x] Premium Plan
+- [ ] Consumption Plan
 
-Answer: Dedicated plans run in App service which supports setting autoscaling rules based on predictive usage.
+Answer: Both Premium and Dedicated plans supports always-on workloads, but only Premium supports event-driven auto-scaling (Dedicated supports only manual or rule-based auto-scaling).
 
 ---
 

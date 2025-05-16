@@ -18,24 +18,23 @@ Azure Functions, a serverless compute service, allows you to execute small code 
 
 Consumption is the lowest plan that supports scaling and offer event based scheduling behavior.
 
-Limitations:
-
-- Direct migration to a Dedicated (App Service) plan isn't currently supported
-- Migration isn't supported on Linux.
-- HTTP triggers get new instances at most every second. Non-HTTP triggers get them at most every 30 seconds.
-
 ### Azure Functions Hosting Plans Comparison
 
-| Hosting Plan                                                                                           | Pricing Model                                                  | Ideal For                                                                            | Key Features                                                                                     | Limitations                                                                                              |
-| ------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
-| [Consumption](https://learn.microsoft.com/en-us/azure/azure-functions/consumption-plan)                | Serverless<br>Pay only for the time your functions are running | Variable or unpredictable workloads                                                  | - Pay-per-use<br>- Auto-scaling<br>- Max instances: 100 (Linux), 200 (Windows)                   | - No Docker support<br>- 5-10 min timeout<br>- No VNET Integration<br>- May scale to zero (_cold start_) |
-| [Flex Consumption](https://learn.microsoft.com/en-us/azure/azure-functions/flex-consumption-plan)      | Serverless<br>Pay-as-you-go                                    | Variable workloads that myght need Always On.                                        | - Always ready instances (optional)<br/>- Virtual network integration<br/>- Per-function scaling | - Some features like Deployment slots and others are not currently supported.                            |
-| [Premium](https://learn.microsoft.com/en-us/azure/azure-functions/functions-premium-plan)              | Hybrid<br>Mix of predictable and variable costs                | Production apps requiring robust scaling (_no cold start_) and VNET Integration      | - Pre-warmed instances<br>- More powerful hardware<br>- VNET Integration                         | - Must keep one instance warm<br>- Higher cost                                                           |
-| [Dedicated](https://learn.microsoft.com/en-us/azure/azure-functions/dedicated-plan)                    | Predictable                                                    | Long-running tasks and full control over environment                                 | - Fixed monthly cost<br>- Manual/Auto-scaling (10-20 instances)                                  | - Higher cost if not continuously running<br>- Manual scaling required                                   |
-| [ASE (App Service Environment)](https://learn.microsoft.com/en-us/azure/app-service/environment/intro) | Predictable + Flat                                             | Maximum isolation and control                                                        | - Fully isolated environment<br>- High scale                                                     | - Flat monthly rate<br>- Additional cost per vCPU                                                        |
-| [Kubernetes](https://learn.microsoft.com/en-us/azure/azure-functions/functions-kubernetes-keda)        | Cluster-Based Costs                                            | Provides the flexibility to run on-premises, in the cloud, or in hybrid environments | - Runs on Kubernetes<br>- Highly customizable                                                    | - Requires Kubernetes expertise<br>- Variable costs based on cluster                                     |
+| Plan                                                                                                           | Cost Model                                                   | Cold Start                                                                                    | Scale                                        | Best For                                                                                                                                                             | Limitations                                                                                                                                                                              |
+| -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ | --------------------------------------------------------------------------------------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [**Consumption**](https://learn.microsoft.com/en-us/azure/azure-functions/consumption-plan)                    | Serverless (Pay per use)                                     | When idle or scaled down to zero instances                                                    | Event-driven                                 | - Low-traffic, cost-sensitive workloads<br/>- Variable or unpredictable workloads                                                                                    | - No container support<br/>- 5–10 min timeout<br/>- Max instances: 100 (Linux), 200 (Windows)<br/>- No VNET integration<br/>- No support for durable functions chaining large executions |
+| [**Flex Consumption**](https://learn.microsoft.com/en-us/azure/azure-functions/flex-consumption-plan)          | Serverless (Pay per use) + memory for always-ready instances | Mitigates cold starts during scaling via always-ready instances                               | Per-function                                 | - Low-latency apps needing faster startup                                                                                                                            | - No containers or Windows support<br/>- Regional availability limited                                                                                                                   |
+| [**Premium**](https://learn.microsoft.com/en-us/azure/azure-functions/functions-premium-plan)                  | Predictable: runtime + memory for pre-warmed instances       | No cold starts (minimum instance count always warm)                                           | Event-driven                                 | - Production-grade apps<br/>- Long-running tasks<br/>- Custom images                                                                                                 | - Must keep at least one instance warm<br/>- Higher cost                                                                                                                                 |
+| [**Dedicated**](https://learn.microsoft.com/en-us/azure/azure-functions/dedicated-plan)                        | Predicatble (Fixed) - App Service Plan pricing               | Avoided for the always-on instance, but may occur during scale-out (no pre-warmed instances). | Manual or App Service autoscale (rule-based) | - App Service integration (reuse VMs)<br/>- Run multiple apps on one plan<br/>- Access to larger compute sizes<br/>- Full isolation (VNET) & secure networking (ASE) | - Not cost-effective unless fully utilized<br/>- Manual scaling unless using App Service autoscale                                                                                       |
+| [**Container Apps**](https://learn.microsoft.com/en-us/azure/azure-functions/functions-container-apps-hosting) | Azure Container Apps plan (consumption / dedicated)          | Depends on `minReplicas`: 1+ avoids cold start                                                | Event-driven (KEDA based)                    | - Custom runtimes/libraries<br/>- Legacy/on-prem to containers<br/>- No Kubernetes management<br/>- GPU-powered functions                                            | - Cold start unless minReplica ≥ 1<br/>- Complexer setup                                                                                                                                 |
 
-The _scale controller_ adjusts resources based on event rates and trigger types. It uses heuristics for each trigger type (for Queue storage trigger, it scales based on the queue length and the age of the oldest queue message). The number of host instances can be scaled to zero when no functions are running (_cold start_).
+#### Scaling
+
+- [Event driven](https://learn.microsoft.com/en-us/azure/azure-functions/event-driven-scaling): The _scale controller_ adjusts resources based on event rates and trigger types. It uses heuristics for each trigger type (for Queue storage trigger, it scales based on the queue length and the age of the oldest queue message).
+- [Per function](https://learn.microsoft.com/en-us/azure/azure-functions/flex-consumption-plan#per-function-scaling): Most functions scale independently, while HTTP, Blob (Event Grid), and Durable Function triggers each scale as grouped sets on shared instances.
+- [Rule based (autoscale)](https://learn.microsoft.com/en-us/azure/azure-monitor/autoscale/autoscale-get-started): Unlike event-driven scaling, it doesn't directly respond to function invocations, but to the resource metrics (CPU, memory, HTTP queue length) or schedules.
+
+#### CLI
 
 ```sh
 az functionapp plan create
@@ -75,6 +74,11 @@ az functionapp plan list --resource-group $resourceGroup --query "[?sku.family==
 
 The following languages can be used directly in Azure Portal (no external editor needed): `C# Script`, `JavaScript`, `Python`, `PowerShell`.
 
+- **Application Settings**: Cloud-based env vars. Securely store secrets (e.g. connection strings). Set via Portal/CLI/ARM. Accessed via `%VAR%` or `Environment.GetEnvironmentVariable()`.
+- **function.json**: Per-function bindings config (script languages only). Declares triggers, inputs, outputs. References **Application Settings** by name.
+- **host.json**: App-wide runtime config. Controls logging, timeouts, retries, and extension settings.
+- **local.settings.json**: Local dev only. `"Values"` mimic **Application Settings**. Never deploy or commit (can contain secrets).
+
 ### [host.json](https://learn.microsoft.com/en-us/azure/azure-functions/functions-host-json)
 
 - `functionTimeout`: Default: 5 min for Consumption, 30 for rest.
@@ -92,7 +96,7 @@ For scripting languages, like `C# Script`, `Python`, you must provide the config
 
 - For triggers, the direction is always `in`
 - Input and output bindings use `in` and `out`, or `inout` in some cases.
-- `connection`: refers to an environment variable that holds the service connection string. **The property does not contain the actual connection string!**
+- `connection`: refers to an environment variable holding the connection string. **It never contains the actual secret**. Define the connection string in `Application Settings`.
 
 ```jsonc
 {
