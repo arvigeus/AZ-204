@@ -504,7 +504,7 @@ Answer: Cosmos DB internally stores data in a JSON-like format, regardless of th
 Question: When executing a query in Azure Cosmos DB utilizing the Table API as follows:
 
 ```Cosmos DB
-SELECT
+SELECT *
 FROM Invoices i
 WHERE i.id =1
 ```
