@@ -263,6 +263,13 @@ Limitations:
 
 A webhook can be used to notify Azure Container Apps when a new image has been pushed to the ACR, triggering automatic deployment of the updated container.
 
+### Criteria for using multiple environments
+
+- Different virtual networks: VNet is scoped at the environment level.
+- Different Log Analytics workspaces: Diagnostics settings are tied to the environment.
+- Different regional deployments (i.e. apps in different Azure regions): An environment is region-bound.
+- Different managed identities for environment-level operations (rare): Only if using environment-scope identity.
+
 ### [Auth](https://learn.microsoft.com/en-us/azure/container-apps/authentication)
 
 The platform's authentication and authorization middleware component runs as a _sidecar_ container on each application replica, screening all incoming HTTPS (ensure `allowInsecure` is _disabled_ in ingress config) requests before they reach your application. [See more](./App%20Service%20Web%20Apps.md). It requires any identity provider and specified provider within app settings.
@@ -330,7 +337,7 @@ Scopes:
 - Revision-scope changes via `az containerapp update` trigger a new revision when you deploy your app. Trigger: changing [properties.template](https://learn.microsoft.com/en-us/azure/container-apps/azure-resource-manager-api-spec?tabs=arm-template#propertiestemplate). Example: version suffix, container config, scaling rules. The changes don't affect other revisions.
 - Application-scope changes are globally applied to all revisions. A new revision isn't created Trigger: changing [properties.configuration](https://learn.microsoft.com/en-us/azure/container-apps/azure-resource-manager-api-spec?tabs=arm-template#propertiesconfiguration). Example: secrets, revision mode, ingress, credentials, DARP settings.
 
-### [Secrets](https://learn.microsoft.com/en-us/azure/container-apps/manage-secrets?tabs=azure-cli)
+### [Secrets](https://learn.microsoft.com/en-us/azure/container-apps/manage-secrets)
 
 Secrets are scoped to an application (`az containerapp create`), outside of any specific revision of an application. Once secrets are defined at the application level, secured values are available to container apps. Adding, removing, or changing secrets doesn't generate new revisions. Apps need to be restarted to reflect updates.
 
@@ -362,6 +369,8 @@ az monitor log-analytics query --workspace $WORKSPACE_CUSTOMER_ID --analytics-qu
 If you anticipate needing more control or specific configurations in the future, `az containerapp create` might be the more suitable choice. If simplicity and speed are the primary concerns, `az containerapp up` might be preferred.
 
 ```sh
+# https://learn.microsoft.com/en-us/azure/container-apps/containerapp-up
+
 # Upgrade Azure CLI version on the workstation
 az upgrade
 

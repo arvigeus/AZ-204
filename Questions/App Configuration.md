@@ -44,6 +44,25 @@ A filter is a rule for evaluating the state of a feature flag.
 
 ---
 
+Question: You are building a web application that uses Azure App Configuration to manage feature rollouts. You want to introduce a new feature and gradually enable it for a subset of users based on specific conditions. Which components must you define in Azure App Configuration to support this feature flag behavior?
+
+- [x] Name
+- [ ] Keys and Values
+- [x] List of Filters
+- [ ] Labels
+
+Answer:
+
+- **Name** – Required to identify the feature flag.
+- **List of Filters** – Used to define conditions for feature activation (e.g., % rollout, user targeting).
+
+Incorrect options:
+
+- Keys and Values – Used for general configuration, not feature flags.
+- Labels – Optional; useful for versioning but not required for a flag.
+
+---
+
 Question: What is the purpose of using customer-managed keys in Azure App Configuration?
 
 - [ ] To enable authentication with Microsoft Entra ID
@@ -127,7 +146,7 @@ What is the total count of distinct keys that will be saved in Azure App Configu
 - [ ] 4
 - [x] 5
 
-Answer: Here's the breakdown:
+Answer:
 
 - `AppName:Region1:DbEndpoint` and `AppName:region1:dbendpoint` are considered two unique keys because they differ in case.
 - `AppName:Service1:ApiEndpoint` appears three times with different label variations:
@@ -138,6 +157,19 @@ Answer: Here's the breakdown:
 Since different labels create different versions of the same key, these are considered distinct entries.
 
 Therefore, the total number of unique keys stored in Azure App Configuration is: **5**.
+
+---
+
+Question: A financial services company is deploying a compliance-sensitive application to Azure. The app is hosted in a virtual network (VNet) and retrieves its runtime settings from Azure App Configuration.
+To meet internal security requirements, the company mandates that all configuration traffic must stay entirely within the Azure backbone network and avoid exposure to the public internet.
+Which solution meets this requirement?
+
+- [ ] Use a system-assigned managed identity
+- [ ] Use a user-assigned managed identity
+- [x] Configure a private endpoint for the App Configuration store
+- [ ] Use a customer-managed key for encryption
+
+Answer: Private endpoint assigns a VNet IP to the App Configuration store, ensuring all traffic flows over the Azure backbone via a private link—never crossing the public internet.
 
 ---
 

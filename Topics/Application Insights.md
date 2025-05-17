@@ -169,9 +169,38 @@ Example: Create an alert that will notify you via email if the web app becomes u
 
 `Portal > Application Insights resource > Availability > Add Test option > Rules (Alerts) > set action group for availability alert > Configure notifications (email, SMS)`
 
-## [Troubleshoot app performance by using Application Map](https://learn.microsoft.com/en-us/azure/azure-monitor/app/app-map?tabs=net)
+## [Troubleshoot app performance by using Application Map](https://learn.microsoft.com/en-us/azure/azure-monitor/app/app-map)
 
-Application Map: find issues and understand app's structure. It labels each part as a "component". Components can run on various servers and appear individually or as roles under one key. The whole app is displayed. Components provide performance and failure data. Rename by changing "cloud role name".
+Application Map visualizes application topology and how components interact via HTTP dependencies. It's built from telemetry sent by the Application Insights SDK or OpenTelemetry.
+
+### Key Requirements
+
+- Use a **single Application Insights resource** (not just the same subscription) to see all components on a single map.
+- Components are grouped by their `cloud_RoleName` value. To **customize component names**, override the it using:
+  - Classic SDK: `cloud_RoleName`
+  - OpenTelemetry: `service.name` + `service.namespace`
+
+### Containerized Services with OpenTelemetry
+
+In microservices or containerized environments, use **OpenTelemetry Resource attributes** to define component identity.
+
+| OTel Attribute        | Maps To in App Insights    | Example              |
+| --------------------- | -------------------------- | -------------------- |
+| `service.name`        | Logical service name       | `orders-api`         |
+| `service.namespace`   | Component grouping         | `ecommerce-platform` |
+| `service.instance.id` | Unique service instance ID | `instance-01`        |
+
+These values are translated internally by Azure Monitor:
+
+- `cloud_RoleName` = `service.namespace`.`service.name`
+- `cloud_RoleInstance` = `service.instance.id` (if provided)
+
+### [Application Map Integration with OpenTelemetry](https://learn.microsoft.com/en-us/azure/azure-monitor/app/opentelemetry-configuration)
+
+To properly render all services in Application Map:
+
+- All components **must send telemetry to the same Application Insights resource**.
+- Each component **must set a distinct `cloud_RoleName`** (via `service.name` and `service.namespace`).
 
 ## Monitor a local web API by using Application Insights
 
@@ -240,3 +269,74 @@ From env var `APPLICATIONINSIGHTS_CONNECTION_STRING`. Controls where telemetry i
 - **Incoming Messages**: Number of messages received.
 - **Outgoing Messages**: Number of messages sent.
 - **Capture Backlog**: Number of messages waiting to be captured.
+
+## [OpenTelemetry](https://learn.microsoft.com/en-us/azure/azure-monitor/app/opentelemetry-enable)
+
+### Custom Metrics
+
+| OTel Instrument            | Azure Aggregation Type    |
+| -------------------------- | ------------------------- |
+| `Counter` / `AsyncCounter` | Sum                       |
+| `UpDownCounter`            | Sum                       |
+| `Histogram`                | Min, Max, Avg, Sum, Count |
+
+Histogram - closest to `GetMetric()` from classic SDK
+
+#### Examples
+
+```csharp
+var meter = new Meter("MyApp.Metrics");
+
+var histogram = meter.CreateHistogram<long>("response_time_ms");
+// Record a few random sale prices for apples and lemons, with different colors.
+histogram.Record(rand.Next(1, 1000), new("name", "apple"), new("color", "red"));
+
+var counter = meter.CreateCounter<long>("MyFruitCounter");
+// Record the number of fruits sold, grouped by name and color.
+counter.Add(1, new("name", "apple"), new("color", "red"));
+```
+
+### [Span Mapping to Application Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/app/opentelemetry-add-modify)
+
+Azure Monitor uses the type of **OpenTelemetry span** to determine how to classify telemetry in Application Insights. This classification happens **automatically** when OpenTelemetry telemetry is exported to Application Insights.
+
+#### Span Kind → Application Insights Type
+
+| OpenTelemetry Span Kind | Application Insights Equivalent     | Description                                    |
+| ----------------------- | ----------------------------------- | ---------------------------------------------- |
+| `Server`                | **Request**                         | Represents an incoming HTTP request            |
+| `Client`                | **Dependency**                      | Represents an outgoing call to a service/API   |
+| `Producer`              | **Dependency**                      | Used for messaging or queuing operations       |
+| `Consumer`              | **Request**                         | When receiving a message                       |
+| `Internal`              | **Custom Event / Custom Operation** | Custom telemetry (non-HTTP or system-internal) |
+
+Practical Examples:
+
+- You call a third-party REST API → OpenTelemetry uses a `Client Span` → Application Insights logs a **Dependency**
+- Your API receives a request → `Server Span` → logged as a **Request**
+- Your app posts to Azure Service Bus → `Producer Span` → logged as a **Dependency**
+- Your background worker consumes from a queue → `Consumer Span` → logged as a **Request**
+
+### [Filtering](https://learn.microsoft.com/en-us/azure/azure-monitor/app/opentelemetry-filter)
+
+- Remove noise (e.g. health checks)
+- Drop sensitive data (PII, credentials)
+- Improve performance by excluding low-value traces
+
+```csharp
+// Via Instrumentation
+builder.Services.AddOpenTelemetry().UseAzureMonitor().WithTracing(builder => builder.AddSqlClientInstrumentation(options => {
+  options.SetDbStatementForStoredProcedure = false;
+}));
+
+// Via custom span processor
+public class ActivityFilteringProcessor : BaseProcessor<Activity>
+{
+    public override void OnStart(Activity activity)
+    {
+        // Drop all internal spans
+        if (activity.Kind == ActivityKind.Internal)
+            activity.IsAllDataRequested = false;
+    }
+}
+```

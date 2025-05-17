@@ -176,6 +176,13 @@ After setup, assign a managed identity to the App Configuration and grant it `GE
 az keyvault set-policy --key-permissions get wrapKey unwrapKey
 ```
 
+## [Private endpoint](https://learn.microsoft.com/en-us/azure/azure-app-configuration/concept-private-endpoint)
+
+- Enables secure access to Azure App Configuration over a private link using an IP address from the VNet address space.
+- Traffic stays on the Microsoft backbone network, preventing exposure to the public internet.
+- Blocks public network access by default; can be re-enabled.
+- Uses same connection strings/auth; no app changes needed.
+
 ## Configure Key Vault
 
 ```cs

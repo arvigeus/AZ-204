@@ -198,7 +198,7 @@ az functionapp create --resource-group $resourceGroupName --plan $planName --nam
 
 ---
 
-Question: Suppose you are asked to create a function app in Azure where you want to have dedicated compute resources and you don't want the function app to be paused during periods of inactivity. How would you set up such an Azure function app using Azure CLI? Assume you are starting from scratch and you need to take care of any required setup or prerequisites in your CLI commands.
+Question: You are asked to create a function app in Azure where you want to have dedicated compute resources and you don't want the function app to be paused during periods of inactivity. How would you set up such an Azure function app using Azure CLI? Assume you are starting from scratch and you need to take care of any required setup or prerequisites in your CLI commands.
 
 ```ps
 # Code here
@@ -447,7 +447,7 @@ public static void Run(
 
 ---
 
-Question: Suppose you're working for an e-commerce company that has high traffic and they're dealing with large amounts of customer orders. The company wants to keep a track of every order received in real-time and then send an automated confirmation email to the customer. Which Azure service would you choose to trigger your Azure function? Fill in the triggers and bindings in the following code:
+Question: You're working for an e-commerce company that has high traffic and they're dealing with large amounts of customer orders. The company wants to keep a track of every order received in real-time and then send an automated confirmation email to the customer. Which Azure service would you choose to trigger your Azure function? Fill in the triggers and bindings in the following code:
 
 ```cs
 [FunctionName("ProcessOrder")]

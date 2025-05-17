@@ -402,3 +402,138 @@ finally {
 Answer: `TrackDependency`: for those dependencies not automatically collected by SDK, like response times.
 
 ---
+
+Question: You’re designing a distributed architecture deployed in containers across AKS and App Services. You want to visualize the full topology in Application Map, including dependencies between components.
+
+Which actions you should take?
+
+- [x] Use the same Application Insights instrumentation key across all services.
+- [ ] Ensure that each service runs in the same Azure subscription.
+- [ ] Set `cloud_RoleName` uniquely for each component.
+- [x] Define `service.name` and `service.namespace` attributes in each service's telemetry configuration.
+- [ ] Use `cloud_RoleInstance` to ensure component grouping.
+
+Answer:
+
+- Using the same Application Insights instrumentation key across all services ensures telemetry goes to the same Application Insights resource.
+- Defining `service.name` and `service.namespace` ensures proper role naming and grouping on the map via OpenTelemetry.
+- Running each service in the same Azure subscription is irrelevant.
+- `cloud_RoleInstance` is indirectly set via `service.name` and `service.namespace`.
+- `cloud_RoleInstance` defines instance-level granularity, not grouping.
+
+---
+
+Question: You are containerizing a microservice called `inventory-service`, part of the `storefront` platform. You want it to appear under the correct logical grouping in the Application Map.
+
+Which telemetry attributes should you configure?
+
+- [ ] `service.name = storefront`
+- [ ] `cloud_RoleName = storefront.inventory-service`
+- [x] `service.namespace = storefront`
+- [ ] `cloud_RoleInstance = instance-01`
+- [x] `service.name = inventory-service`
+
+Answer:
+
+- `service.namespace` defines grouping
+- `service.name` defines logical service
+- `cloud_RoleName` is derived internally from these.
+- `service.name = storefront` is incorrect because it flips the names.
+- `cloud_RoleInstance = instance-01` is optional and relates to instances, not grouping.
+
+---
+
+Question: You instrument an ASP.NET Core app using OpenTelemetry. You want to track incoming HTTP requests and outgoing calls to a payment gateway.
+
+Which span kinds should you explicitly use?
+
+- [ ] `Server`
+- [ ] `Client`
+- [ ] `Producer`
+- [ ] `Internal`
+- [ ] `Consumer`
+
+Answer:
+
+- `Server` for incoming HTTP requests
+- `Client` for outbound calls (e.g. to the payment gateway)
+- `Producer` is for message sending
+- `Internal` is for in-process, not I/O
+- `Consumer` is for receiving from queues
+
+---
+
+Question: You're debugging a performance issue in a multi-service architecture. Application Map shows incomplete dependency lines between services.
+
+What are the likely causes?
+
+- [x] Services send telemetry to separate Application Insights resources.
+- [ ] Services don’t expose their metrics via Prometheus exporters.
+- [x] `cloud_RoleName` is not uniquely configured per service.
+- [ ] The `service.namespace` is missing from some components.
+- [ ] The HTTP calls between services are done using raw TCP sockets.
+
+Answer: The likely causes for incomplete dependency lines between services in a multi-service architecture, as indicated by the Application Map, are:
+
+- Services send telemetry to separate Application Insights resources. This breaks the map since Application Insights doesn’t correlate across resources.
+- `cloud_RoleName` is not uniquely configured per service. This prevents unique nodes from appearing in the Application Map.
+
+Other options are less likely or irrelevant:
+
+- The `service.namespace` being missing from some components could cause grouping issues but not necessarily map breakage.
+- Services not exposing their metrics via Prometheus exporters is irrelevant to Application Insights.
+- HTTP calls between services being done using raw TCP sockets is a problem because Application Map expects HTTP dependencies, but this is not one of the primary causes listed.
+
+---
+
+Question: You’re sending custom metrics with OpenTelemetry from a .NET backend. You want to capture detailed latency info, including percentiles, across key endpoints.
+
+Which OpenTelemetry instrument should you use?
+
+- [ ] Counter
+- [ ] UpDownCounter
+- [x] Histogram
+- [ ] ObservableGauge
+
+Answer: Histogram enables min/max/avg/count → ideal for latency.
+
+- Counter only aggregates sums.
+- UpDownCounter tracks increments/decrements.
+- ObservableGauge is for instantaneous measurements (like memory usage).
+
+---
+
+Question: You’re deploying a worker service that pulls messages from Azure Service Bus and logs operations to Application Insights via OpenTelemetry. You want telemetry to appear as “Requests” in Application Insights.
+
+What should you do?
+
+- [x] Set the span kind to Consumer when processing messages.
+- [ ] Set the span kind to Server when dequeuing.
+- [ ] Define the span as Client to match dependency tracing.
+- [ ] Use a Histogram to record the message processing latency.
+
+Answer: Consumer spans are mapped to Requests in Application Insights.
+
+- Server is for HTTP handling.
+- Client is for outgoing calls.
+- Histogram is not relevant to classification.
+
+---
+
+Question: You want to reduce noise in your telemetry and exclude internal spans and health checks from being sent to Application Insights.
+
+Which approaches should you implement?
+
+- [x] Use a custom span processor to drop internal spans.
+- [ ] Filter spans in Azure Monitor Analytics query language (KQL).
+- [ ] Disable telemetry auto-collection in the Application Insights config.
+- [x] Use instrumentation-level filtering before export.
+- [ ] Configure firewall rules to block span export from local hosts.
+
+Answer: Custom processor and instrumentation filtering are correct ways to prevent span creation/export.
+
+- Filters after ingestion—cost is still incurred.
+- Disabling telemetry disables all collection.
+- Using firewall is a networking workaround—not a trace filtering solution.
+
+---

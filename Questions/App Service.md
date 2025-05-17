@@ -154,7 +154,7 @@ Answer: WebJobs content is swapped.
 
 ---
 
-Question: Suppose you are a developer tasked with deploying a new .NET web application using on Microsoft Azure. Your first task is to create a new resource group `myResourceGroup` located in the South Central US region. Following that, you need to establish a deployment user for the web application. You are then required to create `myAppServicePlan` App Service plan within a Linux environment that is cost-efficient. The web application should be created within this resource group and App Service plan, using .NET as its runtime. You are also required to configure the application settings to set the deployment branch to `main`. Lastly, you are provided with a sample application from GitHub: `https://github.com/Azure-Samples/App-Service-Troubleshoot-Azure-Monitor`. You need to clone this application, rename the default branch to `main`, add the Azure remote repository using the URL from the webapp create command, and push the code to the Azure repository. How would you accomplish these tasks using Azure CLI commands?
+Question: You are a developer tasked with deploying a new .NET web application using on Microsoft Azure. Your first task is to create a new resource group `myResourceGroup` located in the South Central US region. Following that, you need to establish a deployment user for the web application. You are then required to create `myAppServicePlan` App Service plan within a Linux environment that is cost-efficient. The web application should be created within this resource group and App Service plan, using .NET as its runtime. You are also required to configure the application settings to set the deployment branch to `main`. Lastly, you are provided with a sample application from GitHub: `https://github.com/Azure-Samples/App-Service-Troubleshoot-Azure-Monitor`. You need to clone this application, rename the default branch to `main`, add the Azure remote repository using the URL from the webapp create command, and push the code to the Azure repository. How would you accomplish these tasks using Azure CLI commands?
 
 ```ps
 # Code here
@@ -379,7 +379,7 @@ az webapp config container set --resource-group $resourceGroup --name $appName -
 
 ---
 
-Question: Suppose you're responsible for migrating your company's online store application to a Kubernetes environment hosted on Azure (AKS). This application has a set of microservices, each defined in `serviceA.yaml`, `serviceB.yaml`, and `serviceC.yaml` YAML files. You need to ensure the successful deployment and management of these microservices. Also, let's say you are required to monitor the performance and health of your application, for which you decide to integrate Azure Monitor for containers. How would you accomplish this task?
+Question: You're responsible for migrating your company's online store application to a Kubernetes environment hosted on Azure (AKS). This application has a set of microservices, each defined in `serviceA.yaml`, `serviceB.yaml`, and `serviceC.yaml` YAML files. You need to ensure the successful deployment and management of these microservices. Also, let's say you are required to monitor the performance and health of your application, for which you decide to integrate Azure Monitor for containers. How would you accomplish this task?
 
 ```ps
 # Variables

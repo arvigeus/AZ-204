@@ -43,6 +43,24 @@ Answer: Due to the YAML format's more concise nature, a YAML file is recommended
 
 ---
 
+You are deploying a lightweight multi-container workload to Azure Container Instances (ACI). The containers must:
+
+- Start and stop together,
+- Communicate over an isolated local network,
+- Access the same persistent storage mount, and
+- Share allocated compute and memory resources.
+
+Which ACI feature should you use to meet all these requirements?
+
+- [ ] Deployment manifest (YAML)
+- [x] Container group
+- [ ] Virtual network integration
+- [ ] Runtime environment variables
+
+Answer: Container Groups share a lifecycle, resources, local network, and storage volumes.
+
+---
+
 Question: Which of the following options is true about the built-in authentication feature in Azure Container Apps?
 
 - [ ] It can only be configured to restrict access to authenticated users.
@@ -499,7 +517,7 @@ az container create --name $containerName --resource-group $resourceGroup --imag
 
 ---
 
-Question: Suppose you have an ASP.NET Core application running within an Azure Container Instance (ACI) and your monitoring team has a unique container image loaded with their monitoring tools. To ensure compliance, you have been tasked with attaching a "sidecar" container (an auxiliary container that works alongside the main application container) from the same host. However, you must take into account that the solution should be cost-effective and require minimal changes to the current application, keeping the setup simple. What Azure service would you employ to realize this objective?
+Question: You have an ASP.NET Core application running within an Azure Container Instance (ACI) and your monitoring team has a unique container image loaded with their monitoring tools. To ensure compliance, you have been tasked with attaching a "sidecar" container (an auxiliary container that works alongside the main application container) from the same host. However, you must take into account that the solution should be cost-effective and require minimal changes to the current application, keeping the setup simple. What Azure service would you employ to realize this objective?
 
 - [x] ACI Container Groups
 - [ ] Azure Kubernetes Service (AKS)
@@ -612,6 +630,26 @@ az containerapp create \
 ```
 
 `az containerapp create` gives you more control over the configuration and is suitable for setting up a new application or when making changes to an existing application in a production environment.
+
+---
+
+Question: You are designing a microservices-based application using Azure Container Apps. The architecture will include eight separate container apps. You are evaluating whether to deploy them in a single Container Apps environment or across multiple environments.
+
+Which two requirements would justify deploying multiple environments?
+
+- [ ] Each app must authenticate against a different Azure Active Directory tenant.
+- [ ] Each app must scale based on different CPU and memory usage thresholds.
+- [x] Each app must be isolated to a different virtual network.
+- [x] Each app must send logs to a separate Log Analytics workspace for auditing purposes.
+- [ ] Each app uses a different container registry for pulling images.
+
+Answer:
+
+- VNet isolation is bound to the Container Apps Environment. If you need multiple VNets, you need multiple environments.
+- Log Analytics workspace is set at the environment level. Different destinations require separate environments.
+- AAD auth is configurable per app via identity provider config; environments don’t constrain this.
+- ACA supports individual autoscaling configs per app (via KEDA rules), even in the same environment.
+- Container registry configuration is at the app level (you can pull from different registries within one environment).
 
 ---
 

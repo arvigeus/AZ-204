@@ -34,6 +34,20 @@ Answer: Block blobs in Azure Blob storage can store up to about 190.7-TiB of dat
 
 ---
 
+Question: You are developing a service that organizes uploaded documents into containers in Azure Blob Storage. Your application assigns metadata to each container, including user names and titles that may contain international characters (e.g., Vietnamese or Bulgarian diacritics). You use the `SetMetadata` method on a `BlobContainerClient` to store this metadata. During testing, you discover that the metadata appears corrupted or incomplete when retrieved. You need to ensure the metadata is stored and retrieved correctly without losing any special characters.
+
+What should you do?
+
+- [x] Convert the metadata values to Base64 before storing them.
+- [ ] Re-save metadata again to ensure values are stored properly.
+- [ ] Encode the values in UTF-8 and pass them directly to `SetMetadata`.
+- [ ] Change the storage account's encoding settings to allow Unicode metadata.
+- [ ] `SetMetadata` is not a valid method on a `BlobContainerClient` object.
+
+Answer: Azure Storage metadata only supports ASCII characters. If you need to store non-ASCII characters (e.g., Unicode), you must encode them, and Base64 is the standard workaround.
+
+---
+
 Question: What are the two versions of client-side encryption available in the Azure Blob Storage and Queue Storage client libraries?
 
 - [x] Version 1 uses Cipher Block Chaining (CBC) mode with AES and Version 2 uses Galois/Counter Mode (GCM) mode with AES
@@ -245,6 +259,7 @@ Options:
 - [ ] Predictive Results – Hot access tier, Sensor Data – Cool access tier
 
 Answer:
+
 - **Predictive Results**: Both Hot and Cool tiers are instantly available (within minutes), but the Hot tier is optimized for frequently accessed data. Anything needing less than an hour that doesn’t need frequent access could be put in Cool.
 - **Sensor Data**: Both Cool and Archive are suitable for less frequently accessed data. Since the question mentions no requirement for instant access and asks for optimal (cost-effective), Archive tier is more suitable.
 

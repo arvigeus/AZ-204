@@ -54,7 +54,7 @@ export default function App() {
 								<Outlet />
 							</div>
 							<small className="mt-2 block text-center">
-								Exam revision: October 11, 2024
+								Exam revision: April 11, 2025
 							</small>
 						</main>
 						<footer className="mt-6 text-center">

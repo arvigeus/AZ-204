@@ -1,6 +1,6 @@
 # Storage Security
 
-Question: Suppose you are an Azure Architect and you are transferring patient medical data from one hospital to another using Azure services. What method(s) should you use to secure the data?
+Question: You are an Azure Architect and you are transferring patient medical data from one hospital to another using Azure services. What method(s) should you use to secure the data?
 
 - [x] Encryption-at-rest
 - [x] Encryption-in-transit
