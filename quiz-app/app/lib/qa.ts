@@ -19,7 +19,7 @@ export const getQA = (
 	if (answeredIndexes && answeredIndexes.size) {
 		const answeredIds = new Set<string>()
 		for (const i of answeredIndexes)
-			if (i >= 0 && i < data.length) answeredIds.add(data[i].id)
+			if (i >= 0 && i < data.length && data[i]) answeredIds.add(data[i].id)
 
 		if (topic) {
 			const availableIds = new Set(questions.map((q) => q.id))
@@ -35,7 +35,7 @@ export const getQA = (
 		)
 
 		const filtered = questions.filter(
-			(item) => !chances[item.id] || Math.random() > chances[item.id],
+			(item) => !chances[item.id] || Math.random() > chances[item.id]!,
 		)
 
 		if (filtered.length > 0) questions = filtered
@@ -48,8 +48,8 @@ export const getQA = (
 }
 
 export const getQAById = (id: string) => {
-	var index = data.findIndex((item) => item.id == id)
-	if (index < 0) return null
+	const index = data.findIndex((item) => item.id == id)
+	if (index < 0 || !data[index]) return null
 	return shuffleQA({ ...data[index], index })
 }
 
@@ -62,12 +62,12 @@ export const getQuestionsByTopic = (topic: string): QAPair[] => {
 }
 
 const getRandomElement = <T>(array: T[]): T =>
-	array[Math.floor(Math.random() * array.length)]
+	array[Math.floor(Math.random() * array.length)]!
 
 function shuffleQA(question: Question): Question {
 	if (!question.options.length) return question
 
-	const answers = question.answerIndexes.map((i) => question.options[i])
+	const answers = question.answerIndexes.map((i) => question.options[i]!)
 
 	const options = shuffleArray(question.options)
 	return {
@@ -77,11 +77,11 @@ function shuffleQA(question: Question): Question {
 	}
 }
 
-function shuffleArray<T>(arr: T[]) {
+function shuffleArray<T>(arr: T[]): T[] {
 	const arrayCopy = [...arr]
 	for (let i = arrayCopy.length - 1; i > 0; i--) {
 		const j = Math.floor(Math.random() * (i + 1))
-		;[arrayCopy[i], arrayCopy[j]] = [arrayCopy[j], arrayCopy[i]]
+		;[arrayCopy[i], arrayCopy[j]] = [arrayCopy[j] as T, arrayCopy[i] as T]
 	}
 	return arrayCopy
 }

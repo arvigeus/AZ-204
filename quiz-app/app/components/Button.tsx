@@ -1,8 +1,10 @@
 import clsx from 'clsx'
 import {
+	useEffect,
+	useRef,
+	useState,
 	type ButtonHTMLAttributes,
 	type FC,
-	type MouseEventHandler,
 } from 'react'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -10,27 +12,21 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const btnStyle =
-	'min-w-[30%] flex items-center justify-center text-center focus:ring-2 font-medium text-xs sm:text-sm px-2.5 py-1 sm:px-5 sm:py-2.5 inline-flex items-center'
+	'flex items-center justify-center text-center font-medium text-xs sm:text-sm px-2.5 py-1 sm:px-5 sm:py-2.5 shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2'
 
 const getColor = (color: ButtonProps['bgColor']) => {
 	switch (color) {
 		case 'blue':
-			return 'bg-blue-700 hover:bg-blue-800 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'
+			return 'bg-blue-600 hover:bg-blue-700 hover:shadow-md border border-blue-700 text-white focus:ring-blue-500'
 		case 'green':
-			return 'bg-green-700 hover:bg-green-800 focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800'
+			return 'bg-green-600 hover:bg-green-700 hover:shadow-md border border-green-700 text-white focus:ring-green-500'
 		default:
 			return ''
 	}
 }
 
 export const Button: FC<ButtonProps> = ({ bgColor, className, ...props }) => {
-	const style = clsx(
-		btnStyle,
-		getColor(bgColor),
-		'text-white',
-		'rounded-lg',
-		className,
-	)
+	const style = clsx(btnStyle, getColor(bgColor), 'rounded-lg', className)
 	return <button className={style} {...props} />
 }
 
@@ -46,9 +42,8 @@ export const LoadingButton: FC<LoadingButtonProps> = ({
 }) => {
 	const style = clsx(
 		btnStyle,
-		'text-gray-900',
+		'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:shadow-md focus:ring-indigo-500',
 		'rounded-lg',
-		'border border-gray-200 bg-white hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:text-blue-700 focus:ring-blue-700 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white',
 		className,
 	)
 	return (
@@ -56,7 +51,7 @@ export const LoadingButton: FC<LoadingButtonProps> = ({
 			<svg
 				aria-hidden="true"
 				role="status"
-				className="mr-3 inline h-4 w-4 animate-spin text-gray-200 dark:text-gray-600"
+				className="mr-3 inline h-4 w-4 animate-spin text-gray-400"
 				viewBox="0 0 100 101"
 				fill="none"
 				xmlns="http://www.w3.org/2000/svg"
@@ -67,9 +62,9 @@ export const LoadingButton: FC<LoadingButtonProps> = ({
 				/>
 				<path
 					d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-					fill="#1C64F2"
+					fill="#6366f1"
 				/>
-			</svg>{' '}
+			</svg>
 			{text}
 		</button>
 	)
@@ -79,8 +74,6 @@ type NextButtonProps = {
 	bgColor: ButtonProps['bgColor']
 	text: string
 	topic?: string | undefined | null
-	showDropdown: boolean
-	onToggleDropdown: MouseEventHandler<HTMLButtonElement>
 	entries: string[]
 }
 
@@ -89,30 +82,55 @@ export const NextButton: FC<NextButtonProps> = ({
 	text,
 	topic,
 	entries,
-	showDropdown,
-	onToggleDropdown,
 }) => {
-	const getDropdownColor = (color: ButtonProps['bgColor']) => {
-		switch (color) {
-			case 'blue':
-				return 'bg-blue-800 hover:bg-blue-900 focus:ring-blue-400 dark:bg-blue-500 dark:hover:bg-blue-800 dark:focus:ring-blue-900'
-			case 'green':
-				return 'bg-green-800 hover:bg-green-900 focus:ring-green-400 dark:bg-green-500 dark:hover:bg-green-800 dark:focus:ring-green-900'
-			default:
-				return ''
+	const [showDropdown, setShowDropdown] = useState(false)
+	const dropdownRef = useRef<HTMLDivElement>(null)
+
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (
+				dropdownRef.current &&
+				!dropdownRef.current.contains(event.target as Node)
+			) {
+				setShowDropdown(false)
+			}
 		}
-	}
+
+		document.addEventListener('mousedown', handleClickOutside)
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside)
+		}
+	}, [])
+
+	const getMainButtonColor = (color: ButtonProps['bgColor']) =>
+		color === 'blue'
+			? 'bg-blue-600 hover:bg-blue-700 border-blue-700 text-white'
+			: 'bg-green-600 hover:bg-green-700 border-green-700 text-white'
+
+	const getDropdownButtonColor = (color: ButtonProps['bgColor']) =>
+		color === 'blue'
+			? 'bg-blue-700 hover:bg-blue-800 border-blue-700 text-white'
+			: 'bg-green-700 hover:bg-green-800 border-green-700 text-white'
+
+	const getFocusRing = (color: ButtonProps['bgColor']) =>
+		color === 'blue' ? 'focus:ring-blue-500' : 'focus:ring-green-500'
+
 	return (
-		<div className="flex flex-row">
+		<div
+			className={clsx(
+				'flex h-auto rounded-lg shadow-sm transition-all duration-200 hover:shadow-md',
+				'focus-within:ring-2 focus-within:ring-offset-2',
+				getFocusRing(bgColor),
+			)}
+		>
 			<button
 				type="submit"
 				name="topic"
 				value={topic ?? ''}
 				className={clsx(
-					btnStyle,
-					getColor(bgColor),
-					'text-white',
-					'rounded-l-lg',
+					'flex h-full items-center justify-center rounded-l-lg border border-r-0 focus:z-10 focus:outline-none',
+					'px-2.5 py-1 text-xs font-medium sm:px-5 sm:py-2.5 sm:text-sm',
+					getMainButtonColor(bgColor),
 				)}
 			>
 				{text}
@@ -127,22 +145,20 @@ export const NextButton: FC<NextButtonProps> = ({
 						fillRule="evenodd"
 						d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
 						clipRule="evenodd"
-					></path>
+					/>
 				</svg>
 			</button>
-			<div className="relative">
+			<div className="relative flex" ref={dropdownRef}>
 				<button
-					onClick={onToggleDropdown}
-					data-dropdown-toggle="dropdown"
-					className={clsx(
-						'inline-flex items-center rounded-r-lg py-2.5 pr-4 text-center text-sm font-medium text-white focus:outline-none focus:ring-4',
-						getDropdownColor(bgColor),
-					)}
+					onClick={() => setShowDropdown((prev) => !prev)}
 					type="button"
+					className={clsx(
+						'flex h-full items-center justify-center rounded-r-lg border focus:z-10 focus:outline-none sm:w-11',
+						getDropdownButtonColor(bgColor),
+					)}
 				>
-					<span className="invisible">|</span>
 					<svg
-						className="ml-2 h-4 w-4"
+						className="h-4 w-4"
 						aria-hidden="true"
 						fill="none"
 						stroke="currentColor"
@@ -154,18 +170,19 @@ export const NextButton: FC<NextButtonProps> = ({
 							strokeLinejoin="round"
 							strokeWidth="2"
 							d="M19 9l-7 7-7-7"
-						></path>
+						/>
 					</svg>
 				</button>
 
 				<div
 					className={clsx(
-						'absolute z-10 w-44 divide-y divide-gray-100 rounded-lg bg-white shadow dark:bg-gray-700',
+						'absolute right-0 z-10 mt-2 w-48 rounded-lg border border-gray-200 bg-white shadow-lg',
+						'divide-y divide-gray-100',
 						{ hidden: !showDropdown },
 					)}
 				>
 					<ul
-						className="m-0 list-none px-0 py-1 text-sm text-gray-700 dark:text-gray-200"
+						className="m-0 list-none px-0 py-1 text-sm text-gray-700"
 						aria-labelledby="dropdownDefaultButton"
 					>
 						{entries.map((entry, index) => (
@@ -174,7 +191,7 @@ export const NextButton: FC<NextButtonProps> = ({
 									type="submit"
 									name="topic"
 									value={entry}
-									className="block w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+									className="block w-full px-4 py-2 text-left transition-colors duration-150 hover:bg-gray-50 focus:bg-gray-50 focus:outline-none"
 									role="menuitem"
 								>
 									{entry}
