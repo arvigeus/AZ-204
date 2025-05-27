@@ -472,7 +472,7 @@ Write a query that will return this result, filtering by `teapo-surfboard-72109`
 ]
 ```
 
-```sql
+```tsql
 -- Code here
 ```
 

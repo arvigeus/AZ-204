@@ -24,6 +24,10 @@ const CodeEditor = ({ lang, ...props }: CodeEditorProps) => {
 				return langs.dockerfile()
 			case 'jsonc':
 				return langs.json()
+			case 'sql':
+				return langs.sql()
+			case 'tsql':
+				return langs.sql()
 			default:
 				return langs.csharp()
 		}

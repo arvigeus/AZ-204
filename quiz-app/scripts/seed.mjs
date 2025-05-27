@@ -1,8 +1,8 @@
 // @ts-check
-import { createHash } from "crypto";
-import fs from "fs/promises";
-import path from "path";
-import { fileURLToPath } from "url";
+import { createHash } from 'crypto'
+import fs from 'fs/promises'
+import path from 'path'
+import { fileURLToPath } from 'url'
 
 /**
  * @typedef {Object} FileContent
@@ -10,8 +10,8 @@ import { fileURLToPath } from "url";
  * @property {string} content
  */
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 /**
  * @typedef {Object} QAPair
@@ -38,98 +38,98 @@ const __dirname = path.dirname(__filename);
  * @returns {QAPair[]} An array of QAPair objects.
  */
 const parseQuestionItems = (name, text) => {
-  const lines = text.split("\n");
-  /** @type {QAPair[]} */
-  const qaPairs = [];
-  /** @type {string[]} */
-  let currentQuestion = [];
-  /** @type {string[]} */
-  let currentOptions = [];
-  /** @type {string[]} */
-  let currentAnswer = [];
-  /** @type {number[]} */
-  let currentAnswerIndex = [];
-  /** @type {boolean} */
-  let currentHasCode = false;
+	const lines = text.split('\n')
+	/** @type {QAPair[]} */
+	const qaPairs = []
+	/** @type {string[]} */
+	let currentQuestion = []
+	/** @type {string[]} */
+	let currentOptions = []
+	/** @type {string[]} */
+	let currentAnswer = []
+	/** @type {number[]} */
+	let currentAnswerIndex = []
+	/** @type {boolean} */
+	let currentHasCode = false
 
-  /** @type {RegExp} */
-  const optionRegex = /^\s*- \[(?:x|\s)\]\s/;
+	/** @type {RegExp} */
+	const optionRegex = /^\s*- \[(?:x|\s)\]\s/
 
-  /** @type {("question" | "option" | "answer" | null)} */
-  let itemType = null;
+	/** @type {("question" | "option" | "answer" | null)} */
+	let itemType = null
 
-  for (const line of lines) {
-    if (line.startsWith("Question:")) {
-      if (currentQuestion.length > 0) {
-        const question = currentQuestion.join("\n").trimEnd();
-        qaPairs.push({
-          id: createHash("sha256").update(question).digest("hex"),
-          question,
-          answer: currentAnswer.join("\n").trimEnd(),
-          options: [...currentOptions],
-          answerIndexes: currentAnswerIndex,
-          hasCode: currentHasCode,
-          topic: name,
-        });
-        currentQuestion = [];
-        currentAnswer = [];
-        currentOptions = [];
-        currentAnswerIndex = [];
-        currentHasCode = false;
-        itemType = null;
-      }
+	for (const line of lines) {
+		if (line.startsWith('Question:')) {
+			if (currentQuestion.length > 0) {
+				const question = currentQuestion.join('\n').trimEnd()
+				qaPairs.push({
+					id: createHash('sha256').update(question).digest('hex'),
+					question,
+					answer: currentAnswer.join('\n').trimEnd(),
+					options: [...currentOptions],
+					answerIndexes: currentAnswerIndex,
+					hasCode: currentHasCode,
+					topic: name,
+				})
+				currentQuestion = []
+				currentAnswer = []
+				currentOptions = []
+				currentAnswerIndex = []
+				currentHasCode = false
+				itemType = null
+			}
 
-      currentQuestion = [line.replace("Question:", "").trimStart()];
-      itemType = "question";
-    } else if (line.startsWith("Answer:")) {
-      currentAnswer = [line.replace("Answer:", "").trimStart()];
-      itemType = "answer";
-    } else if (line.trim() === "---") {
-      if (itemType === "question") currentQuestion.push(line);
-    } else {
-      if (optionRegex.test(line)) {
-        currentOptions.push(line.replace(optionRegex, ""));
-        itemType = "option";
-        if (/^(\s*- \[x\])/.test(line))
-          currentAnswerIndex.push(currentOptions.length - 1);
-      } else {
-        switch (itemType) {
-          case "question":
-            currentQuestion.push(line);
-            if (/^```(cs|ps|Dockerfile|jsonc)$/i.test(line.trim()))
-              currentHasCode = true;
-            break;
-          case "answer":
-            currentAnswer.push(line);
-            break;
-          case "option":
-            if (line.trim() !== "") currentOptions.push(line);
-            break;
-          default:
-            break;
-        }
-      }
-    }
-  }
+			currentQuestion = [line.replace('Question:', '').trimStart()]
+			itemType = 'question'
+		} else if (line.startsWith('Answer:')) {
+			currentAnswer = [line.replace('Answer:', '').trimStart()]
+			itemType = 'answer'
+		} else if (line.trim() === '---') {
+			if (itemType === 'question') currentQuestion.push(line)
+		} else {
+			if (optionRegex.test(line)) {
+				currentOptions.push(line.replace(optionRegex, ''))
+				itemType = 'option'
+				if (/^(\s*- \[x\])/.test(line))
+					currentAnswerIndex.push(currentOptions.length - 1)
+			} else {
+				switch (itemType) {
+					case 'question':
+						currentQuestion.push(line)
+						if (/^```(cs|ps|Dockerfile|jsonc|tsql)$/i.test(line.trim()))
+							currentHasCode = true
+						break
+					case 'answer':
+						currentAnswer.push(line)
+						break
+					case 'option':
+						if (line.trim() !== '') currentOptions.push(line)
+						break
+					default:
+						break
+				}
+			}
+		}
+	}
 
-  // For QA pair without trailing empty line
-  if (currentQuestion.length > 0) {
-    const question = currentQuestion.join("\n").trimEnd();
-    if (currentOptions.length > 0 && currentAnswerIndex.length === 0)
-      throw new Error(`Question '${question}' has missing answer`);
-    qaPairs.push({
-      id: createHash("sha256").update(question).digest("hex"),
-      question,
-      answer: currentAnswer.join("\n").trimEnd(),
-      options: [...currentOptions],
-      answerIndexes: currentAnswerIndex,
-      hasCode: currentHasCode,
-      topic: name,
-    });
-  }
+	// For QA pair without trailing empty line
+	if (currentQuestion.length > 0) {
+		const question = currentQuestion.join('\n').trimEnd()
+		if (currentOptions.length > 0 && currentAnswerIndex.length === 0)
+			throw new Error(`Question '${question}' has missing answer`)
+		qaPairs.push({
+			id: createHash('sha256').update(question).digest('hex'),
+			question,
+			answer: currentAnswer.join('\n').trimEnd(),
+			options: [...currentOptions],
+			answerIndexes: currentAnswerIndex,
+			hasCode: currentHasCode,
+			topic: name,
+		})
+	}
 
-  return qaPairs;
-};
+	return qaPairs
+}
 
 /**
  * Loads the content of all markdown files in a given directory.
@@ -138,22 +138,22 @@ const parseQuestionItems = (name, text) => {
  * @returns {Promise<FileContent[]>} An array of FileContent objects.
  */
 const loadContents = async (directory) => {
-  const dirPath = path.join(__dirname, "..", "..", directory);
-  console.log(`Loading questions from ${dirPath}`);
-  const fileNames = await fs.readdir(dirPath);
+	const dirPath = path.join(__dirname, '..', '..', directory)
+	console.log(`Loading questions from ${dirPath}`)
+	const fileNames = await fs.readdir(dirPath)
 
-  const filePromises = fileNames
-    .filter((fileName) => fileName.toLowerCase() !== "readme.md")
-    .map(async (fileName) => {
-      const filePath = path.join(dirPath, fileName);
-      const content = await fs.readFile(filePath, "utf-8");
-      const name = path.parse(fileName).name; // remove extension
+	const filePromises = fileNames
+		.filter((fileName) => fileName.toLowerCase() !== 'readme.md')
+		.map(async (fileName) => {
+			const filePath = path.join(dirPath, fileName)
+			const content = await fs.readFile(filePath, 'utf-8')
+			const name = path.parse(fileName).name // remove extension
 
-      return { name, content };
-    });
+			return { name, content }
+		})
 
-  return await Promise.all(filePromises);
-};
+	return await Promise.all(filePromises)
+}
 
 /**
  * Loads content from a GitHub repository.
@@ -162,42 +162,42 @@ const loadContents = async (directory) => {
  * @returns {Promise<FileContent[]>} An array of FileContent objects.
  */
 const loadContentFromGItHub = async (directory) => {
-  const githubAPIUrl = "https://api.github.com/repos";
-  const repo = "arvigeus/AZ-204";
+	const githubAPIUrl = 'https://api.github.com/repos'
+	const repo = 'arvigeus/AZ-204'
 
-  const repoDir = `${githubAPIUrl}/${repo}/contents/${directory}`;
-  console.log(`Loading questions from ${repoDir}`);
+	const repoDir = `${githubAPIUrl}/${repo}/contents/${directory}`
+	console.log(`Loading questions from ${repoDir}`)
 
-  const dirResponse = await fetch(repoDir);
-  /**
-   * @type {DirDataItem[]}
-   * An array of directory data items.
-   */
-  const dirData = await dirResponse.json();
-  const files = dirData.filter(
-    (item) =>
-      item.type === "file" &&
-      item.name.toLowerCase() !== "readme.md" &&
-      item.name.endsWith(".md")
-  );
-  /**
-   * @type {FileContent[]}
-   * An array of directory data items.
-   */
-  const items = [];
+	const dirResponse = await fetch(repoDir)
+	/**
+	 * @type {DirDataItem[]}
+	 * An array of directory data items.
+	 */
+	const dirData = await dirResponse.json()
+	const files = dirData.filter(
+		(item) =>
+			item.type === 'file' &&
+			item.name.toLowerCase() !== 'readme.md' &&
+			item.name.endsWith('.md'),
+	)
+	/**
+	 * @type {FileContent[]}
+	 * An array of directory data items.
+	 */
+	const items = []
 
-  for (const file of files) {
-    const url = `${githubAPIUrl}/${repo}/contents/${file.path}`;
-    const response = await fetch(url);
-    const data = await response.json();
-    const name = file.name.replace(/\.[^/.]+$/, "");
-    const content = Buffer.from(data.content, "base64").toString("utf-8");
+	for (const file of files) {
+		const url = `${githubAPIUrl}/${repo}/contents/${file.path}`
+		const response = await fetch(url)
+		const data = await response.json()
+		const name = file.name.replace(/\.[^/.]+$/, '')
+		const content = Buffer.from(data.content, 'base64').toString('utf-8')
 
-    items.push({ name, content });
-  }
+		items.push({ name, content })
+	}
 
-  return items;
-};
+	return items
+}
 
 /**
  * Parses an array of files containing Q&A items, extracting topics and data.
@@ -205,24 +205,24 @@ const loadContentFromGItHub = async (directory) => {
  * @returns {Object} An object containing topics and data.
  */
 const parseQuestionFiles = (files) => {
-  const topics = [];
-  const data = [];
+	const topics = []
+	const data = []
 
-  for (const { name, content } of files) {
-    topics.push(name);
-    const items = parseQuestionItems(name, content);
-    data.push(...items);
-  }
+	for (const { name, content } of files) {
+		topics.push(name)
+		const items = parseQuestionItems(name, content)
+		data.push(...items)
+	}
 
-  return { topics, data };
-};
+	return { topics, data }
+}
 
 /**
  * Serializes an item to a JSON string.
  * @param {any} item - The item to serialize.
  * @returns {string} The serialized string.
  */
-const serialize = (item) => JSON.stringify(item, null, 2);
+const serialize = (item) => JSON.stringify(item, null, 2)
 
 /**
  * Saves the provided topics and data to a file at the specified location.
@@ -233,12 +233,12 @@ const serialize = (item) => JSON.stringify(item, null, 2);
  * @returns {Promise<void>}
  */
 const saveData = async (topics, data, location) => {
-  const content = `export const topics = ${serialize(
-    topics
-  )};\n\nexport const data = ${serialize(data)};\n`;
+	const content = `export const topics = ${serialize(
+		topics,
+	)};\n\nexport const data = ${serialize(data)};\n`
 
-  await fs.writeFile(location, content);
-};
+	await fs.writeFile(location, content)
+}
 
 /**
  * Loads files either from the disk or from GitHub depending on the NODE_ENV.
@@ -247,9 +247,9 @@ const saveData = async (topics, data, location) => {
  * @returns {Promise<FileContent[]>} An array of FileContent objects.
  */
 const loadFiles = async (dir) =>
-  await (process.env.NODE_ENV !== "production"
-    ? loadContents(path.join(dir))
-    : loadContentFromGItHub(path.join(dir)));
+	await (process.env.NODE_ENV !== 'production'
+		? loadContents(path.join(dir))
+		: loadContentFromGItHub(path.join(dir)))
 
 /**
  * Main function to initialize the process of loading, parsing, and saving Q&A pairs.
@@ -257,13 +257,13 @@ const loadFiles = async (dir) =>
  * @returns {Promise<void>}
  */
 const init = async () => {
-  const { topics: qaTopics, data: qaData } = parseQuestionFiles(
-    await loadFiles("Questions")
-  );
+	const { topics: qaTopics, data: qaData } = parseQuestionFiles(
+		await loadFiles('Questions'),
+	)
 
-  await saveData(qaTopics, qaData, path.join(process.cwd(), "app", "db.ts"));
-};
+	await saveData(qaTopics, qaData, path.join(process.cwd(), 'app', 'db.ts'))
+}
 
 init()
-  .then(() => console.log("Questions saved to database successfully"))
-  .catch((err) => console.error(err));
+	.then(() => console.log('Questions saved to database successfully'))
+	.catch((err) => console.error(err))

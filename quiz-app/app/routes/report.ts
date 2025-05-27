@@ -7,13 +7,11 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 	if (!id) throw new Response('Missing id parameter', { status: 400 })
 
-	const index = data.findIndex((item) => item.id == id)
-	if (index < 0) throw new Response('Invalid id parameter', { status: 400 })
-
-	const question = data[index]!
+	const question = data.find((item) => item.id === id)
+	if (!question) throw new Response('Invalid id parameter', { status: 400 })
 
 	const title = encodeURIComponent(`Report a problem: ${question.id}`)
-	const fullBody = `${question.question}\n\n${
+	const fullBody = `<!--- Describe the issue -->\n\n---\n\n${question.question}\n\n${
 		question.options.length > 0
 			? question.options
 					.map(
@@ -23,7 +21,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 					.join('\n') + '\n\n'
 			: ''
 	}Answer: ${question.answer}`
-	const maxBodyLength = 1500 // Conservative limit
+	const maxBodyLength = 4000
 	const body =
 		fullBody.length > maxBodyLength
 			? encodeURIComponent(
