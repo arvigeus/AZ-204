@@ -1,6 +1,5 @@
 import { langs } from '@uiw/codemirror-extensions-langs';
-import { githubLight } from '@uiw/codemirror-theme-github';
-import { type ComponentType, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 
 import { InputStyle } from '~/components/Input';
@@ -18,8 +17,8 @@ type CodeEditorProps = Omit<
 
 const CodeEditor = ({ lang, value = '', ...props }: CodeEditorProps) => {
 	const [isClient, setIsClient] = useState(false);
-	const [CodeMirror, setCodeMirror] =
-		useState<ComponentType<ReactCodeMirrorProps> | null>(null);
+	const [CodeMirror, setCodeMirror] = useState<React.ComponentType<ReactCodeMirrorProps> | null>(null);
+	const [theme, setTheme] = useState<any>(null);
 
 	const languageExtension = useMemo(() => {
 		switch (lang) {
@@ -42,14 +41,19 @@ const CodeEditor = ({ lang, value = '', ...props }: CodeEditorProps) => {
 
 	useEffect(() => {
 		setIsClient(true);
-		// Dynamically import CodeMirror only on client
-		import('@uiw/react-codemirror').then((module) => {
-			setCodeMirror(() => module.default);
+		// Dynamically import both CodeMirror and theme on client
+		Promise.all([
+			import('@uiw/react-codemirror'),
+			import('@uiw/codemirror-theme-github')
+		]).then(([codeMirrorModule, themeModule]) => {
+			setCodeMirror(() => codeMirrorModule.default);
+			// Handle both named export and default export patterns
+			setTheme(themeModule.githubLight || themeModule.default?.githubLight || themeModule.default);
 		});
 	}, []);
 
 	// Server-side fallback - render syntax highlighted code
-	if (!isClient || !CodeMirror) {
+	if (!isClient || !CodeMirror || !theme) {
 		// Map your languages to Prism language names
 		const getPrismLanguage = (lang: SupportedLanguage): string => {
 			switch (lang) {
@@ -75,7 +79,7 @@ const CodeEditor = ({ lang, value = '', ...props }: CodeEditorProps) => {
 				language={getPrismLanguage(lang)}
 				wrapLongLines
 				codeTagProps={{
-					className: 'text-sm px-6 py-2',
+					className: 'text-sm px-[1.5rem] py-[0.5rem]',
 				}}
 			>
 				{String(value)}
@@ -86,7 +90,7 @@ const CodeEditor = ({ lang, value = '', ...props }: CodeEditorProps) => {
 	// Client-side CodeMirror
 	return (
 		<CodeMirror
-			theme={githubLight}
+			theme={theme}
 			extensions={[languageExtension]}
 			value={value}
 			{...props}
