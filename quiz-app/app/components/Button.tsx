@@ -1,39 +1,39 @@
-import clsx from 'clsx'
+import clsx from 'clsx';
 import {
+	type ButtonHTMLAttributes,
+	type FC,
 	useEffect,
 	useRef,
 	useState,
-	type ButtonHTMLAttributes,
-	type FC,
-} from 'react'
+} from 'react';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-	bgColor: 'blue' | 'green'
+	bgColor: 'blue' | 'green';
 }
 
 const btnStyle =
-	'flex items-center justify-center text-center font-medium text-xs sm:text-sm px-2.5 py-1 sm:px-5 sm:py-2.5 shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2'
+	'flex items-center justify-center text-center font-medium text-xs sm:text-sm px-2.5 py-1 sm:px-5 sm:py-2.5 shadow-xs transition-all duration-200 focus:outline-hidden focus:ring-2 focus:ring-offset-2';
 
 const getColor = (color: ButtonProps['bgColor']) => {
 	switch (color) {
 		case 'blue':
-			return 'bg-blue-600 hover:bg-blue-700 hover:shadow-md border border-blue-700 text-white focus:ring-blue-500'
+			return 'bg-blue-600 hover:bg-blue-700 hover:shadow-md border border-blue-700 text-white focus:ring-blue-500';
 		case 'green':
-			return 'bg-green-600 hover:bg-green-700 hover:shadow-md border border-green-700 text-white focus:ring-green-500'
+			return 'bg-green-600 hover:bg-green-700 hover:shadow-md border border-green-700 text-white focus:ring-green-500';
 		default:
-			return ''
+			return '';
 	}
-}
+};
 
 export const Button: FC<ButtonProps> = ({ bgColor, className, ...props }) => {
-	const style = clsx(btnStyle, getColor(bgColor), 'rounded-lg', className)
-	return <button className={style} {...props} />
-}
+	const style = clsx(btnStyle, getColor(bgColor), 'rounded-lg', className);
+	return <button className={style} {...props} />;
+};
 
 type LoadingButtonProps = Omit<
 	ButtonHTMLAttributes<HTMLButtonElement>,
 	'disabled' | 'type'
-> & { text: string }
+> & { text: string };
 
 export const LoadingButton: FC<LoadingButtonProps> = ({
 	text,
@@ -45,12 +45,11 @@ export const LoadingButton: FC<LoadingButtonProps> = ({
 		'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:shadow-md focus:ring-indigo-500',
 		'rounded-lg',
 		className,
-	)
+	);
 	return (
 		<button disabled type="button" className={style} {...props}>
 			<svg
 				aria-hidden="true"
-				role="status"
 				className="mr-3 inline h-4 w-4 animate-spin text-gray-400"
 				viewBox="0 0 100 101"
 				fill="none"
@@ -67,15 +66,15 @@ export const LoadingButton: FC<LoadingButtonProps> = ({
 			</svg>
 			{text}
 		</button>
-	)
-}
+	);
+};
 
 type NextButtonProps = {
-	bgColor: ButtonProps['bgColor']
-	text: string
-	topic?: string | undefined | null
-	entries: string[]
-}
+	bgColor: ButtonProps['bgColor'];
+	text: string;
+	topic?: string | undefined | null;
+	entries: string[];
+};
 
 export const NextButton: FC<NextButtonProps> = ({
 	bgColor,
@@ -83,8 +82,8 @@ export const NextButton: FC<NextButtonProps> = ({
 	topic,
 	entries,
 }) => {
-	const [showDropdown, setShowDropdown] = useState(false)
-	const dropdownRef = useRef<HTMLDivElement>(null)
+	const [showDropdown, setShowDropdown] = useState(false);
+	const dropdownRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
@@ -92,33 +91,33 @@ export const NextButton: FC<NextButtonProps> = ({
 				dropdownRef.current &&
 				!dropdownRef.current.contains(event.target as Node)
 			) {
-				setShowDropdown(false)
+				setShowDropdown(false);
 			}
-		}
+		};
 
-		document.addEventListener('mousedown', handleClickOutside)
+		document.addEventListener('mousedown', handleClickOutside);
 		return () => {
-			document.removeEventListener('mousedown', handleClickOutside)
-		}
-	}, [])
+			document.removeEventListener('mousedown', handleClickOutside);
+		};
+	}, []);
 
 	const getMainButtonColor = (color: ButtonProps['bgColor']) =>
 		color === 'blue'
 			? 'bg-blue-600 hover:bg-blue-700 border-blue-700 text-white'
-			: 'bg-green-600 hover:bg-green-700 border-green-700 text-white'
+			: 'bg-green-600 hover:bg-green-700 border-green-700 text-white';
 
 	const getDropdownButtonColor = (color: ButtonProps['bgColor']) =>
 		color === 'blue'
 			? 'bg-blue-700 hover:bg-blue-800 border-blue-700 text-white'
-			: 'bg-green-700 hover:bg-green-800 border-green-700 text-white'
+			: 'bg-green-700 hover:bg-green-800 border-green-700 text-white';
 
 	const getFocusRing = (color: ButtonProps['bgColor']) =>
-		color === 'blue' ? 'focus:ring-blue-500' : 'focus:ring-green-500'
+		color === 'blue' ? 'focus:ring-blue-500' : 'focus:ring-green-500';
 
 	return (
 		<div
 			className={clsx(
-				'flex h-auto rounded-lg shadow-sm transition-all duration-200 hover:shadow-md',
+				'flex h-auto rounded-lg shadow-xs transition-all duration-200 hover:shadow-md',
 				'focus-within:ring-2 focus-within:ring-offset-2',
 				getFocusRing(bgColor),
 			)}
@@ -128,8 +127,8 @@ export const NextButton: FC<NextButtonProps> = ({
 				name="topic"
 				value={topic ?? ''}
 				className={clsx(
-					'flex h-full items-center justify-center rounded-l-lg border border-r-0 focus:z-10 focus:outline-none',
-					'px-2.5 py-1 text-xs font-medium sm:px-5 sm:py-2.5 sm:text-sm',
+					'flex h-full items-center justify-center rounded-l-lg border border-r-0 focus:z-10 focus:outline-hidden',
+					'px-2.5 py-1 font-medium text-xs sm:px-5 sm:py-2.5 sm:text-sm',
 					getMainButtonColor(bgColor),
 				)}
 			>
@@ -153,7 +152,7 @@ export const NextButton: FC<NextButtonProps> = ({
 					onClick={() => setShowDropdown((prev) => !prev)}
 					type="button"
 					className={clsx(
-						'flex h-full items-center justify-center rounded-r-lg border focus:z-10 focus:outline-none sm:w-11',
+						'flex h-full items-center justify-center rounded-r-lg border focus:z-10 focus:outline-hidden sm:w-11',
 						getDropdownButtonColor(bgColor),
 					)}
 				>
@@ -182,16 +181,16 @@ export const NextButton: FC<NextButtonProps> = ({
 					)}
 				>
 					<ul
-						className="m-0 list-none px-0 py-1 text-sm text-gray-700"
+						className="m-0 list-none px-0 py-1 text-gray-700 text-sm"
 						aria-labelledby="dropdownDefaultButton"
 					>
-						{entries.map((entry, index) => (
-							<li key={index} className="box-border p-0">
+						{entries.map((entry) => (
+							<li key={entry} className="box-border p-0">
 								<button
 									type="submit"
 									name="topic"
 									value={entry}
-									className="block w-full px-4 py-2 text-left transition-colors duration-150 hover:bg-gray-50 focus:bg-gray-50 focus:outline-none"
+									className="block w-full px-4 py-2 text-left transition-colors duration-150 hover:bg-gray-50 focus:bg-gray-50 focus:outline-hidden"
 									role="menuitem"
 								>
 									{entry}
@@ -202,5 +201,5 @@ export const NextButton: FC<NextButtonProps> = ({
 				</div>
 			</div>
 		</div>
-	)
-}
+	);
+};

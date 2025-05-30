@@ -1,21 +1,16 @@
-import clsx from 'clsx'
-import {
-	type FC,
-	type Dispatch,
-	type SetStateAction,
-	type ChangeEventHandler,
-} from 'react'
-import { InputStyle } from '~/components/Input'
-import { Markdown } from '~/components/Markdown'
+import clsx from 'clsx';
+import type { ChangeEventHandler, Dispatch, FC, SetStateAction } from 'react';
+import { InputStyle } from '~/components/Input';
+import { Markdown } from '~/components/Markdown';
 
 interface AnswerOptionsProps {
-	name: string
-	options: string[]
-	checkedValues: number[]
-	setCheckedValues: Dispatch<SetStateAction<number[]>>
-	showAnswer: boolean
-	answerIndexes: number[]
-	disabled?: boolean
+	name: string;
+	options: string[];
+	checkedValues: number[];
+	setCheckedValues: Dispatch<SetStateAction<number[]>>;
+	showAnswer: boolean;
+	answerIndexes: number[];
+	disabled?: boolean;
 }
 
 export const AnswerOptions: FC<AnswerOptionsProps> = ({
@@ -28,30 +23,30 @@ export const AnswerOptions: FC<AnswerOptionsProps> = ({
 	disabled,
 }) => {
 	const handleChange: ChangeEventHandler<HTMLInputElement> = async (event) => {
-		const { checked, value, type } = event.target
+		const { checked, value, type } = event.target;
 
-		const index = parseInt(value, 10)
+		const index = Number.parseInt(value, 10);
 
 		if (type === 'checkbox') {
 			if (checked) {
 				// Add to checked values
-				setCheckedValues((prev) => [...prev, index])
+				setCheckedValues((prev) => [...prev, index]);
 			} else {
 				// Remove from checked values
-				setCheckedValues((prev) => prev.filter((v) => v !== index))
+				setCheckedValues((prev) => prev.filter((v) => v !== index));
 			}
 		} else if (type === 'radio') {
 			if (checked) {
 				// Set checked value to the selected radio button
-				setCheckedValues([index])
+				setCheckedValues([index]);
 			}
 		}
-	}
+	};
 
 	return (
 		<ul className="list-none p-0">
 			{options.map((option: string, index: number) => (
-				<li key={index} className="mb-2">
+				<li key={option} className="mb-2">
 					<label
 						className={clsx(
 							InputStyle,
@@ -73,20 +68,21 @@ export const AnswerOptions: FC<AnswerOptionsProps> = ({
 							disabled={disabled}
 						/>
 						<Markdown
-							children={option}
 							components={{
 								p({ node, className, children, ...props }) {
 									return (
-										<p className={clsx(className, 'my-0')} {...props}>
+										<p className={clsx(className, 'my-0!')} {...props}>
 											{children}
 										</p>
-									)
+									);
 								},
 							}}
-						/>
+						>
+							{option}
+						</Markdown>
 					</label>
 				</li>
 			))}
 		</ul>
-	)
-}
+	);
+};

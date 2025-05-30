@@ -1,7 +1,13 @@
 node_modules
 
 /.cache
-/build
 .env
+
+# React Router
+/.react-router/
+/build/
+
+# Vercel
+/.vercel/
 
 app/db.ts

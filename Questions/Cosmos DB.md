@@ -361,6 +361,7 @@ Answer: Same as SQL. Note: The `SELECT *` syntax is only valid if FROM clause ha
 Question: Given the following query, which option correctly selects all properties from items in the container?
 
 ```sql
+SELECT ?
 FROM c
 JOIN p IN c.phones
 ```

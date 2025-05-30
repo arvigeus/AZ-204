@@ -1,31 +1,14 @@
 {
   "files.exclude": {
-    "node_modules": true,
-    "*.log": true,
-    "dist": true,
-    ".env": true,
-    ".cache": true,
-    "vite-cache": true,
-    "*.tsbuildinfo": true
+    "quiz-app": true
   },
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.defaultFormatter": "biomejs.biome",
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
+    "source.fixAll.biome": "explicit",
+    "source.organizeImports.biome": "explicit"
   },
-  "eslint.validate": [
-    "javascript",
-    "javascriptreact",
-    "typescript",
-    "typescriptreact"
-  ],
-  "eslint.workingDirectories": [
-    {
-      "directory": "quiz-app",
-      "changeProcessCWD": true
-    }
-  ],
-  "eslint.rules.customizations": [
-    { "rule": "*", "fixable": true, "severity": "off" }
-  ]
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }

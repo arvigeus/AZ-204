@@ -1,18 +1,18 @@
-import clsx from 'clsx'
-import { lazy, Suspense } from 'react'
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-const CodeEditor = lazy(() => import('./CodeEditor'))
-import { Markdown } from '~/components/Markdown'
-import ghcolors from '~/lib/ghcolors'
+import clsx from 'clsx';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+
+import { Markdown } from '~/components/Markdown';
+import ghcolors from '~/lib/ghcolors';
+import CodeEditor from './CodeEditor';
 
 import {
 	isLanguageEditSupported,
 	isLanguageSupported,
-} from '~/lib/languageServer'
+} from '~/lib/languageServer';
 
 interface RichMarkdownProps {
-	interactive?: boolean
-	children: string
+	interactive?: boolean;
+	children: string;
 }
 
 export const RichMarkdown = ({ interactive, children }: RichMarkdownProps) => (
@@ -26,28 +26,28 @@ export const RichMarkdown = ({ interactive, children }: RichMarkdownProps) => (
 					>
 						{children}
 					</pre>
-				)
+				);
 			},
 			code({ className, children, ...props }) {
-				const match = /language-(\w+)/.exec(className || '')
+				const match = /language-(\w+)/.exec(className || '');
 
 				if (!match)
 					return (
 						<code {...props} className={className}>
 							{children}
 						</code>
-					)
+					);
 
-				let language = match[1] || ''
-				const code = String(children).replace(/\n$/, '') + '\n'
+				let language = match[1] || '';
+				const code = `${String(children).replace(/\n$/, '')}\n`;
 
 				// Fix language for highlighter
 				switch (language) {
 					case 'Dockerfile':
-						language = 'docker'
-						break
+						language = 'docker';
+						break;
 					default:
-						break
+						break;
 				}
 
 				const highlightedCode = (
@@ -56,31 +56,23 @@ export const RichMarkdown = ({ interactive, children }: RichMarkdownProps) => (
 						language={language}
 						wrapLongLines
 						codeTagProps={{
-							className: 'text-sm px-[1.5rem] py-[0.5rem]',
+							className: 'text-sm px-6 py-2',
 						}}
 					>
 						{code}
 					</SyntaxHighlighter>
-				)
+				);
 
 				if (interactive && isLanguageEditSupported(language))
-					return (
-						<Suspense fallback={highlightedCode}>
-							<CodeEditor value={code + '\n'} lang={language} />
-						</Suspense>
-					)
+					return <CodeEditor value={`${code}\n`} lang={language} />;
 
 				if (isLanguageSupported(language))
-					return (
-						<Suspense fallback={highlightedCode}>
-							<CodeEditor readOnly value={code + '\n'} lang={language} />
-						</Suspense>
-					)
+					return <CodeEditor readOnly value={`${code}\n`} lang={language} />;
 
-				return highlightedCode
+				return highlightedCode;
 			},
 		}}
 	>
 		{children}
 	</Markdown>
-)
+);

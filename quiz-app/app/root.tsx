@@ -1,4 +1,5 @@
-import { type LinksFunction } from '@remix-run/node'
+import highlight from 'highlight.js/styles/github.css?url';
+import type { LinksFunction } from 'react-router';
 import {
 	Link,
 	Links,
@@ -6,15 +7,13 @@ import {
 	Outlet,
 	Scripts,
 	// ScrollRestoration,
-} from '@remix-run/react'
-
-import highlight from 'highlight.js/styles/github.css?url'
-import stylesheet from '~/tailwind.css?url'
+} from 'react-router';
+import stylesheet from '~/tailwind.css?url';
 
 export const links: LinksFunction = () => [
 	{ rel: 'stylesheet', href: stylesheet },
 	{ rel: 'stylesheet', href: highlight },
-]
+];
 
 export default function App() {
 	return (
@@ -39,15 +38,15 @@ export default function App() {
 					sizes="16x16"
 					href="/favicon-16x16.png"
 				/>
-				<link rel="manifest" href="/site.webmanifest"></link>
+				<link rel="manifest" href="/site.webmanifest" />
 				<Meta />
 				<Links />
 			</head>
 			<body className="h-screen w-full bg-gray-100 text-gray-700 antialiased">
 				<div className="flex h-screen w-full justify-center bg-gray-100 pt-6 text-gray-700 antialiased">
 					<div className="flex w-full max-w-3xl flex-col justify-between p-3">
-						<main className="prose max-w-3xl flex-grow">
-							<h1 className="text-center text-5xl font-bold text-indigo-700">
+						<main className="prose max-w-3xl grow">
+							<h1 className="text-center font-bold text-5xl text-indigo-700">
 								<Link to="/">AZ-204 Quiz</Link>
 							</h1>
 							<div className="mt-6 w-full rounded-lg bg-white p-8 shadow-lg">
@@ -66,6 +65,8 @@ export default function App() {
 									rel="noreferrer"
 								>
 									<svg
+										role="img"
+										aria-label="GitHub"
 										xmlns="http://www.w3.org/2000/svg"
 										width="24"
 										height="24"
@@ -82,5 +83,5 @@ export default function App() {
 				<Scripts />
 			</body>
 		</html>
-	)
+	);
 }

@@ -1,0 +1,12 @@
+{
+  "folders": [
+    {
+      "name": "AZ-204",
+      "path": "."
+    },
+    {
+      "name": "Quiz App",
+      "path": "quiz-app"
+    }
+  ]
+}

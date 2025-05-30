@@ -1,4 +1,4 @@
-export type SupportedEditLanguage = 'cs' | 'ps' | 'docker' | 'jsonc' | 'tsql'
+export type SupportedEditLanguage = 'cs' | 'ps' | 'docker' | 'jsonc' | 'tsql';
 
 export type SupportedLanguage =
 	| 'csharp'
@@ -6,12 +6,12 @@ export type SupportedLanguage =
 	| 'Dockerfile'
 	| 'json'
 	| 'sql'
-	| SupportedEditLanguage
+	| SupportedEditLanguage;
 
 export function isLanguageEditSupported(
 	lang: string,
 ): lang is SupportedEditLanguage {
-	return ['cs', 'ps', 'docker', 'jsonc', 'tsql'].includes(lang.toLowerCase())
+	return ['cs', 'ps', 'docker', 'jsonc', 'tsql'].includes(lang.toLowerCase());
 }
 
 export function isLanguageSupported(
@@ -27,5 +27,5 @@ export function isLanguageSupported(
 		'json',
 		'sql',
 		'tsql',
-	].includes(lang.toLowerCase())
+	].includes(lang.toLowerCase());
 }

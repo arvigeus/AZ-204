@@ -178,6 +178,6 @@ const ghcolors: { [key: string]: React.CSSProperties } = {
 	italic: {
 		fontStyle: 'italic',
 	},
-}
+};
 
-export default ghcolors
+export default ghcolors;

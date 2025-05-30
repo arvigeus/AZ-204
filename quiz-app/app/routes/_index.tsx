@@ -1,105 +1,103 @@
+import clsx from 'clsx';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import type {
+	ActionFunctionArgs,
+	LoaderFunctionArgs,
+	MetaFunction,
+} from 'react-router';
 import {
-	json,
-	type ActionFunctionArgs,
-	type MetaFunction,
-	type LoaderFunctionArgs,
-} from '@remix-run/node'
-import {
-	useLoaderData,
-	useActionData,
-	useNavigation,
 	Form,
 	Link,
-} from '@remix-run/react'
-import clsx from 'clsx'
-import { useState, useMemo, useEffect, useRef } from 'react'
+	useActionData,
+	useLoaderData,
+	useNavigation,
+} from 'react-router';
 
-import { AnswerOptions } from '~/components/AnswerOptions'
-import { Button, LoadingButton, NextButton } from '~/components/Button'
-import { TextInput } from '~/components/Input'
-import { RichMarkdown } from '~/components/RichMarkdown'
-import { getQA, getQAById, topics } from '~/lib/qa'
+import { AnswerOptions } from '~/components/AnswerOptions';
+import { Button, LoadingButton, NextButton } from '~/components/Button';
+import { TextInput } from '~/components/Input';
+import { RichMarkdown } from '~/components/RichMarkdown';
+import { getQA, getQAById, topics } from '~/lib/qa';
 
 export const meta: MetaFunction = () => {
-	return [{ title: 'Developing Solutions for Microsoft Azure: Quiz' }]
-}
+	return [{ title: 'Developing Solutions for Microsoft Azure: Quiz' }];
+};
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-	const url = new URL(request.url)
-	const topic = url.searchParams.get('topic')
+	const url = new URL(request.url);
+	const topic = url.searchParams.get('topic');
 
-	const data = url.searchParams.has('id')
-		? getQAById(url.searchParams.get('id')!.toString())
-		: getQA(topic)
+	const id = url.searchParams.get('id');
+	const data = id != null ? getQAById(id) : getQA(topic);
 
 	if (!data)
 		throw new Response(null, {
 			status: 404,
 			statusText: 'Not Found',
-		})
+		});
 
-	return { data, topic }
-}
+	return { data, topic };
+};
 
 export const action = async ({ request }: ActionFunctionArgs) => {
-	const payload = await request.formData()
-	const topic = payload.get('topic')
+	const payload = await request.formData();
+	const topic = payload.get('topic');
 	// const id = payload.get("id");
 	const answered = new Set<number>(
 		payload
 			.get('answered')
 			?.toString()
 			?.split(',')
-			.map((i) => parseInt(i, 10)),
-	)
-	const data = getQA(topic?.toString(), answered)
-	return json(data)
-}
+			.map((i) => Number.parseInt(i, 10)),
+	);
+	const data = getQA(topic?.toString(), answered);
+	return data;
+};
 
 export default function Index() {
-	const loaderData = useLoaderData<typeof loader>()
-	const actionData = useActionData<typeof action>()
-	const navigation = useNavigation()
+	const loaderData = useLoaderData<typeof loader>();
+	const actionData = useActionData<typeof action>();
+	const navigation = useNavigation();
 
-	const [checkedValues, setCheckedValues] = useState<number[]>([])
-	const [showAnswer, setShowAnswer] = useState(false)
+	const [checkedValues, setCheckedValues] = useState<number[]>([]);
+	const [showAnswer, setShowAnswer] = useState(false);
 
-	const data = actionData || loaderData.data
+	const data = actionData || loaderData.data;
 
 	useEffect(() => {
-		const currentURL = new URL(window.location.href)
-		const searchParams = new URLSearchParams(currentURL.search)
+		const currentURL = new URL(window.location.href);
+		const searchParams = new URLSearchParams(currentURL.search);
 
-		searchParams.delete('index')
-		searchParams.set('id', data.id)
-		currentURL.search = searchParams.toString()
+		searchParams.delete('index');
+		searchParams.set('id', data.id);
+		currentURL.search = searchParams.toString();
 
-		window.history.replaceState({}, null!, currentURL.toString())
-	})
+		window.history.replaceState({}, data.id, currentURL.toString());
+	});
 
-	const answerSet = useRef(new Set<number>())
+	const answerSet = useRef(new Set<number>());
 
 	const answered = useMemo(() => {
-		answerSet.current.delete(data.index)
-		answerSet.current.add(data.index)
-		return Array.from(answerSet.current).join(',')
-	}, [data.index])
+		answerSet.current.delete(data.index);
+		answerSet.current.add(data.index);
+		return Array.from(answerSet.current).join(',');
+	}, [data.index]);
 
 	const handleSubmit = () => {
-		setCheckedValues([])
-		setShowAnswer(false)
+		setCheckedValues([]);
+		setShowAnswer(false);
 		// window.scrollTo(0, 0);
-		return false
-	}
+		return false;
+	};
 
-	const isLoading = navigation.state === 'submitting'
+	const isLoading = navigation.state === 'submitting';
 	const isCorrectlyAnswered =
 		data.answerIndexes &&
 		data.answerIndexes.length > 0 &&
-		data.answerIndexes.length == checkedValues.length &&
-		data.answerIndexes.every((value) => checkedValues.includes(value))
+		data.answerIndexes.length === checkedValues.length &&
+		data.answerIndexes.every((value) => checkedValues.includes(value));
 
-	const buttonColor = showAnswer || isCorrectlyAnswered ? 'green' : 'blue'
+	const buttonColor = showAnswer || isCorrectlyAnswered ? 'green' : 'blue';
 
 	return (
 		<Form method="post" onSubmit={handleSubmit}>
@@ -108,11 +106,13 @@ export default function Index() {
 					{data.topic}
 				</Link>{' '}
 				<Link
-					to={`/topics`}
+					to={'/topics'}
 					title="More topics"
-					className="absolute -right-4 -top-4 scale-75 no-underline"
+					className="-right-4 -top-4 absolute scale-75 no-underline"
 				>
 					<svg
+						role="img"
+						aria-label="Open book"
 						width="64px"
 						height="64px"
 						viewBox="0 0 64 64"
@@ -153,7 +153,7 @@ export default function Index() {
 			<input type="hidden" name="type" value={data.topic} />
 			<div className="text-2x">
 				<div className="-mb-4 font-bold">Question: </div>
-				<RichMarkdown interactive children={data.question} />
+				<RichMarkdown interactive>{data.question}</RichMarkdown>
 			</div>
 			{data.options && data.options.length > 0 && (
 				<AnswerOptions
@@ -167,7 +167,7 @@ export default function Index() {
 				/>
 			)}
 			{data.answerIndexes && data.answerIndexes.length > 1 && (
-				<div className="text-xs italic text-gray-400">
+				<div className="text-gray-400 text-xs italic">
 					Note: This question has more than one correct answer
 				</div>
 			)}
@@ -177,12 +177,12 @@ export default function Index() {
 
 			<div
 				className={clsx(
-					'mt-4 overflow-hidden transition-[opacity] duration-500 ease-in-out',
+					'mt-4 overflow-hidden transition-opacity duration-500 ease-in-out',
 					showAnswer ? 'h-auto opacity-100' : 'h-0 opacity-0',
 				)}
 			>
 				<div className="font-bold">Answer: </div>
-				<RichMarkdown children={data.answer} />
+				<RichMarkdown>{data.answer}</RichMarkdown>
 			</div>
 			<div className="mt-12 flex justify-between gap-4">
 				<Button
@@ -197,9 +197,11 @@ export default function Index() {
 				<a
 					href={`/report?id=${data.id}`}
 					target="_blank"
-					className="inline-flex items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition-all duration-200 hover:border-gray-400 hover:bg-gray-50 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+					className="inline-flex items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 font-medium text-gray-700 text-sm shadow-xs transition-all duration-200 hover:border-gray-400 hover:bg-gray-50 hover:shadow-md focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+					rel="noreferrer"
 				>
 					<svg
+						role="alert"
 						width="25px"
 						height="25px"
 						fill="none"
@@ -232,5 +234,5 @@ export default function Index() {
 				)}
 			</div>
 		</Form>
-	)
+	);
 }
