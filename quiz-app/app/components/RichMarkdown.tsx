@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { Suspense, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 
 import { Markdown } from '~/components/Markdown';
@@ -9,6 +9,7 @@ import {
 	isLanguageEditSupported,
 	isLanguageSupported,
 } from '~/lib/languageServer';
+import type { CodeEditorProps } from './CodeEditor';
 
 interface RichMarkdownProps {
 	interactive?: boolean;
@@ -17,7 +18,8 @@ interface RichMarkdownProps {
 
 // Dynamic import hook for client-only components
 const useCodeEditor = () => {
-	const [CodeEditor, setCodeEditor] = useState<React.ComponentType<any> | null>(null);
+	const [CodeEditor, setCodeEditor] =
+		useState<React.ComponentType<CodeEditorProps> | null>(null);
 
 	useEffect(() => {
 		import('./CodeEditor').then((module) => {
@@ -67,16 +69,17 @@ export const RichMarkdown = ({ interactive, children }: RichMarkdownProps) => {
 					}
 
 					const highlightedCode = (
-						<div className='pt-[0.6rem]'>
+						<div className="pt-[0.6rem]">
 							<SyntaxHighlighter
 								style={ghcolors}
 								language={language}
 								wrapLongLines
 								codeTagProps={{
-									className: 'text-[14px] leading-[1.38] font-[monospace] px-[1.1rem] block text-nowrap!',
+									className:
+										'text-[14px] leading-[1.38] font-[monospace] px-[1.1rem] block text-nowrap!',
 								}}
 							>
-								{code + '\n\n'}
+								{`${code}\n\n`}
 							</SyntaxHighlighter>
 						</div>
 					);
@@ -88,7 +91,9 @@ export const RichMarkdown = ({ interactive, children }: RichMarkdownProps) => {
 						}
 
 						if (isLanguageSupported(language)) {
-							return <CodeEditor readOnly value={`${code}\n`} lang={language} />;
+							return (
+								<CodeEditor readOnly value={`${code}\n`} lang={language} />
+							);
 						}
 					}
 
