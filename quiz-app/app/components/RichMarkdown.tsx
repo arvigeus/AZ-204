@@ -68,16 +68,16 @@ export const RichMarkdown = ({ interactive, children }: RichMarkdownProps) => {
 
 					const highlightedCode = (
 						<div className='pt-[0.6rem]'>
-						<SyntaxHighlighter
-							style={ghcolors}
-							language={language}
-							wrapLongLines
-							codeTagProps={{
-								className: 'text-[14px] leading-[1.38] font-[monospace] px-[1.1rem] block text-nowrap!',
-							}}
-						>
-							{code + '\n'}
-						</SyntaxHighlighter>
+							<SyntaxHighlighter
+								style={ghcolors}
+								language={language}
+								wrapLongLines
+								codeTagProps={{
+									className: 'text-[14px] leading-[1.38] font-[monospace] px-[1.1rem] block text-nowrap!',
+								}}
+							>
+								{code + '\n\n'}
+							</SyntaxHighlighter>
 						</div>
 					);
 

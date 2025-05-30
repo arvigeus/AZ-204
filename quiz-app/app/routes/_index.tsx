@@ -84,6 +84,7 @@ export default function Index() {
 	}, [data.index]);
 
 	const handleSubmit = () => {
+		window.history.pushState({}, data.id, window.location.href);
 		setCheckedValues([]);
 		setShowAnswer(false);
 		// window.scrollTo(0, 0);
