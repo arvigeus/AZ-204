@@ -2,15 +2,14 @@
 const ghcolors: { [key: string]: React.CSSProperties } = {
 	'code[class*="language-"]': {
 		color: '#393A34',
-		fontFamily:
-			'"Consolas", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace',
+		fontFamily: 'monospace',
 		direction: 'ltr',
 		textAlign: 'left',
 		whiteSpace: 'pre',
 		wordSpacing: 'normal',
 		wordBreak: 'normal',
 		fontSize: '.9em',
-		lineHeight: '1.2em',
+		lineHeight: '1em',
 		MozTabSize: '4',
 		OTabSize: '4',
 		tabSize: '4',
@@ -21,15 +20,14 @@ const ghcolors: { [key: string]: React.CSSProperties } = {
 	},
 	'pre[class*="language-"]': {
 		color: '#393A34',
-		fontFamily:
-			'"Consolas", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace',
+		fontFamily: 'monospace',
 		direction: 'ltr',
 		textAlign: 'left',
 		whiteSpace: 'pre',
 		wordSpacing: 'normal',
 		wordBreak: 'normal',
 		fontSize: '.9em',
-		lineHeight: '1.2em',
+		lineHeight: '1em',
 		MozTabSize: '4',
 		OTabSize: '4',
 		tabSize: '4',
@@ -78,8 +76,7 @@ const ghcolors: { [key: string]: React.CSSProperties } = {
 		border: '1px solid #dddddd',
 	},
 	comment: {
-		color: '#999988',
-		fontStyle: 'italic',
+		color: '#6a737d',
 	},
 	prolog: {
 		color: '#999988',
@@ -97,7 +94,7 @@ const ghcolors: { [key: string]: React.CSSProperties } = {
 		opacity: '.7',
 	},
 	string: {
-		color: '#e3116c',
+		color: '#032f62',
 	},
 	'attr-value': {
 		color: '#e3116c',
@@ -139,20 +136,22 @@ const ghcolors: { [key: string]: React.CSSProperties } = {
 		color: '#36acaa',
 	},
 	atrule: {
-		color: '#00a4db',
+		color: '#d73a49',
 	},
 	keyword: {
-		color: '#00a4db',
+		color: '#d73a49',
+	},
+	'class-name': {
+		color: '#d73a49',
 	},
 	'attr-name': {
-		color: '#00a4db',
+		color: '#d73a49',
 	},
 	'.language-autohotkey .token.selector': {
-		color: '#00a4db',
+		color: '#d73a49',
 	},
 	function: {
-		color: '#9a050f',
-		fontWeight: 'bold',
+		color: '#d73a49',
 	},
 	deleted: {
 		color: '#9a050f',

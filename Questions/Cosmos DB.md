@@ -382,36 +382,36 @@ Question: Given the following data:
 
 ```json
 [
-  {
-    "id": "6e9f51c1-6b45-440f-af5a-2abc96cd083d",
-    "categoryName": "Sleeping Bags",
-    "name": "Vareno Sleeping Bag (6') Turmeric",
-    "sku": "vareno-sleeping-bag-72109",
-    "price": 120,
-    "closeout": true,
-    "manufacturer": {
-      "name": "Vareno"
-    },
-    "tags": [{ "name": "Color Group: Yellow" }, { "name": "Bag Shape: Mummy" }]
-  },
-  {
-    "id": "12345",
-    "categoryName": "Surfboards",
-    "name": "Teapo Surfboard (6'10\") Grape",
-    "sku": "teapo-surfboard-72109",
-    "price": 500,
-    "closeout": false,
-    "manufacturer": {
-      "name": "Taepo"
-    },
-    "tags": [{ "name": "Color Group: Purple" }]
-  }
+	{
+		"id": "6e9f51c1-6b45-440f-af5a-2abc96cd083d",
+		"categoryName": "Sleeping Bags",
+		"name": "Vareno Sleeping Bag (6') Turmeric",
+		"sku": "vareno-sleeping-bag-72109",
+		"price": 120,
+		"closeout": true,
+		"manufacturer": {
+			"name": "Vareno"
+		},
+		"tags": [{ "name": "Color Group: Yellow" }, { "name": "Bag Shape: Mummy" }]
+	},
+	{
+		"id": "12345",
+		"categoryName": "Surfboards",
+		"name": "Teapo Surfboard (6'10\") Grape",
+		"sku": "teapo-surfboard-72109",
+		"price": 500,
+		"closeout": false,
+		"manufacturer": {
+			"name": "Taepo"
+		},
+		"tags": [{ "name": "Color Group: Purple" }]
+	}
 ]
 ```
 
 What result this query will produce:
 
-```Cosmos DB
+```sql
 SELECT {
   "name": p.name,
   "sku": p.sku,
@@ -423,7 +423,7 @@ WHERE p.sku = "teapo-surfboard-72109"
 
 ```jsonc
 [
-  // Result here
+	// Result here
 ]
 ```
 
@@ -431,13 +431,13 @@ Answer:
 
 ```json
 [
-  {
-    "product": {
-      "name": "Teapo Surfboard (6'10\") Grape",
-      "sku": "teapo-surfboard-72109",
-      "vendor": "Taepo"
-    }
-  }
+	{
+		"product": {
+			"name": "Teapo Surfboard (6'10\") Grape",
+			"sku": "teapo-surfboard-72109",
+			"vendor": "Taepo"
+		}
+	}
 ]
 ```
 
@@ -447,17 +447,17 @@ Question: Given the following data:
 
 ```json
 [
-  {
-    "id": "6e9f51c1-6b45-440f-af5a-2abc96cd083d",
-    "categoryName": "Sleeping Bags",
-    "name": "Vareno Sleeping Bag (6') Turmeric",
-    "price": 120,
-    "closeout": true,
-    "manufacturer": {
-      "name": "Vareno"
-    },
-    "tags": [{ "name": "Color Group: Yellow" }, { "name": "Bag Shape: Mummy" }]
-  }
+	{
+		"id": "6e9f51c1-6b45-440f-af5a-2abc96cd083d",
+		"categoryName": "Sleeping Bags",
+		"name": "Vareno Sleeping Bag (6') Turmeric",
+		"price": 120,
+		"closeout": true,
+		"manufacturer": {
+			"name": "Vareno"
+		},
+		"tags": [{ "name": "Color Group: Yellow" }, { "name": "Bag Shape: Mummy" }]
+	}
 ]
 ```
 
@@ -465,11 +465,11 @@ Write a query that will return this result, filtering by `teapo-surfboard-72109`
 
 ```json
 [
-  {
-    "name": "Teapo Surfboard (6'10\") Grape",
-    "sku": "teapo-surfboard-72109",
-    "vendor": "Taepo"
-  }
+	{
+		"name": "Teapo Surfboard (6'10\") Grape",
+		"sku": "teapo-surfboard-72109",
+		"vendor": "Taepo"
+	}
 ]
 ```
 
@@ -504,7 +504,7 @@ Answer: Cosmos DB internally stores data in a JSON-like format, regardless of th
 
 Question: When executing a query in Azure Cosmos DB utilizing the Table API as follows:
 
-```Cosmos DB
+```sql
 SELECT *
 FROM Invoices i
 WHERE i.id =1
@@ -879,20 +879,20 @@ Answer:
 
 ```js
 function validateToDoItemTimestamp() {
-  var context = getContext();
-  var request = context.getRequest();
+	var context = getContext();
+	var request = context.getRequest();
 
-  // item to be created in the current operation
-  var itemToCreate = request.getBody();
+	// item to be created in the current operation
+	var itemToCreate = request.getBody();
 
-  // validate properties
-  if (!("timestamp" in itemToCreate)) {
-    var ts = new Date();
-    itemToCreate["timestamp"] = ts.getTime();
-  }
+	// validate properties
+	if (!('timestamp' in itemToCreate)) {
+		var ts = new Date();
+		itemToCreate['timestamp'] = ts.getTime();
+	}
 
-  // update the item that will be created
-  request.setBody(itemToCreate);
+	// update the item that will be created
+	request.setBody(itemToCreate);
 }
 ```
 
@@ -931,11 +931,11 @@ Question: Create a stored procedure that creates a document.
 
 ```js
 var createDocumentStoredProc = {
-  id: "createMyDocument",
-  // This stored procedure creates a new item in the Azure Cosmos container
-  body: function createMyDocument(documentToCreate) {
-    // Code here
-  },
+	id: 'createMyDocument',
+	// This stored procedure creates a new item in the Azure Cosmos container
+	body: function createMyDocument(documentToCreate) {
+		// Code here
+	},
 };
 ```
 
@@ -943,29 +943,29 @@ Answer:
 
 ```js
 var createDocumentStoredProc = {
-  id: "createMyDocument",
-  // This stored procedure creates a new item in the Azure Cosmos container
-  body: function createMyDocument(documentToCreate) {
-    var context = getContext();
-    var collection = context.getCollection();
+	id: 'createMyDocument',
+	// This stored procedure creates a new item in the Azure Cosmos container
+	body: function createMyDocument(documentToCreate) {
+		var context = getContext();
+		var collection = context.getCollection();
 
-    // Async 'createDocument' operation, depends on JavaScript callbacks
-    // returns true if creation was successful
-    var accepted = collection.createDocument(
-      collection.getSelfLink(),
-      documentToCreate,
-      // Callback function with error and created document parameters
-      function (err, documentCreated) {
-        // Handle or throw error inside the callback
-        if (err) throw new Error("Error" + err.message);
-        // Return the id of the newly created document
-        context.getResponse().setBody(documentCreated.id);
-      }
-    );
+		// Async 'createDocument' operation, depends on JavaScript callbacks
+		// returns true if creation was successful
+		var accepted = collection.createDocument(
+			collection.getSelfLink(),
+			documentToCreate,
+			// Callback function with error and created document parameters
+			function (err, documentCreated) {
+				// Handle or throw error inside the callback
+				if (err) throw new Error('Error' + err.message);
+				// Return the id of the newly created document
+				context.getResponse().setBody(documentCreated.id);
+			}
+		);
 
-    // If the document creation was not accepted, return
-    if (!accepted) return;
-  },
+		// If the document creation was not accepted, return
+		if (!accepted) return;
+	},
 };
 ```
 
@@ -992,11 +992,11 @@ You have to define a policy for this:
 
 ```jsonc
 {
-  "automatic": true,
-  "indexingMode": "Consistent",
-  "includedPaths": [{ "path": "/*" }],
-  "excludedPaths": []
-  /* Code here */
+	"automatic": true,
+	"indexingMode": "Consistent",
+	"includedPaths": [{ "path": "/*" }],
+	"excludedPaths": []
+	/* Code here */
 }
 ```
 
@@ -1004,22 +1004,22 @@ Answer: Queries that have an `ORDER BY` clause with two or more properties requi
 
 ```json
 {
-  "automatic": true,
-  "indexingMode": "Consistent",
-  "includedPaths": [{ "path": "/*" }],
-  "excludedPaths": [],
-  "compositeIndexes": [
-    [
-      {
-        "path": "/city",
-        "order": "ascending"
-      },
-      {
-        "path": "/customername",
-        "order": "descending"
-      }
-    ]
-  ]
+	"automatic": true,
+	"indexingMode": "Consistent",
+	"includedPaths": [{ "path": "/*" }],
+	"excludedPaths": [],
+	"compositeIndexes": [
+		[
+			{
+				"path": "/city",
+				"order": "ascending"
+			},
+			{
+				"path": "/customername",
+				"order": "descending"
+			}
+		]
+	]
 }
 ```
 
