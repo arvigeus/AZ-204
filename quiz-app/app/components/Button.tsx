@@ -8,7 +8,7 @@ import {
 } from 'react';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-	bgColor: 'blue' | 'green';
+	bgColor: 'blue' | 'green' | 'gray';
 }
 
 const btnStyle =
@@ -20,6 +20,8 @@ const getColor = (color: ButtonProps['bgColor']) => {
 			return 'bg-blue-600 hover:bg-blue-700 hover:shadow-md border border-blue-700 text-white focus:ring-blue-500';
 		case 'green':
 			return 'bg-green-600 hover:bg-green-700 hover:shadow-md border border-green-700 text-white focus:ring-green-500';
+		case 'gray':
+			return 'bg-gray-300 hover:bg-gray-300 hover:shadow-md border border-gray-300 text-white';
 		default:
 			return '';
 	}
@@ -40,12 +42,7 @@ export const LoadingButton: FC<LoadingButtonProps> = ({
 	className,
 	...props
 }) => {
-	const style = clsx(
-		btnStyle,
-		'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:shadow-md focus:ring-indigo-500',
-		'rounded-lg',
-		className,
-	);
+	const style = clsx(btnStyle, getColor('gray'), 'rounded-lg', className);
 	return (
 		<button disabled type="button" className={style} {...props}>
 			<svg
