@@ -198,7 +198,7 @@ export default function Index() {
 				<a
 					href={`/report?id=${data.id}`}
 					target="_blank"
-					className="inline-flex items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 font-medium text-gray-700 text-sm shadow-xs transition-all duration-200 hover:border-gray-400 hover:bg-gray-50 hover:shadow-md focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+					className="-translate-x-1/2 absolute left-1/2 inline-flex transform items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 font-medium text-gray-700 text-sm shadow-xs transition-all duration-200 hover:border-gray-400 hover:bg-gray-50 hover:shadow-md focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
 					rel="noreferrer"
 				>
 					<svg
