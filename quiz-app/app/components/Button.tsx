@@ -12,7 +12,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const btnStyle =
-	'flex items-center justify-center text-center font-medium text-xs sm:text-sm px-2.5 py-1 sm:px-5 sm:py-2.5 shadow-xs transition-all duration-200 focus:outline-hidden focus:ring-2 focus:ring-offset-2';
+	'flex items-center justify-center text-center font-medium text-xs sm:text-sm px-2.5 py-4 sm:px-5 sm:py-2.5 shadow-xs transition-all duration-200 focus:outline-hidden focus:ring-2 focus:ring-offset-2';
 
 const getColor = (color: ButtonProps['bgColor']) => {
 	switch (color) {
@@ -67,6 +67,7 @@ export const LoadingButton: FC<LoadingButtonProps> = ({
 };
 
 type NextButtonProps = {
+	className?: string;
 	bgColor: ButtonProps['bgColor'];
 	text: string;
 	topic?: string | undefined | null;
@@ -74,6 +75,7 @@ type NextButtonProps = {
 };
 
 export const NextButton: FC<NextButtonProps> = ({
+	className,
 	bgColor,
 	text,
 	topic,
@@ -116,6 +118,7 @@ export const NextButton: FC<NextButtonProps> = ({
 			className={clsx(
 				'flex h-auto rounded-lg shadow-xs transition-all duration-200 hover:shadow-md',
 				'focus-within:ring-2 focus-within:ring-offset-2',
+				className,
 				getFocusRing(bgColor),
 			)}
 		>
@@ -124,7 +127,7 @@ export const NextButton: FC<NextButtonProps> = ({
 				name="topic"
 				value={topic ?? ''}
 				className={clsx(
-					'flex h-full items-center justify-center rounded-l-lg border border-r-0 focus:z-10 focus:outline-hidden',
+					'flex h-full w-full items-center justify-center rounded-l-lg border border-r-0 py-4 focus:z-10 focus:outline-hidden',
 					'px-2.5 py-1 font-medium text-xs sm:px-5 sm:py-2.5 sm:text-sm',
 					getMainButtonColor(bgColor),
 				)}

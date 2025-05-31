@@ -185,9 +185,10 @@ export default function Index() {
 				<div className="font-bold">Answer: </div>
 				<RichMarkdown>{data.answer}</RichMarkdown>
 			</div>
-			<div className="mt-12 flex justify-between gap-4">
+			<div className="tems-center mt-12 grid grid-cols-1 gap-y-4 sm:grid-cols-3">
 				<Button
 					type="button"
+					className="sm:justify-self-start"
 					disabled={isLoading}
 					onClick={() => setShowAnswer((ans) => !ans)}
 					bgColor={isLoading ? 'gray' : buttonColor}
@@ -197,7 +198,7 @@ export default function Index() {
 				<a
 					href={`/report?id=${data.id}`}
 					target="_blank"
-					className="-translate-x-1/2 absolute left-1/2 inline-flex transform items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 font-medium text-gray-700 text-sm shadow-xs transition-all duration-200 hover:border-gray-400 hover:bg-gray-50 hover:shadow-md focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+					className="inline-flex transform items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 font-medium text-gray-700 text-sm shadow-xs transition-all duration-200 hover:border-gray-400 hover:bg-gray-50 hover:shadow-md focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:justify-self-center"
 					rel="noreferrer"
 				>
 					<svg
@@ -223,9 +224,10 @@ export default function Index() {
 					Report a problem
 				</a>
 				{isLoading ? (
-					<LoadingButton text="Loading" />
+					<LoadingButton className="sm:justify-self-end" text="Loading" />
 				) : (
 					<NextButton
+						className="sm:justify-self-end"
 						bgColor={buttonColor}
 						text="Next"
 						topic={loaderData.topic}
