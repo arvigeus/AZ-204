@@ -17,7 +17,7 @@ import { AnswerOptions } from '~/components/AnswerOptions';
 import { Button, LoadingButton, NextButton } from '~/components/Button';
 import { TextInput } from '~/components/Input';
 import { RichMarkdown } from '~/components/RichMarkdown';
-import { getQA, getQAById, topics } from '~/lib/qa';
+import { type Question, getQA, getQAById, topics } from '~/lib/qa';
 
 export const meta: MetaFunction = () => {
 	return [{ title: 'Developing Solutions for Microsoft Azure: Quiz' }];
@@ -57,21 +57,15 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 export default function Index() {
 	const loaderData = useLoaderData<typeof loader>();
 	const actionData = useActionData<typeof action>();
-	const navigation = useNavigation();
-
-	const [checkedValues, setCheckedValues] = useState<number[]>([]);
-	const [showAnswer, setShowAnswer] = useState(false);
 
 	const data = actionData || loaderData.data;
 
 	useEffect(() => {
 		const currentURL = new URL(window.location.href);
 		const searchParams = new URLSearchParams(currentURL.search);
-
 		searchParams.delete('index');
 		searchParams.set('id', data.id);
 		currentURL.search = searchParams.toString();
-
 		window.history.replaceState({}, data.id, currentURL.toString());
 	});
 
@@ -83,11 +77,32 @@ export default function Index() {
 		return Array.from(answerSet.current).join(',');
 	}, [data.index]);
 
+	return (
+		<QuestionForm
+			key={data.id}
+			data={data}
+			answered={answered}
+			topic={loaderData.topic}
+		/>
+	);
+}
+
+function QuestionForm({
+	data,
+	answered,
+	topic,
+}: {
+	data: Question;
+	answered: string;
+	topic: string | null;
+}) {
+	const [checkedValues, setCheckedValues] = useState<number[]>([]);
+	const [showAnswer, setShowAnswer] = useState(false);
+	const navigation = useNavigation();
+
 	const handleSubmit = () => {
 		window.history.pushState({}, data.id, window.location.href);
-		setCheckedValues([]);
-		setShowAnswer(false);
-		// window.scrollTo(0, 0);
+		window.scrollTo(0, 0);
 		return false;
 	};
 
@@ -230,7 +245,7 @@ export default function Index() {
 						className="sm:justify-self-end"
 						bgColor={buttonColor}
 						text="Next"
-						topic={loaderData.topic}
+						topic={topic}
 						entries={topics}
 					/>
 				)}

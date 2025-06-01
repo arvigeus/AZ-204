@@ -70,7 +70,7 @@ type NextButtonProps = {
 	className?: string;
 	bgColor: ButtonProps['bgColor'];
 	text: string;
-	topic?: string | undefined | null;
+	topic?: string | null;
 	entries: string[];
 };
 

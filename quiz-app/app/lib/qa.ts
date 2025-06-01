@@ -4,7 +4,7 @@ import type { QAPair } from '~/types/QAPair';
 export { topics } from '~/db';
 export { data };
 
-type Question = QAPair & { index: number };
+export type Question = QAPair & { index: number };
 
 export const getQA = (
 	topic?: string | null | undefined,
