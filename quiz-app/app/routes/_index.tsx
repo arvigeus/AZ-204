@@ -102,7 +102,7 @@ function QuestionForm({
 
 	const handleSubmit = () => {
 		window.history.pushState({}, data.id, window.location.href);
-		window.scrollTo(0, 0);
+		window.scrollTo({ top: 0, behavior: 'smooth' });
 		return false;
 	};
 
