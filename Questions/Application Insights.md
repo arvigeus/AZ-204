@@ -447,19 +447,19 @@ Question: You instrument an ASP.NET Core app using OpenTelemetry. You want to tr
 
 Which span kinds should you explicitly use?
 
-- [ ] `Server`
-- [ ] `Client`
+- [x] `Server`
+- [x] `Client`
 - [ ] `Producer`
 - [ ] `Internal`
 - [ ] `Consumer`
 
 Answer:
 
-- `Server` for incoming HTTP requests
-- `Client` for outbound calls (e.g. to the payment gateway)
-- `Producer` is for message sending
-- `Internal` is for in-process, not I/O
-- `Consumer` is for receiving from queues
+- ✅ `Server` for incoming HTTP requests
+- ✅ `Client` for outbound calls (e.g. to the payment gateway)
+- ❌ `Producer` is for message sending
+- ❌ `Internal` is for in-process, not I/O
+- ❌ `Consumer` is for receiving from queues
 
 ---
 
