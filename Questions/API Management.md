@@ -161,18 +161,31 @@ Question: An API is integrated into an Azure API Management (APIM) gateway and i
 
 Answer: Header-based versioning uses custom HTTP headers to determine the version of the API to be accessed. This allows different versions of the API to be accessed through the same URL.
 
+---
+
 Question: You establish an API Management (APIM) gateway and incorporate an existing App Services API app within it. Your goal is to limit each client application to a maximum of 1000 calls to the API on an hourly basis.". Which policies could achieve this requirement?
 
-- [x] `<rate-limit-by-key calls="1000" renewal-period="3600" counter-key="@(context.Subscription.Id)" />`
+- [ ] `<rate-limit-by-key calls="1000" renewal-period="3600" counter-key="@(context.Subscription.Id)" />`
+- [x] `<rate-limit-by-key calls="80" renewal-period="300" counter-key="@(context.Subscription.Id)" />`
 - [ ] `<rate-limit-by-key calls="1000" renewal-period="60" counter-key="@(context.Subscription.Id)" />`
 - [ ] `<rate-limit-by-key calls="1000" renewal-period="3600" />`
+- [ ] `<rate-limit-by-key calls="80" renewal-period="5" />`
 - [ ] `<rate-limit-by-key calls="1000" renewal-period="60" />`
 - [x] `<quota-by-key calls="1000" renewal-period="3600" counter-key="@(context.Subscription.Id)" />`
 - [ ] `<quota-by-key calls="1000" renewal-period="60" counter-key="@(context.Subscription.Id)" />`
+- [ ] `<quota-by-key calls="15" renewal-period="60" counter-key="@(context.Subscription.Id)" />`
 - [ ] `<quota-by-key calls="1000" renewal-period="3600" />`
 - [ ] `<quota-by-key calls="1000" renewal-period="60" />`
+- [ ] `<quota-by-key calls="15" renewal-period="60" />`
 
-Answer: `rate-limit-by-key` and `quota-by-key` can limit numbers of requests.
+Answer: To enforce a per-client limit of **1000 API calls per hour**, a combination of [rate-limit-by-key](https://learn.microsoft.com/en-us/azure/api-management/rate-limit-by-key-policy) and [quota-by-key](https://learn.microsoft.com/en-us/azure/api-management/quota-by-key-policy) policies is required:
+
+- `rate-limit-by-key` is used to control short-term bursts. However, this policy has a **maximum renewal period of 300 seconds (5 minutes)**. To approximate an hourly rate, the hour is divided into 12 intervals. By allowing **80 calls per 5 minutes**, the effective cap becomes 960 calls per hour, which satisfies the requirement of **not exceeding** 1000 calls/hour.
+- `quota-by-key` sets a hard cap on total usage. This policy allows a **minimum renewal period of 300 seconds**, so setting it to **1000 calls per 3600 seconds (1 hour)** provides a strict upper boundary per client.
+
+`counter-key` is required if you want the policy to apply per client (e.g., per subscription, per user, per IP). If you omit counter-key, the policy applies globally to all clients combined, which is rarely useful for rate-limiting or quotas in multi-tenant APIs.
+
+Together, these policies ensure both **rate smoothing** and **strict quota enforcement**. All other options either violate APIM policy constraints (e.g., invalid renewal periods), omit required keys, or fail to distribute traffic safely within allowed limits.
 
 ---
 
