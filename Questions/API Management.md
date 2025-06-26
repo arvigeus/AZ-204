@@ -46,7 +46,7 @@ Answer: The key can be included in the request header as "Ocp-Apim-Subscription-
 
 ---
 
-Question: What rule should be used to cache this URL: `https://myapi.azure-api.net/items/123456`?
+Question: What rule should be used to serve this URL from cache: `https://myapi.azure-api.net/items/123456`?
 
 - [x] `<cache-lookup><vary-by-query-parameter /></cache-lookup>`
 - [ ] `<cache-lookup><vary-by-query-parameter>itemId</vary-by-query-parameter></cache-lookup>`
@@ -56,12 +56,12 @@ Question: What rule should be used to cache this URL: `https://myapi.azure-api.n
 - [ ] `<cache-lookup-value key="items" />`
 - [ ] `<cache-lookup-value value="items" />`
 
-Answer: When URL has no parameters to cache on, the whole URL is used (empty `vary-by-query-parameter`).  
-`itemId` does not exist. `items` is not a valid query parameter. `cache-lookup-value` is for retrieving cached value by name.
+Answer: This URL has no query parameters, so you use an empty `<vary-by-query-parameter />` to cache based on the full path.  
+`itemId` and `items` are invalid here, and `cache-lookup-value` is not applicable - it's for retrieving named values from the cache directly.
 
 ---
 
-Question: What rule should be used to cache this URL: `https://myapi.azure-api.net/items?id=123456`?
+Question: What rule should be used to serve this URL from cache: `https://myapi.azure-api.net/items?id=123456`?
 
 - [ ] `<cache-lookup><vary-by-query-parameter>items</vary-by-query-parameter></cache-lookup>`
 - [x] `<cache-lookup><vary-by-query-parameter>id</vary-by-query-parameter></cache-lookup>`
@@ -70,12 +70,12 @@ Question: What rule should be used to cache this URL: `https://myapi.azure-api.n
 - [ ] `<cache-lookup-value key="items" />`
 - [ ] `<cache-lookup-value value="items" />`
 
-Answer: Use `id` to store the value.  
+Answer: The URL has a query parameter `id`. To cache per distinct ID, you must vary by `id`.  
 `items` is not valid query parameter. `cache-lookup-value` is for retrieving cached value by name.
 
 ---
 
-Question: What rule should be used to cache this URL: `https://myapi.azure-api.net/me`?
+Question: What rule should be used to serve this URL from cache: `https://myapi.azure-api.net/me`?
 
 - [x] `<cache-lookup><vary-by-header>Authorization</vary-by-header></cache-lookup>`
 - [ ] `<cache-lookup><vary-by-query-parameter /></cache-lookup>`
@@ -85,7 +85,8 @@ Question: What rule should be used to cache this URL: `https://myapi.azure-api.n
 - [ ] `<cache-lookup-value key="" />`
 - [ ] `<cache-lookup-value value="" />`
 
-Answer: This looks like user endpoint, `Authorization` header could be used.
+Answer: This looks like a user-specific endpoint. The response is typically user-dependent, and the `Authorization` header is often used to distinguish identities.  
+So, vary the cache by `Authorization` header. The rest of the options are irrelevant or malformed.
 
 ---
 
