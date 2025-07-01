@@ -185,12 +185,13 @@ Question: Which of the following permissions require admin consent?
 
 - [x] `AppCatalog.Submit`
 - [x] `BusinessScenarioConfig.Read.OwnedBy`
-- [x] `Calendars.ReadBasic`
+- [x] `Calendars.ReadBasic.All`
 - [ ] `Calendars.Read.Shared`
 - [ ] `Users.Read`
 - [x] `Users.Read.All`
 
-Answer: Rule of thumb - everything ending with ".All".
+Answer: Generally, permissions ending in `.All` or involving org-wide data require admin consent. Also, some app-specific permissions like `AppCatalog.Submit` do too.  
+Source: [Microsoft Graph permissions reference](https://learn.microsoft.com/en-us/graph/permissions-reference)
 
 ---
 
