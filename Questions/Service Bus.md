@@ -322,12 +322,12 @@ Answer: Per [best practices](https://learn.microsoft.com/en-us/azure/service-bus
 Question: Which strategies would be effective for a queue with a large number of senders?
 
 - [x] Use a single factory per process for each sender.
-- [ ] Use a multiple factory per process for each sender.
+- [ ] Use multiple factories per process for each sender.
 - [ ] Disable batched store access.
 - [x] Enable batched store access.
 - [x] Use asynchronous operations.
 - [ ] Use synchronous operations.
-- [x] Set a high prefetch count.
+- [x] Set the prefetch count to 20 times the processing rate of the sender.
 - [ ] Set a low prefetch count.
 
 Answer: Per [best practices](https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-performance-improvements?tabs=net-standard-sdk-2#queue-with-a-large-number-of-senders)
@@ -337,13 +337,13 @@ Answer: Per [best practices](https://learn.microsoft.com/en-us/azure/service-bus
 Question: What strategies would be effective for a queue with a large number of receivers?
 
 - [x] Use a single factory per process for each receiver.
-- [ ] Use a multiple factory per process for each receiver.
+- [ ] Use multiple factories per process for each receiver.
 - [ ] Disable batched store access.
 - [x] Enable batched store access.
 - [x] Use asynchronous operations.
 - [ ] Use synchronous operations.
-- [x] Set the prefetch count to 20 times the processing rate of the receiver.
-- [ ] Set a low prefetch count.
+- [x] Set a low prefetch count (e.g., 10).
+- [ ] Set the prefetch count to 20 times the processing rate of the receiver.
 
 Answer: Per [best practices](https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-performance-improvements?tabs=net-standard-sdk-2#queue-with-a-large-number-of-receivers)
 
