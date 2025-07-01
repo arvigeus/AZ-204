@@ -844,9 +844,9 @@ Question: Which of the following App Service plans supports schedule based scali
 - [ ] Basic
 - [x] Standard
 - [x] Premium
-- [ ] Isolated
+- [x] Isolated
 
-Answer: Only `Standard` to `Premium` support schedule based scaling.
+Answer: Only `Standard` to `Isolated` support schedule based scaling.
 
 ---
 
