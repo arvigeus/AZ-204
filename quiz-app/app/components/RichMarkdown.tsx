@@ -87,7 +87,15 @@ export const RichMarkdown = ({ interactive, children }: RichMarkdownProps) => {
 					// Only render CodeEditor on client after component is loaded
 					if (CodeEditor) {
 						if (interactive && isLanguageEditSupported(language)) {
-							return <CodeEditor value={`${code}\n`} lang={language} />;
+							return (
+								<>
+									<CodeEditor value={`${code}\n`} lang={language} />
+
+									<div className="mt-4 text-gray-400 text-xs italic">
+										Note: On the real exam you don't have to write code
+									</div>
+								</>
+							);
 						}
 
 						if (isLanguageSupported(language)) {
