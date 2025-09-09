@@ -12,15 +12,24 @@ Answer: Azure Container Apps is designed to handle microservices architecture, p
 
 ---
 
-Question: You need to deploy a containerized application to Azure and require autoscaling based on custom metrics. Which Azure service would you use?
+Question: You need to deploy a containerized application to Azure and require autoscaling based on **custom metrics**. Which Azure service should you use?
 
 - [ ] Azure Container Instances (ACI)
-- [x] Azure App Service
-- [ ] Azure Container Apps
+- [ ] Azure App Service
+- [x] Azure Container Apps
 - [ ] Azure Functions
 - [ ] Azure Logic Apps
 
-Answer: Both Azure App Service and Azure Container Apps support autoscaling and allows you to scale based on custom metrics. ACI doesn't offer autoscaling, and Azure Functions and Logic Apps are not primarily container services.
+Answer: Container Apps use **KEDA (Kubernetes Event-driven Autoscaler)** to support scaling on CPU, memory, HTTP requests, event sources (such as Service Bus, Event Hubs, Kafka), and arbitrary custom metrics. Source: [Set scaling rules in Azure Container Apps](https://learn.microsoft.com/en-us/azure/container-apps/scale-app)
+
+- **Azure App Service** can host containers and supports autoscaling, but scaling is limited to built-in or Azure Monitor metrics, making it less flexible than KEDA.
+- **Azure Container Instances (ACI)** does not support autoscaling.
+- **Azure Functions** can run from containers but scale only on trigger-based events, not arbitrary custom metrics.
+- **Azure Logic Apps** is a workflow automation tool, not a general-purpose container hosting service.
+
+---
+
+Want me to also **reformat all your questions** in this consistent style (Question → Options → Correct Answer → Explanation with option-by-option breakdown), so your whole question bank is standardized?
 
 ---
 
@@ -33,6 +42,36 @@ Question: An e-commerce company is looking to host its web platform, which inclu
 - [ ] Azure Container Apps
 
 Answer: Azure App Service is optimized for hosting web applications, including websites and web APIs. Its integration with other Azure services makes it a suitable choice for an e-commerce platform.
+
+---
+
+Question: A retail company is running a public-facing e-commerce website in Azure. The site experiences predictable spikes in traffic during sales campaigns, and management wants to minimize costs during normal hours while automatically handling the spikes. The solution must:
+
+- Host an HTTP-based web application.
+- Support custom domains and SSL.
+- Scale automatically based on a schedule (e.g., during promotions).
+- Require no container orchestration or Kubernetes knowledge.
+
+Which Azure service is the most suitable?
+
+- [x] Azure App Service
+- [ ] Azure Container Instances
+- [ ] Azure Container Apps
+- [ ] Azure Kubernetes Service
+- [ ] Azure Functions
+
+Answer: Azure App Service is the best choice here because it:
+
+- Provides a fully managed PaaS for hosting web applications with built-in support for custom domains, SSL, and HTTP workloads.
+- Supports autoscaling based on both metrics (CPU, memory, HTTP queue length) and schedules (e.g., scale out during sales campaigns).
+- Requires no infrastructure or Kubernetes management.
+
+Other options:
+
+- Azure Container Instances: No autoscaling, poor fit for persistent web apps.
+- Azure Container Apps: Supports scaling but is aimed at microservices/event-driven workloads; App Service is a simpler and cheaper fit for standard web apps.
+- Azure Kubernetes Service (AKS): Overkill; requires infrastructure management, not aligned with “focus on coding.”
+- Azure Functions: Best for event-driven workloads, not full-featured websites with sessions, SSL, and predictable schedule-based scaling.
 
 ---
 

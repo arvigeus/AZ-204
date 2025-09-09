@@ -166,14 +166,13 @@ az deployment group create --resource-group MultiContainerGroup1 --template-file
 Question: You have just deployed several Azure resources within the `DemoResourceGroup` resource group and you want to capture the template that Azure Resource Manager used for the deployment for future use. How can you accomplish this efficiently?
 
 - [ ] `az group export --name DemoResourceGroup`
-- [x] `az group deployment export --name DemoResourceGroup --deployment-name Deployment1`
+- [x] `az deployment group export --resource-group DemoResourceGroup --name Deployment1`
 - [ ] Use the Azure portal to manually inspect and copy the JSON of the deployment template.
 - [ ] `Export-AzResourceGroup -Name DemoResourceGroup`
 
-Answer: The `az group deployment export` command is used to export the template that was used for a specific deployment. This command allows you to capture the exact template used by Azure Resource Manager for that particular deployment.  
+Answer: The `az deployment group export` command is used to export the template that was used for a specific deployment. This command allows you to capture the exact template used by Azure Resource Manager for that particular deployment.  
 Using the Azure portal to manually copy the JSON of the deployment template also is valid way to do it, but is a manual process and inefficient.  
-`az group export --name DemoResourceGroup` and `Export-AzResourceGroup -Name DemoResourceGroup` export the resource group (which may include many deployments)  
-is a manual process that doesn't provide the convenience or automation of a CLI command
+`az group export --name DemoResourceGroup` and `Export-AzResourceGroup -Name DemoResourceGroup` export the resource group (which may include many deployments), not a specific deployment template.
 
 ---
 
