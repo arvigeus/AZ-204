@@ -11,6 +11,29 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 	if (!question) throw new Response('Invalid id parameter', { status: 400 });
 
 	const title = encodeURIComponent(`Report a problem: ${question.id}`);
+
+	// Check if issue already exists
+	const searchUrl = `https://api.github.com/search/issues?q=repo:arvigeus/AZ-204+type:issue+in:title+${encodeURIComponent(title)}`;
+
+	try {
+		const searchResponse = await fetch(searchUrl);
+		if (searchResponse.ok) {
+			const searchData = (await searchResponse.json()) as {
+				items?: Array<{ html_url: string }>;
+			};
+			if (
+				searchData.items &&
+				searchData.items.length > 0 &&
+				searchData.items[0].html_url
+			) {
+				return redirect(searchData.items[0].html_url);
+			}
+		}
+	} catch (error) {
+		// If search fails, continue with creating new issue
+		console.error('Failed to search for existing issues:', error);
+	}
+
 	const fullBody = `<!--- Describe the issue -->\n\n---\n\n${question.question}\n\n${
 		question.options.length > 0
 			? `${question.options
