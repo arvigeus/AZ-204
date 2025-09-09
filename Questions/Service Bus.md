@@ -278,7 +278,7 @@ Answer: Per [best practices](https://learn.microsoft.com/en-us/azure/service-bus
 
 ---
 
-Answer: Which of the following would be effective for optimizing multiple high-throughput queues?
+Question: Which of the following would be effective for optimizing multiple high-throughput queues?
 
 - [ ] Use a single message factory for all queues.
 - [x] Use different factories for clients interacting with different queues.

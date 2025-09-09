@@ -1043,9 +1043,9 @@ Answer: Cron schedules supports both 5 and 6 fields (`{minute} {hour} {day} {mon
 
 ---
 
-Question: In your e-commerce system, you've built two Azure Functions to handle order processing and retrieval. The `OrderProcessingFunction` is triggered when an order is placed by a customer. The details of this order are then processed and stored into a cloud storage system for later reference. Configuration for the service is stored into Cosmos DB database. The `OrderRetrievalFunction` is invoked on-demand via a web request, which fetches and returns the previously stored order details.
+Question: In your e-commerce system, you've built two Azure Functions to handle order processing and retrieval. The `OrderProcessingFunction` is triggered when an order is placed by a customer via an Azure Service Bus queue. The details of this order are then processed and stored into a cloud storage system for later reference. Configuration for the service is stored into Cosmos DB database. The `OrderRetrievalFunction` is invoked on-demand via a web request, which fetches and returns the previously stored order details.
 
-Given this setup, which triggers and bindings would you use in the `OrderProcessingFunction`? There may be more than one correct answer.
+Which triggers and bindings would you use in the `OrderProcessingFunction`?
 
 - [x] ServiceBus trigger binding
 - [ ] HTTP trigger binding
@@ -1053,18 +1053,18 @@ Given this setup, which triggers and bindings would you use in the `OrderProcess
 - [ ] Cosmos DB trigger binding
 - [ ] Blob input binding
 - [x] Blob output binding
-- [ ] Blob input output binding
+- [ ] Blob input/output binding
 - [x] Cosmos DB input binding
 - [ ] Cosmos DB output binding
-- [ ] Cosmos DB input output binding
+- [ ] Cosmos DB input/output binding
 
 Answer: The `OrderProcessingFunction` uses the ServiceBus trigger binding because it is triggered by new messages (orders) arriving in the Azure Service Bus. Configuration for the service is stored in a Cosmos DB database, so a Cosmos DB input binding is required. Function uses the Blob output binding to store the processed order details into Azure Blob Storage, a cloud storage system.
 
 ---
 
-Question: In your e-commerce system, you've built two Azure Functions to handle order processing and retrieval. The `OrderProcessingFunction` is triggered when an order is placed by a customer. The details of this order are then processed and stored into a cloud storage system for later reference. Configuration for the service is stored into Cosmos DB database. The `OrderRetrievalFunction` is invoked on-demand via a web request, which fetches and returns the previously stored order details.
+Question: In your e-commerce system, you've built two Azure Functions to handle order processing and retrieval. The `OrderProcessingFunction` is triggered when an order is placed by a customer via an Azure Service Bus queue. The details of this order are then processed and stored into a cloud storage system for later reference. Configuration for the service is stored into Cosmos DB database. The `OrderRetrievalFunction` is invoked on-demand via a web request, which fetches and returns the previously stored order details.
 
-Given this setup, which bindings are you most likely to use in the `OrderRetrievalFunction`? There may be more than one correct answer.
+Which triggers and bindings would you use in the `OrderRetrievalFunction`?
 
 - [ ] ServiceBus trigger binding
 - [x] HTTP trigger binding

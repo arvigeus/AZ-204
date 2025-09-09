@@ -80,18 +80,25 @@ Azure File Sync is used to centralize file services in Azure while maintaining l
 
 ---
 
-Question: Your company is concerned about DDoS attacks on its Azure Storage. Which service should you use to add a layer of protection against such attacks?
+Question: Your company hosts static assets such as images and videos in Azure Storage.  
+Management is concerned that sudden traffic spikes or malicious requests could overwhelm the storage account.  
+They want a solution that provides both performance improvements for global users and an additional layer of protection by offloading traffic away from the storage origin.
 
-- [ ] Azure DDoS Protection Standard
-- [x] Azure CDN
-- [ ] Native Azure Storage functionality with TLS
-- [ ] Azure Advanced Threat Protection
+Which service should you configure?
+
 - [ ] Azure Firewall
+- [ ] Azure Front Door
+- [x] Azure Content Delivery Network (CDN)
+- [ ] Azure DDoS Protection Standard
+- [ ] Azure Application Gateway
 
-Answer: CDNs can help protect your applications against Distributed Denial of Service (DDoS) attacks by providing a layer of abstraction between the attackers and the application servers.  
-Azure DDoS Protection Standard, while a good choice for DDoS protection in general, does not provide the CDN functionality.  
-Azure Advanced Threat Protection is used to detect and investigate security incidents, not for DDoS protection.  
-Azure Firewall is a managed, cloud-based network security service, but does not provide the caching and DDoS mitigation benefits of a CDN.
+Answer:
+
+- **Azure CDN** caches content at distributed edge locations. This reduces latency, improves availability during heavy traffic, and shields the origin (Azure Storage) from being directly hit by every request. While not a replacement for dedicated DDoS protection, it adds an indirect layer of resilience against volumetric attacks.
+- **Azure DDoS Protection Standard** is designed to mitigate network-layer DDoS attacks on public IPs. Azure Storage endpoints are platform-managed, and you cannot attach DDoS Protection directly to them. Therefore, this does not solve the stated problem.
+- **Azure Front Door** provides global load balancing and WAF features, but the question is specifically about caching storage content at the edge.
+- **Azure Firewall** filters traffic using network rules but does not provide caching, latency reduction, or origin shielding.
+- **Azure Application Gateway** provides application-layer load balancing and WAF but does not cache static storage content globally.
 
 ---
 

@@ -304,19 +304,24 @@ Configuring a VPN connection is not relevant to the scenario described.
 
 ---
 
-Here's the modified question using generic Azure CLI commands instead of PowerShell:
+Question: Your team has developed an application API based on the OpenAPI specification. You need to make this API accessible through Azure API Management. Currently, no APIM instance exists.
 
-Your team has developed an application API based on the OpenAPI specification. You have to ensure that the API can be accessed via an Azure API management service instance. Which of the following Azure CLI commands would you run?
+Which Azure CLI commands should you run to accomplish this task?
 
-- [ ] `az apim api import`
-- [ ] `az apim backend create`
 - [x] `az apim create`
+- [x] `az apim api import`
+- [ ] `az apim backend create`
 - [ ] `az apim backend proxy create`
 
-Answer: First, you need to create a new API management instance using `az apim create`.  
-`az apim api import` imports an API into an existing API Management service instance.  
-`az apim backend create` creates a new backend entity in API Management.
-`az apim backend proxy create` is for creating a proxy backend, not an API Management instance.
+Answer:
+
+1. **`az apim create`**: Creates the Azure API Management service instance. You cannot import APIs without an APIM instance.
+1. **`az apim api import`**: Imports your OpenAPI-based API definition into the APIM instance, making it accessible through APIM endpoints.
+
+Incorrect:
+
+- `az apim backend create`: Adds a backend service to APIM; does not create the API itself.
+- `az apim backend proxy create`: Creates a proxy backend; unrelated to importing an API.
 
 ---
 

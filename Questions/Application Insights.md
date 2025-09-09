@@ -66,8 +66,8 @@ catch(Exception ex)
 }
 ```
 
-- [ ] Diagnostic trace listener
-- [x] The Trace.aspx page
+- [x] Diagnostic trace listener
+- [ ] The Trace.aspx page
 - [ ] Application Insights
 - [ ] Event Log
 

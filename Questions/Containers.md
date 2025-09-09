@@ -302,10 +302,10 @@ properties:
     - name: mycontainer
       properties:
         environmentVariables:
-          - name: "EXPOSED"
-            value: "my-exposed-value"
-          - name: "SECRET"
-            secureValue: "my-secret-value"
+          - name: 'EXPOSED'
+            value: 'my-exposed-value'
+          - name: 'SECRET'
+            secureValue: 'my-secret-value'
   osType: Linux
   restartPolicy: Always
 tags: null
@@ -777,20 +777,20 @@ Question: What will happen if you change `template.scale.maxReplicas` from 3 to 
 
 ```json
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-  "contentVersion": "1.0.0.0",
-  "resources": [
-    {
-      "properties": {
-        "template": {
-          "scale": {
-            "minReplicas": 1,
-            "maxReplicas": 3
-          }
-        }
-      }
-    }
-  ]
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"resources": [
+		{
+			"properties": {
+				"template": {
+					"scale": {
+						"minReplicas": 1,
+						"maxReplicas": 3
+					}
+				}
+			}
+		}
+	]
 }
 ```
 
@@ -806,21 +806,21 @@ Question: What will happen if you change `configuration.ingress.allowInsecure` f
 
 ```json
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-  "contentVersion": "1.0.0.0",
-  "resources": [
-    {
-      "properties": {
-        "configuration": {
-          "ingress": {
-            "external": true,
-            "targetPort": 80,
-            "allowInsecure": false
-          }
-        }
-      }
-    }
-  ]
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"resources": [
+		{
+			"properties": {
+				"configuration": {
+					"ingress": {
+						"external": true,
+						"targetPort": 80,
+						"allowInsecure": false
+					}
+				}
+			}
+		}
+	]
 }
 ```
 
@@ -939,16 +939,28 @@ Answer: Webhooks in Azure Container Registry allow you to trigger actions in res
 
 ---
 
-What storage service should you utilize to ensure persistent storage for a new Azure container instance running a SQL Server database within a Docker image?
+Question: You are deploying a containerized application in Azure.
 
-- [ ] Azure Table storage
-- [ ] Azure Queue storage
+Requirements:
+
+- The application uses SQL Server in a container, and the database files must be stored on a persistent volume that supports the SMB protocol.
+- The application must automatically redeploy whenever a new container image is pushed to Azure Container Registry (ACR).
+
+What should you configure?
+
+- [x] ACR Webhooks
+- [ ] Azure Event Hub
+- [ ] Azure Event Grid
 - [ ] Azure Blob storage
+- [ ] Azure Queue storage
+- [ ] Azure Table storage
 - [x] Azure Files
+- [ ] Azure DevOps Pipeline
 
 Answer:
 
-- Azure Files is the correct choice as it offers SMB protocol support, making it suitable for persistent storage for SQL Server instances in containers.
-- Azure Blob storage lacks SMB support needed for SQL Server instances in containers.
-- Azure Table storage is for NoSQL data and not suitable for SQL Server persistent storage.
-- Azure Queue storage is for message queuing and not for persistent storage.
+- **ACR Webhooks**: Automatically notify your deployment system (e.g., AKS, App Service, Function) when a new image is pushed, enabling continuous deployment.
+- **Azure Files**: Provides persistent shared storage over SMB, suitable for SQL Server instances running inside containers.
+- **Azure Event Hub/Event Grid**: General eventing/messaging platforms; not the direct mechanism ACR uses for image updates.
+- **Azure Blob/Table/Queue**: Storage services for blobs, NoSQL data, or queues. None provide SMB support or automatic image update triggers.
+- **Azure DevOps Pipeline**: Useful for orchestrating deployments but does not inherently trigger on ACR image pushes without webhooks.
