@@ -131,7 +131,7 @@ TLDR;
 ## Study resources
 
 - [Microsoft Learning Path](https://learn.microsoft.com/en-us/certifications/exams/az-204/) (or [/Learning Path](/Learning%20Path/))
-- [\[GitHub\] MicrosoftLearning / AZ-204: Developing solutions for Microsoft Azure](https://github.com/MicrosoftLearning/AZ-204-DevelopingSolutionsforMicrosoftAzure)
+- [\[GitHub\] MicrosoftLearning / Microsoft Lab Exercises](https://github.com/MicrosoftLearning/mslearn-azure-developer)
 - Exam Readiness Zone:
   - [Develop Azure compute solutions](https://learn.microsoft.com/en-us/shows/exam-readiness-zone/preparing-for-az-204-develop-azure-compute-solutions-1-of-5)
   - [Develop for Azure storage](https://learn.microsoft.com/en-us/shows/exam-readiness-zone/preparing-for-az-204-develop-for-azure-storage-segment-2-of-5)

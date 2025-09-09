@@ -324,7 +324,7 @@ In JSON format.
 
 `az group export --name $resourceGroup` - create ARM template
 
-`az group deployment export --name $resourceGroup --deployment-name $deployment` - create ARM template for specific deploy
+`az deployment group export --resource-group $resourceGroup --name $deployment` - create ARM template for specific deploy
 
 `az deployment group create --resource-group $resourceGroup --template-file $armTemplateJsonFile` - create deployment group from ARM template
 

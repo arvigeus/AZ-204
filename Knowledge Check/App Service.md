@@ -256,7 +256,7 @@ md: What are the general steps when deploying an app from scratch using App Serv
 
 sh: How to create ARM template, ARM template for specific deploy, deployment group?
 
-<!-- az group export --name $resourceGroup; az group deployment export --name $resourceGroup --deployment-name $deployment; az deployment group create --resource-group $resourceGroup --template-file $armTemplateJsonFile -->
+<!-- az group export --name $resourceGroup; az deployment group export --name $resourceGroup --deployment-name $deployment; az deployment group create --resource-group $resourceGroup --template-file $armTemplateJsonFile -->
 
 ---
 

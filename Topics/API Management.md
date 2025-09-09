@@ -319,7 +319,10 @@ az apim api release create --resource-group $resourceGroup \
     --api-id demo-conference-api --api-revision 2 --service-name apim-hello-world \
     --notes 'Testing revisions. Added new "test" operation.'
 
-az group deployment create --resource-group $resourceGroup --template-file ./apis.json --parameters apiRevision="20191206" apiVersion="v1" serviceName=<serviceName> apiVersionSetName=<versionSetName> apiName=<apiName> apiDisplayName=<displayName>
+az deployment group create \
+  --resource-group $resourceGroup \
+  --template-file ./apis.json \
+  --parameters apiRevision="20191206" apiVersion="v1" serviceName=<serviceName> apiVersionSetName=<versionSetName> apiName=<apiName> apiDisplayName=<displayName>
 ```
 
 ## [Integrating backend API with APIM](https://learn.microsoft.com/en-us/azure/api-management/import-and-publish)
