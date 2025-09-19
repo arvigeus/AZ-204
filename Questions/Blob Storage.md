@@ -336,12 +336,12 @@ Answer: `user_impersonation` allows the application to act as the user, inheriti
 
 Question: Which of the following accounts are eligable for using ZRS?
 
-- [x] General purpose v2 account at Standard performace tier
-- [x] General purpose v2 account at Premium performace tier
-- [ ] General purpose v1 account at Standard performace tier
-- [ ] General purpose v1 account at Premium performace tier
-- [ ] Blob storage account at Standard performace tier
-- [ ] Blob storage account at Premium performace tier
+- [x] General purpose v2 account at Standard performance tier
+- [x] General purpose v2 account at Premium performance tier
+- [ ] General purpose v1 account at Standard performance tier
+- [ ] General purpose v1 account at Premium performance tier
+- [ ] Blob storage account at Standard performance tier
+- [ ] Blob storage account at Premium performance tier
 
 Answer: Only General purpose v2 accounts are eligable for using ZRS
 
@@ -349,12 +349,12 @@ Answer: Only General purpose v2 accounts are eligable for using ZRS
 
 Question: Which of the following accounts are eligable for using GRS?
 
-- [x] General purpose v2 account at Standard performace tier
-- [ ] General purpose v2 account at Premium performace tier
-- [ ] General purpose v1 account at Standard performace tier
-- [ ] General purpose v1 account at Premium performace tier
-- [ ] Blob storage account at Standard performace tier
-- [ ] Blob storage account at Premium performace tier
+- [x] General purpose v2 account at Standard performance tier
+- [ ] General purpose v2 account at Premium performance tier
+- [ ] General purpose v1 account at Standard performance tier
+- [ ] General purpose v1 account at Premium performance tier
+- [ ] Blob storage account at Standard performance tier
+- [ ] Blob storage account at Premium performance tier
 
 Answer: Only General purpose v2 accounts at standard tier are eligable for using GRS
 
