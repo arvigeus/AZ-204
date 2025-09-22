@@ -248,7 +248,7 @@ az webapp deployment slot swap --name $webapp --resource-group $resourceGroup \
     --slot staging
 ```
 
-Note: If there was no deployment slots requirenments, `az webapp deployment slot create` and `az webapp deployment slot swap` (and `--slot staging` in `az webapp deployment source config`) could be dropped, and app service plan can go as low as FREE.
+Note: If there was no deployment slots requirements, `az webapp deployment slot create` and `az webapp deployment slot swap` (and `--slot staging` in `az webapp deployment source config`) could be dropped, and app service plan can go as low as FREE.
 
 ---
 
@@ -293,7 +293,7 @@ az webapp deployment source config --name $webapp --resource-group $resourceGrou
     --repo-url $gitrepo --branch master --manual-integration
 ```
 
-Note: If there is deployment slots requirenment, then `az webapp deployment slot create` and `az webapp deployment slot swap` (and `--slot staging` in `az webapp deployment source config`) should be added. Also the app service plan should be bumped to STANDARD.
+Note: If there is deployment slots requirement, then `az webapp deployment slot create` and `az webapp deployment slot swap` (and `--slot staging` in `az webapp deployment source config`) should be added. Also the app service plan should be bumped to STANDARD.
 
 ---
 
@@ -612,7 +612,7 @@ Question: Which of the following statements are true for application logging?
 - [ ] Blob storage logging will turn itself off in 12 hours
 - [x] Blob storage is for long-term logging
 - [ ] App Service file system logging is more detailed than Blob storage logging
-- [x] Logs can be reatained for specified amount of days
+- [x] Logs can be reattained for specified amount of days
 - [x] For logs stored in the App Service file system, you can download the ZIP file in the browser
 - [ ] Filesystem and storage Blob storage are supported for both Windows and Linux apps.
 
@@ -680,7 +680,7 @@ Question: How to stream errors from `myApp` in `myResourceGroup` resource group,
 
 Answer:
 
-To filter logs by errror, such as HTTP, use the `--filter Error` parameter
+To filter logs by error, such as HTTP, use the `--filter Error` parameter
 
 ```ps
 az webapp log tail --name myApp --resource-group myResourceGroup --filter Error
@@ -758,7 +758,7 @@ az webapp create --name MyAppService --resource-group MyResourceGroup --plan MyA
 
 ---
 
-Question: Create an App Service web app `MyAppService` and its prerequisites. The service will be located in West US and would scale occasionally when some promotion is running. Should be outimized for cost.
+Question: Create an App Service web app `MyAppService` and its prerequisites. The service will be located in West US and would scale occasionally when some promotion is running. Should be optimized for cost.
 
 ```ps
 # Code here
@@ -797,7 +797,7 @@ Question: Your company has developed a web application that experiences intermit
 - [x] Implement Azure Automatic Scaling with prewarming of instances.
 - [ ] Monitor performance using Azure Application Insights Live Metrics.
 
-Bonus question: You are running on a `Standard` plan, do you need to chenge it in order to implement your solution?
+Bonus question: You are running on a `Standard` plan, do you need to change it in order to implement your solution?
 
 Answer: The problem your company experiences is called _cold boot_. In order to mitigate it, you need Automatic Scaling with pre-warmed/always ready instances. This requires at least `PremiumV2` plan.  
 Azure Manual Scaling lacks real-time adjustment capabilities, making it inefficient for sudden traffic spikes.  
@@ -898,8 +898,8 @@ Question: You want to move to another App Service plan. Which of following state
 - [x] You can always move from lower-tiered plan to a higher-tiered plan
 - [ ] You can always move from higher-tiered plan to a lower-tiered plan
 - [x] You can move from higher-tiered plan to a lower-tiered plan only in certain scenarios
-- [x] You can move an app to another App Service plan only in the same resouce group
-- [ ] You can move an app to another App Service plan in any resouce group
+- [x] You can move an app to another App Service plan only in the same resource group
+- [ ] You can move an app to another App Service plan in any resource group
 - [x] You can move an app to another App Service plan only in the same geographical region
 - [ ] You can move an app to another App Service plan in any geographical region
 - [x] You can move an app to another App Service plan only of the same OS type
@@ -922,7 +922,7 @@ Answer: You cannot have custom DNS name on the `Free` tier.
 
 ---
 
-Question: You want a Linux App Service web app on an App Service plan that supports custom DNS name. Which App Service plans satisfy these requirenments?
+Question: You want a Linux App Service web app on an App Service plan that supports custom DNS name. Which App Service plans satisfy these requirements?
 
 - [ ] Free
 - [ ] Shared
@@ -997,7 +997,7 @@ Answer: You cannot move web app from one region to other. Also `Basic` plan does
 # Create new resource group with location 'North Central US'
 New-AzResourceGroup -Name DestinationAzureResourceGroup -Location "North Central US"
 
-# Create new 'Standard' App Service plan for that group (and set staging environments leter)
+# Create new 'Standard' App Service plan for that group (and set staging environments later)
 New-AzAppServicePlan -Location "North Central US" -ResourceGroupName DestinationAzureResourceGroup -Name DestinationAppServicePlan -Tier Standard
 
 # Clone `MyAppService` into new web app and place it in the new App Service plan
@@ -1184,11 +1184,11 @@ Question: You want to mount an Azure Storage as a local share in App Service in 
 - [ ] Azure blobs are mounted in read and write mode.
 - [x] The app may only have 5 mount points.
 - [ ] The app may only have 1 mount point.
-- [ ] The app may have unlimeted mount points.
+- [ ] The app may have unlimited mount points.
 - [x] Storage mount changes will restart the app.
 - [ ] Storage mount changes will not restart the app.
 
-Answer: Azure Files are read/write, Azure blobs are read only. Up to 5 mount points per app. Restart on chaning storage mount.
+Answer: Azure Files are read/write, Azure blobs are read only. Up to 5 mount points per app. Restart on changing storage mount.
 
 ---
 
@@ -1228,7 +1228,7 @@ Answer: Free Managed certificated - No wildcard certificates or private DNS, can
 
 Question: You have multiple web apps in Standard plan. Which of the following statements is true?
 
-- [ ] All apps in theat plan use shared workers
+- [ ] All apps in the plan use shared workers
 - [ ] Each app has its own worker
 - [x] All apps in that plan run on the same worker
 

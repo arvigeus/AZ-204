@@ -8,7 +8,7 @@ md: Describe the hierarchy of Blob Storage?
 
 md: How to change SKU of storage account?
 
-<!-- You cannot change type, but you can seemlessly change redundancy type. To change storage account copy the contents to another account -->
+<!-- You cannot change type, but you can seamlessly change redundancy type. To change storage account copy the contents to another account -->
 
 ---
 
@@ -21,7 +21,7 @@ md: Describe redundancy types and when to use each?
 - GRS-RA
 - GZRS-RA
 
-<!-- LRS: if you can reconstruct data, have government restrictions; ZRS: write is successful when all zones comfirm, reccomended for Azure FIles; GRS: LRS+async copy; GZRS: ZRS+async copy; RA: R to https://{accountName}-secondary.<url> -->
+<!-- LRS: if you can reconstruct data, have government restrictions; ZRS: write is successful when all zones confirm, recommended for Azure FIles; GRS: LRS+async copy; GZRS: ZRS+async copy; RA: R to https://{accountName}-secondary.<url> -->
 
 ---
 

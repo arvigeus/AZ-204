@@ -34,7 +34,7 @@ Answer: `ServiceBusMessage` can be both `string` and `byte[]`.
 
 ---
 
-Question: Write an az cli script that creates an isntance of Azure Service Bus:
+Question: Write an az cli script that creates an instance of Azure Service Bus:
 
 ```ps
 namespace=mynamespace

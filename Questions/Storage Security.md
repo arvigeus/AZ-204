@@ -50,7 +50,7 @@ Azure Traffic Manager is for network routing optimization and does not manage en
 
 ---
 
-Question: Your global company is using Azure Storage and wants to ensure that data is served to users secureky and quickly regardless of their location. Which service should you use?
+Question: Your global company is using Azure Storage and wants to ensure that data is served to users securely and quickly regardless of their location. Which service should you use?
 
 - [ ] Azure Functions
 - [x] Azure CDN

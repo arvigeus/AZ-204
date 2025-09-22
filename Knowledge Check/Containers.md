@@ -40,7 +40,7 @@ sh: Create an ACR with its prerequisites?
 
 md: What types of ACR login methods are there? Their characteristics?
 
-<!-- Interactive, Unnatended-->
+<!-- Interactive, Unattended-->
 
 ---
 
@@ -116,7 +116,7 @@ md: Accessing your ACI: what you need to know if accessing by IP? What you need 
 
 md: If using ACR with managed identity, what you need to know?
 
-<!-- Need AcrPull permisison, identity needs to be assigned to az container -->
+<!-- Need AcrPull permission, identity needs to be assigned to az container -->
 
 ---
 
@@ -244,7 +244,7 @@ md: Describe the two commands available for logging in ACI?
 
 ---
 
-sh: How to verify an ACI conrainer is running?
+sh: How to verify an ACI container is running?
 
 <!-- az container show --query "{FQDN:ipAddress.fqdn,ProvisioningState:provisioningState}" --out table -->
 
@@ -256,7 +256,7 @@ yaml: Define YAML template for ACI?
 
 md: What are the limitations of Container Apps?
 
-<!-- No root, linux/amd64 images only, use external redis for in-mamery state -->
+<!-- No root, linux/amd64 images only, use external redis for in-memory state -->
 
 ---
 
@@ -364,7 +364,7 @@ md: Explain revision labels in Container Apps? When would you use them?
 
 md: Describe revision scope changes in Container Apps?
 
-<!-- New version on changes to properties.template - version suffixm container config, scaling rules. Need to run az containerapp update afterwards. Only new revisions will be affected -->
+<!-- New version on changes to properties.template - version suffix container config, scaling rules. Need to run az containerapp update afterwards. Only new revisions will be affected -->
 
 ---
 
@@ -386,7 +386,7 @@ sh: In Container Apps, declare a bogus connection to Key Vault, then use pass it
 
 ---
 
-sh: How to mount secrets in a colume in Container Apps?
+sh: How to mount secrets in a column in Container Apps?
 
 <!-- --secret-volume-mount "/mnt/secrets" -->
 

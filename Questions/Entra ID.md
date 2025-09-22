@@ -226,8 +226,8 @@ Question: You have an application registered in Microsoft Entra ID and you have 
 
 ```json
 {
-  "clientId": "your-client-id",
-  "tenantId": "your-tenant-id"
+	"clientId": "your-client-id",
+	"tenantId": "your-tenant-id"
 }
 ```
 
@@ -262,10 +262,10 @@ Answer: You should modify `appsettings.json` to include the client secret, path,
 
 ```json
 {
-  "clientId": "your-client-id",
-  "tenantId": "your-tenant-id",
-  "clientSecret": "your-client-secret",
-  "certificateName": "MyCertificate.pfx"
+	"clientId": "your-client-id",
+	"tenantId": "your-tenant-id",
+	"clientSecret": "your-client-secret",
+	"certificateName": "MyCertificate.pfx"
 }
 ```
 
@@ -315,7 +315,7 @@ services.AddAuthorization(options =>
         policy.RequireAuthenticatedUser();
         policy.RequireRole("Employee");
     });
-    options.AddPolicy("ReatailPolicy", policy =>
+    options.AddPolicy("RetailPolicy", policy =>
     {
         policy.RequireAuthenticatedUser();
         policy.RequireRole("Manager");
@@ -366,7 +366,7 @@ public class EmployeeController : Controller
 
 public class SalesController : Controller
 {
-    [Authorize(Policy = "ReatailPolicy")]
+    [Authorize(Policy = "RetailPolicy")]
     public IActionResult ManageSales() => Content("Sales Management");
 }
 
@@ -388,7 +388,7 @@ Question: You are creating an internal portal for staff members to access confid
 - [x] Establish a new conditional access policy in Microsoft Entra ID.
 
 Answer: Conditional access policies require Microsoft Entra ID Premium P1 licenses.  
-Security defaults enable MFA for **ALL** users, which does not meat requirenments for specific staff members.
+Security defaults enable MFA for **ALL** users, which does not meat requirements for specific staff members.
 
 ---
 
@@ -429,7 +429,7 @@ Question: You are developing a web application using ASP.Net Core. The applicati
 - [x] `Microsoft Graph > User.Read`
 - [ ] `Microsoft Graph > User.ReadWrite`
 - [ ] `Microsoft Graph > user_impersonation`
-- [ ] `Microsoft Graph > Microsoft Greaph Reader`
+- [ ] `Microsoft Graph > Microsoft Graph Reader`
 - [x] `Azure Storage > user_impersonation`
 - [ ] `Azure Storage > Storage Blob Data Reader`
 - [ ] `Azure Storage > Files.Read`
@@ -472,7 +472,7 @@ Question: You are a solutions architect for 'StreamBox,' a video streaming servi
 - [x] Microsoft Entra ID B2C
 - [ ] Microsoft Entra ID Single Tenant Authentication
 
-Answer: Emtra ID B2C supports authentication through a variety of social media platforms and email accounts, making it the most suitable choice for this scenario.
+Answer: Entra ID B2C supports authentication through a variety of social media platforms and email accounts, making it the most suitable choice for this scenario.
 
 ---
 
@@ -516,8 +516,8 @@ Answer:
 
 Question: You need to implement authentication for two applications: a web application and an API. Only users from a specific Entra ID tenant should be able to access both applications. Which of the following account types should you select to meet the security requirements?
 
-- [ ] Accounts in any organizational directory (Any Microsoft Entra ID directory - Multitenant)
-- [ ] Accounts in any organizational directory (Any Microsoft Entra ID directory - Multitenant) and personal Microsoft accounts
+- [ ] Accounts in any organizational directory (Any Microsoft Entra ID directory - Multi-tenant)
+- [ ] Accounts in any organizational directory (Any Microsoft Entra ID directory - Multi-tenant) and personal Microsoft accounts
 - [x] Accounts in this organizational directory only (Single tenant)
 - [ ] Personal Microsoft accounts only
 
@@ -536,9 +536,9 @@ How would you modify the Microsoft Entra ID application manifest file to meet th
 
 ```jsonc
 {
-  "appId": "your-app-id-here",
-  "displayName": "Your App Name"
-  // Write related properties here
+	"appId": "your-app-id-here",
+	"displayName": "Your App Name"
+	// Write related properties here
 }
 ```
 
@@ -546,10 +546,10 @@ Answer:
 
 ```jsonc
 {
-  "appId": "your-app-id-here",
-  "displayName": "Your App Name",
-  "groupMembershipClaims": "SecurityGroup",
-  "oauth2AllowImplicitFlow": true
+	"appId": "your-app-id-here",
+	"displayName": "Your App Name",
+	"groupMembershipClaims": "SecurityGroup",
+	"oauth2AllowImplicitFlow": true
 }
 ```
 
