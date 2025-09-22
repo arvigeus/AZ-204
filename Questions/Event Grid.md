@@ -154,13 +154,13 @@ Question: Fill in "XXX" and "YYY" for this Event Grid filter:
 
 ```jsonc
 {
-  "XXX": [
-    {
-      "operatorType": "StringContains",
-      "key": "Subject",
-      "YYY": ["container1", "container2"]
-    }
-  ]
+	"XXX": [
+		{
+			"operatorType": "StringContains",
+			"key": "Subject",
+			"YYY": ["container1", "container2"]
+		}
+	]
 }
 ```
 
@@ -168,13 +168,13 @@ Answer:
 
 ```jsonc
 {
-  "advancedFilters": [
-    {
-      "operatorType": "StringContains",
-      "key": "Subject",
-      "values": ["container1", "container2"]
-    }
-  ]
+	"advancedFilters": [
+		{
+			"operatorType": "StringContains",
+			"key": "Subject",
+			"values": ["container1", "container2"]
+		}
+	]
 }
 ```
 

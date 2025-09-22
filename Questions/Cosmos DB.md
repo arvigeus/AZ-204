@@ -95,7 +95,7 @@ Question: What is the most suitable consistency level for a database solution th
 - [ ] Eventual
 
 Answer: The bounded Staleness consistency level ensures that data writes are returned sequentially (no gaps). You have the flexibility to set up staleness, deciding the version of data to be returned, based on either the count of versions or the time elapsed.  
-All other options (except Eventual) also enabless gapless reads, but cannot configure staleness.
+All other options (except Eventual) also enables gapless reads, but cannot configure staleness.
 
 ---
 
@@ -341,7 +341,7 @@ Question: You are designing an application that will use Azure Cosmos DB as its 
 - [ ] Assign shared throughput to each container individually, allowing each to draw from its own pool of throughput.
 
 Answer: Shared throughput in Azure Cosmos DB is specified at the database level and then shared among all containers within the database. This is ideal for scenarios where you have multiple containers that do not require a high volume of operations and you want to optimize costs.  
-Dedicated throughput is specified at the container (not at dayabase level) level and would be more expensive for a scenario where the containers do not have a high volume of operations.  
+Dedicated throughput is specified at the container (not at database level) level and would be more expensive for a scenario where the containers do not have a high volume of operations.  
 Shared throughput is not assigned at the container level but at the database level.
 
 ---
@@ -530,7 +530,7 @@ Question: Given the following statements about Azure Cosmos DB's Change Feed, id
 - [x] A soft-delete pattern is supported in Azure Cosmos DB where a "deleted" attribute can be appended to items intended for deletion.
 - [x] In the push model, the Change Feed processor independently dispatches tasks to a client.
 - [ ] Change Feed functionality is available across all API models in Azure Cosmos DB.
-- [x] The pull model in Change Feed allows for manual checkpointing and control over processing speed.
+- [x] The pull model in Change Feed allows for manual checkpoint and control over processing speed.
 - [x] Items can have a time-to-live (TTL) value attached for automatic deletion.
 - [ ] Change Feed functionality is limited to the SQL (Core) API in Azure Cosmos DB.
 - [ ] In the push model, the Change Feed processor requires manual intervention to dispatch tasks to a client.
@@ -679,7 +679,7 @@ Question: You are developing an application with a read-heavy workload using Azu
 
 - [x] Use `PartitionKey` for point read.
 - [ ] Set the `EnableContentResponseOnWrite` request option to false.
-- [x] Use `FeedIterator` for iteratin multiple pages of query results.
+- [x] Use `FeedIterator` for iterating multiple pages of query results.
 - [ ] Increase the size of your documents.
 
 Answer: Utilizing `PartitionKey` for point read can reduce Request Unit (RU) charges and enhance performance, particularly for read-heavy workloads, while employing `FeedIterator` can improve performance when handling multiple pages of query results, a common scenario in read-heavy workloads.
@@ -855,7 +855,7 @@ Answer: Stored procedures are capable of performing CRUD and query operations on
 
 ---
 
-Question: Complete the following pre-trigger that adds timestampt to every new item:
+Question: Complete the following pre-trigger that adds timestamp to every new item:
 
 ```js
 function validateToDoItemTimestamp() {

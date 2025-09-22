@@ -186,7 +186,7 @@ Question: What is needed to enable authentication on your Azure Container App?
 - [ ] An Azure Container App certificate issued by Microsoft
 - [ ] Microsoft Entra ID is required as an Identity provider
 
-Answer: Auth works only with HTTPS, requires any identity provider and specified provider within app settings. Authough Entra ID is a valid option, it's incorrect to state it's required.
+Answer: Auth works only with HTTPS, requires any identity provider and specified provider within app settings. Although Entra ID is a valid option, it's incorrect to state it's required.
 
 ---
 

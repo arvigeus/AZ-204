@@ -129,7 +129,7 @@ sh: How to add CORS to a function?
 
 md: How to collect SQL queries from Functions?
 
-<!-- logging > applicationInsigts > dependencyTrackingOptions > enableSqlCommandTextInstrumentation: true -->
+<!-- logging > applicationInsights > dependencyTrackingOptions > enableSqlCommandTextInstrumentation: true -->
 
 ---
 

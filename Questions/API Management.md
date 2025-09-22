@@ -247,7 +247,7 @@ Question: You receive `401 Access Denied` trying to get access to your API insta
 - [ ] Quota has been exceeded
 - [ ] IP Filter policy has been activated
 
-Answer: Pass a valid subsription key.  
+Answer: Pass a valid subscription key.  
 Server errors are `5XX`, quota and ip restrictions are `403`.
 
 ---

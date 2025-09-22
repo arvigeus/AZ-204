@@ -10,7 +10,7 @@ md: How App Service Plans are charged?
 
 ---
 
-md: Describe fornt ends and workers in App Service? What is their networking behavior in different App Service Plans?
+md: Describe front ends and workers in App Service? What is their networking behavior in different App Service Plans?
 
 <!-- Front ends: Handle incoming HTTP(S) requests; Workers: host customer workload. Free and Shared: multi-tenant (shared) workers. Basic+ use dedicated workers. Standard runs on the same worker. -->
 
@@ -28,7 +28,7 @@ md: What you must know when it comes to App Service Plan charging?
 
 ---
 
-md: Deployment slots, diagnostic logs, perforing backups, apps in the same App Service plan: how they behave together?
+md: Deployment slots, diagnostic logs, performing backups, apps in the same App Service plan: How do they behave together?
 
 <!-- Run on the same VM instances -->
 
@@ -40,7 +40,7 @@ md: When to isolate an app into a new App Service Plan?
 
 ---
 
-md: How to move an App Service Plan? What are the prerequisites and requirenments?
+md: How to move an App Service Plan? What are the prerequisites and requirements?
 
 <!-- Source plan and destination plan must be in the same resource group, geographical region, same OS type, and supports the currently used features. -->
 
@@ -74,7 +74,7 @@ md: What is "flapping"?
 
 ---
 
-md: If you want to use `--is-linux`, what requirenments and limitations there are?
+md: If you want to use `--is-linux`, what requirements and limitations are there?
 
 <!-- Standard+ plan; persistent storage is on by default, mounted blob storage is read-only, auth middleware runs separately, only app and deployment logging -->
 
@@ -214,7 +214,7 @@ md: What you need to know if you want to use remote debugging?
 
 md: What are handler mappings? What properties they have?
 
-<!-- Add custom script processors to handle requests for specific file extensions. (File) Extension (wildcard or full name), Script Preprocesor, Arguments -->
+<!-- Add custom script processors to handle requests for specific file extensions. (File) Extension (wildcard or full name), Script Preprocessor, Arguments -->
 
 ---
 
@@ -226,7 +226,7 @@ json: How would you change files to be served from root dir to `public` dir insi
 
 md: What you need to know if you want to use persistent storage? For Windows and Linux?
 
-<!-- Billed separately. Linux: Standard+ plan, it's on by default, maps to /home, /home/LogFiles is not affected by this setting, it's afected by logging being enabled, Blobs are read-only, higher latency for Storage -->
+<!-- Billed separately. Linux: Standard+ plan, it's on by default, maps to /home, /home/LogFiles is not affected by this setting, it's affected by logging being enabled, Blobs are read-only, higher latency for Storage -->
 
 ---
 
@@ -302,7 +302,7 @@ md: Using certificates with Application Service: general specifics and when to u
 - App Service Certificate
 - Using Key Vault
 
-<!-- Accessible to all apps in the same resource group and region; Free Managed: Basic+, does not support wildcart ASE, and exporting; AppService: can be exported; KeyVault: can be used for private (no automated reneval) or managed cert -->
+<!-- Accessible to all apps in the same resource group and region; Free Managed: Basic+, does not support wildcard ASE, and exporting; AppService: can be exported; KeyVault: can be used for private (no automated renewal) or managed cert -->
 
 ---
 
@@ -312,7 +312,7 @@ md: When to use public certificate?
 
 ---
 
-md: What are the requirenments to have TLS mutial authentications?
+md: What are the requirements to have TLS mutual authentications?
 
 <!-- Basic+ plan. Enable client certificates; X-ARR-ClientCert header is added. AddCertificateForwarding AddAuthentication must be used to use cert for auth. To access cert: C#: HttpRequest.ClientCertificate, NodeJs: req.get('X-ARR-ClientCert') -->
 

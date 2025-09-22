@@ -41,10 +41,10 @@ Question: You are the administrator of an Azure SQL database that is set up to a
 - [ ] Entra ID guest user access.
 - [ ] Entra ID token.
 
-Answer: Entra ID integrated authentication allows seamless authentication using on-premises Emtra ID credentials.  
-Entra ID B2C is designed for customer identity access, not for on-premises Emtra ID integration.  
-Azure Conditional Access sets access policies but doesn't ensure seamless on-premises Emtra ID authentication.  
-Entra ID guest user access allows external users to access company resources, not related to on-premises Emtra ID authentication.  
+Answer: Entra ID integrated authentication allows seamless authentication using on-premises Entra ID credentials.  
+Entra ID B2C is designed for customer identity access, not for on-premises Azure ID integration.  
+Azure Conditional Access sets access policies but doesn't ensure seamless on-premises Entra ID authentication.  
+Entra ID guest user access allows external users to access company resources, not related to on-premises Entra ID authentication.  
 Entra ID token can be used for Azure SQL Database, they would not necessarily reduce the number of authentication prompts.
 
 ---
@@ -173,7 +173,7 @@ Answer: Common use cases for user-assigned identities:
 
 ---
 
-Question: Which managed entity requirest minimum effort to use?
+Question: Which managed entity requires minimum effort to use?
 
 - [x] System-assigned identity
 - [ ] User-assigned identity
