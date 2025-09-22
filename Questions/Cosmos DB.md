@@ -530,7 +530,7 @@ Question: Given the following statements about Azure Cosmos DB's Change Feed, id
 - [x] A soft-delete pattern is supported in Azure Cosmos DB where a "deleted" attribute can be appended to items intended for deletion.
 - [x] In the push model, the Change Feed processor independently dispatches tasks to a client.
 - [ ] Change Feed functionality is available across all API models in Azure Cosmos DB.
-- [x] The pull model in Change Feed allows for manual checkpoint and control over processing speed.
+- [x] The pull model in Change Feed allows for manual checkpointing and control over processing speed.
 - [x] Items can have a time-to-live (TTL) value attached for automatic deletion.
 - [ ] Change Feed functionality is limited to the SQL (Core) API in Azure Cosmos DB.
 - [ ] In the push model, the Change Feed processor requires manual intervention to dispatch tasks to a client.
