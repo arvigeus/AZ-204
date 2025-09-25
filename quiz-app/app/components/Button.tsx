@@ -6,6 +6,7 @@ import {
 	useRef,
 	useState,
 } from 'react';
+import { useResults } from '~/root';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 	bgColor: 'blue' | 'green' | 'gray';
@@ -72,6 +73,7 @@ type NextButtonProps = {
 	text: string;
 	topic?: string | null;
 	entries: string[];
+	UserPutcorrectAnswer: Boolean;
 };
 
 export const NextButton: FC<NextButtonProps> = ({
@@ -80,6 +82,7 @@ export const NextButton: FC<NextButtonProps> = ({
 	text,
 	topic,
 	entries,
+	UserPutcorrectAnswer
 }) => {
 	const [showDropdown, setShowDropdown] = useState(false);
 	const dropdownRef = useRef<HTMLDivElement>(null);
@@ -113,6 +116,18 @@ export const NextButton: FC<NextButtonProps> = ({
 	const getFocusRing = (color: ButtonProps['bgColor']) =>
 		color === 'blue' ? 'focus:ring-blue-500' : 'focus:ring-green-500';
 
+	const increaseTotalQuestions = useResults((state:any) => state.increaseTotalQuestions)
+	const increaseCorrectAnswer = useResults((state:any) => state.increaseCorrectAnswer)
+
+
+	const handleNextClick = () => {
+		increaseTotalQuestions();
+		if (UserPutcorrectAnswer) {
+			increaseCorrectAnswer();
+		}
+	}
+	
+
 	return (
 		<div
 			className={clsx(
@@ -131,6 +146,8 @@ export const NextButton: FC<NextButtonProps> = ({
 					'px-2.5 py-1 font-medium text-xs sm:px-5 sm:py-2.5 sm:text-sm',
 					getMainButtonColor(bgColor),
 				)}
+									onClick={handleNextClick}
+
 			>
 				{text}
 				<svg
@@ -192,6 +209,9 @@ export const NextButton: FC<NextButtonProps> = ({
 									value={entry}
 									className="block w-full px-4 py-2 text-left transition-colors duration-150 hover:bg-gray-50 focus:bg-gray-50 focus:outline-hidden"
 									role="menuitem"
+									// onClick={increasePopulation}
+									// onClick={() => console.log("next")}
+
 								>
 									{entry}
 								</button>

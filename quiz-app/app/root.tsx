@@ -1,4 +1,5 @@
 import highlight from 'highlight.js/styles/github.css?url';
+import { create } from 'zustand'
 import type { LinksFunction } from 'react-router';
 import {
 	Link,
@@ -15,7 +16,46 @@ export const links: LinksFunction = () => [
 	{ rel: 'stylesheet', href: highlight },
 ];
 
+export const useBear = create((set) => ({
+  bears: 0,
+  increasePopulation: () => set((state:any) => ({ bears: state.bears + 1 })),
+  removeAllBears: () => set({ bears: 0 }),
+  updateBears: (newBears:any) => set({ bears: newBears }),
+}))
+
+interface state {
+	correctAnswers:number,
+	TotalQuestions:number
+}
+
+export const useResults = create((set) => ({
+  correctAnswers: 0,
+  TotalQuestions: 0,
+  increaseCorrectAnswer: () => set((state: state) => ({ correctAnswers: state.correctAnswers + 1 })),
+  increaseTotalQuestions: () => set((state:state) => ({ TotalQuestions: state.TotalQuestions + 1 })),
+
+  removeAllBears: () => set({ bears: 0 }),
+  updateBears: (newBears:any) => set({ bears: newBears }),
+}))
+
+function ExamResults() {
+  const results = useResults((state:any) => state)
+  console.log(results)
+  const percentage = Math.round(results.correctAnswers/ results.TotalQuestions*100)
+  return <div style={{backgroundColor: percentage > 70 ? "green" : "red", color: "white", borderRadius: "4px", paddingLeft: "8px"}}> {results.correctAnswers}/{results.TotalQuestions} {percentage}%</div>
+}
+
+// function Controls() {
+//   const increasePopulation = useBear((state:any) => state.increasePopulation)
+//   return <button onClick={increasePopulation}>one up</button>
+// }
+
 export default function App() {
+
+	
+
+
+
 	return (
 		<html lang="en">
 			<head>
@@ -48,7 +88,10 @@ export default function App() {
 						<main className="prose max-w-3xl grow">
 							<h1 className="text-center font-bold text-5xl text-indigo-700">
 								<Link to="/">AZ-204 Quiz</Link>
+								
 							</h1>
+							<div><ExamResults/>
+						</div>
 							<div className="mt-6 w-full rounded-lg bg-white p-8 shadow-lg">
 								<Outlet />
 							</div>

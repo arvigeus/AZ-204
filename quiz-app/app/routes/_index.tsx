@@ -18,6 +18,8 @@ import { Button, LoadingButton, NextButton } from '~/components/Button';
 import { TextInput } from '~/components/Input';
 import { RichMarkdown } from '~/components/RichMarkdown';
 import { type Question, getQA, getQAById, topics } from '~/lib/qa';
+import { useBear } from '~/root';
+
 
 export const meta: MetaFunction = () => {
 	return [{ title: 'Developing Solutions for Microsoft Azure: Quiz' }];
@@ -117,6 +119,7 @@ function QuestionForm({
 
 	return (
 		<Form method="post" onSubmit={handleSubmit}>
+			
 			<h2 className="relative mt-0 text-center">
 				<Link to={`?topic=${encodeURIComponent(data.topic)}`}>
 					{data.topic}
@@ -247,6 +250,7 @@ function QuestionForm({
 						text="Next"
 						topic={topic}
 						entries={topics}
+						UserPutcorrectAnswer={isCorrectlyAnswered}
 					/>
 				)}
 			</div>
