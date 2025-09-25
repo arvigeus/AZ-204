@@ -250,7 +250,8 @@ function QuestionForm({
 						text="Next"
 						topic={topic}
 						entries={topics}
-						UserPutcorrectAnswer={isCorrectlyAnswered}
+						userPutcorrectAnswer={isCorrectlyAnswered}
+						shouldUpdateTotalAnswers={!data.hasCode}
 					/>
 				)}
 			</div>

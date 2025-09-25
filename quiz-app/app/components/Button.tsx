@@ -73,7 +73,8 @@ type NextButtonProps = {
 	text: string;
 	topic?: string | null;
 	entries: string[];
-	UserPutcorrectAnswer: Boolean;
+	userPutcorrectAnswer: Boolean;
+	shouldUpdateTotalAnswers: Boolean;
 };
 
 export const NextButton: FC<NextButtonProps> = ({
@@ -82,7 +83,8 @@ export const NextButton: FC<NextButtonProps> = ({
 	text,
 	topic,
 	entries,
-	UserPutcorrectAnswer
+	userPutcorrectAnswer,
+	shouldUpdateTotalAnswers
 }) => {
 	const [showDropdown, setShowDropdown] = useState(false);
 	const dropdownRef = useRef<HTMLDivElement>(null);
@@ -121,8 +123,11 @@ export const NextButton: FC<NextButtonProps> = ({
 
 
 	const handleNextClick = () => {
-		increaseTotalQuestions();
-		if (UserPutcorrectAnswer) {
+		if (shouldUpdateTotalAnswers) {
+			increaseTotalQuestions();
+
+		}
+		if (userPutcorrectAnswer) {
 			increaseCorrectAnswer();
 		}
 	}

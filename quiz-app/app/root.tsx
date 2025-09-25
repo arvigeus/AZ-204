@@ -40,15 +40,9 @@ export const useResults = create((set) => ({
 
 function ExamResults() {
   const results = useResults((state:any) => state)
-  console.log(results)
   const percentage = Math.round(results.correctAnswers/ results.TotalQuestions*100)
   return <div style={{backgroundColor: percentage > 70 ? "green" : "red", color: "white", borderRadius: "4px", paddingLeft: "8px"}}> {results.correctAnswers}/{results.TotalQuestions} {percentage}%</div>
 }
-
-// function Controls() {
-//   const increasePopulation = useBear((state:any) => state.increasePopulation)
-//   return <button onClick={increasePopulation}>one up</button>
-// }
 
 export default function App() {
 
