@@ -117,7 +117,7 @@ function QuestionForm({
 
 	const buttonColor = showAnswer || isCorrectlyAnswered ? 'green' : 'blue';
 
-	const increaseTotalAnswered = !((!data.options || !data.options.length) && !data.hasCode) || !data.hasCode;
+	const increaseTotalAnswered = data.options.length > 0;
 
 	return (
 		<Form method="post" onSubmit={handleSubmit}>
