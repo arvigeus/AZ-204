@@ -197,7 +197,7 @@ function QuestionForm({
 					showAnswer ? 'h-auto opacity-100' : 'h-0 opacity-0',
 				)}
 			>
-				<div className="font-bold">Answer: </div>
+				<div className="font-bold text-[var(--color-accent)]">Answer: </div>
 				<RichMarkdown>{data.answer}</RichMarkdown>
 			</div>
 			<div className="tems-center mt-12 grid grid-cols-1 gap-y-4 sm:grid-cols-3">
