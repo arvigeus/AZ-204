@@ -55,7 +55,7 @@ export const AnswerOptions: FC<AnswerOptionsProps> = ({
 								answerIndexes.includes(index)
 								? 'bg-green-200 text-black dark:text-black'
 								: checkedValues.includes(index)
-									? 'bg-red-200'
+									? 'bg-red-200 text-black dark:text-black'
 									: 'bg-[var(--color-surface)] text-[var(--color-text)]',
 						)}
 					>
@@ -87,22 +87,39 @@ export const AnswerOptions: FC<AnswerOptionsProps> = ({
 											);
 										},
 									}
-									: {
-										p({ node, className, children, ...props }) {
-											return (
-												<p className={clsx(className, 'my-0! text-[var(--color-text)]')} {...props}>
-													{children}
-												</p>
-											);
-										},
-										code({ className, children, ...props }) {
-											return (
-												<code className={clsx(className, 'text-[var(--color-text)]')} {...props}>
-													{children}
-												</code>
-											);
-										},
-									}
+									: checkedValues.includes(index)
+										? {
+											p({ node, className, children, ...props }) {
+												return (
+													<p className={clsx(className, 'my-0! text-black dark:text-black')} {...props}>
+														{children}
+													</p>
+												);
+											},
+											code({ className, children, ...props }) {
+												return (
+													<code className={clsx(className, 'text-black dark:text-black')} {...props}>
+														{children}
+													</code>
+												);
+											},
+										}
+										: {
+											p({ node, className, children, ...props }) {
+												return (
+													<p className={clsx(className, 'my-0! text-[var(--color-text)]')} {...props}>
+														{children}
+													</p>
+												);
+											},
+											code({ className, children, ...props }) {
+												return (
+													<code className={clsx(className, 'text-[var(--color-text)]')} {...props}>
+														{children}
+													</code>
+												);
+											},
+										}
 							}
 						>
 							{option}
