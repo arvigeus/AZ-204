@@ -36,6 +36,11 @@ export const RichMarkdown = ({ interactive, children }: RichMarkdownProps) => {
 	return (
 		   <Markdown
 			   components={{
+			   a: (props) => (
+				   <a className={clsx(props.className, 'text-[var(--color-accent)] underline font-semibold')} {...props}>
+					   {props.children}
+				   </a>
+			   ),
 				   p({ className, children, ...props }) {
 					   return (
 						   <p
