@@ -49,6 +49,19 @@ export const RichMarkdown = ({ interactive, children }: RichMarkdownProps) => {
 						   </p>
 					   );
 				   },
+				   li({ className, children, ...props }) {
+					   return (
+						   <li
+							   className={clsx(
+								   className,
+								   'text-[var(--color-text)]'
+							   )}
+							   {...props}
+						   >
+							   {children}
+						   </li>
+					   );
+				   },
 				   pre({ className, children, ...props }) {
 					   return (
 						   <pre
