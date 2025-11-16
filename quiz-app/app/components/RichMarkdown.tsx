@@ -49,6 +49,19 @@ export const RichMarkdown = ({ interactive, children }: RichMarkdownProps) => {
 						   </p>
 					   );
 				   },
+				   strong({ className, children, ...props }) {
+					   return (
+						   <strong
+							   className={clsx(
+								   className,
+								   'text-[var(--color-accent)] font-bold'
+							   )}
+							   {...props}
+						   >
+							   {children}
+						   </strong>
+					   );
+				   },
 				   li({ className, children, ...props }) {
 					   return (
 						   <li
