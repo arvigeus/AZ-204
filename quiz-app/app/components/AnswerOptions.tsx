@@ -50,12 +50,12 @@ export const AnswerOptions: FC<AnswerOptionsProps> = ({
 					<label
 						className={clsx(
 							InputStyle,
-							'border-[var(--color-border)]',
+							'border border-[var(--color-border)]',
 							(showAnswer || checkedValues.includes(index)) &&
 								answerIndexes.includes(index)
-								? 'bg-green-200 border border-[var(--color-border)]'
+								? 'bg-green-200'
 								: checkedValues.includes(index)
-									? 'bg-red-200 border border-[var(--color-border)]'
+									? 'bg-red-200'
 									: 'bg-[var(--color-surface)] text-[var(--color-text)]',
 						)}
 					>

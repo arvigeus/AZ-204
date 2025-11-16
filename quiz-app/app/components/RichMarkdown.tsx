@@ -34,19 +34,37 @@ export const RichMarkdown = ({ interactive, children }: RichMarkdownProps) => {
 	const CodeEditor = useCodeEditor();
 
 	return (
-		<Markdown
-			components={{
-				pre({ className, children, ...props }) {
-					return (
-						<pre
-							className={clsx(className, 'my-0 bg-transparent p-0 bg-[var(--color-surface)] text-[var(--color-text)]')}
-							{...props}
-						>
-							{children}
-						</pre>
-					);
-				},
-				code({ className, children, ...props }) {
+		   <Markdown
+			   components={{
+				   p({ className, children, ...props }) {
+					   return (
+						   <p
+							   className={clsx(
+								   className,
+								   'text-[var(--color-text)]'
+							   )}
+							   {...props}
+						   >
+							   {children}
+						   </p>
+					   );
+				   },
+				   pre({ className, children, ...props }) {
+					   return (
+						   <pre
+							   className={clsx(
+								   className,
+								   'my-0 bg-transparent p-0 bg-[var(--color-surface)] text-[var(--color-text)]',
+								   'dark:text-white',
+								   'light:text-[var(--color-text)]'
+							   )}
+							   {...props}
+						   >
+							   {children}
+						   </pre>
+					   );
+				   },
+				   code({ className, children, ...props }) {
 					const match = /language-(\w+)/.exec(className || '');
 
 					if (!match)
@@ -76,7 +94,7 @@ export const RichMarkdown = ({ interactive, children }: RichMarkdownProps) => {
 								wrapLongLines
 								codeTagProps={{
 									className:
-										'text-[14px] leading-[1.38] font-[monospace] px-[1.1rem] block text-nowrap!',
+										'text-[14px] leading-[1.38] font-[monospace] px-[1.1rem] block text-nowrap! text-[var(--color-text)] dark:text-white',
 								}}
 							>
 								{`${code}\n\n`}

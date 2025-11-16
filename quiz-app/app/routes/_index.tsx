@@ -168,7 +168,7 @@ function QuestionForm({
 			<input type="hidden" name="answered" value={answered} />
 			<input type="hidden" name="type" value={data.topic} />
 			<div className="text-2x">
-				<div className="-mb-4 font-bold">Question: </div>
+				<div className="-mb-4 font-bold text-[var(--color-accent)]">Question: </div>
 				<RichMarkdown interactive>{data.question}</RichMarkdown>
 			</div>
 			{data.options && data.options.length > 0 && (
