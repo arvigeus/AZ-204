@@ -23,7 +23,11 @@ export default function App() {
 	useEffect(() => {
 		setMounted(true);
 		// On mount, check localStorage and set theme
-		const storedTheme = localStorage.getItem('theme');
+		let storedTheme = localStorage.getItem('theme');
+		if (!storedTheme) {
+			localStorage.setItem('theme', 'light');
+			storedTheme = 'light';
+		}
 		if (storedTheme === 'dark') {
 			setIsDark(true);
 			document.documentElement.classList.add('dark');
