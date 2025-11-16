@@ -72,9 +72,16 @@ export const AnswerOptions: FC<AnswerOptionsProps> = ({
 							components={{
 								p({ node, className, children, ...props }) {
 									return (
-										<p className={clsx(className, 'my-0! text-[var(--color-text)] ')} {...props}>
+										<p className={clsx(className, 'my-0! text-[var(--color-text)]')} {...props}>
 											{children}
 										</p>
+									);
+								},
+								code({ className, children, ...props }) {
+									return (
+										<code className={clsx(className, 'text-[var(--color-text)]')} {...props}>
+											{children}
+										</code>
 									);
 								},
 							}}
