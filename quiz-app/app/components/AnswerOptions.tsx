@@ -50,12 +50,13 @@ export const AnswerOptions: FC<AnswerOptionsProps> = ({
 					<label
 						className={clsx(
 							InputStyle,
+							'border-[var(--color-border)]',
 							(showAnswer || checkedValues.includes(index)) &&
 								answerIndexes.includes(index)
-								? 'bg-green-200'
+								? 'bg-green-200 border border-[var(--color-border)]'
 								: checkedValues.includes(index)
-									? 'bg-red-200'
-									: 'bg-transparent',
+									? 'bg-red-200 border border-[var(--color-border)]'
+									: 'bg-[var(--color-surface)] text-[var(--color-text)]',
 						)}
 					>
 						<input
@@ -71,7 +72,7 @@ export const AnswerOptions: FC<AnswerOptionsProps> = ({
 							components={{
 								p({ node, className, children, ...props }) {
 									return (
-										<p className={clsx(className, 'my-0!')} {...props}>
+										<p className={clsx(className, 'my-0! text-[var(--color-text)] ')} {...props}>
 											{children}
 										</p>
 									);

@@ -39,7 +39,7 @@ export const RichMarkdown = ({ interactive, children }: RichMarkdownProps) => {
 				pre({ className, children, ...props }) {
 					return (
 						<pre
-							className={clsx(className, 'my-0 bg-transparent p-0')}
+							className={clsx(className, 'my-0 bg-transparent p-0 bg-[var(--color-surface)] text-[var(--color-text)]')}
 							{...props}
 						>
 							{children}
@@ -91,7 +91,7 @@ export const RichMarkdown = ({ interactive, children }: RichMarkdownProps) => {
 								<>
 									<CodeEditor value={`${code}\n`} lang={language} />
 
-									<div className="mt-4 text-gray-400 text-xs italic">
+									<div className="mt-4 text-[var(--color-text)] text-xs italic">
 										Note: On the real exam you don't have to write code
 									</div>
 								</>

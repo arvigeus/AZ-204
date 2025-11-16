@@ -17,11 +17,11 @@ const btnStyle =
 const getColor = (color: ButtonProps['bgColor']) => {
 	switch (color) {
 		case 'blue':
-			return 'bg-blue-600 hover:bg-blue-700 hover:shadow-md border border-blue-700 text-white focus:ring-blue-500';
+			return 'bg-blue-600 hover:bg-blue-700 hover:shadow-md border border-[var(--color-border)] text-white focus:ring-blue-500';
 		case 'green':
-			return 'bg-green-600 hover:bg-green-700 hover:shadow-md border border-green-700 text-white focus:ring-green-500';
+			return 'bg-green-600 hover:bg-green-700 hover:shadow-md border border-[var(--color-border)] text-white focus:ring-green-500';
 		case 'gray':
-			return 'bg-gray-300 hover:bg-gray-300 hover:shadow-md border border-gray-300 text-white';
+			return 'bg-[var(--color-surface)] border-[var(--color-border)] text-[var(--color-text)]';
 		default:
 			return '';
 	}
@@ -47,7 +47,7 @@ export const LoadingButton: FC<LoadingButtonProps> = ({
 		<button disabled type="button" className={style} {...props}>
 			<svg
 				aria-hidden="true"
-				className="mr-3 inline h-4 w-4 animate-spin text-gray-400"
+				className="mr-3 inline h-4 w-4 animate-spin text-[var(--color-text)]"
 				viewBox="0 0 100 101"
 				fill="none"
 				xmlns="http://www.w3.org/2000/svg"
@@ -102,13 +102,13 @@ export const NextButton: FC<NextButtonProps> = ({
 
 	const getMainButtonColor = (color: ButtonProps['bgColor']) =>
 		color === 'blue'
-			? 'bg-blue-600 hover:bg-blue-700 border-blue-700 text-white'
-			: 'bg-green-600 hover:bg-green-700 border-green-700 text-white';
+			? 'bg-blue-600 hover:bg-blue-700 border-[var(--color-border)] text-white'
+			: 'bg-green-600 hover:bg-green-700 border-[var(--color-border)] text-white';
 
 	const getDropdownButtonColor = (color: ButtonProps['bgColor']) =>
 		color === 'blue'
-			? 'bg-blue-700 hover:bg-blue-800 border-blue-700 text-white'
-			: 'bg-green-700 hover:bg-green-800 border-green-700 text-white';
+			? 'bg-blue-700 hover:bg-blue-800 border-[var(--color-border)] text-white'
+			: 'bg-green-700 hover:bg-green-800 border-[var(--color-border)] text-white';
 
 	const getFocusRing = (color: ButtonProps['bgColor']) =>
 		color === 'blue' ? 'focus:ring-blue-500' : 'focus:ring-green-500';
@@ -118,6 +118,7 @@ export const NextButton: FC<NextButtonProps> = ({
 			className={clsx(
 				'flex h-auto rounded-lg shadow-xs transition-all duration-200 hover:shadow-md',
 				'focus-within:ring-2 focus-within:ring-offset-2',
+				'bg-[var(--color-surface)] text-[var(--color-text)] border-[var(--color-border)]',
 				className,
 				getFocusRing(bgColor),
 			)}
@@ -127,7 +128,7 @@ export const NextButton: FC<NextButtonProps> = ({
 				name="topic"
 				value={topic ?? ''}
 				className={clsx(
-					'flex h-full w-full items-center justify-center rounded-l-lg border border-r-0 py-4 focus:z-10 focus:outline-hidden',
+					'flex h-full w-full items-center justify-center rounded-l-lg border border-r-0 py-4 focus:z-10 focus:outline-hidden border-[var(--color-border)]',
 					'px-2.5 py-1 font-medium text-xs sm:px-5 sm:py-2.5 sm:text-sm',
 					getMainButtonColor(bgColor),
 				)}
@@ -152,7 +153,7 @@ export const NextButton: FC<NextButtonProps> = ({
 					onClick={() => setShowDropdown((prev) => !prev)}
 					type="button"
 					className={clsx(
-						'flex h-full items-center justify-center rounded-r-lg border focus:z-10 focus:outline-hidden sm:w-11',
+						'flex h-full items-center justify-center rounded-r-lg border focus:z-10 focus:outline-hidden sm:w-11 border-[var(--color-border)]',
 						getDropdownButtonColor(bgColor),
 					)}
 				>
@@ -175,13 +176,13 @@ export const NextButton: FC<NextButtonProps> = ({
 
 				<div
 					className={clsx(
-						'absolute right-0 z-10 mt-2 w-48 rounded-lg border border-gray-200 bg-white shadow-lg',
+						'absolute right-0 z-10 mt-2 w-48 rounded-lg border-[var(--color-border)] bg-[var(--color-surface)] shadow-lg',
 						'divide-y divide-gray-100',
 						{ hidden: !showDropdown },
 					)}
 				>
 					<ul
-						className="m-0 list-none px-0 py-1 text-gray-700 text-sm"
+						className="m-0 list-none px-0 py-1 text-[var(--color-text)] text-sm"
 						aria-labelledby="dropdownDefaultButton"
 					>
 						{entries.map((entry) => (
