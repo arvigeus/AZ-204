@@ -118,7 +118,7 @@ function QuestionForm({
 	return (
 		<Form method="post" onSubmit={handleSubmit}>
 			<h2 className="relative mt-0 text-center">
-				<Link to={`?topic=${encodeURIComponent(data.topic)}`}>
+				<Link to={`?topic=${encodeURIComponent(data.topic)}`} className="text-[var(--color-accent)] font-semibold underline">
 					{data.topic}
 				</Link>{' '}
 				<Link
