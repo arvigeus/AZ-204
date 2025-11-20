@@ -107,11 +107,10 @@ export const getQAById = (id: string) => {
 	return shuffleQA({ ...data[index], index });
 };
 
-export const getQuestionsByTopic = (topic: string): QAPair[] => {
+export const getQuestionsByTopic = (topic: string, seed?: number): QAPair[] => {
 	const questions: QAPair[] = data.filter((item) => item.topic === topic);
 	if (questions.length === 0) return [];
-	const seed = getTopicSeed(topic);
-	return shuffleArraySeed(questions, seed);
+	return shuffleArraySeed(questions, seed ?? Math.floor(Math.random() * 1e9));
 };
 
 const getRandomElement = <T>(array: T[]): T =>

@@ -10,8 +10,10 @@ import { TextInput } from '~/components/Input';
 import { RichMarkdown } from '~/components/RichMarkdown';
 import { getQuestionsByTopic } from '~/lib/qa';
 
-export const loader = async ({ params }: LoaderFunctionArgs) => {
-	return getQuestionsByTopic(params.name || '');
+export const loader = async ({ params, request }: LoaderFunctionArgs) => {
+	const url = new URL(request.url);
+	const seed = url.searchParams.get('seed');
+	return getQuestionsByTopic(params.name || '', seed ? parseInt(seed, 10) : undefined);
 };
 
 export const meta: MetaFunction = ({ params }) => {
@@ -21,7 +23,9 @@ export const meta: MetaFunction = ({ params }) => {
 };
 
 export default function Topic() {
-	const questions = useLoaderData<typeof loader>();
+	const loaderQuestions = useLoaderData<typeof loader>();
+	// Memoize questions so they don't reshuffle on theme change or unrelated re-renders
+	const questions = useMemo(() => loaderQuestions, [loaderQuestions]);
 	const params = useParams();
 	const [searchParams, setSearchParams] = useSearchParams();
 
@@ -72,7 +76,7 @@ export default function Topic() {
 					to={'/topics'}
 					className="text-[var(--color-accent)] font-semibold underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] transition-colors duration-300"
 					style={{ color: 'var(--color-accent)' }}
-				>
+					>
 					← Back to Topics
 				</Link>
 			</h2>

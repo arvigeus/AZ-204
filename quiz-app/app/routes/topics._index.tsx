@@ -15,7 +15,7 @@ export default function Index() {
 				<li key={`${topic}-${idx}`} className="mb-2">
 					<Link
 						className={`${InputStyle} text-[var(--color-accent)] font-semibold underline`}
-						to={`/topics/${topic}`}
+						to={`/topics/${topic}?seed=${Math.floor(Math.random() * 1e9)}`}
 					>
 						{topic}{' '}
 					</Link>

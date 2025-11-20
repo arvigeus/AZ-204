@@ -25,9 +25,14 @@ export default function App() {
 
 	useEffect(() => {
 		setMounted(true);
-		document.documentElement.classList.remove('dark');
-		localStorage.setItem('theme', 'light');
-		setIsDark(false);
+		const storedTheme = localStorage.getItem('theme');
+		if (storedTheme === 'dark') {
+			document.documentElement.classList.add('dark');
+			setIsDark(true);
+		} else {
+			document.documentElement.classList.remove('dark');
+			setIsDark(false);
+		}
 	}, []);
 
 	const toggleTheme = useCallback(() => {
@@ -59,7 +64,7 @@ export default function App() {
 			<body className="h-screen w-full antialiased bg-[var(--color-bg)] text-[var(--color-text)]">
 				<div className="flex h-screen w-full justify-center pt-6 antialiased bg-[var(--color-bg)] text-[var(--color-text)]">
 					<div className="flex w-full max-w-3xl flex-col justify-between p-3">
-						<main key={isDark ? 'dark' : 'light'} className="prose max-w-3xl grow">
+						<main className="prose max-w-3xl grow">
 							<div className="flex justify-between items-center">
 								<div className="flex flex-col items-center w-full">
 									<h1 className="font-bold text-5xl text-[var(--color-accent)]">
