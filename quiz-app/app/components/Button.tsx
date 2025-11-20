@@ -185,8 +185,8 @@ export const NextButton: FC<NextButtonProps> = ({
 						className="m-0 list-none px-0 py-1 text-[var(--color-text)] text-sm"
 						aria-labelledby="dropdownDefaultButton"
 					>
-						{entries.map((entry) => (
-							<li key={entry} className="box-border p-0">
+						{entries.map((entry, idx) => (
+							<li key={typeof entry === 'string' ? `${entry}-${idx}` : idx} className="box-border p-0">
 								<button
 									type="submit"
 									name="topic"

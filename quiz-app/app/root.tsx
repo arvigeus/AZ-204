@@ -9,7 +9,7 @@ import {
 	// ScrollRestoration,
 } from 'react-router';
 import stylesheet from '~/tailwind.css?url';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 
 export const links: LinksFunction = () => [
 	{ rel: 'stylesheet', href: stylesheet },
@@ -17,27 +17,20 @@ export const links: LinksFunction = () => [
 ];
 
 export default function App() {
+	/**
+	 * Theme state: true for dark, false for light
+	 */
 	const [isDark, setIsDark] = useState(false);
 	const [mounted, setMounted] = useState(false);
 
 	useEffect(() => {
 		setMounted(true);
-		// On mount, check localStorage and set theme
-		let storedTheme = localStorage.getItem('theme');
-		if (!storedTheme) {
-			localStorage.setItem('theme', 'light');
-			storedTheme = 'light';
-		}
-		if (storedTheme === 'dark') {
-			setIsDark(true);
-			document.documentElement.classList.add('dark');
-		} else {
-			setIsDark(false);
-			document.documentElement.classList.remove('dark');
-		}
+		document.documentElement.classList.remove('dark');
+		localStorage.setItem('theme', 'light');
+		setIsDark(false);
 	}, []);
 
-	const toggleTheme = () => {
+	const toggleTheme = useCallback(() => {
 		setIsDark((prev) => {
 			const newTheme = !prev;
 			if (newTheme) {
@@ -49,7 +42,7 @@ export default function App() {
 			}
 			return newTheme;
 		});
-	};
+	}, []);
 
 	return (
 		<html lang="en">
@@ -84,6 +77,7 @@ export default function App() {
 										className="ml-4 rounded px-3 py-2 border shadow transition bg-[var(--color-surface)] text-[var(--color-text)] border-[var(--color-border)] hover:bg-[var(--color-bg)]"
 										onClick={toggleTheme}
 										aria-label="Toggle dark mode"
+										tabIndex={0}
 									>
 										{isDark ? '🌙 Dark' : '☀️ Light'}
 									</button>
@@ -103,6 +97,7 @@ export default function App() {
 									target="_blank"
 									title="Viewing existing code on GitHub"
 									rel="noreferrer"
+									aria-label="GitHub repository"
 								>
 									<svg
 										role="img"

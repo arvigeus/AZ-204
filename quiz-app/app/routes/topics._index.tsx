@@ -11,8 +11,8 @@ export const meta: MetaFunction = () => {
 export default function Index() {
 	return (
 		<ul className="list-none p-0">
-			{topics.map((topic: string) => (
-				<li key={topic} className="mb-2">
+			{topics.map((topic: string, idx: number) => (
+				<li key={`${topic}-${idx}`} className="mb-2">
 					<Link
 						className={`${InputStyle} text-[var(--color-accent)] font-semibold underline`}
 						to={`/topics/${topic}`}

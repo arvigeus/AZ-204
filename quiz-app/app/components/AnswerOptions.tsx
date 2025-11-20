@@ -46,7 +46,7 @@ export const AnswerOptions: FC<AnswerOptionsProps> = ({
 	return (
 		<ul className="list-none p-0">
 			{options.map((option: string, index: number) => (
-				<li key={option} className="mb-2">
+				<li key={`${option}-${index}`} className="mb-2">
 					<label
 						className={clsx(
 							InputStyle,
