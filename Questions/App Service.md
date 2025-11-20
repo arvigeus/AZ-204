@@ -883,7 +883,7 @@ Answer: VM instances
 
 ---
 
-Question: How apps are charged in Isolated App Service plan:
+Question: How are apps in an Isolated App Service Plan charged?
 
 - [ ] Each app is charged for CPU quota
 - [ ] Each VM instance in the App Service plan is charged
