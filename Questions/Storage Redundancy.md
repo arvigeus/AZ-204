@@ -112,7 +112,7 @@ Answer: GRS and GZRS copies your data asynchronously to secondary region.
 Question: Beta Enterprises operates an application in Azure that handles sensitive data. Due to data residency laws, they cannot replicate their data outside of their country, but they still want to maintain high availability within their region. In addition, they require read access to their data even if one of the zones in their region goes down. Which storage redundancy option is most suitable for Beta Enterprises?
 
 - [ ] Locally Redundant Storage (LRS)
-- [ ] Geo-Redundant Storage (GRS-RA)
+- [ ] Geo-Redundant Storage (GRS)
 - [ ] Geo-Zone-Redundant Storage (GZRS)
 - [ ] Geo-Redundant Storage with Read Access (GRS-RA)
 - [ ] Geo-Zone-Redundant Storage with Read Access (GZRS-RA)
