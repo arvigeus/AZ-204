@@ -69,7 +69,14 @@ export const RichMarkdown = ({ interactive, children }: RichMarkdownProps) => {
 				},
 				pre({ className, children, ...props }) {
 					return (
-						<pre className={clsx(className, 'my-0 bg-transparent p-0 bg-[var(--color-surface)] text-[var(--color-text)]', 'dark:text-white', 'light:text-[var(--color-text)]')} {...props}>
+						<pre
+							className={clsx(
+								className,
+								'bg-[var(--color-surface)] text-[var(--color-text)] rounded border border-[var(--color-border)] p-4 my-2 overflow-x-auto',
+							)}
+							style={{ background: 'var(--color-surface)', color: 'var(--color-text)' }}
+							{...props}
+						>
 							{children}
 						</pre>
 					);
@@ -78,7 +85,11 @@ export const RichMarkdown = ({ interactive, children }: RichMarkdownProps) => {
 					const match = /language-(\w+)/.exec(className || '');
 					if (!match)
 						return (
-							<code {...props} className={clsx(className, 'text-[var(--color-text)]')}>
+							<code
+								{...props}
+								className={clsx(className, 'bg-[var(--color-surface)] text-[var(--color-text)] rounded px-2 py-1 font-mono')}
+								style={{ background: 'var(--color-surface)', color: 'var(--color-text)' }}
+							>
 								{children}
 							</code>
 						);
@@ -92,23 +103,22 @@ export const RichMarkdown = ({ interactive, children }: RichMarkdownProps) => {
 							break;
 					}
 					const isYaml = language === 'yaml' || language === 'yml';
-					const yamlStyle = {
-						background: 'var(--color-surface)',
-						color: 'var(--color-text)',
-						borderRadius: '0.5rem',
-						border: '1px solid var(--color-border)',
-						padding: '1em',
-						fontFamily: 'monospace',
-						fontSize: '1em',
-						overflowX: 'auto' as 'auto',
-					};
 					const highlightedCode = (
 						<div className="pt-[0.6rem]">
 							<SyntaxHighlighter
-								style={isYaml ? {} : ghcolors}
+								style={ghcolors}
 								language={language}
 								wrapLongLines
-								customStyle={isYaml ? yamlStyle : undefined}
+								customStyle={{
+									background: 'var(--color-surface)',
+									color: 'var(--color-text)',
+									borderRadius: '0.5rem',
+									border: '1px solid var(--color-border)',
+									padding: '1em',
+									fontFamily: 'monospace',
+									fontSize: '1em',
+									overflowX: 'auto',
+								}}
 								codeTagProps={{
 									className:
 										'text-[14px] leading-[1.38] font-[monospace] px-[1.1rem] block text-nowrap! text-[var(--color-text)]',

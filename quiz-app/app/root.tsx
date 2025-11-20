@@ -62,9 +62,12 @@ export default function App() {
 				<Links />
 			</head>
 			<body className="h-screen w-full antialiased bg-[var(--color-bg)] text-[var(--color-text)]">
+				<a href="#main-content" className="skip-link absolute left-2 top-2 z-50 bg-[var(--color-accent)] text-white px-4 py-2 rounded focus:translate-y-0 focus:outline focus:outline-2 focus:outline-[var(--color-accent)] -translate-y-20 transition-transform duration-200" tabIndex={0}>
+					Skip to main content
+				</a>
 				<div className="flex h-screen w-full justify-center pt-6 antialiased bg-[var(--color-bg)] text-[var(--color-text)]">
 					<div className="flex w-full max-w-3xl flex-col justify-between p-3">
-						<main className="prose max-w-3xl grow">
+						<main id="main-content" className="prose max-w-3xl grow">
 							<div className="flex justify-between items-center">
 								<div className="flex flex-col items-center w-full">
 									<h1 className="font-bold text-5xl text-[var(--color-accent)]">
