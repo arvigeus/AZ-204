@@ -792,12 +792,12 @@ az webapp update --minimum-elastic-instance-count X --prewarmed-instance-count Y
 
 Question: Your company has developed a web application that experiences intermittent high traffic volumes. However, the company has noticed that during the sudden traffic spikes, the performance of their application temporarily degrades before it starts to stabilize. The degradation is especially apparent when the application hasn't received any significant traffic for a while. How can you mitigate this performance degradation issue?
 
+Bonus question: You are running on a `Standard` plan, do you need to change it in order to implement your solution?
+
 - [ ] Manually adjust the number of instances when traffic increases.
 - [ ] Set up custom scaling rules based on traffic using Azure Autoscale.
 - [x] Implement Azure Automatic Scaling with prewarming of instances.
 - [ ] Monitor performance using Azure Application Insights Live Metrics.
-
-Bonus question: You are running on a `Standard` plan, do you need to change it in order to implement your solution?
 
 Answer: The problem your company experiences is called _cold boot_. In order to mitigate it, you need Automatic Scaling with pre-warmed/always ready instances. This requires at least `PremiumV2` plan.  
 Azure Manual Scaling lacks real-time adjustment capabilities, making it inefficient for sudden traffic spikes.  
