@@ -52,12 +52,21 @@ export default function Topic() {
 	return (
 		<Form method="post" onSubmit={handleSubmit}>
 			<h2 className="mt-0 text-center">
-				<Link to={'/topics'}>← Back to Topics</Link>
+				<Link
+					to={'/topics'}
+					className="text-[var(--color-accent)] font-semibold underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] transition-colors duration-300"
+					style={{ color: 'var(--color-accent)' }}
+				>
+					← Back to Topics
+				</Link>
 			</h2>
 			{question ? (
 				<>
 					<div className="text-2x">
-						<span className="font-bold">
+						<span
+							className="font-bold text-[var(--color-accent)] transition-colors duration-300"
+							style={{ color: 'var(--color-accent)' }}
+						>
 							{params.name} ({index + 1} / {questions.length}):{' '}
 						</span>
 						<RichMarkdown interactive>{question.question}</RichMarkdown>
