@@ -211,11 +211,16 @@ function QuestionForm({
 				>
 					{!showAnswer ? 'Show' : 'Hide'} Answer
 				</Button>
-				<a
-					href={`/report?id=${data.id}`}
-					target="_blank"
-					className="inline-flex transform items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 font-medium text-gray-700 text-sm shadow-xs transition-all duration-200 hover:border-gray-400 hover:bg-gray-50 hover:shadow-md focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:justify-self-center"
-					rel="noreferrer"
+				<button
+					type="button"
+					onClick={() => window.open(`/report?id=${data.id}`, '_blank', 'noopener,noreferrer')}
+					className={clsx(
+						'inline-flex transform items-center justify-center gap-2 rounded-md border-2 px-4 py-2 font-medium text-sm shadow-xs transition-all duration-200 sm:justify-self-center',
+						'bg-[var(--color-surface)] text-[var(--color-text)] border-[var(--color-accent)]',
+						'hover:bg-[var(--color-bg)] hover:border-[var(--color-accent)] hover:shadow-md',
+						'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2'
+					)}
+					aria-label="Report a problem"
 				>
 					<svg
 						role="alert"
@@ -238,7 +243,7 @@ function QuestionForm({
 						/>
 					</svg>
 					Report a problem
-				</a>
+				</button>
 				{isLoading ? (
 					<LoadingButton className="sm:justify-self-end" text="Loading" />
 				) : (
