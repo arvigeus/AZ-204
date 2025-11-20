@@ -117,12 +117,26 @@ export const RichMarkdown = ({ interactive, children }: RichMarkdownProps) => {
 							   break;
 					   }
 
+					   // Accessible theme-aware style for YAML
+					   const isYaml = language === 'yaml' || language === 'yml';
+											 const yamlStyle = {
+												 background: 'var(--color-surface)',
+												 color: 'var(--color-text)',
+												 borderRadius: '0.5rem',
+												 border: '1px solid var(--color-border)',
+												 padding: '1em',
+												 fontFamily: 'monospace',
+												 fontSize: '1em',
+												 overflowX: 'auto' as 'auto',
+											 };
+
 					   const highlightedCode = (
 						   <div className="pt-[0.6rem]">
 							   <SyntaxHighlighter
-								   style={ghcolors}
+								   style={isYaml ? {} : ghcolors}
 								   language={language}
 								   wrapLongLines
+								   customStyle={isYaml ? yamlStyle : undefined}
 								   codeTagProps={{
 									   className:
 										   'text-[14px] leading-[1.38] font-[monospace] px-[1.1rem] block text-nowrap! text-[var(--color-text)]',
