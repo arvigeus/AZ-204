@@ -21,8 +21,8 @@
 		border-color: var(--color-gray-200, currentcolor);
 	}
 	html {
-		--color-bg: #ffffff;
-		--color-surface: #f3f4f6;
+		--color-bg: #f3f4f6;
+		--color-surface: #ffffff;
 		--color-text: #393A34;
 		--color-accent: #6366f1;
 		--color-border: #dddddd;
