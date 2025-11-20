@@ -1,5 +1,6 @@
 import { langs } from '@uiw/codemirror-extensions-langs';
 import { githubLight } from '@uiw/codemirror-theme-github';
+import { githubDark } from '@uiw/codemirror-theme-github';
 import CodeMirror, { type ReactCodeMirrorProps } from '@uiw/react-codemirror';
 
 import { useMemo } from 'react';
@@ -32,9 +33,13 @@ const CodeEditor = ({ lang, ...props }: CodeEditorProps) => {
 				return langs.csharp();
 		}
 	}, [lang]);
+
+	// Detect dark mode
+	const isDark = typeof window !== 'undefined' && window.document.documentElement.classList.contains('dark');
+
 	return (
 		<CodeMirror
-			theme={githubLight}
+			theme={isDark ? githubDark : githubLight}
 			extensions={[languate]}
 			{...props}
 			className={InputStyle}

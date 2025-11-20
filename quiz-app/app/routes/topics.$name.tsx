@@ -1,7 +1,8 @@
 import clsx from 'clsx';
-import { type FormEventHandler, useState } from 'react';
+import { type FormEventHandler, useState, useEffect, useMemo } from 'react';
 import type { LoaderFunctionArgs, MetaFunction } from 'react-router';
 import { Form, Link, useLoaderData, useParams } from 'react-router';
+import { useSearchParams } from 'react-router';
 
 import { AnswerOptions } from '~/components/AnswerOptions';
 import { Button } from '~/components/Button';
@@ -9,8 +10,10 @@ import { TextInput } from '~/components/Input';
 import { RichMarkdown } from '~/components/RichMarkdown';
 import { getQuestionsByTopic } from '~/lib/qa';
 
-export const loader = async ({ params }: LoaderFunctionArgs) => {
-	return getQuestionsByTopic(params.name || '');
+export const loader = async ({ params, request }: LoaderFunctionArgs) => {
+	const url = new URL(request.url);
+	const seed = url.searchParams.get('seed');
+	return getQuestionsByTopic(params.name || '', seed ? parseInt(seed, 10) : undefined);
 };
 
 export const meta: MetaFunction = ({ params }) => {
@@ -20,49 +23,78 @@ export const meta: MetaFunction = ({ params }) => {
 };
 
 export default function Topic() {
-	const questions = useLoaderData<typeof loader>();
+	const loaderQuestions = useLoaderData<typeof loader>();
+	const [isReady, setIsReady] = useState(false);
+	// Memoize questions so they don't reshuffle on theme change or unrelated re-renders
+	const questions = useMemo(() => loaderQuestions, [loaderQuestions]);
 	const params = useParams();
+	const [searchParams, setSearchParams] = useSearchParams();
 
-	const [index, setIndex] = useState(0);
+	// Memoize initial index calculation
+	const initialIndex = useMemo(() => {
+		const questionId = searchParams.get('id');
+		return questionId ? questions.findIndex(q => q.id === questionId) : 0;
+	}, [questions, searchParams]);
+	const [index, setIndex] = useState(initialIndex);
+
+	useEffect(() => {
+		// Only set ready when questions are loaded
+		if (questions.length > 0) {
+			setIsReady(true);
+		}
+	}, [questions]);
+
 
 	const [checkedValues, setCheckedValues] = useState<number[]>([]);
 	const [showAnswer, setShowAnswer] = useState(false);
 
-	const question = index < questions.length ? questions[index] : null;
+	const question = (typeof index === 'number' && index >= 0 && index < questions.length) ? questions[index] : null;
 
 	const isCorrectlyAnswered =
-		question?.answerIndexes &&
+		question && Array.isArray(question.answerIndexes) &&
 		question.answerIndexes.length > 0 &&
 		question.answerIndexes.length === checkedValues.length &&
 		question.answerIndexes.every((value) => checkedValues.includes(value));
 
 	const buttonColor = showAnswer || isCorrectlyAnswered ? 'green' : 'blue';
 
-	const handleSubmit: FormEventHandler<HTMLFormElement | HTMLButtonElement> = (
-		e,
-	) => {
+	if (!isReady) {
+		return <div className="text-center py-8">Loading question...</div>;
+	}
+
+	const handleSubmit: FormEventHandler<HTMLFormElement> = (e) => {
 		e.preventDefault();
 		setCheckedValues([]);
 		setShowAnswer(false);
-		setIndex((index) => index + 1);
-		// window.scrollTo(0, 0);
+		if (index < questions.length - 1) {
+			setIndex(index + 1);
+		}
 		return false;
 	};
 
 	return (
 		<Form method="post" onSubmit={handleSubmit}>
 			<h2 className="mt-0 text-center">
-				<Link to={'/topics'}>← Back to Topics</Link>
+				<Link
+					to={'/topics'}
+					className="text-[var(--color-accent)] font-semibold underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] transition-colors duration-300"
+					style={{ color: 'var(--color-accent)' }}
+				>
+					← Back to Topics
+				</Link>
 			</h2>
 			{question ? (
 				<>
 					<div className="text-2x">
-						<span className="font-bold">
+						<span
+							className="font-bold text-[var(--color-accent)] transition-colors duration-300"
+							style={{ color: 'var(--color-accent)' }}
+						>
 							{params.name} ({index + 1} / {questions.length}):{' '}
 						</span>
 						<RichMarkdown interactive>{question.question}</RichMarkdown>
 					</div>
-					{question.options && question.options.length > 0 && (
+					{question.options?.length > 0 && (
 						<AnswerOptions
 							name="answers"
 							options={question.options}
@@ -73,13 +105,12 @@ export default function Topic() {
 							disabled={showAnswer}
 						/>
 					)}
-					{question.answerIndexes && question.answerIndexes.length > 1 && (
+					{question.answerIndexes?.length > 1 && (
 						<div className="text-gray-400 text-xs italic">
 							Note: This question has more than one correct answer
 						</div>
 					)}
-					{(!question.options || !question.options.length) &&
-						!question.hasCode && <TextInput />}
+					{(!question.options?.length) && !question.hasCode && <TextInput />}
 
 					<div
 						className={clsx(
@@ -98,7 +129,7 @@ export default function Topic() {
 						>
 							{!showAnswer ? 'Show' : 'Hide'} Answer
 						</Button>
-						<Button bgColor={buttonColor} type="submit" onSubmit={handleSubmit}>
+						<Button bgColor={buttonColor} type="submit">
 							Next
 						</Button>
 					</div>

@@ -46,16 +46,18 @@ export const AnswerOptions: FC<AnswerOptionsProps> = ({
 	return (
 		<ul className="list-none p-0">
 			{options.map((option: string, index: number) => (
-				<li key={option} className="mb-2">
+				<li key={`${option}-${index}`} className="mb-2">
 					<label
 						className={clsx(
 							InputStyle,
+							'border-2 rounded-lg',
+							'border-[var(--color-border)] dark:border-[var(--color-accent)] focus-visible:border-[var(--color-accent)]',
 							(showAnswer || checkedValues.includes(index)) &&
 								answerIndexes.includes(index)
-								? 'bg-green-200'
+								? 'bg-green-200 text-black dark:text-black'
 								: checkedValues.includes(index)
-									? 'bg-red-200'
-									: 'bg-transparent',
+									? 'bg-red-200 text-black dark:text-black'
+									: 'bg-[var(--color-surface)] text-[var(--color-text)]',
 						)}
 					>
 						<input
@@ -68,15 +70,58 @@ export const AnswerOptions: FC<AnswerOptionsProps> = ({
 							disabled={disabled}
 						/>
 						<Markdown
-							components={{
-								p({ node, className, children, ...props }) {
-									return (
-										<p className={clsx(className, 'my-0!')} {...props}>
-											{children}
-										</p>
-									);
-								},
-							}}
+							components={
+								(showAnswer || checkedValues.includes(index)) && answerIndexes.includes(index)
+									? {
+										p({ node, className, children, ...props }) {
+											return (
+												<p className={clsx(className, 'my-0! text-black dark:text-black')} {...props}>
+													{children}
+												</p>
+											);
+										},
+										code({ className, children, ...props }) {
+											return (
+												<code className={clsx(className, 'text-black dark:text-black')} {...props}>
+													{children}
+												</code>
+											);
+										},
+									}
+									: checkedValues.includes(index)
+										? {
+											p({ node, className, children, ...props }) {
+												return (
+													<p className={clsx(className, 'my-0! text-black dark:text-black')} {...props}>
+														{children}
+													</p>
+												);
+											},
+											code({ className, children, ...props }) {
+												return (
+													<code className={clsx(className, 'text-black dark:text-black')} {...props}>
+														{children}
+													</code>
+												);
+											},
+										}
+										: {
+											p({ node, className, children, ...props }) {
+												return (
+													<p className={clsx(className, 'my-0! text-[var(--color-text)]')} {...props}>
+														{children}
+													</p>
+												);
+											},
+											code({ className, children, ...props }) {
+												return (
+													<code className={clsx(className, 'text-[var(--color-text)]')} {...props}>
+														{children}
+													</code>
+												);
+											},
+										}
+							}
 						>
 							{option}
 						</Markdown>
