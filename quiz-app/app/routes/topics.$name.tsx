@@ -1,7 +1,8 @@
 import clsx from 'clsx';
-import { type FormEventHandler, useState } from 'react';
+import { type FormEventHandler, useState, useEffect, useMemo } from 'react';
 import type { LoaderFunctionArgs, MetaFunction } from 'react-router';
 import { Form, Link, useLoaderData, useParams } from 'react-router';
+import { useSearchParams } from 'react-router';
 
 import { AnswerOptions } from '~/components/AnswerOptions';
 import { Button } from '~/components/Button';
@@ -22,30 +23,45 @@ export const meta: MetaFunction = ({ params }) => {
 export default function Topic() {
 	const questions = useLoaderData<typeof loader>();
 	const params = useParams();
+	const [searchParams, setSearchParams] = useSearchParams();
 
-	const [index, setIndex] = useState(0);
+	// Memoize initial index calculation
+	const initialIndex = useMemo(() => {
+		const questionId = searchParams.get('id');
+		return questionId ? questions.findIndex(q => q.id === questionId) : 0;
+	}, [questions, searchParams]);
+	const [index, setIndex] = useState(initialIndex);
+
+	useEffect(() => {
+		// Only update URL when index changes due to user action
+		if (questions[index]) {
+			setSearchParams(paramsObj => ({
+				...paramsObj,
+				id: questions[index].id,
+			}));
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [index]);
 
 	const [checkedValues, setCheckedValues] = useState<number[]>([]);
 	const [showAnswer, setShowAnswer] = useState(false);
 
-	const question = index < questions.length ? questions[index] : null;
+	const question = questions[index] ?? null;
 
 	const isCorrectlyAnswered =
-		question?.answerIndexes &&
-		question.answerIndexes.length > 0 &&
+		question?.answerIndexes?.length > 0 &&
 		question.answerIndexes.length === checkedValues.length &&
 		question.answerIndexes.every((value) => checkedValues.includes(value));
 
 	const buttonColor = showAnswer || isCorrectlyAnswered ? 'green' : 'blue';
 
-	const handleSubmit: FormEventHandler<HTMLFormElement | HTMLButtonElement> = (
-		e,
-	) => {
+	const handleSubmit: FormEventHandler<HTMLFormElement> = (e) => {
 		e.preventDefault();
 		setCheckedValues([]);
 		setShowAnswer(false);
-		setIndex((index) => index + 1);
-		// window.scrollTo(0, 0);
+		if (index < questions.length - 1) {
+			setIndex(index + 1);
+		}
 		return false;
 	};
 
@@ -71,24 +87,23 @@ export default function Topic() {
 						</span>
 						<RichMarkdown interactive>{question.question}</RichMarkdown>
 					</div>
-					{question.options && question.options.length > 0 && (
-						<AnswerOptions
-							name="answers"
-							options={question.options}
-							checkedValues={checkedValues}
-							setCheckedValues={setCheckedValues}
-							showAnswer={showAnswer}
-							answerIndexes={question.answerIndexes}
-							disabled={showAnswer}
-						/>
-					)}
-					{question.answerIndexes && question.answerIndexes.length > 1 && (
-						<div className="text-gray-400 text-xs italic">
-							Note: This question has more than one correct answer
-						</div>
-					)}
-					{(!question.options || !question.options.length) &&
-						!question.hasCode && <TextInput />}
+						{question.options?.length > 0 && (
+							<AnswerOptions
+								name="answers"
+								options={question.options}
+								checkedValues={checkedValues}
+								setCheckedValues={setCheckedValues}
+								showAnswer={showAnswer}
+								answerIndexes={question.answerIndexes}
+								disabled={showAnswer}
+							/>
+						)}
+						{question.answerIndexes?.length > 1 && (
+							<div className="text-gray-400 text-xs italic">
+								Note: This question has more than one correct answer
+							</div>
+						)}
+					{(!question.options?.length) && !question.hasCode && <TextInput />}
 
 					<div
 						className={clsx(
@@ -100,16 +115,16 @@ export default function Topic() {
 						<RichMarkdown>{question.answer}</RichMarkdown>
 					</div>
 					<div className="mt-12 flex justify-between">
-						<Button
-							type="button"
-							onClick={() => setShowAnswer((ans) => !ans)}
-							bgColor={buttonColor}
-						>
-							{!showAnswer ? 'Show' : 'Hide'} Answer
-						</Button>
-						<Button bgColor={buttonColor} type="submit" onSubmit={handleSubmit}>
-							Next
-						</Button>
+												<Button
+													type="button"
+													onClick={() => setShowAnswer((ans) => !ans)}
+													bgColor={buttonColor}
+												>
+													{!showAnswer ? 'Show' : 'Hide'} Answer
+												</Button>
+												<Button bgColor={buttonColor} type="submit">
+													Next
+												</Button>
 					</div>
 				</>
 			) : (
