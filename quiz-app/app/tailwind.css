@@ -24,14 +24,14 @@
 		--color-bg: #f3f4f6;
 		--color-surface: #ffffff;
 		--color-text: #393A34;
-		--color-accent: #6366f1;
+		--color-accent: #000000;
 		--color-border: #dddddd;
 	}
 	html.dark {
 		--color-bg: #18181b;
 		--color-surface: #23272f;
 		--color-text: #e5e7eb;
-		--color-accent: #818cf8;
+		--color-accent: #ffffff;
 		--color-border: #2d2d2d;
 	}
 	a {
