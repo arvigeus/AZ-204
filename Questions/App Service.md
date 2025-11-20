@@ -99,15 +99,21 @@ Answer: To access an on-premises system or service securely.
 
 ---
 
-Question: When would you use Gateway-required virtual network integration feature?
+Question: When would you _not_ use the Gateway-required virtual network integration feature?
 
-- [x] To access resources in your Azure virtual network or on-premises network over ExpressRoute or site-to-site VPN.
-- [ ] To restrict access to your Azure Service Resources to only your virtual network.
-- [ ] To support IP-based SSL for your app.
-- [ ] To access an on-premises system securely.
-- [ ] To support a dedicated inbound address for your app.
+- [x] To access resources in your Azure virtual network or on-premises network over ExpressRoute
+- [ ] To access resources over a site-to-site VPN
+- [ ] To integrate with a virtual network using point-to-site VPN
+- [ ] To reach resources in a peered virtual network
+- [ ] To restrict inbound access to your app using private endpoints
 
-Answer: To access resources in your Azure virtual network or on-premises network over ExpressRoute or site-to-site VPN.
+Answer: You can't use gateway-required virtual network integration:
+
+- With a virtual network connected to ExpressRoute.
+- With a coexistence gateway (ExpressRoute + point-to-site or site-to-site VPN).
+- From a Linux app or a Windows container.
+- To access service-endpoint–secured resources.
+- To resolve app settings referencing a network-secured Key Vault.
 
 ---
 

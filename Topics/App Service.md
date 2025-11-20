@@ -162,9 +162,9 @@ string myParentSettingValue = Configuration["MyParentSetting/MySubSetting"]; // 
 
 // settings.json
 [
-  { "name": "key1", "value": "value1", "slotSetting": false },
-  { "name": "key2", "value": "value2" }
-  // ...
+	{ "name": "key1", "value": "value1", "slotSetting": false },
+	{ "name": "key2", "value": "value2" }
+	// ...
 ]
 
 // Load: az webapp config appsettings set --resource-group $resourceGroup --name $appName --settings @settings.json
@@ -195,18 +195,18 @@ string myConnectionStringEnv = Environment.GetEnvironmentVariable("SQLCONNSTR_My
 
 // conn-settings.json
 [
-  {
-    "name": "name-1",
-    "value": "conn-string-1",
-    "type": "SQLServer",
-    "slotSetting": false
-  },
-  {
-    "name": "name-2",
-    "value": "conn-string-2",
-    "type": "PostgreSQL"
-  }
-  // ...
+	{
+		"name": "name-1",
+		"value": "conn-string-1",
+		"type": "SQLServer",
+		"slotSetting": false
+	},
+	{
+		"name": "name-2",
+		"value": "conn-string-2",
+		"type": "PostgreSQL"
+	}
+	// ...
 ]
 
 // Load: az webapp config connection-string set --resource-group $resourceGroup --name $appName --settings @conn-settings.json
@@ -461,14 +461,14 @@ _To enable the sending of credentials like cookies or authentication tokens in y
 
 - [**Networking Features**](https://learn.microsoft.com/en-us/azure/app-service/networking-features): Manage both incoming (inbound) and outgoing (outbound) network traffic.
 
-  | Feature                                      | Type     | Use Cases                                                                                 |
-  | -------------------------------------------- | -------- | ----------------------------------------------------------------------------------------- |
-  | App-assigned address                         | Inbound  | Support IP-based SSL for your app; Support a dedicated inbound address for your app       |
-  | Access restrictions                          | Inbound  | Restrict access to your app from a set of well-defined IP addresses                       |
-  | Service endpoints/Private endpoints          | Inbound  | Restrict access to your Azure Service Resources to only your virtual network              |
-  | Hybrid Connections                           | Outbound | Access an on-premises system or service securely (from Azure to On-Premises)              |
-  | Gateway-required virtual network integration | Outbound | Access Azure or on-premises resources via ExpressRoute or VPN (two way Azure-On-Premises) |
-  | Virtual network integration                  | Outbound | Access Azure network resources                                                            |
+  | Feature                                      | Type     | Use Cases                                                                                                                                |
+  | -------------------------------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+  | App-assigned address                         | Inbound  | Support IP-based SSL for your app; Support a dedicated inbound address for your app                                                      |
+  | Access restrictions                          | Inbound  | Restrict access to your app from a set of well-defined IP addresses                                                                      |
+  | Service endpoints / Private endpoints        | Inbound  | Restrict access to your Azure Service Resources to only your virtual network                                                             |
+  | Hybrid Connections                           | Outbound | Access an on-premises system or service securely (from Azure to on-premises)                                                             |
+  | Gateway-required virtual network integration | Outbound | Access Azure or on-premises resources via **point-to-site VPN**; legacy integration for Windows apps. **Does not support ExpressRoute.** |
+  | Virtual network integration                  | Outbound | Access Azure network resources; preferred method for regional VNet integration and ExpressRoute                                          |
 
   Hybrid Connections: from Azure to On-Premises; Gateway: two way Azure-On-Premises.
 
