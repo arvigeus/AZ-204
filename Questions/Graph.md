@@ -172,7 +172,7 @@ Answer: By leaving the constraint part blank, the `User.Read` permission will on
 
 Question: The app is granted the `Calendars.Read` permission to access Microsoft 365 calendar services from your new web app through Microsoft Graph. You need to ensure that the app can not only access the calendars owned by the signed-in user but also the calendars that other users have shared with the signed-in user. How should you configure the permission?
 
-- [ ] Apply rhe `ReadWrite` constraint.
+- [ ] Apply the `ReadWrite` constraint.
 - [x] Apply the `Shared`` constraint.
 - [ ] Leave the constraint blank.
 - [ ] Use the `User.Read` permission.
