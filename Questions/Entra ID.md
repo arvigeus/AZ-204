@@ -557,7 +557,7 @@ Answer:
 
 ---
 
-Question : You created a new user account named AppAdmin. You must assign the role of Application Administrator to the AppAdmin user account. What should you do?
+Question: You created a new user account named AppAdmin. You must assign the role of Application Administrator to the AppAdmin user account. What should you do?
 
 - [x] Assign the `Administrator` role
 - [ ] Add to `Administrators` group
