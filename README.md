@@ -138,6 +138,7 @@ TLDR;
   - [Implement Azure security](https://learn.microsoft.com/en-us/shows/exam-readiness-zone/preparing-for-az-204-implement-azure-security-segment-3-of-5)
   - [Monitor, troubleshoot, and optimize Azure solutions](https://learn.microsoft.com/en-us/shows/exam-readiness-zone/preparing-for-az-204-monitor-troubleshoot-and-optimize-azure-solutions-segment-4-of-5)
   - [Connect to and consume Azure services and third-party services](https://learn.microsoft.com/en-us/shows/exam-readiness-zone/preparing-for-az-204-connect-to-and-consume-azure-services-and-third-party-services-segment-5-of-5)
+- [\[OFFICIAL\] Microsoft Learn: AZ-204: Develop Solutions for Microsoft Azure (YouTube)](https://www.youtube.com/playlist?list=PLahhVEj9XNTcQ-rtUyuly3KpWFP9xzp7A)
 - [/Topics](/Topics/)
 - [Microsoft Applied Skills](https://learn.microsoft.com/en-us/credentials/browse/?credential_types=applied%20skills) (some of the skills listed could help you understand certain topics better)
 - [Azure Sandbox Environment](https://github.com/Azure-Samples/azuresandbox) (costs $$$)
