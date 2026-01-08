@@ -9,6 +9,7 @@ import {
 	// ScrollRestoration,
 } from 'react-router';
 import stylesheet from '~/tailwind.css?url';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 
 export const links: LinksFunction = () => [
 	{ rel: 'stylesheet', href: stylesheet },
@@ -16,40 +17,81 @@ export const links: LinksFunction = () => [
 ];
 
 export default function App() {
+	/**
+	 * Theme state: true for dark, false for light
+	 */
+	const [isDark, setIsDark] = useState(false);
+	const [mounted, setMounted] = useState(false);
+
+	useEffect(() => {
+		setMounted(true);
+		const storedTheme = localStorage.getItem('theme');
+		if (storedTheme === 'dark') {
+			document.documentElement.classList.add('dark');
+			setIsDark(true);
+		} else {
+			document.documentElement.classList.remove('dark');
+			setIsDark(false);
+		}
+	}, []);
+
+	const toggleTheme = useCallback(() => {
+		setIsDark((prev) => {
+			const newTheme = !prev;
+			if (newTheme) {
+				document.documentElement.classList.add('dark');
+				localStorage.setItem('theme', 'dark');
+			} else {
+				document.documentElement.classList.remove('dark');
+				localStorage.setItem('theme', 'light');
+			}
+			return newTheme;
+		});
+	}, []);
+
 	return (
 		<html lang="en">
 			<head>
 				<meta charSet="utf-8" />
 				<meta name="viewport" content="width=device-width,initial-scale=1" />
-				<link
-					rel="apple-touch-icon"
-					sizes="180x180"
-					href="/apple-touch-icon.png"
-				/>
-				<link
-					rel="icon"
-					type="image/png"
-					sizes="32x32"
-					href="/favicon-32x32.png"
-				/>
-				<link
-					rel="icon"
-					type="image/png"
-					sizes="16x16"
-					href="/favicon-16x16.png"
-				/>
+				<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+				<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+				<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
 				<link rel="manifest" href="/site.webmanifest" />
 				<Meta />
 				<Links />
 			</head>
-			<body className="h-screen w-full bg-gray-100 text-gray-700 antialiased">
-				<div className="flex h-screen w-full justify-center bg-gray-100 pt-6 text-gray-700 antialiased">
+			<body className="h-screen w-full antialiased bg-[var(--color-bg)] text-[var(--color-text)]">
+				<a href="#main-content" className="skip-link absolute left-2 top-2 z-50 bg-[var(--color-accent)] text-white px-4 py-2 rounded focus:translate-y-0 focus:outline focus:outline-2 focus:outline-[var(--color-accent)] -translate-y-20 transition-transform duration-200" tabIndex={0}>
+					Skip to main content
+				</a>
+				<div className="flex h-screen w-full justify-center pt-6 antialiased bg-[var(--color-bg)] text-[var(--color-text)]">
 					<div className="flex w-full max-w-3xl flex-col justify-between p-3">
-						<main className="prose max-w-3xl grow">
-							<h1 className="text-center font-bold text-5xl text-indigo-700">
-								<Link to="/">AZ-204 Quiz</Link>
-							</h1>
-							<div className="mt-6 w-full rounded-lg bg-white p-8 shadow-lg">
+						<main id="main-content" className="prose max-w-3xl grow">
+							<div className="flex justify-between items-center">
+								<div className="flex flex-col items-center w-full">
+									<h1 className="font-bold text-5xl text-[var(--color-accent)]">
+										<Link
+											to="/"
+											className="flex justify-center text-[var(--color-accent)] font-semibold underline"
+										>
+											AZ-204 Quiz
+										</Link>
+									</h1>
+								</div>
+								{mounted && (
+									<button
+										type="button"
+										className="ml-4 rounded px-3 py-2 border shadow transition bg-[var(--color-surface)] text-[var(--color-text)] border-[var(--color-border)] hover:bg-[var(--color-bg)]"
+										onClick={toggleTheme}
+										aria-label="Toggle dark mode"
+										tabIndex={0}
+									>
+										{isDark ? '🌙 Dark' : '☀️ Light'}
+									</button>
+								)}
+							</div>
+							<div className="mt-6 w-full rounded-lg p-8 shadow-lg bg-[var(--color-surface)]">
 								<Outlet />
 							</div>
 							<small className="mt-2 block text-center">
@@ -63,6 +105,7 @@ export default function App() {
 									target="_blank"
 									title="Viewing existing code on GitHub"
 									rel="noreferrer"
+									aria-label="GitHub repository"
 								>
 									<svg
 										role="img"

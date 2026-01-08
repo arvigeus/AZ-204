@@ -1,4 +1,58 @@
 import { data } from '~/db';
+/**
+ * Simple seeded random generator (LCG)
+ * @param seed number
+ * @returns function generating pseudo-random numbers in [0, 1)
+ */
+function seededRandom(seed: number) {
+	let value = seed;
+	return () => {
+		value = (value * 9301 + 49297) % 233280;
+		return value / 233280;
+	};
+}
+
+/**
+ * Shuffle array using a seed for reproducible order
+ * @param arr array to shuffle
+ * @param seed number
+ * @returns shuffled array
+ */
+function shuffleArraySeed<T>(arr: T[], seed: number): T[] {
+	const arrayCopy = [...arr];
+	const rand = seededRandom(seed);
+	for (let i = arrayCopy.length - 1; i > 0; i--) {
+		const j = Math.floor(rand() * (i + 1));
+		[arrayCopy[i], arrayCopy[j]] = [arrayCopy[j], arrayCopy[i]];
+	}
+	return arrayCopy;
+}
+
+/**
+ * Get a stable seed for a topic from URL or localStorage
+ * @param topic string
+ * @returns number
+ */
+function getTopicSeed(topic: string): number {
+	if (typeof window === 'undefined') return 0;
+	const urlParams = new URLSearchParams(window.location.search);
+	let seed: number | null = null;
+	if (urlParams.has('seed')) {
+		seed = parseInt(urlParams.get('seed') || '', 10);
+		if (isNaN(seed)) seed = null;
+	}
+	if (seed === null) {
+		const key = `quiz_seed_${topic}`;
+		const storedSeed = localStorage.getItem(key);
+		if (storedSeed && !isNaN(parseInt(storedSeed, 10))) {
+			seed = parseInt(storedSeed, 10);
+		} else {
+			seed = Math.floor(Math.random() * 1e9);
+			localStorage.setItem(key, seed.toString());
+		}
+	}
+	return seed ?? 0;
+}
 import type { QAPair } from '~/types/QAPair';
 
 export { topics } from '~/db';
@@ -53,12 +107,10 @@ export const getQAById = (id: string) => {
 	return shuffleQA({ ...data[index], index });
 };
 
-export const getQuestionsByTopic = (topic: string): QAPair[] => {
-	const questions: QAPair[] = data.filter((item) => topic === item.topic);
-
+export const getQuestionsByTopic = (topic: string, seed?: number): QAPair[] => {
+	const questions: QAPair[] = data.filter((item) => item.topic === topic);
 	if (questions.length === 0) return [];
-
-	return shuffleArray(questions);
+	return shuffleArraySeed(questions, seed ?? Math.floor(Math.random() * 1e9));
 };
 
 const getRandomElement = <T>(array: T[]): T =>

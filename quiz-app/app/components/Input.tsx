@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import { type ChangeEvent, useEffect, useRef, useState } from 'react';
 
 export const InputStyle =
-	'block mt-4 border border-gray-3000 rounded-lg py-2 px-6 text-lg wrap-break-word';
+	'block mt-4 rounded-lg py-2 px-6 text-lg wrap-break-word bg-[var(--color-surface)] text-[var(--color-text)] border border-[var(--color-border)] ';
 
 export const TextInput = () => {
 	const [text, setText] = useState<string>('');
