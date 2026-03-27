@@ -302,12 +302,13 @@ To include custom claims like the user's department and job title, you would typ
 
 ## Answer 9
 
-MFA requires Microsoft Entra ID Premium P2 plan
+MFA enforcement for specific users (such as external vendors) requires Microsoft Entra ID Premium P1 plan. The plan provides access to Conditional Access policies, which are required to enforce Multi-Factor Authentication (MFA) for specific users or groups (e.g., external vendors).
 
 Incorrect:
 
-- Microsoft Entra ID B2C is more for consumer-facing applications and doesn't inherently enforce MFA for external vendors.
-- Use Microsoft Entra ID B2B and only allow guest users to access the application: Microsoft Entra ID B2B is for business-to-business collaborations and doesn't inherently enforce MFA.
+- Microsoft Entra ID Premium P2 is not required for MFA enforcement; it adds advanced features such as risk-based Conditional Access and identity protection, which are not needed in this scenario.
+- Microsoft Entra ID B2C is intended for consumer-facing applications and does not inherently enforce MFA for external vendors in enterprise scenarios.
+- Use Microsoft Entra ID B2B and only allow guest users to access the application: B2B enables external collaboration but does not enforce MFA by itself; Conditional Access (P1) is still required.
 
 ## Answer 10
 
